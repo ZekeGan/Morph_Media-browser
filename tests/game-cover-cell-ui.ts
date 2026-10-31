@@ -115,13 +115,15 @@ for (const [w, h] of [
     await button('開啟專案 Cover Test').first().click()
     await page.locator('.folder-card .cell-image').first().waitFor()
     await fits('card', '.folder-card', 'card ' + w + 'x' + h)
+    // The default shows the whole cover over a blurred copy of itself, never a crop.
     assert.equal(
       await page
-        .locator('.folder-card .cell-image')
+        .locator('.folder-card .cell-blur-fg')
         .first()
         .evaluate((node) => getComputedStyle(node).objectFit),
-      'cover'
+      'contain'
     )
+    assert.equal(await page.locator('.folder-card .cell-blur-bg').count(), 1)
     await button('更改樣式').click()
     await page
       .locator('.editor-cell .cell-image, .editor-cell .cell-image-placeholder')
@@ -130,10 +132,10 @@ for (const [w, h] of [
     await fits('editor', '.editor-cell', 'editor ' + w + 'x' + h)
     assert.equal(
       await page
-        .locator('.editor-cell .cell-image')
+        .locator('.editor-cell .cell-blur-fg')
         .first()
         .evaluate((node) => getComputedStyle(node).objectFit),
-      'cover'
+      'contain'
     )
     await page.screenshot({ path: path.join(root, 'editor-' + w + 'x' + h + '.png') })
   } catch (error) {

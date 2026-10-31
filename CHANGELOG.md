@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.22.0 — 2026-11-02
+
+- Cover and image cells have a third fit, "show everything, fill the gaps with a blurred background" (`blur`). Game cover cells use it by default, so tall and wide covers are no longer cropped (titles stay visible); cells that explicitly chose "fill and crop" or "show whole" keep their choice.
+
 ## 0.21.0 — 2026-11-02
 
 - Video playback failures now say the likely cause (a ZIP/RAR/7z archive or web page named like a video, or an empty file) and offer "open with the default player" and "show in File Explorer".

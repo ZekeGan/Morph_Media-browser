@@ -205,9 +205,10 @@ export function EditorInspector(props: EditorInspectorProps) {
                         allowDeselect={false}
                         value={
                           selectedCell.imageFit ??
-                          (selectedCell.kind === 'game-cover' ? 'cover' : 'contain')
+                          (selectedCell.kind === 'game-cover' ? 'blur' : 'contain')
                         }
                         data={[
+                          { value: 'blur', label: tr('完整顯示，空白處以模糊背景填滿') },
                           { value: 'cover', label: tr('填滿容器（裁切多餘部分）') },
                           { value: 'contain', label: tr('完整顯示（保留空白）') },
                         ]}

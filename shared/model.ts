@@ -43,7 +43,8 @@ export interface Cell {
   decimals?: number
   systemInfo?: 'category' | 'files' | 'size'
   presentation?: 'badge' | 'rating' | 'progress'
-  imageFit?: 'contain' | 'cover'
+  // 'blur': the whole picture, with its own blurred copy filling the leftover space.
+  imageFit?: 'contain' | 'cover' | 'blur'
   maximum?: number
   copyValue?: boolean
   condition?: {
@@ -339,7 +340,8 @@ function validCell(c: unknown): boolean {
       (c.presentation === 'badge' && ['field-enum', 'field-boolean'].includes(c.kind)) ||
       (['rating', 'progress'].includes(c.presentation) && c.kind === 'field-number')) &&
     (c.imageFit === undefined ||
-      (['contain', 'cover'].includes(c.imageFit) && ['image', 'game-cover'].includes(c.kind))) &&
+      (['contain', 'cover', 'blur'].includes(c.imageFit) &&
+        ['image', 'game-cover'].includes(c.kind))) &&
     (c.wrap === undefined ||
       (typeof c.wrap === 'boolean' && ['field-text', 'name', 'path'].includes(c.kind))) &&
     (c.unit === undefined || (c.kind === 'field-number' && text(c.unit, 20))) &&

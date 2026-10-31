@@ -240,6 +240,10 @@ test('image fit is limited to image cells and valid values', () => {
   }
   project.cells.push(cell)
   assert.doesNotThrow(() => validateProject(project))
+  for (const imageFit of ['contain', 'cover', 'blur'] as const)
+    assert.doesNotThrow(() =>
+      validateProject({ ...project, cells: [...project.cells.slice(0, -1), { ...cell, imageFit }] })
+    )
   reject(
     validateProject,
     { ...project, cells: [...project.cells.slice(0, -1), { ...cell, imageFit: 'stretch' }] },

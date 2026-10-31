@@ -15,6 +15,25 @@ type CellProps = {
   preview?: boolean
   project?: Project
 }
+// Covers come tall and wide; 'blur' shows all of the art and fills the rest with a blurred copy instead of bars or a crop.
+function CellPicture({
+  src,
+  alt,
+  fit,
+}: {
+  src: string
+  alt: string
+  fit: 'contain' | 'cover' | 'blur'
+}) {
+  if (fit !== 'blur')
+    return <img className="cell-image" style={{ objectFit: fit }} src={src} alt={alt} />
+  return (
+    <span className="cell-image cell-blur">
+      <img className="cell-blur-bg" src={src} alt="" aria-hidden="true" />
+      <img className="cell-blur-fg" src={src} alt={alt} />
+    </span>
+  )
+}
 export function CellContent(props: CellProps) {
   useLocale()
   const { cell, row, preview, project } = props,
@@ -126,11 +145,10 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       row?.record?.assets.find((a) => a.assetId === row.record?.details?.bannerAssetId) ??
       row?.record?.assets[0]
     return asset ? (
-      <img
-        className="cell-image"
-        style={{ objectFit: cell.imageFit ?? 'cover' }}
+      <CellPicture
         src={`media://asset/${row!.rowId}/${asset.assetId}`}
         alt={asset.originalName}
+        fit={cell.imageFit ?? 'blur'}
       />
     ) : (
       <span className="cell-image-placeholder">{tr('尚無封面')}</span>
@@ -145,11 +163,10 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
           : (row?.record?.assets.find((a) => a.assetId === row.record?.details?.bannerAssetId) ??
             row?.record?.assets[0])
     return asset ? (
-      <img
-        className="cell-image"
-        style={{ objectFit: cell.imageFit ?? 'contain' }}
+      <CellPicture
         src={`media://asset/${row!.rowId}/${asset.assetId}`}
         alt={asset.originalName}
+        fit={cell.imageFit ?? 'contain'}
       />
     ) : preview ? (
       <span>{tr('選用圖片 · 可留空')}</span>

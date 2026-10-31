@@ -5878,5 +5878,11 @@
     "en": "Enter a search first to save it as a saved search",
     "ja": "先に検索条件を入力すると保存できます",
     "es": "Escribe primero una búsqueda para guardarla"
+  },
+  "完整顯示，空白處以模糊背景填滿": {
+    "zh-CN": "完整显示，空白处用模糊背景填充",
+    "en": "Show everything; fill the gaps with a blurred background",
+    "ja": "全体を表示し、余白はぼかした背景で埋める",
+    "es": "Mostrar todo y rellenar los huecos con un fondo desenfocado"
   }
 }
