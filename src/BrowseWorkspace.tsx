@@ -5,7 +5,8 @@ import type { OverviewEntry } from '../shared/explorer'
 import type { FolderNavigation } from '../shared/workspace'
 import { t as tr, useLocale, currentLocale } from './i18n'
 import { Icon } from './icons'
-import { RightPanel } from './RightPanel'
+import { BrowseToolbar } from './BrowseToolbar'
+import { BrowsePanel } from './BrowsePanel'
 import {
   lazy,
   Suspense,
@@ -17,22 +18,7 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import {
-  ActionIcon,
-  Breadcrumbs,
-  Button,
-  Group,
-  Menu,
-  Checkbox,
-  TextInput,
-  NumberInput,
-  Pagination,
-  SegmentedControl,
-  Select,
-  Stack,
-  Text,
-  Tooltip,
-} from '@mantine/core'
+import { ActionIcon, Breadcrumbs, Menu, Pagination, Select, Tooltip } from '@mantine/core'
 import { Card } from './Card'
 import { cardPresets } from '../shared/layouts'
 import {
@@ -660,302 +646,38 @@ export function BrowseWorkspace({
           toolbarTarget
         )}
       <section className="center-pane" aria-label={tr('資料夾瀏覽區')}>
-        <div className={'workspace-toolbar' + (folderMode ? '' : ' file-mode-toolbar')}>
-          <div className="toolbar-left">
-            {!['game', 'media', 'manga'].includes(project.mediaCategory) && (
-              <SegmentedControl
-                aria-label={tr('展示內容')}
-                size="xs"
-                value={browse.contentMode ?? 'folders'}
-                disabled={busy || !ready}
-                data={[
-                  { value: 'folders', label: tr('資料夾') },
-                  { value: 'files', label: tr('檔案') },
-                ]}
-                onChange={(value) => {
-                  setFilePreview(undefined)
-                  persist({
-                    ...state.current,
-                    contentMode: value as 'folders' | 'files',
-                    fileRootId: detail?.rowId ?? currentFolder?.rowId,
-                    filePresentation: state.current.filePresentation ?? 'tiles',
-                    fileScope: state.current.fileScope ?? 'descendants',
-                  })
-                }}
-              />
-            )}
-            {folderMode && browse.mode === 'CARD' && (
-              <>
-                <div className="preset-controls">
-                  <Select
-                    aria-label={tr('CELL 版面方案')}
-                    size="xs"
-                    value={project.activeLayoutId ?? presets[0].id}
-                    allowDeselect={false}
-                    data={presets.map((p) => ({
-                      value: p.id,
-                      label: p.id === 'default' && p.name === '預設版面' ? tr('預設版面') : p.name,
-                    }))}
-                    disabled={busy}
-                    onChange={(id) => id && pickPreset(id)}
-                  />
-                  <Tooltip label={tr('更改樣式')}>
-                    <ActionIcon
-                      aria-label={tr('更改樣式')}
-                      variant="default"
-                      disabled={busy}
-                      onClick={() => edit()}
-                    >
-                      <Icon name="edit" />
-                    </ActionIcon>
-                  </Tooltip>
-                </div>
-                <Menu>
-                  <Menu.Target>
-                    <ActionIcon
-                      className="compact-presets"
-                      aria-label={tr('CELL 方案選單')}
-                      variant="subtle"
-                    >
-                      <Icon name="grid" />
-                    </ActionIcon>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    {presets.map((p) => (
-                      <Menu.Item key={p.id} onClick={() => pickPreset(p.id)}>
-                        {p.id === 'default' && p.name === '預設版面' ? tr('預設版面') : p.name}
-                      </Menu.Item>
-                    ))}
-                    <Menu.Divider />
-                    <Menu.Item onClick={() => edit()}>{tr('更改樣式')}</Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
-              </>
-            )}
-            {folderMode && project.mediaCategory === 'game' && browse.mode !== 'TREE' && (
-              <>
-                <Select
-                  className="game-boundary-filter"
-                  size="xs"
-                  aria-label={tr('遊戲資料夾篩選')}
-                  allowDeselect={false}
-                  value={boundariesOnly ? 'boundaries' : 'all'}
-                  data={[
-                    { value: 'all', label: tr('全部資料夾') },
-                    { value: 'boundaries', label: tr('邊界的資料夾') },
-                  ]}
-                  onChange={(value) => {
-                    setBoundariesOnly(value === 'boundaries')
-                    setPage(1)
-                  }}
-                />
-                {/* Narrow toolbars swap the select for an icon menu so tools never overlap. */}
-                <Menu>
-                  <Menu.Target>
-                    <ActionIcon
-                      className="compact-boundary"
-                      aria-label={tr('遊戲資料夾篩選')}
-                      variant={boundariesOnly ? 'light' : 'subtle'}
-                    >
-                      <Icon name="sliders" />
-                    </ActionIcon>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    {(
-                      [
-                        [false, '全部資料夾'],
-                        [true, '邊界的資料夾'],
-                      ] as const
-                    ).map(([only, label]) => (
-                      <Menu.Item
-                        key={label}
-                        leftSection={boundariesOnly === only ? <Icon name="check" /> : null}
-                        onClick={() => {
-                          setBoundariesOnly(only)
-                          setPage(1)
-                        }}
-                      >
-                        {tr(label)}
-                      </Menu.Item>
-                    ))}
-                  </Menu.Dropdown>
-                </Menu>
-              </>
-            )}
-          </div>
-          <SegmentedControl
-            style={{ display: folderMode ? undefined : 'none' }}
-            className="center-mode"
-            aria-label={tr('瀏覽模式')}
-            size="xs"
-            value={browse.mode}
-            data={(['CARD', 'TABLE', 'TREE'] as const).map((mode) => ({
-              value: mode,
-              label: (
-                <>
-                  <Icon
-                    name={mode === 'CARD' ? 'grid' : mode === 'TABLE' ? 'list' : 'tree'}
-                    size={14}
-                  />
-                  {mode === 'CARD' ? tr('卡片') : mode === 'TABLE' ? tr('表格') : tr('樹狀圖')}
-                </>
-              ),
-            }))}
-            disabled={busy || !ready}
-            onChange={(mode) => void switchMode(mode as BrowseMode)}
-          />
-          <div
-            ref={setOverviewTools}
-            className="workspace-file-tools"
-            style={{ display: folderMode ? 'none' : undefined }}
-          />
-          <div className="toolbar-right">
-            {folderMode && browse.mode === 'TABLE' && (
-              <Menu closeOnItemClick={false}>
-                <Menu.Target>
-                  <ActionIcon variant="subtle" aria-label={tr('選擇表格欄位')}>
-                    <Icon name="list" />
-                  </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <TextInput
-                    placeholder={tr('搜尋欄位')}
-                    aria-label={tr('搜尋欄位')}
-                    value={columnQuery}
-                    onChange={(event) => setColumnQuery(event.currentTarget.value)}
-                  />
-                  <Stack
-                    gap="xs"
-                    p="xs"
-                    style={{ maxHeight: 'min(48vh,320px)', overflowY: 'auto' }}
-                  >
-                    {orderedColumns
-                      .filter((column) =>
-                        column.label.toLocaleLowerCase().includes(columnQuery.toLocaleLowerCase())
-                      )
-                      .map((column) => (
-                        <Checkbox
-                          key={column.id}
-                          label={column.label}
-                          disabled={column.id === 'name' || busy}
-                          checked={
-                            column.id === 'name' || !browse.hiddenColumns?.includes(column.id)
-                          }
-                          onChange={(event) =>
-                            persist({
-                              ...state.current,
-                              hiddenColumns: event.currentTarget.checked
-                                ? (state.current.hiddenColumns ?? []).filter(
-                                    (id) => id !== column.id
-                                  )
-                                : [...new Set([...(state.current.hiddenColumns ?? []), column.id])],
-                            })
-                          }
-                        />
-                      ))}
-                  </Stack>
-                  <Button
-                    variant="subtle"
-                    size="xs"
-                    onClick={() => persist({ ...state.current, hiddenColumns: [] })}
-                  >
-                    {tr('恢復預設')}
-                  </Button>
-                </Menu.Dropdown>
-              </Menu>
-            )}
-            <Tooltip label={tr('重新掃描')}>
-              <ActionIcon
-                variant="subtle"
-                color="gray"
-                aria-label={tr('重新掃描')}
-                disabled={busy}
-                onClick={() => void act({ action: 'scan' })}
-              >
-                <Icon name="refresh" />
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label={tr('目前資料夾設定')}>
-              <ActionIcon
-                variant="subtle"
-                color="gray"
-                aria-label={tr('目前資料夾設定')}
-                disabled={!currentFolder || busy}
-                onClick={() => currentFolder && openConfig(currentFolder.rowId)}
-              >
-                <Icon name="folder-settings" />
-              </ActionIcon>
-            </Tooltip>
-          </div>
-        </div>
-        {folderMode && browse.mode === 'CARD' && (
-          <div className="card-inline-controls">
-            <SegmentedControl
-              size="xs"
-              aria-label={tr('層級顯示')}
-              value={display.mode}
-              data={[
-                { value: 'multi', label: tr('多層') },
-                { value: 'single', label: tr('單層') },
-              ]}
-              onChange={(mode) => {
-                setDisplay({
-                  mode: mode as 'multi' | 'single',
-                  level: mode === 'single' && display.level === 'all' ? 1 : display.level,
-                })
-                changedCard()
-              }}
-            />
-            <Select
-              size="xs"
-              aria-label={tr('顯示層數')}
-              value={String(display.level)}
-              allowDeselect={false}
-              data={[
-                ...(display.mode === 'multi' ? [{ value: 'all', label: tr('全部') }] : []),
-                ...Array.from({ length: deepest }, (_, index) => ({
-                  value: String(index + 1),
-                  label: tr('第 ') + (index + 1) + tr(' 層'),
-                })),
-              ]}
-              onChange={(value) => {
-                if (value) {
-                  setDisplay({ ...display, level: value === 'all' ? 'all' : Number(value) })
-                  changedCard()
-                }
-              }}
-            />
-            <NumberInput
-              size="xs"
-              label={tr('每列卡片數')}
-              min={1}
-              max={6}
-              allowDecimal={false}
-              value={density.itemsPerRow}
-              onChange={(value) => {
-                setDensity({ ...density, itemsPerRow: value })
-                changedCard()
-              }}
-            />
-            <NumberInput
-              size="xs"
-              label={tr('每頁筆數')}
-              min={1}
-              max={500}
-              allowDecimal={false}
-              value={density.pageSize}
-              onChange={(value) => {
-                setDensity({ ...density, pageSize: value })
-                changedCard()
-              }}
-            />
-            {cardSaveError && (
-              <Button size="compact-xs" color="red" variant="subtle" onClick={changedCard}>
-                {cardSaveError}
-              </Button>
-            )}
-          </div>
-        )}
+        <BrowseToolbar
+          act={act}
+          boundariesOnly={boundariesOnly}
+          browse={browse}
+          busy={busy}
+          cardSaveError={cardSaveError}
+          changedCard={changedCard}
+          columnQuery={columnQuery}
+          currentFolder={currentFolder}
+          deepest={deepest}
+          density={density}
+          detail={detail}
+          display={display}
+          edit={edit}
+          folderMode={folderMode}
+          openConfig={openConfig}
+          orderedColumns={orderedColumns}
+          persist={persist}
+          pickPreset={pickPreset}
+          presets={presets}
+          project={project}
+          ready={ready}
+          setBoundariesOnly={setBoundariesOnly}
+          setColumnQuery={setColumnQuery}
+          setDensity={setDensity}
+          setDisplay={setDisplay}
+          setFilePreview={setFilePreview}
+          setOverviewTools={setOverviewTools}
+          setPage={setPage}
+          state={state}
+          switchMode={switchMode}
+        />
         <div className="workspace-breadcrumb">
           <Tooltip label={tr('返回上一個瀏覽位置')}>
             <ActionIcon
@@ -1242,209 +964,37 @@ export function BrowseWorkspace({
           </div>
         )}
       </section>
-      <div
-        ref={panelSlot}
-        className="content-panel-slot"
-        data-open={panelOpen}
-        data-resizing={resize.current?.id === 'panel'}
-        aria-hidden={!panelOpen}
-        style={{ '--panel-width': browse.panelWidth + 'px' } as React.CSSProperties}
-      >
-        {detail && panelOpen && (
-          <RightPanel
-            className={project.mediaCategory === 'video' ? 'video-panel' : ''}
-            label={tr('資料夾內容')}
-            resizerLabel={tr('調整資料夾內容寬度')}
-            width={browse.panelWidth}
-            onResizeStart={(e) => {
-              resize.current = { id: 'panel', start: e.clientX, width: browse.panelWidth }
-              e.currentTarget.setPointerCapture(e.pointerId)
-            }}
-            onResizeMove={moveWidth}
-            onResizeEnd={stopWidth}
-            bodyRef={panelBody}
-            header={
-              <>
-                <Tooltip label={tr('返回上一個瀏覽位置')}>
-                  <ActionIcon
-                    aria-label={tr('返回')}
-                    disabled={!ready || busy || !history.index}
-                    variant="subtle"
-                    onClick={() => navHistory(-1)}
-                  >
-                    <Icon name="arrow-left" />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label={tr('前進至下一個瀏覽位置')}>
-                  <ActionIcon
-                    aria-label={tr('前進')}
-                    disabled={!ready || busy || history.index >= history.items.length - 1}
-                    variant="subtle"
-                    onClick={() => navHistory(1)}
-                  >
-                    <Icon name="arrow-right" />
-                  </ActionIcon>
-                </Tooltip>
-                {project.mediaCategory !== 'video' && <strong>{detail.name}</strong>}
-
-                <Tooltip label={tr('前往此資料夾')}>
-                  <ActionIcon
-                    aria-label={tr('前往資料夾 {0}', detail.name)}
-                    variant="subtle"
-                    disabled={busy}
-                    onClick={() => void open(detail.rowId)}
-                  >
-                    <Icon name="folder-go" />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label={tr('資料夾設定')}>
-                  <ActionIcon
-                    aria-label={tr('資料夾設定')}
-                    variant="subtle"
-                    onClick={() => openConfig(detail.rowId)}
-                  >
-                    <Icon name="settings" />
-                  </ActionIcon>
-                </Tooltip>
-                {project.mediaCategory === 'manga' && (
-                  <Tooltip label={tr('編輯此專案所有漫畫的資訊版面；CARD 版面獨立')}>
-                    <ActionIcon
-                      aria-label={tr('編輯漫畫展示')}
-                      variant="subtle"
-                      color="gray"
-                      disabled={busy}
-                      onClick={() => edit('manga')}
-                    >
-                      <Icon name="layout" />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-                <ActionIcon
-                  aria-label={expanded ? tr('還原內容區') : tr('放大內容區')}
-                  variant="subtle"
-                  color="gray"
-                  onClick={() => setExpanded((v) => !v)}
-                >
-                  <Icon name="maximize" />
-                </ActionIcon>
-                <ActionIcon
-                  aria-label={tr('關閉資料夾內容')}
-                  variant="subtle"
-                  color="gray"
-                  onClick={togglePanel}
-                >
-                  <Icon name="close" />
-                </ActionIcon>
-              </>
-            }
-            tabs={
-              <div
-                className="folder-panel-dock-tabs"
-                role="tablist"
-                aria-label={tr('右側面板分頁')}
-              >
-                <Button
-                  size="compact-sm"
-                  variant={config ? 'subtle' : 'light'}
-                  role="tab"
-                  aria-selected={!config}
-                  onClick={closeConfig}
-                >
-                  {tr('內容')}
-                </Button>
-                <Button
-                  size="compact-sm"
-                  variant={config ? 'light' : 'subtle'}
-                  role="tab"
-                  aria-selected={!!config}
-                  disabled={busy}
-                  onClick={() => !config && openConfig(detail.rowId)}
-                >
-                  {tr('設定')}
-                  {config ? ' · ' + config.name : ''}
-                </Button>
-                <span className="folder-panel-dock-spacer" />
-                {config && (
-                  <Tooltip label={tr('關閉資料夾設定')}>
-                    <ActionIcon
-                      variant="subtle"
-                      color="gray"
-                      size="sm"
-                      aria-label={tr('關閉資料夾設定')}
-                      onClick={closeConfig}
-                    >
-                      <Icon name="close" size={16} />
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </div>
-            }
-            footer={
-              <>
-                {canReturnTop && (
-                  <Button
-                    className="manga-top"
-                    size="compact-sm"
-                    variant="default"
-                    aria-label={tr('返回頂部')}
-                    onClick={() =>
-                      panelBody.current?.scrollTo({
-                        top: 0,
-                        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
-                          ? 'instant'
-                          : 'smooth',
-                      })
-                    }
-                  >
-                    <Icon name="arrow-up" size={15} />
-                    {tr('返回頂部')}
-                  </Button>
-                )}
-              </>
-            }
-          >
-            {config ? (
-              <div
-                className="folder-panel-dock-settings"
-                role="region"
-                aria-label={tr('資料夾設定 · ') + config.name}
-              >
-                {settingsBody}
-              </div>
-            ) : (
-              <Suspense fallback={<p>{tr('載入內容…')}</p>}>
-                {panelOpen && (folderMode || filePreview) ? (
-                  <FolderContent
-                    key={detail.rowId + '/' + (filePreview?.id ?? 'folder')}
-                    selectedFileId={folderMode ? undefined : filePreview?.id}
-                    row={detail}
-                    project={project}
-                    run={run}
-                    act={act}
-                    busy={busy}
-                    configure={(tab) => openConfig(detail.rowId, tab)}
-                    onChild={child}
-                    sourceRows={all}
-                    onSource={(id) => void open(id)}
-                    childNames={all
-                      .filter(
-                        (row) =>
-                          row.record &&
-                          !row.error &&
-                          !row.readonly &&
-                          !row.stopped &&
-                          pathKey(row.path).replace(/\/[^/]+$/, '') === pathKey(detail.path)
-                      )
-                      .map((row) => row.name)}
-                  />
-                ) : panelOpen ? (
-                  <p>{tr('選擇檔案以預覽')}</p>
-                ) : null}
-              </Suspense>
-            )}
-          </RightPanel>
-        )}
-      </div>
+      <BrowsePanel
+        act={act}
+        all={all}
+        browse={browse}
+        busy={busy}
+        canReturnTop={canReturnTop}
+        child={child}
+        closeConfig={closeConfig}
+        config={config}
+        detail={detail}
+        edit={edit}
+        expanded={expanded}
+        filePreview={filePreview}
+        folderMode={folderMode}
+        moveWidth={moveWidth}
+        navHistory={navHistory}
+        open={open}
+        openConfig={openConfig}
+        panelBody={panelBody}
+        panelOpen={panelOpen}
+        panelSlot={panelSlot}
+        project={project}
+        ready={ready}
+        resize={resize}
+        run={run}
+        setExpanded={setExpanded}
+        settingsBody={settingsBody}
+        stopWidth={stopWidth}
+        togglePanel={togglePanel}
+        history={history}
+      />
     </div>
   )
 }

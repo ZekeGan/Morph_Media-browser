@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.17.2 — 2026-11-01
+
+- Refactor only: `BrowseWorkspace.tsx` (1450 → 999 lines) is split into `BrowseToolbar.tsx` and `BrowsePanel.tsx`; behavior is unchanged.
+
 ## 0.17.1 — 2026-11-01
 
 - Refactor only: the CELL editor is split into `Editor.tsx` (1632 → 847 lines), `EditorInspector.tsx` and `EditorPalette.tsx`; behavior is unchanged.
