@@ -272,8 +272,16 @@ try {
   await page.keyboard.press('Escape')
   await right().getByRole('button', { name: '資料夾設定', exact: true }).click()
   await page.locator('.folder-panel-dock-settings').waitFor()
+  // Settings are a panel tab, so history navigation still works and the settings follow the folder.
   await side(-1, '.react-flow')
+  await page.waitForFunction(
+    () => document.querySelector('.breadcrumb-current')?.textContent?.trim() !== 'B'
+  )
+  const moved = (await page.locator('.breadcrumb-current').innerText()).trim()
+  await page.getByRole('tab', { name: '設定 · ' + moved, exact: true }).waitFor()
+  await side(1, '.react-flow')
   await current('B')
+  await page.getByRole('tab', { name: '設定 · B', exact: true }).waitFor()
   await button('關閉資料夾設定').click()
   await page.locator('.folder-panel-dock-settings').waitFor({ state: 'detached' })
   await page.locator('.breadcrumb-link').first().click()

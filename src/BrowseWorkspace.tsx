@@ -242,9 +242,7 @@ export function BrowseWorkspace({
       if (
         e.key === 'Escape' &&
         !e.defaultPrevented &&
-        !document.querySelector(
-          '.reader,.mantine-Drawer-content,.folder-panel-dock-settings,.mantine-Modal-content'
-        ) &&
+        !document.querySelector('.reader,.mantine-Drawer-content,.mantine-Modal-content') &&
         expanded
       ) {
         e.preventDefault()
@@ -391,7 +389,7 @@ export function BrowseWorkspace({
       busy ||
       Array.from(
         document.querySelectorAll(
-          '.reader,.media-viewer-shell,.document-viewer,.mantine-Drawer-content,.folder-panel-dock-settings,.mantine-Modal-content,.mantine-Menu-dropdown,.mantine-Select-dropdown,[role="dialog"]'
+          '.reader,.media-viewer-shell,.document-viewer,.mantine-Drawer-content,.mantine-Modal-content,.mantine-Menu-dropdown,.mantine-Select-dropdown,[role="dialog"]'
         )
       ).some(
         (node) => node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden'
@@ -438,9 +436,7 @@ export function BrowseWorkspace({
         !event.repeat &&
         currentFolder &&
         !busy &&
-        !document.querySelector(
-          '.reader,.mantine-Drawer-content,.folder-panel-dock-settings,.mantine-Modal-content'
-        ) &&
+        !document.querySelector('.reader,.mantine-Drawer-content,.mantine-Modal-content') &&
         !(event.target as HTMLElement)?.closest('input,textarea,select,[contenteditable="true"]')
       ) {
         event.preventDefault()
@@ -737,21 +733,54 @@ export function BrowseWorkspace({
               </>
             )}
             {folderMode && project.mediaCategory === 'game' && browse.mode !== 'TREE' && (
-              <Select
-                className="game-boundary-filter"
-                size="xs"
-                aria-label={tr('遊戲資料夾篩選')}
-                allowDeselect={false}
-                value={boundariesOnly ? 'boundaries' : 'all'}
-                data={[
-                  { value: 'all', label: tr('全部資料夾') },
-                  { value: 'boundaries', label: tr('邊界的資料夾') },
-                ]}
-                onChange={(value) => {
-                  setBoundariesOnly(value === 'boundaries')
-                  setPage(1)
-                }}
-              />
+              <>
+                <Select
+                  className="game-boundary-filter"
+                  size="xs"
+                  aria-label={tr('遊戲資料夾篩選')}
+                  allowDeselect={false}
+                  value={boundariesOnly ? 'boundaries' : 'all'}
+                  data={[
+                    { value: 'all', label: tr('全部資料夾') },
+                    { value: 'boundaries', label: tr('邊界的資料夾') },
+                  ]}
+                  onChange={(value) => {
+                    setBoundariesOnly(value === 'boundaries')
+                    setPage(1)
+                  }}
+                />
+                {/* Narrow toolbars swap the select for an icon menu so tools never overlap. */}
+                <Menu>
+                  <Menu.Target>
+                    <ActionIcon
+                      className="compact-boundary"
+                      aria-label={tr('遊戲資料夾篩選')}
+                      variant={boundariesOnly ? 'light' : 'subtle'}
+                    >
+                      <Icon name="sliders" />
+                    </ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    {(
+                      [
+                        [false, '全部資料夾'],
+                        [true, '邊界的資料夾'],
+                      ] as const
+                    ).map(([only, label]) => (
+                      <Menu.Item
+                        key={label}
+                        leftSection={boundariesOnly === only ? <Icon name="check" /> : null}
+                        onClick={() => {
+                          setBoundariesOnly(only)
+                          setPage(1)
+                        }}
+                      >
+                        {tr(label)}
+                      </Menu.Item>
+                    ))}
+                  </Menu.Dropdown>
+                </Menu>
+              </>
             )}
           </div>
           <SegmentedControl

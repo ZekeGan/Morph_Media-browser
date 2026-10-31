@@ -22,7 +22,6 @@ export type CellKind =
   | 'divider'
   | 'open-folder'
   | 'game-cover'
-  | 'group'
 export interface Cell {
   cellId: string
   kind: CellKind
@@ -33,8 +32,6 @@ export interface Cell {
   systemInfo?: 'category' | 'files' | 'size'
   presentation?: 'badge' | 'rating' | 'progress'
   imageFit?: 'contain' | 'cover'
-  // Only on kind 'group': one level of child cells laid out on the group's own 12-column grid.
-  cells?: Cell[]
   maximum?: number
   copyValue?: boolean
   condition?: {
@@ -93,8 +90,6 @@ export interface Project {
   activeLayoutId?: string
   folderLayouts?: Record<string, string>
   scanAll?: boolean
-  videoAutoplay?: boolean
-  videoAutoNext?: boolean
   cardView?: { mode: 'multi' | 'single'; level: number | 'all' }
   traversal?: Record<string, boolean>
   savedSearches?: { id: string; name: string; query: string; queryAst?: StableQuery }[]
@@ -303,36 +298,6 @@ function validFieldBinding(f: unknown): boolean {
   )
 }
 
-export const allCells = (cells: Cell[]): Cell[] =>
-  cells.flatMap((c) => (c.kind === 'group' ? [c, ...(c.cells ?? [])] : [c]))
-const overlaps = (cells: { grid: Cell['grid'] }[]) =>
-  cells.some((a, i) =>
-    cells
-      .slice(i + 1)
-      .some(
-        ({ grid: b }) =>
-          a.grid.x < b.x + b.w &&
-          a.grid.x + a.grid.w > b.x &&
-          a.grid.y < b.y + b.h &&
-          a.grid.y + a.grid.h > b.y
-      )
-  )
-function validGroup(c: Record<string, unknown>): boolean {
-  const cells = c.cells as unknown,
-    grid = c.grid as Cell['grid'] | undefined
-  return (
-    Array.isArray(cells) &&
-    cells.length <= 50 &&
-    !!grid &&
-    cells.every(
-      (child) =>
-        validCell(child) &&
-        (child as Cell).kind !== 'group' &&
-        (child as Cell).grid.y + (child as Cell).grid.h <= grid.h
-    ) &&
-    !overlaps(cells as Cell[])
-  )
-}
 function validCell(c: unknown): boolean {
   return (
     obj(c) &&
@@ -355,9 +320,7 @@ function validCell(c: unknown): boolean {
       'divider',
       'open-folder',
       'game-cover',
-      'group',
     ].includes(c.kind) &&
-    (c.kind === 'group' ? validGroup(c) : c.cells === undefined) &&
     (c.text === undefined || text(c.text, 10000)) &&
     (c.systemInfo === undefined || ['category', 'files', 'size'].includes(c.systemInfo)) &&
     (c.presentation === undefined ||
@@ -526,10 +489,6 @@ export function validateDetails(v: unknown): asserts v is FolderDetails {
     throw new Error('播放設定不合法')
 }
 export function validateProject(v: unknown): asserts v is Project {
-  if (obj(v) && v.videoAutoplay !== undefined && typeof v.videoAutoplay !== 'boolean')
-    throw new Error('影片自動播放設定不合法')
-  if (obj(v) && v.videoAutoNext !== undefined && typeof v.videoAutoNext !== 'boolean')
-    throw new Error('影片接續播放設定不合法')
   if (
     obj(v) &&
     ((v.scanAll !== undefined && typeof v.scanAll !== 'boolean') ||
@@ -564,19 +523,18 @@ export function validateProject(v: unknown): asserts v is Project {
     !v.fieldBindings.every(validFieldBinding) ||
     !Array.isArray(v.cells) ||
     v.cells.length > 50 ||
-    !v.cells.every(validCell) ||
-    allCells(v.cells).length > 50
+    !v.cells.every(validCell)
   )
     throw new Error('專案設定不合法或版本不支援')
   if (
-    new Set(allCells(v.cells).map((c) => c.cellId)).size !== allCells(v.cells).length ||
+    new Set(v.cells.map((c) => c.cellId)).size !== v.cells.length ||
     new Set(v.fieldBindings.map((f) => f.alias.toLowerCase())).size !== v.fieldBindings.length
   )
     throw new Error('組件 ID 或欄位別名重複')
   if (
     v.mediaCategory !== 'game' &&
     [
-      ...allCells(v.cells),
+      ...v.cells,
       ...(Array.isArray(v.layoutPresets)
         ? v.layoutPresets.flatMap((p: { cells?: unknown }) =>
             Array.isArray(p?.cells) ? p.cells : []
@@ -588,7 +546,7 @@ export function validateProject(v: unknown): asserts v is Project {
     ].some((c: unknown) => obj(c) && c.kind === 'game-cover')
   )
     throw new Error('遊戲封面組件只能用於遊戲專案')
-  for (const cell of allCells(v.cells))
+  for (const cell of v.cells)
     if (cell.condition) {
       const condition = cell.condition
       const field = v.fieldBindings.find((field) => field.attributeId === condition.attributeId)
@@ -713,4 +671,17 @@ export function fieldValue(row: FolderRow, attributeId: string): unknown {
     (a) => a.attributeId === attributeId
   )
   return (override ?? row.record?.attributes.find((a) => a.attributeId === attributeId))?.value
+}
+
+// Group cells were removed; a project saved while they existed loads without them (children go with the group).
+export function withoutGroupCells<T>(value: T): T {
+  if (Array.isArray(value))
+    return value
+      .filter((item) => !(obj(item) && item.kind === 'group'))
+      .map((item) => withoutGroupCells(item)) as T
+  if (obj(value))
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, withoutGroupCells(item)])
+    ) as T
+  return value
 }

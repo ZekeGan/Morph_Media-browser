@@ -709,18 +709,3 @@ test('recovery copy or root cleanup failure keeps readable primary identity and 
     assert.equal((await lib.create(p1, input)).projects[0].error, undefined)
   }
 })
-test('video autoplay and auto-next preferences are independent, validated and portable across project relinking', async (t) => {
-  const { p1, lib } = await fixture(t),
-    state = await lib.create(p1, { ...input, mediaCategory: 'video' }),
-    project = state.projects[0].project!
-  assert.equal(project.videoAutoplay, undefined)
-  assert.equal(project.videoAutoNext, undefined)
-  await assert.rejects(lib.saveProject({ ...project, videoAutoplay: 'no' as any }), /自動播放設定/)
-  await assert.rejects(lib.saveProject({ ...project, videoAutoNext: 'yes' as any }), /接續播放設定/)
-  await lib.saveProject({ ...project, videoAutoplay: false, videoAutoNext: true })
-  await lib.unlink(project.projectId)
-  const restored = (await lib.link(p1)).projects[0].project!
-  assert.equal(restored.videoAutoplay, false)
-  assert.equal(restored.videoAutoNext, true)
-  assert.equal(restored.schemaVersion, 1)
-})

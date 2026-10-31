@@ -1,6 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { validateDetails, validateFolder, validateProject } from '../shared/model'
+import {
+  validateDetails,
+  validateFolder,
+  validateProject,
+  withoutGroupCells,
+} from '../shared/model'
 import { modelDetails, modelFolder, modelProject } from './support/model-fixtures'
 
 const reject = (check: (value: unknown) => void, value: unknown, message: string) => {
@@ -117,16 +122,6 @@ test('optional project rules preserve CARD limits, presets and first error order
     { ...project, cardView: { mode: 'single', level: 'all' } },
     'CARD 顯示範圍不合法'
   )
-  reject(
-    validateProject,
-    { ...project, videoAutoplay: 'yes', videoAutoNext: 'yes', schemaVersion: 2 },
-    '影片自動播放設定不合法'
-  )
-  reject(
-    validateProject,
-    { ...project, videoAutoNext: 'yes', schemaVersion: 2 },
-    '影片接續播放設定不合法'
-  )
   reject(validateProject, { ...project, activeLayoutId: 'missing' }, '作用中方案不存在')
   reject(validateProject, { ...project, layoutPresets: undefined }, '方案清單不存在')
   reject(validateProject, { ...project, contentCells: { invalid: [] } }, '內容模板不合法')
@@ -210,10 +205,6 @@ test('validation preserves existing optional null compatibility and rejected inp
   const before = structuredClone(legacy)
   validateDetails(legacy)
   assert.deepEqual(legacy, before)
-  const rejected = { ...modelProject(), videoAutoNext: 'invalid' }
-  const original = structuredClone(rejected)
-  reject(validateProject, rejected, '影片接續播放設定不合法')
-  assert.deepEqual(rejected, original)
 })
 
 test('game cover cells are accepted only by game projects', () => {
@@ -264,59 +255,27 @@ test('image fit is limited to image cells and valid values', () => {
   )
 })
 
-test('group cells hold one level of children inside their own grid', () => {
+test('group cells were removed: they are invalid, and older saved projects load without them', () => {
   const style = { textColor: '#e4e6e8', backgroundColor: 'transparent' }
-  const child = (cellId: string, y: number, extra: Record<string, unknown> = {}) => ({
-    cellId,
-    kind: 'static-text' as const,
-    text: cellId,
-    grid: { x: 0, y, w: 12, h: 1 },
+  const old = modelProject()
+  old.cells.push({
+    cellId: 'group-1',
+    kind: 'group',
+    grid: { x: 0, y: 8, w: 12, h: 3 },
     style,
-    ...extra,
-  })
-  const withGroup = (cells: unknown[], grid = { x: 0, y: 8, w: 12, h: 3 }, category = 'manga') => {
-    const project = modelProject()
-    project.mediaCategory = category
-    project.cells.push({ cellId: 'group-1', kind: 'group', grid, style, cells } as never)
-    return project
-  }
-  assert.doesNotThrow(() => validateProject(withGroup([child('a', 0), child('b', 1)])))
-  assert.doesNotThrow(() => validateProject(withGroup([])))
-  const bad = '專案設定不合法或版本不支援'
-  reject(validateProject, withGroup([{ ...child('nested', 0), kind: 'group', cells: [] }]), bad)
-  reject(validateProject, withGroup([child('a', 2, { grid: { x: 0, y: 2, w: 12, h: 2 } })]), bad)
-  reject(validateProject, withGroup([child('a', 0), child('b', 0)]), bad)
-  const loose = modelProject()
-  loose.cells.push({ ...child('plain', 9), cells: [] } as never)
-  reject(validateProject, loose, bad)
-  reject(validateProject, withGroup([child('group-1', 0)]), '組件 ID 或欄位別名重複')
-  reject(
-    validateProject,
-    withGroup([{ cellId: 'cover', kind: 'game-cover', grid: { x: 0, y: 0, w: 12, h: 1 }, style }]),
-    '遊戲封面組件只能用於遊戲專案'
+    cells: [
+      { cellId: 'a', kind: 'static-text', text: 'a', grid: { x: 0, y: 0, w: 12, h: 1 }, style },
+    ],
+  } as never)
+  reject(validateProject, old, '專案設定不合法或版本不支援')
+  const loaded = withoutGroupCells(old)
+  assert.doesNotThrow(() => validateProject(loaded))
+  assert.equal(
+    loaded.cells.some((c) => c.cellId === 'group-1' || c.cellId === 'a'),
+    false
   )
-  assert.doesNotThrow(() =>
-    validateProject(
-      withGroup(
-        [{ cellId: 'cover', kind: 'game-cover', grid: { x: 0, y: 0, w: 12, h: 1 }, style }],
-        undefined,
-        'game'
-      )
-    )
-  )
-  const many = Array.from({ length: 50 }, (_, i) =>
-    child('m' + i, 0, { grid: { x: i % 12, y: 0, w: 1, h: 1 } })
-  )
-  reject(
-    validateProject,
-    withGroup(
-      many.slice(0, 12).concat(
-        many.slice(12, 50).map((cell, i) => ({
-          ...cell,
-          grid: { x: i % 12, y: 1 + (Math.floor(i / 12) % 2), w: 1, h: 1 },
-        }))
-      )
-    ),
-    bad
+  assert.equal(
+    old.cells.some((c) => c.cellId === 'group-1'),
+    true
   )
 })

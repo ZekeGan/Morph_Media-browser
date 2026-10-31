@@ -87,8 +87,6 @@ async function runGroup(group: Group, fixture: string) {
     depth: { mode: 'through', level: 1 },
   })
 
-  state = await lib.saveProject({ ...state.projects[0].project!, videoAutoplay: false })
-
   const record = await fs.readFile(folderFile(media)),
     projectId = state.projects[0].projectId
 

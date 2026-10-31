@@ -227,14 +227,10 @@ export function FolderContent({
           entries={visibleEntries}
           run={run}
           busy={busy}
-          autoplay={project.videoAutoplay !== false}
-          autoNext={project.videoAutoNext === true}
-          changeAutoplay={async (value) =>
-            !!(await act({ action: 'saveProject', project: { ...project, videoAutoplay: value } }))
-          }
-          changeAutoNext={async (value) =>
-            !!(await act({ action: 'saveProject', project: { ...project, videoAutoNext: value } }))
-          }
+          autoplay
+          autoNext={false}
+          changeAutoplay={async () => false}
+          changeAutoNext={async () => false}
         />
       </Suspense>
     )

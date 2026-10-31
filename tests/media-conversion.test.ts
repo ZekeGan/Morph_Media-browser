@@ -30,7 +30,6 @@ test('media conversion preserves identity, templates, backups and supports resto
       await library.saveProject({
         ...initial,
         contentCells: category === 'music' ? undefined : { [category]: initial.cells },
-        videoAutoplay: true,
       })
       const original = library.snapshot().projects[0].project!,
         record = await fs.readFile(folderFile(folder)),
@@ -46,7 +45,6 @@ test('media conversion preserves identity, templates, backups and supports resto
       assert.deepEqual(await fs.readFile(file + '.bak'), bytes)
       const saved = JSON.parse(await fs.readFile(file, 'utf8'))
       validateProject(saved)
-      assert.equal(saved.videoAutoplay, true)
       const reopened = new Library(path.join(root, 'local-' + category), undefined, false)
       await reopened.init()
       assert.equal(reopened.snapshot().projects[0].project!.mediaSourceCategory, category)

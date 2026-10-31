@@ -192,13 +192,8 @@ export function MediaViewer({
                   run={run}
                   busy={busy}
                   autoplay={true}
-                  autoNext={project.videoAutoNext === true}
-                  changeAutoNext={async (value) =>
-                    !!(await act({
-                      action: 'saveProject',
-                      project: { ...project, videoAutoNext: value },
-                    }))
-                  }
+                  autoNext={false}
+                  changeAutoNext={async () => false}
                   changeAutoplay={async () => false}
                   initialFileId={selected}
                   hideStrip

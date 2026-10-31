@@ -1058,35 +1058,20 @@
     padding: 4px 2px 16px;
 }
 
-.group-editing-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 6px;
-    border-bottom: 1px dashed var(--line);
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.canvas.group-editing {
-    border: 2px solid var(--accent);
-}
-
-.group-editing-bar {
-    background: color-mix(in srgb, var(--accent) 14%, transparent);
-}
-
-.group-editing-bar > strong {
-    color: var(--accent);
-}
-
 .media-info-template:empty {
     display: none;
 }
 
-@container center (max-width: 620px) {
+.compact-boundary {
+    display: none;
+}
+
+@container center (max-width: 760px) {
     .game-boundary-filter {
-        flex-basis: 104px;
-        max-width: 104px;
+        display: none;
+    }
+
+    .compact-boundary {
+        display: flex;
     }
 }

@@ -33,4 +33,4 @@ Windows 優先的本機資料夾檢視器。此頁維護產品邊界；互動細
 
 ## 範圍之外／後續
 
-音樂與跨專案影音播放已有實作，未完成互動見 [工作清單](WORK_ITEMS.md#最新回饋)；PDF／ZIP／CBZ 已有唯讀能力，限制見 [文件檢視器](DOCUMENT_VIEWER_DESIGN.md)。無專案通用檢視、更多解碼器與來源等，依 [OPEN_DECISIONS](OPEN_DECISIONS.md) 另行授權。不要把設計候選、自動執行任意腳本、雲端同步或批量網路抓取推定為當前需求。原始決策理由按 ID 查 [DECISIONS](DECISIONS.md)。
+音樂與跨專案影音播放已有實作，未完成互動見 [工作清單](WORK_ITEMS.md#已交付)；PDF／ZIP／CBZ 已有唯讀能力，限制見 [文件檢視器](DOCUMENT_VIEWER_DESIGN.md)。無專案通用檢視、更多解碼器與來源等，依 [OPEN_DECISIONS](OPEN_DECISIONS.md) 另行授權。不要把設計候選、自動執行任意腳本、雲端同步或批量網路抓取推定為當前需求。原始決策理由按 ID 查 [DECISIONS](DECISIONS.md)。

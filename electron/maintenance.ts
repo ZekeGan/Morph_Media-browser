@@ -226,11 +226,9 @@ export async function applyMaintenance(
 export function withoutField(project: Project, attributeId: string) {
   const next = structuredClone(project),
     cells = (items: Project['cells']): Project['cells'] =>
-      items
-        .filter(
-          (cell) => cell.attributeId !== attributeId && cell.condition?.attributeId !== attributeId
-        )
-        .map((cell) => (cell.kind === 'group' ? { ...cell, cells: cells(cell.cells ?? []) } : cell))
+      items.filter(
+        (cell) => cell.attributeId !== attributeId && cell.condition?.attributeId !== attributeId
+      )
   next.fieldBindings = next.fieldBindings.filter((field) => field.attributeId !== attributeId)
   next.cells = cells(next.cells)
   next.layoutPresets = next.layoutPresets?.map((preset) => ({

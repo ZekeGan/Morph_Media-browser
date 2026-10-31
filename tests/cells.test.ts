@@ -4,7 +4,6 @@ import { cellVisible, copyableValue, numericDisplay } from '../shared/cells'
 import { grabOffset, localDragPosition } from '../src/editorDrag'
 import { validateProject, type Cell, type FolderRow } from '../shared/model'
 import { withoutField } from '../electron/maintenance'
-import { projectImageCells } from '../shared/layouts'
 import { modelFolder, modelProject } from './support/model-fixtures'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -154,49 +153,4 @@ test('conditional templates persist across reopening and field removal previews 
   assert.deepEqual(next.contentCells!.manga, [])
   assert.deepEqual(await fs.readFile(folderFile(media)), record)
   assert.equal(await fs.readFile(path.join(media, 'original.txt'), 'utf8'), 'ORIGINAL')
-})
-test('group children take part in field deletion and image slot discovery', () => {
-  const project = modelProject()
-  project.fieldBindings.push({ alias: 'FLAG', attributeId: 'flag', type: 'boolean' })
-  const style = { textColor: '#e4e6e8', backgroundColor: 'transparent' }
-  const keep = cell({
-    cellId: 'keep',
-    kind: 'static-text',
-    text: 'keep',
-    grid: { x: 0, y: 0, w: 12, h: 1 },
-    style,
-  })
-  const conditional = cell({
-    cellId: 'child-conditional',
-    kind: 'static-text',
-    text: 'x',
-    grid: { x: 0, y: 1, w: 12, h: 1 },
-    style,
-    condition: { attributeId: 'flag', operator: 'set' },
-  })
-  const image = cell({
-    cellId: 'child-image',
-    kind: 'image',
-    attributeId: 'slot',
-    grid: { x: 0, y: 2, w: 12, h: 1 },
-    style,
-  })
-  project.cells.push({
-    cellId: 'grp',
-    kind: 'group',
-    grid: { x: 0, y: 8, w: 12, h: 4 },
-    style,
-    cells: [keep, conditional, image],
-  } as Cell)
-  assert.doesNotThrow(() => validateProject(project))
-  assert.deepEqual(
-    projectImageCells(project).map((c) => c.cellId),
-    ['child-image']
-  )
-  const clean = withoutField(project, 'flag')
-  assert.deepEqual(
-    clean.cells.find((c) => c.cellId === 'grp')!.cells!.map((c) => c.cellId),
-    ['keep', 'child-image']
-  )
-  assert.equal(project.cells.find((c) => c.cellId === 'grp')!.cells!.length, 3)
 })

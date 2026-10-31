@@ -46,7 +46,7 @@ for (const category of ['album', 'video'] as const) {
     depth: { mode: 'through', level: 1 },
   })
   const linked = snapshot.projects.at(-1)!,
-    project = { ...linked.project!, videoAutoplay: false }
+    project = linked.project!
   snapshot = await library.saveProject(project)
   const row = snapshot.rows.find(
     (row) => row.projectId === project.projectId && row.path === media

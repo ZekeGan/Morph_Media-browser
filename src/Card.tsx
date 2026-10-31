@@ -121,24 +121,6 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       </Button>
     )
   if (cell.kind === 'divider') return <hr className="cell-divider" />
-  if (cell.kind === 'group')
-    return (
-      <div className="card-grid cell-group">
-        {(cell.cells ?? []).map((child) => (
-          <div
-            key={child.cellId}
-            className="card-cell"
-            style={{
-              gridColumn: `${child.grid.x + 1} / span ${child.grid.w}`,
-              gridRow: `${child.grid.y + 1} / span ${child.grid.h}`,
-              ...cellColors(child),
-            }}
-          >
-            <CellContent cell={child} row={row} project={project} open={open} preview={preview} />
-          </div>
-        ))}
-      </div>
-    )
   if (cell.kind === 'game-cover') {
     const asset =
       row?.record?.assets.find((a) => a.assetId === row.record?.details?.bannerAssetId) ??

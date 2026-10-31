@@ -5254,53 +5254,5 @@
     "en": "Dock to the right panel",
     "ja": "右パネルに固定",
     "es": "Anclar al panel derecho"
-  },
-  "群組內不能再放群組": {
-    "zh-CN": "群组内不能再放群组",
-    "en": "Groups cannot be nested",
-    "ja": "グループの中にグループは置けません",
-    "es": "No se pueden anidar grupos"
-  },
-  "群組空間不足，請先放大群組或移動組件": {
-    "zh-CN": "群组空间不足，请先放大群组或移动组件",
-    "en": "Not enough room in the group; enlarge it or move cells first",
-    "ja": "グループに空きがありません。先に拡大するか移動してください",
-    "es": "No hay espacio en el grupo; amplíalo o mueve celdas primero"
-  },
-  "← 返回上層": {
-    "zh-CN": "← 返回上层",
-    "en": "← Back",
-    "ja": "← 戻る",
-    "es": "← Volver"
-  },
-  "群組可整體移動、縮放並設定顯示條件。群組只有一層，雙擊或按下方按鈕編輯內容。": {
-    "zh-CN": "群组可整体移动、缩放并设置显示条件。群组只有一层，双击或点下方按钮编辑内容。",
-    "en": "A group moves, resizes and takes a display condition as one unit. One level only; double-click or use the button below to edit it.",
-    "ja": "グループは一括で移動・拡大縮小・表示条件の設定ができます。入れ子は1階層のみ。ダブルクリックか下のボタンで編集します。",
-    "es": "Un grupo se mueve, escala y admite una condición como una unidad. Solo un nivel; haz doble clic o usa el botón."
-  },
-  "編輯群組內容": {
-    "zh-CN": "编辑群组内容",
-    "en": "Edit group contents",
-    "ja": "グループの内容を編集",
-    "es": "Editar contenido del grupo"
-  },
-  "群組內容": {
-    "zh-CN": "群组内容",
-    "en": "Group contents",
-    "ja": "グループの内容",
-    "es": "Contenido del grupo"
-  },
-  "可用空間：12 欄 × {rows} 列，已用 {used} 列、剩餘 {free} 列。組件需落在此範圍內。": {
-    "zh-CN": "可用空间：12 列 × {rows} 行，已用 {used} 行、剩余 {free} 行。组件需落在此范围内。",
-    "en": "Space: 12 columns × {rows} rows, {used} used, {free} free. Cells must stay inside.",
-    "ja": "使用可能: 12列 × {rows}行（使用 {used}行、残り {free}行）。セルは範囲内に収めてください。",
-    "es": "Espacio: 12 columnas × {rows} filas, {used} usadas, {free} libres. Las celdas deben quedar dentro."
-  },
-  "目前高度 {rows} 列，內容已用 {used} 列；高度不能縮小到低於內容。": {
-    "zh-CN": "当前高度 {rows} 行，内容已用 {used} 行；高度不能缩小到低于内容。",
-    "en": "Height {rows} rows, contents use {used}; it cannot shrink below its contents.",
-    "ja": "高さ {rows}行、内容は {used}行使用。内容より小さくはできません。",
-    "es": "Alto {rows} filas, el contenido usa {used}; no puede ser menor que su contenido."
   }
 }

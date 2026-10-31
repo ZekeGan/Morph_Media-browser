@@ -56,8 +56,6 @@ export function modelProject(): Project {
     cells,
     list: { itemsPerRow: 3, pageSize: 100 },
     excludedRelativePaths: ['Private'],
-    videoAutoplay: false,
-    videoAutoNext: true,
     scanAll: true,
     cardView: { mode: 'multi', level: 'all' },
     layoutPresets: [{ id: 'preset', name: 'Default', cells: structuredClone(cells) }],

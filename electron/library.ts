@@ -5,10 +5,10 @@ import path from 'node:path'
 import { randomUUID, createHash } from 'node:crypto'
 import {
   DATA_DIR,
-  allCells,
   defaultCells,
   validateFolder,
   validateProject,
+  withoutGroupCells,
   type Project,
   type ProjectInput,
   type FolderRecord,
@@ -241,12 +241,12 @@ export class Library {
       await safePath(root, path.join(dir, name))
       let p: Project
       try {
-        const current = await readJson(path.join(dir, name))
+        const current = withoutGroupCells(await readJson(path.join(dir, name)))
         validateProject(current)
         p = current
       } catch {
         await safePath(root, path.join(dir, `${name}.bak`))
-        const backup = await readJson(path.join(dir, `${name}.bak`))
+        const backup = withoutGroupCells(await readJson(path.join(dir, `${name}.bak`)))
         validateProject(backup)
         p = backup
       }
@@ -415,9 +415,12 @@ export class Library {
             ([key, cells]) => ['content:' + key, cells] as const
           ),
         ])
-        preview.layouts += allCells([...layouts.values()].flat()).filter(
-          (cell) => cell.attributeId === attributeId || cell.condition?.attributeId === attributeId
-        ).length
+        preview.layouts += [...layouts.values()]
+          .flat()
+          .filter(
+            (cell) =>
+              cell.attributeId === attributeId || cell.condition?.attributeId === attributeId
+          ).length
         preview.searches += (project.savedSearches?.length ?? 0) - (next.savedSearches?.length ?? 0)
         changes.push({ ...guard, value: { ...next, revision: project.revision + 1 } })
       }

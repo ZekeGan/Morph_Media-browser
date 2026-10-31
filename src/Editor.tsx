@@ -26,7 +26,6 @@ import GridLayout, { useContainerWidth, type Layout } from 'react-grid-layout'
 import { transformStrategy } from 'react-grid-layout/core'
 import { grabOffset, localDragPosition } from './editorDrag'
 import {
-  allCells,
   type Cell,
   type CellKind,
   type FolderRow,
@@ -97,7 +96,6 @@ export function Editor({
     divider: tr('分隔線'),
     'open-folder': tr('開啟資料夾'),
     'game-cover': tr('遊戲封面'),
-    group: tr('群組'),
   }
   const typeLabels: Record<string, string> = {
     string: tr('文字'),
@@ -182,23 +180,8 @@ export function Editor({
     }),
     [containerRef]
   )
-  const [groupId, setGroupId] = useState('')
-  const group = draft.cells.find((c) => c.cellId === groupId && c.kind === 'group')
-  const level = group ? (group.cells ?? []) : draft.cells
-  const withLevel = (cells: Cell[]): Project => ({
-    ...draft,
-    cells: group
-      ? draft.cells.map((c) => (c.cellId === group.cellId ? { ...c, cells } : c))
-      : cells,
-  })
-  const childBottom = (c: Cell) =>
-    Math.max(1, ...(c.cells ?? []).map((child) => child.grid.y + child.grid.h))
-  useEffect(() => {
-    if (groupId && !group) {
-      setGroupId('')
-      setSelected('')
-    }
-  }, [groupId, group])
+  const level = draft.cells
+  const withLevel = (cells: Cell[]): Project => ({ ...draft, cells })
   const selectedCell = level.find((c) => c.cellId === selected),
     preview = rows.find((r) => r.rowId === previewId)
   const conditionField = draft.fieldBindings.find(
@@ -236,11 +219,7 @@ export function Editor({
       setError(tr('欄位與組件型別不符'))
       return
     }
-    if (group && kind === 'group') {
-      setError(tr('群組內不能再放群組'))
-      return
-    }
-    if (allCells(draft.cells).length >= 50) {
+    if (draft.cells.length >= 50) {
       setError(tr('POC 每張卡片最多 50 個組件'))
       return
     }
@@ -300,19 +279,16 @@ export function Editor({
       cellId: crypto.randomUUID(),
       kind,
       ...(isFieldKind(kind) || kind === 'image' ? { attributeId } : {}),
-      ...(kind === 'group' ? { cells: [] } : {}),
       grid: grid ?? {
         x: 0,
         y,
         w: 12,
-        h: kind === 'image' || kind === 'game-cover' || kind === 'group' ? 3 : 1,
+        h: kind === 'image' || kind === 'game-cover' ? 3 : 1,
       },
       style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
     }
-    if (cell.grid.y + cell.grid.h > (group ? group.grid.h : 100)) {
-      setError(
-        group ? tr('群組空間不足，請先放大群組或移動組件') : tr('畫布沒有空間，請先移動或刪除組件')
-      )
+    if (cell.grid.y + cell.grid.h > 100) {
+      setError(tr('畫布沒有空間，請先移動或刪除組件'))
       return
     }
     change({ ...withLevel([...cells, cell]), fieldBindings: bindings })
@@ -726,7 +702,6 @@ export function Editor({
                   'spacer',
                   'system-info',
                   'image',
-                  ...(group ? [] : ['group' as const]),
                   ...(draft.mediaCategory === 'game' ? ['game-cover' as const] : []),
                   'divider',
                   'open-folder',
@@ -884,33 +859,7 @@ export function Editor({
             onChange={(v) => setPreviewId(v ?? undefined)}
             mb="md"
           />
-          <div
-            ref={containerRef as React.RefObject<HTMLDivElement>}
-            className={`canvas ${group ? 'group-editing' : ''}`}
-          >
-            {group && (
-              <div className="group-editing-bar">
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  onClick={() => {
-                    setGroupId('')
-                    setSelected(group.cellId)
-                  }}
-                >
-                  {tr('← 返回上層')}
-                </Button>
-                <strong>{tr('群組內容')}</strong>
-                <small>
-                  {tr(
-                    '可用空間：12 欄 × {rows} 列，已用 {used} 列、剩餘 {free} 列。組件需落在此範圍內。'
-                  )
-                    .replace('{rows}', String(group.grid.h))
-                    .replace('{used}', String(childBottom(group)))
-                    .replace('{free}', String(Math.max(0, group.grid.h - childBottom(group))))}
-                </small>
-              </div>
-            )}
+          <div ref={containerRef as React.RefObject<HTMLDivElement>} className="canvas">
             {!level.length && (
               <Button variant="light" onClick={() => add('static-text')}>
                 {tr('加入第一個組件')}
@@ -920,11 +869,10 @@ export function Editor({
               <GridLayout
                 positionStrategy={gridPosition}
                 width={width}
-                style={group ? { height: group.grid.h * 46 - 4 } : { minHeight: 320 }}
+                style={{ minHeight: 320 }}
                 layout={level.map((c) => ({
                   i: c.cellId,
                   ...c.grid,
-                  ...(c.kind === 'group' ? { minH: childBottom(c) } : {}),
                   ...(c.kind === 'spacer'
                     ? { static: true, isDraggable: true, isResizable: true }
                     : {}),
@@ -932,7 +880,7 @@ export function Editor({
                 gridConfig={{
                   cols: 12,
                   rowHeight: 42,
-                  maxRows: group ? group.grid.h : 100,
+                  maxRows: 100,
                   margin: [4, 4],
                   containerPadding: [0, 0],
                 }}
@@ -969,12 +917,6 @@ export function Editor({
                   <div
                     key={cell.cellId}
                     onDragStart={(event) => event.preventDefault()}
-                    onDoubleClick={() => {
-                      if (cell.kind === 'group') {
-                        setGroupId(cell.cellId)
-                        setSelected('')
-                      }
-                    }}
                     className={`editor-cell ${selected === cell.cellId ? 'selected' : ''}`}
                     style={{ ...cellColors(cell) }}
                     tabIndex={0}
@@ -1052,30 +994,6 @@ export function Editor({
                   ]}
                   onChange={(value) => updateCell({ imageFit: value as Cell['imageFit'] })}
                 />
-              )}
-              {selectedCell.kind === 'group' && (
-                <>
-                  <Text size="sm" c="dimmed">
-                    {tr(
-                      '群組可整體移動、縮放並設定顯示條件。群組只有一層，雙擊或按下方按鈕編輯內容。'
-                    )}
-                  </Text>
-                  <Text size="xs" c="dimmed">
-                    {tr('目前高度 {rows} 列，內容已用 {used} 列；高度不能縮小到低於內容。')
-                      .replace('{rows}', String(selectedCell.grid.h))
-                      .replace('{used}', String(childBottom(selectedCell)))}
-                  </Text>
-                  <Button
-                    variant="default"
-                    size="xs"
-                    onClick={() => {
-                      setGroupId(selectedCell.cellId)
-                      setSelected('')
-                    }}
-                  >
-                    {tr('編輯群組內容')}
-                  </Button>
-                </>
               )}
               {selectedCell.kind === 'image' && (
                 <Text size="sm" c="dimmed">

@@ -2,6 +2,12 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.15.0 — 2026-11-01
+
+- Remove CELL groups (older projects load without them) and the video project autoplay/auto-next fields.
+- Game page toolbar: below 620px the boundary-folder filter becomes an icon menu so tools no longer overlap.
+- History navigation keeps working while folder settings are open; settings follow the folder.
+
 ## 0.14.0 — 2026-11-01
 
 - Folder settings always dock into the right panel as a tab (drawer and dock toggle removed), follow the folder being viewed, and have a close icon in the tab row.
