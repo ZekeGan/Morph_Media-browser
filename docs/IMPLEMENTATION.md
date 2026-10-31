@@ -88,6 +88,7 @@
 | `tests/video-failure-ui.ts` | 偽裝成影片的 ZIP 播放失敗時，播放器說明原因並提供「用系統預設播放器開啟」「在檔案總管顯示」（不實際點擊外部開啟） |
 | `tests/file-probe.test.ts` | 以檔頭位元組辨識 ZIP／RAR／7z／網頁／空檔／一般媒體 |
 | `tests/game-launch-cell-ui.ts` | 「啟動遊戲」組件：未綁定啟動檔時停用、已綁定時可用，並出現在遊戲專案的編輯器組件列（不實際啟動） |
+| `tests/panel-preview-ui.ts` | 單擊資料夾在右側面板預覽（中央不進入），雙擊才進入 |
 | `tests/field-edit-ui.ts` | CELL 編輯器欄位改名（清單與設定面板兩處）、重複名稱拒絕、單選比較值選項、字級／對齊／換行、數字單位、大於小於條件選項與設定區塊收合 |
 | `tests/game-cover-cell-ui.ts` | 遊戲封面組件在卡片與編輯器各種格位大小下填滿容器，含填滿方式 |
 | `tests/game-folder-page-ui.ts` | 遊戲專案內非遊戲根資料夾使用共用的詳情／子資料夾／檔案頁 |

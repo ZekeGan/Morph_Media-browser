@@ -320,6 +320,7 @@ export function BrowseWorkspace({
     })
   }
   const open = async (id: string, fromHistory?: number) => {
+    clearTimeout(previewTimer.current)
     const row = all.find((r) => r.rowId === id)
     if (!row || busy) return
     const operation = ++navigation.current
@@ -355,6 +356,24 @@ export function BrowseWorkspace({
       } else moveTo(row.path)
     }
   }
+  // A single click shows that folder in the right panel without entering it: the center stays where it is.
+  const previewDetail = async (id: string) => {
+    if (busy || !ready || id === state.current.detailId || !all.some((r) => r.rowId === id)) return
+    const operation = ++navigation.current
+    const result = await run({ action: 'visit', rowId: id })
+    if (!mounted.current || operation !== navigation.current || !result?.snapshot || !onSelect(id))
+      return
+    setFilePreview(undefined)
+    persist({ ...state.current, detailId: id })
+  }
+  // Wait out a possible double click first: entering a folder must not race with a preview of it.
+  const previewTimer = useRef<ReturnType<typeof setTimeout>>()
+  useEffect(() => {
+    clearTimeout(previewTimer.current)
+    if (highlight && browse.panelVisible !== false)
+      previewTimer.current = setTimeout(() => void previewDetail(highlight), 280)
+    return () => clearTimeout(previewTimer.current)
+  }, [highlight])
   const previewFile = async (entry: OverviewEntry) => {
     if (busy) return
     const operation = ++navigation.current,

@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.24.0 — 2026-11-02
+
+- A single click on a folder (card, table row or tree node) now shows that folder's details in the right panel without entering it; a double click still enters it. Game info is visible while the center stays where it is.
+
 ## 0.23.0 — 2026-11-02
 
 - New "launch game" cell for game projects: a button on the card that starts the game with the folder's bound launch file (disabled with a hint while nothing is bound, confirmation before starting, same validation as the game page).

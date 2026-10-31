@@ -113,11 +113,11 @@ try {
     '包含子資料夾'
   )
   assert.equal(await page.locator('.media-thumbnail').count(), 5)
-  await page
-    .locator('.folder-panel-header')
-    .getByRole('button', { name: '返回', exact: true })
-    .isDisabled()
-    .then((value) => assert.equal(value, true))
+  // The panel's own back button is hidden while the center is visible; read its state from the DOM.
+  assert.equal(
+    await page.locator('.folder-panel-header button[aria-label="返回"]').isDisabled(),
+    true
+  )
   await page.screenshot({ path: path.join(root, 'grouped.png') })
   await page
     .locator('.gallery-source-header')
