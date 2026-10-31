@@ -472,17 +472,20 @@ export function FolderContent({
             alt={first.name}
           />
         )}
-        <Card
-          project={{
-            ...project,
-            folderLayouts: undefined,
-            cells: contentCells(project, project.mediaCategory),
-          }}
-          row={row}
-          open={() => {
-            void window.media.request({ action: 'open', rowId: row.rowId })
-          }}
-        />
+        {/* The default template (name and path) repeats the panel header and folder details, so only a user-edited one is shown. */}
+        {project.contentCells?.[project.mediaCategory]?.length ? (
+          <Card
+            project={{
+              ...project,
+              folderLayouts: undefined,
+              cells: contentCells(project, project.mediaCategory),
+            }}
+            row={row}
+            open={() => {
+              void window.media.request({ action: 'open', rowId: row.rowId })
+            }}
+          />
+        ) : null}
       </div>
       {['manga', 'album'].includes(project.mediaCategory) ? (
         <Gallery

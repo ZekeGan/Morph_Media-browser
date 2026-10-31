@@ -69,6 +69,9 @@ async function dispatch(request: Request): Promise<Response> {
   switch (request.action) {
     case 'snapshot':
       break
+    case 'copyPath':
+      clipboard.writeText((await library.readableRow(request.rowId)).path)
+      break
     case 'copyFieldValue': {
       const row = await library.readableRow(request.rowId),
         project = library

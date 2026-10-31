@@ -559,8 +559,8 @@
 }
 
 .game-boundary-filter {
-    margin: 6px 10px;
-    align-self: flex-start;
+    flex: 0 0 124px;
+    max-width: 124px;
 }
 
 .workspace-file-tools .file-overview-toolbar {
@@ -1068,12 +1068,6 @@
     font-size: 12px;
 }
 
-.drawer-dock-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 6px;
-}
-
 .canvas.group-editing {
     border: 2px solid var(--accent);
 }
@@ -1084,4 +1078,8 @@
 
 .group-editing-bar > strong {
     color: var(--accent);
+}
+
+.media-info-template:empty {
+    display: none;
 }

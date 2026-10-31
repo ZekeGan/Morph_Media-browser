@@ -56,7 +56,7 @@ export function FolderDetails({
                 aria-label={tr('複製完整路徑')}
                 onClick={async () => {
                   try {
-                    await navigator.clipboard.writeText(row.path)
+                    await window.media.request({ action: 'copyPath', rowId: row.rowId })
                     setCopyError('')
                     setCopied(true)
                     window.clearTimeout(timer.current)

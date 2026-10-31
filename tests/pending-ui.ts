@@ -105,7 +105,7 @@ try {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await button('開啟專案 Pending Album').first().click()
   await button('目前資料夾設定').click()
-  const drawer = page.locator('.mantine-Drawer-content'),
+  const drawer = page.locator('.folder-panel-dock-settings'),
     scheme = drawer.getByRole('textbox', { name: '此資料夾的版面方案', exact: true })
   assert.equal(await scheme.inputValue(), '遵循通用設定（此專案版面）')
   assert.equal(await drawer.locator('.mantine-Divider-root').count(), 1)

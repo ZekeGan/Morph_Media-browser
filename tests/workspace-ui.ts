@@ -317,10 +317,10 @@ try {
   await page.getByRole('button', { name: '切換右側內容', exact: true }).click()
   await header().getByText('A', { exact: true }).waitFor()
   await page.getByRole('button', { name: '目前資料夾設定', exact: true }).click()
-  const drawer = page.getByRole('dialog', { name: '資料夾設定 · A', exact: true })
+  const drawer = page.getByRole('region', { name: '資料夾設定 · A', exact: true })
   await drawer.waitFor()
   assert.equal(await page.locator('.folder-panel-header strong').innerText(), 'A')
-  await drawer.getByRole('button', { name: '關閉資料夾設定' }).click()
+  await page.getByRole('button', { name: '關閉資料夾設定', exact: true }).click()
   await drawer.waitFor({ state: 'hidden' })
   await page.getByRole('button', { name: '切換右側內容', exact: true }).click()
   await page.getByRole('button', { name: '更改樣式', exact: true }).click()
@@ -365,6 +365,9 @@ try {
     'PASS mode-specific navigation, missing-record guard, presets, drawer, pane and settings'
   )
   await open('遊戲收藏')
+  // The boundary filter lives in the top toolbar, not in its own row.
+  assert.equal(await page.locator('.toolbar-right .game-boundary-filter').count(), 1)
+  assert.equal(await page.locator('.game-boundary-filter').count(), 1)
   await card('Games').dblclick()
   await card('Game').dblclick()
   await header().getByText('Game', { exact: true }).waitFor()
@@ -375,8 +378,9 @@ try {
   assert.equal(
     await page
       .locator('.game-content .game-banner')
-      .evaluate((e) => getComputedStyle(e).borderTopWidth),
-    '0px'
+      .evaluate((e) => parseFloat(getComputedStyle(e).borderTopWidth) > 0),
+    true,
+    'banner is framed'
   )
   await app.evaluate(
     ({ dialog }, file) => {

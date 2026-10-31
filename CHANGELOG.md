@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.14.0 — 2026-11-01
+
+- Folder settings always dock into the right panel as a tab (drawer and dock toggle removed), follow the folder being viewed, and have a close icon in the tab row.
+- Copy full path now works (clipboard write moved to the main process).
+- Manga page no longer repeats the folder name and path; the game page uses the same spacing and framing as other folder pages.
+- The game boundary-folder filter moved into the top toolbar.
+
 ## 0.13.5 — 2026-11-01
 
 - Error toasts no longer show Electron's "Error invoking remote method" prefix; only the cause is shown.

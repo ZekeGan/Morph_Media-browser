@@ -81,7 +81,7 @@ const current = async (name: string) => {
         await page.evaluate(() =>
           Array.from(
             document.querySelectorAll(
-              '.reader,.media-viewer-shell,.document-viewer,.mantine-Drawer-content,.mantine-Modal-content,.mantine-Menu-dropdown,.mantine-Select-dropdown,[role="dialog"]'
+              '.reader,.media-viewer-shell,.document-viewer,.folder-panel-dock-settings,.mantine-Modal-content,.mantine-Menu-dropdown,.mantine-Select-dropdown,[role="dialog"]'
             )
           ).map((node) => ({
             tag: node.tagName,
@@ -271,11 +271,11 @@ try {
   await current('B')
   await page.keyboard.press('Escape')
   await right().getByRole('button', { name: '資料夾設定', exact: true }).click()
-  await page.locator('.mantine-Drawer-content').waitFor()
+  await page.locator('.folder-panel-dock-settings').waitFor()
   await side(-1, '.react-flow')
   await current('B')
   await button('關閉資料夾設定').click()
-  await page.locator('.mantine-Drawer-content').waitFor({ state: 'detached' })
+  await page.locator('.folder-panel-dock-settings').waitFor({ state: 'detached' })
   await page.locator('.breadcrumb-link').first().click()
   await current('Media')
   await page.locator('.media-thumbnail').filter({ hasText: 'book.cbz' }).click()

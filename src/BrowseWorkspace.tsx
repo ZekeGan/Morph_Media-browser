@@ -21,7 +21,6 @@ import {
   ActionIcon,
   Breadcrumbs,
   Button,
-  Drawer,
   Group,
   Menu,
   Checkbox,
@@ -243,7 +242,9 @@ export function BrowseWorkspace({
       if (
         e.key === 'Escape' &&
         !e.defaultPrevented &&
-        !document.querySelector('.reader,.mantine-Drawer-content,.mantine-Modal-content') &&
+        !document.querySelector(
+          '.reader,.mantine-Drawer-content,.folder-panel-dock-settings,.mantine-Modal-content'
+        ) &&
         expanded
       ) {
         e.preventDefault()
@@ -390,7 +391,7 @@ export function BrowseWorkspace({
       busy ||
       Array.from(
         document.querySelectorAll(
-          '.reader,.media-viewer-shell,.document-viewer,.mantine-Drawer-content,.mantine-Modal-content,.mantine-Menu-dropdown,.mantine-Select-dropdown,[role="dialog"]'
+          '.reader,.media-viewer-shell,.document-viewer,.mantine-Drawer-content,.folder-panel-dock-settings,.mantine-Modal-content,.mantine-Menu-dropdown,.mantine-Select-dropdown,[role="dialog"]'
         )
       ).some(
         (node) => node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden'
@@ -418,16 +419,16 @@ export function BrowseWorkspace({
     setConfigTab(tab)
     setConfigId(id)
   }
-  const [wide, setWide] = useState(() => window.matchMedia('(min-width: 1101px)').matches)
-  useEffect(() => {
-    const query = window.matchMedia('(min-width: 1101px)'),
-      update = () => setWide(query.matches)
-    query.addEventListener('change', update)
-    return () => query.removeEventListener('change', update)
-  }, [])
   const closeConfig = () => {
     if (!configDirty || window.confirm(tr('放棄尚未保存的資料夾設定？'))) setConfigId(undefined)
   }
+  // The settings tab belongs to the folder shown in the panel: follow it when another folder is opened.
+  useEffect(() => {
+    if (!configId || !detail || detail.rowId === configId) return
+    if (configDirty && !window.confirm(tr('放棄尚未保存的資料夾設定？'))) return
+    setConfigDirty(false)
+    setConfigId(detail.rowId)
+  }, [detail?.rowId])
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (
@@ -437,7 +438,9 @@ export function BrowseWorkspace({
         !event.repeat &&
         currentFolder &&
         !busy &&
-        !document.querySelector('.reader,.mantine-Drawer-content,.mantine-Modal-content') &&
+        !document.querySelector(
+          '.reader,.mantine-Drawer-content,.folder-panel-dock-settings,.mantine-Modal-content'
+        ) &&
         !(event.target as HTMLElement)?.closest('input,textarea,select,[contenteditable="true"]')
       ) {
         event.preventDefault()
@@ -501,8 +504,6 @@ export function BrowseWorkspace({
     }
   }, [ready, project.mediaCategory, browse.contentMode])
   const panelOpen = !!detail && browse.panelVisible !== false
-  // Settings dock beside the content only when the right panel is visible and wide enough to sit in-line.
-  const docked = !!browse.settingsDock && panelOpen && wide
   const settingsBody = config && (
     <Suspense fallback={<p>{tr('載入設定…')}</p>}>
       <FolderPanel
@@ -516,20 +517,6 @@ export function BrowseWorkspace({
         onDirty={reportDirty}
       />
     </Suspense>
-  )
-  const dockToggle = (label: string, icon: 'panel-right' | 'panel-left') => (
-    <Tooltip label={label}>
-      <ActionIcon
-        variant="subtle"
-        color="gray"
-        size="sm"
-        aria-label={label}
-        aria-pressed={!!browse.settingsDock}
-        onClick={() => persist({ ...state.current, settingsDock: !browse.settingsDock })}
-      >
-        <Icon name={icon} size={16} />
-      </ActionIcon>
-    </Tooltip>
   )
   useEffect(() => {
     const body = panelBody.current
@@ -777,6 +764,23 @@ export function BrowseWorkspace({
             style={{ display: folderMode ? 'none' : undefined }}
           />
           <div className="toolbar-right">
+            {folderMode && project.mediaCategory === 'game' && browse.mode !== 'TREE' && (
+              <Select
+                className="game-boundary-filter"
+                size="xs"
+                aria-label={tr('遊戲資料夾篩選')}
+                allowDeselect={false}
+                value={boundariesOnly ? 'boundaries' : 'all'}
+                data={[
+                  { value: 'all', label: tr('全部資料夾') },
+                  { value: 'boundaries', label: tr('邊界的資料夾') },
+                ]}
+                onChange={(value) => {
+                  setBoundariesOnly(value === 'boundaries')
+                  setPage(1)
+                }}
+              />
+            )}
             {folderMode && browse.mode === 'TABLE' && (
               <Menu closeOnItemClick={false}>
                 <Menu.Target>
@@ -922,22 +926,6 @@ export function BrowseWorkspace({
               </Button>
             )}
           </div>
-        )}
-        {project.mediaCategory === 'game' && browse.mode !== 'TREE' && (
-          <SegmentedControl
-            className="game-boundary-filter"
-            size="xs"
-            aria-label={tr('遊戲資料夾篩選')}
-            value={boundariesOnly ? 'boundaries' : 'all'}
-            data={[
-              { value: 'all', label: tr('全部資料夾') },
-              { value: 'boundaries', label: tr('邊界的資料夾') },
-            ]}
-            onChange={(value) => {
-              setBoundariesOnly(value === 'boundaries')
-              setPage(1)
-            }}
-          />
         )}
         <div className="workspace-breadcrumb">
           <Tooltip label={tr('返回上一個瀏覽位置')}>
@@ -1321,36 +1309,46 @@ export function BrowseWorkspace({
               </>
             }
             tabs={
-              docked ? (
-                <div
-                  className="folder-panel-dock-tabs"
-                  role="tablist"
-                  aria-label={tr('右側面板分頁')}
+              <div
+                className="folder-panel-dock-tabs"
+                role="tablist"
+                aria-label={tr('右側面板分頁')}
+              >
+                <Button
+                  size="compact-sm"
+                  variant={config ? 'subtle' : 'light'}
+                  role="tab"
+                  aria-selected={!config}
+                  onClick={closeConfig}
                 >
-                  <Button
-                    size="compact-sm"
-                    variant={config ? 'subtle' : 'light'}
-                    role="tab"
-                    aria-selected={!config}
-                    onClick={closeConfig}
-                  >
-                    {tr('內容')}
-                  </Button>
-                  <Button
-                    size="compact-sm"
-                    variant={config ? 'light' : 'subtle'}
-                    role="tab"
-                    aria-selected={!!config}
-                    disabled={busy}
-                    onClick={() => !config && openConfig(detail.rowId)}
-                  >
-                    {tr('設定')}
-                    {config ? ' · ' + config.name : ''}
-                  </Button>
-                  <span className="folder-panel-dock-spacer" />
-                  {dockToggle(tr('改為抽屜顯示設定'), 'panel-left')}
-                </div>
-              ) : undefined
+                  {tr('內容')}
+                </Button>
+                <Button
+                  size="compact-sm"
+                  variant={config ? 'light' : 'subtle'}
+                  role="tab"
+                  aria-selected={!!config}
+                  disabled={busy}
+                  onClick={() => !config && openConfig(detail.rowId)}
+                >
+                  {tr('設定')}
+                  {config ? ' · ' + config.name : ''}
+                </Button>
+                <span className="folder-panel-dock-spacer" />
+                {config && (
+                  <Tooltip label={tr('關閉資料夾設定')}>
+                    <ActionIcon
+                      variant="subtle"
+                      color="gray"
+                      size="sm"
+                      aria-label={tr('關閉資料夾設定')}
+                      onClick={closeConfig}
+                    >
+                      <Icon name="close" size={16} />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </div>
             }
             footer={
               <>
@@ -1376,8 +1374,14 @@ export function BrowseWorkspace({
               </>
             }
           >
-            {docked && config ? (
-              <div className="folder-panel-dock-settings">{settingsBody}</div>
+            {config ? (
+              <div
+                className="folder-panel-dock-settings"
+                role="region"
+                aria-label={tr('資料夾設定 · ') + config.name}
+              >
+                {settingsBody}
+              </div>
             ) : (
               <Suspense fallback={<p>{tr('載入內容…')}</p>}>
                 {panelOpen && (folderMode || filePreview) ? (
@@ -1412,20 +1416,6 @@ export function BrowseWorkspace({
           </RightPanel>
         )}
       </div>
-      <Drawer
-        opened={!!config && !docked}
-        onClose={closeConfig}
-        title={tr('資料夾設定 · ') + (config?.name ?? '')}
-        position="right"
-        size="lg"
-        zIndex={300}
-        closeButtonProps={{ 'aria-label': tr('關閉資料夾設定') }}
-      >
-        {panelOpen && wide && (
-          <div className="drawer-dock-row">{dockToggle(tr('停靠到右側面板'), 'panel-right')}</div>
-        )}
-        {!docked && settingsBody}
-      </Drawer>
     </div>
   )
 }

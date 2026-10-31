@@ -219,6 +219,7 @@ export type Request =
   | { action: 'deleteFieldPreview'; projectId: string; attributeId: string }
   | { action: 'deleteField'; token: string }
   | { action: 'copyFieldValue'; rowId: string; attributeId: string }
+  | { action: 'copyPath'; rowId: string }
   | { action: 'restoreProject'; projectId: string }
   | { action: 'saveFolder'; rowId: string; revision: number; values: Record<string, string> }
   | { action: 'image'; rowId: string; revision: number; cellId?: string }

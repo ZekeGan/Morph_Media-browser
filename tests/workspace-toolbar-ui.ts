@@ -56,16 +56,7 @@ try {
     })
   assert.equal(await page.locator('.folder-table th').count(), 2)
   await page.keyboard.press('Alt+Enter')
-  await page.locator('.mantine-Drawer-content').waitFor()
-  for (const theme of ['dark', 'glass', 'paper']) {
-    await page.evaluate((theme) => (document.documentElement.dataset.theme = theme), theme)
-    assert.equal(
-      await page
-        .locator('.mantine-Drawer-header')
-        .evaluate((element) => getComputedStyle(element).backgroundColor),
-      'rgba(0, 0, 0, 0)'
-    )
-  }
+  await page.locator('.folder-panel-dock-settings').waitFor()
   await button('關閉資料夾設定').click()
   await page.locator('.workspace-toolbar').getByText('檔案', { exact: true }).click()
   await page.locator('.workspace-file-tools .overview-folder-select').waitFor()

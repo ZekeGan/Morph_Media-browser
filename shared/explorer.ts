@@ -14,6 +14,7 @@ export interface BrowseState {
   treeCollapsed?: string[]
   panelWidth: number
   panelVisible?: boolean
+  /** Legacy: settings always dock in the right panel now; kept so older saved preferences stay valid. */
   settingsDock?: boolean
   detailId?: string
   contentMode?: 'folders' | 'files'

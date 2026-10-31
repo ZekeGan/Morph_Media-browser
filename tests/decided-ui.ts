@@ -163,7 +163,7 @@ try {
   )
   await page.screenshot({ path: path.join(screens, 'scheme.png') })
   await button('目前資料夾設定').click()
-  const drawer = page.getByRole('dialog', { name: '資料夾設定 · Library', exact: true })
+  const drawer = page.getByRole('region', { name: '資料夾設定 · Library', exact: true })
   await drawer.waitFor()
   await choose('Verified flag', '否')
   await drawer.getByRole('button', { name: '保存欄位資料', exact: true }).click()
@@ -179,7 +179,7 @@ try {
   assert.equal(await page.getByRole('option').count(), 12)
   await page.screenshot({ path: path.join(screens, 'sources.png') })
   await page.keyboard.press('Escape')
-  await drawer.getByRole('button', { name: '關閉資料夾設定', exact: true }).click()
+  await page.getByRole('button', { name: '關閉資料夾設定', exact: true }).click()
 
   await page.locator('[aria-label="展示內容"]').getByText('檔案', { exact: true }).click()
   await page.locator('.file-overview-item').first().waitFor()

@@ -80,7 +80,7 @@ try {
   assert.equal(await page.locator('.game-candidate').count(), 1)
   assert.equal(await button('啟動遊戲').isDisabled(), true)
   await button('自訂遊戲操作').click()
-  const drawer = page.locator('.mantine-Drawer-content')
+  const drawer = page.locator('.folder-panel-dock-settings')
   await drawer.getByRole('tab', { name: '遊戲操作', exact: true }).waitFor()
   assert.equal(
     await drawer.getByRole('tab', { name: '遊戲操作', exact: true }).getAttribute('aria-selected'),
