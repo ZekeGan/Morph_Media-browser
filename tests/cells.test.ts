@@ -154,3 +154,28 @@ test('conditional templates persist across reopening and field removal previews 
   assert.deepEqual(await fs.readFile(folderFile(media)), record)
   assert.equal(await fs.readFile(path.join(media, 'original.txt'), 'utf8'), 'ORIGINAL')
 })
+
+test('greater/less conditions compare numbers and dates, and never match unknown or mismatched values', () => {
+  const at = (type: string, value: unknown) => {
+    row.record!.attributes = [
+      { attributeId: 'metric', key: 'metric', type, source: 'manual', value },
+    ]
+    row.record!.projectOverrides.project = []
+  }
+  const visible = (operator: 'gt' | 'lt', value: string | number) =>
+    cellVisible(cell({ condition: { attributeId: 'metric', operator, value } }), row)
+  at('number', 4.5)
+  assert.equal(visible('gt', 4), true)
+  assert.equal(visible('gt', 4.5), false)
+  assert.equal(visible('lt', 5), true)
+  assert.equal(visible('lt', 4.5), false)
+  at('number', 0)
+  assert.equal(visible('lt', 1), true, 'zero is a real value')
+  at('date', '2026-05-01')
+  assert.equal(visible('gt', '2026-04-30'), true)
+  assert.equal(visible('lt', '2026-05-01'), false)
+  at('date', null)
+  assert.equal(visible('gt', '2000-01-01'), false, 'unset never matches')
+  at('number', 3)
+  assert.equal(visible('gt', '2000-01-01'), false, 'type mismatch never matches')
+})

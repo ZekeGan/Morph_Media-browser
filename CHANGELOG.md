@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.17.0 — 2026-11-01
+
+- CELL: long-text wrapping (name, path and text cells), text size (S/M/L) and alignment for every cell, decimals and unit text for number cells, and greater/less display conditions for number and date fields.
+
 ## 0.16.0 — 2026-11-01
 
 - CELL editor: rename fields from the field list or the inspector (display name only; duplicate names refused inline).

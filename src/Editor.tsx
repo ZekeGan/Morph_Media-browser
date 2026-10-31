@@ -14,6 +14,7 @@ import {
   Menu,
   Modal,
   NumberInput,
+  SegmentedControl,
   Select,
   Stack,
   TagsInput,
@@ -1270,6 +1271,52 @@ export function Editor({
                             }
                           />
                         )}
+                        {selectedCell.kind === 'field-number' && (
+                          <NumberInput
+                            label={tr('小數位數')}
+                            description={tr('留空則依數值原樣顯示')}
+                            min={0}
+                            max={6}
+                            allowDecimal={false}
+                            value={selectedCell.decimals ?? ''}
+                            onChange={(value) =>
+                              updateCell({
+                                decimals: typeof value === 'number' ? value : undefined,
+                              })
+                            }
+                          />
+                        )}
+                        {selectedCell.kind === 'field-number' && !selectedCell.presentation && (
+                          <div>
+                            <TextInput
+                              label={tr('單位文字')}
+                              description={tr('例如：分、集、%、$')}
+                              maxLength={20}
+                              value={selectedCell.unit ?? ''}
+                              onChange={(event) =>
+                                updateCell({ unit: event.currentTarget.value || undefined })
+                              }
+                            />
+                            {selectedCell.unit && (
+                              <SegmentedControl
+                                mt="xs"
+                                size="xs"
+                                fullWidth
+                                aria-label={tr('單位位置')}
+                                value={selectedCell.unitPosition ?? 'suffix'}
+                                data={[
+                                  { value: 'prefix', label: tr('數字前') },
+                                  { value: 'suffix', label: tr('數字後') },
+                                ]}
+                                onChange={(value) =>
+                                  updateCell({
+                                    unitPosition: value === 'suffix' ? undefined : 'prefix',
+                                  })
+                                }
+                              />
+                            )}
+                          </div>
+                        )}
                         {isFieldKind(selectedCell.kind) && (
                           <Checkbox
                             label={tr('顯示複製按鈕')}
@@ -1324,6 +1371,14 @@ export function Editor({
                                     { value: 'equals', label: tr('等於') },
                                     { value: 'not-equals', label: tr('不等於') },
                                   ]),
+                              ...(['number', 'date', 'datetime'].includes(
+                                conditionField?.type ?? ''
+                              )
+                                ? [
+                                    { value: 'gt', label: tr('大於') },
+                                    { value: 'lt', label: tr('小於') },
+                                  ]
+                                : []),
                             ]}
                             onChange={(operator) => {
                               if (!operator) return
@@ -1344,7 +1399,9 @@ export function Editor({
                               updateCell({ condition })
                             }}
                           />
-                          {['equals', 'not-equals'].includes(selectedCell.condition.operator) &&
+                          {['equals', 'not-equals', 'gt', 'lt'].includes(
+                            selectedCell.condition.operator
+                          ) &&
                             (conditionField?.type === 'boolean' ? (
                               <Select
                                 label={tr('比較值')}
@@ -1453,6 +1510,65 @@ export function Editor({
                   <Accordion.Control>{tr('樣式')}</Accordion.Control>
                   <Accordion.Panel>
                     <Stack gap="sm">
+                      <div>
+                        <Text size="sm" fw={500} mb={4}>
+                          {tr('字級')}
+                        </Text>
+                        <SegmentedControl
+                          size="xs"
+                          fullWidth
+                          aria-label={tr('字級')}
+                          value={selectedCell.style.fontSize ?? 'medium'}
+                          data={[
+                            { value: 'small', label: tr('小') },
+                            { value: 'medium', label: tr('中') },
+                            { value: 'large', label: tr('大') },
+                          ]}
+                          onChange={(value) =>
+                            updateCell({
+                              style: {
+                                ...selectedCell.style,
+                                fontSize:
+                                  value === 'medium' ? undefined : (value as 'small' | 'large'),
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Text size="sm" fw={500} mb={4}>
+                          {tr('對齊')}
+                        </Text>
+                        <SegmentedControl
+                          size="xs"
+                          fullWidth
+                          aria-label={tr('對齊')}
+                          value={selectedCell.style.align ?? 'left'}
+                          data={[
+                            { value: 'left', label: tr('靠左') },
+                            { value: 'center', label: tr('置中') },
+                            { value: 'right', label: tr('靠右') },
+                          ]}
+                          onChange={(value) =>
+                            updateCell({
+                              style: {
+                                ...selectedCell.style,
+                                align: value === 'left' ? undefined : (value as 'center' | 'right'),
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      {['name', 'path', 'field-text'].includes(selectedCell.kind) && (
+                        <Checkbox
+                          label={tr('長文字換行顯示')}
+                          description={tr('關閉時只顯示一行，過長的部分以「…」截斷')}
+                          checked={selectedCell.wrap ?? false}
+                          onChange={(event) =>
+                            updateCell({ wrap: event.currentTarget.checked || undefined })
+                          }
+                        />
+                      )}
                       <ColorInput
                         label={tr('文字顏色')}
                         format="hex"

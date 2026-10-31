@@ -27,8 +27,20 @@ export interface Cell {
   kind: CellKind
   attributeId?: string
   grid: { x: number; y: number; w: number; h: number }
-  style: { textColor: string; backgroundColor: string }
+  style: {
+    textColor: string
+    backgroundColor: string
+    // Optional text scale and alignment; absent means the default size and the kind's usual alignment.
+    fontSize?: 'small' | 'medium' | 'large'
+    align?: 'left' | 'center' | 'right'
+  }
   text?: string
+  // Long text: wrap onto several lines instead of one truncated line (name, path and text-field cells).
+  wrap?: boolean
+  // Number cells only: unit text shown before or after the value (plain presentation) and fixed decimals.
+  unit?: string
+  unitPosition?: 'prefix' | 'suffix'
+  decimals?: number
   systemInfo?: 'category' | 'files' | 'size'
   presentation?: 'badge' | 'rating' | 'progress'
   imageFit?: 'contain' | 'cover'
@@ -36,7 +48,7 @@ export interface Cell {
   copyValue?: boolean
   condition?: {
     attributeId: string
-    operator: 'set' | 'unset' | 'equals' | 'not-equals'
+    operator: 'set' | 'unset' | 'equals' | 'not-equals' | 'gt' | 'lt'
     value?: string | number | boolean
   }
 }
@@ -328,6 +340,12 @@ function validCell(c: unknown): boolean {
       (['rating', 'progress'].includes(c.presentation) && c.kind === 'field-number')) &&
     (c.imageFit === undefined ||
       (['contain', 'cover'].includes(c.imageFit) && ['image', 'game-cover'].includes(c.kind))) &&
+    (c.wrap === undefined ||
+      (typeof c.wrap === 'boolean' && ['field-text', 'name', 'path'].includes(c.kind))) &&
+    (c.unit === undefined || (c.kind === 'field-number' && text(c.unit, 20))) &&
+    (c.unitPosition === undefined ||
+      (c.kind === 'field-number' && ['prefix', 'suffix'].includes(c.unitPosition))) &&
+    (c.decimals === undefined || (c.kind === 'field-number' && integer(c.decimals, 0, 6))) &&
     (c.maximum === undefined ||
       (c.kind === 'field-number' &&
         typeof c.maximum === 'number' &&
@@ -339,7 +357,7 @@ function validCell(c: unknown): boolean {
     (c.condition === undefined ||
       (obj(c.condition) &&
         id(c.condition.attributeId) &&
-        ['set', 'unset', 'equals', 'not-equals'].includes(c.condition.operator) &&
+        ['set', 'unset', 'equals', 'not-equals', 'gt', 'lt'].includes(c.condition.operator) &&
         (['set', 'unset'].includes(c.condition.operator)
           ? c.condition.value === undefined
           : typeof c.condition.value === 'boolean' ||
@@ -356,7 +374,10 @@ function validCell(c: unknown): boolean {
     c.grid.y + c.grid.h <= 100 &&
     obj(c.style) &&
     /^#[0-9a-f]{6}$/i.test(c.style.textColor) &&
-    (c.style.backgroundColor === 'transparent' || /^#[0-9a-f]{6}$/i.test(c.style.backgroundColor))
+    (c.style.backgroundColor === 'transparent' ||
+      /^#[0-9a-f]{6}$/i.test(c.style.backgroundColor)) &&
+    (c.style.fontSize === undefined || ['small', 'medium', 'large'].includes(c.style.fontSize)) &&
+    (c.style.align === undefined || ['left', 'center', 'right'].includes(c.style.align))
   )
 }
 
@@ -552,6 +573,9 @@ export function validateProject(v: unknown): asserts v is Project {
       const field = v.fieldBindings.find((field) => field.attributeId === condition.attributeId)
       if (
         !field ||
+        (['gt', 'lt'].includes(condition.operator) &&
+          (!['number', 'date', 'datetime'].includes(field.type) ||
+            !validFieldValue(field.type, condition.value))) ||
         (['equals', 'not-equals'].includes(condition.operator) &&
           (!['string', 'enum', 'url', 'date', 'datetime', 'number', 'boolean'].includes(
             field.type

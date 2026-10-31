@@ -183,7 +183,14 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       cell.maximum ?? (cell.presentation === 'rating' ? 5 : 100)
     )
     if (!display) return <span>{value == null ? tr('未填') : tr('⚠ 型別不符')}</span>
-    const label = `${display.value.toLocaleString(currentLocale())} / ${display.maximum.toLocaleString(currentLocale())}`
+    const format = (number: number) =>
+      number.toLocaleString(
+        currentLocale(),
+        cell.decimals === undefined
+          ? undefined
+          : { minimumFractionDigits: cell.decimals, maximumFractionDigits: cell.decimals }
+      )
+    const label = `${format(display.value)} / ${format(display.maximum)}`
     if (cell.presentation === 'rating')
       return (
         <span className="cell-rating" title={label}>
@@ -204,7 +211,13 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
           <span>{label}</span>
         </span>
       )
-    return <span>{display.value.toLocaleString(currentLocale())}</span>
+    return (
+      <span>
+        {cell.unit && cell.unitPosition === 'prefix' ? cell.unit : ''}
+        {format(display.value)}
+        {cell.unit && cell.unitPosition !== 'prefix' ? cell.unit : ''}
+      </span>
+    )
   }
   if (cell.kind === 'field-date')
     return (
@@ -269,7 +282,12 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       <span>{value == null ? tr('未填') : tr('⚠ 型別不符')}</span>
     )
   return (
-    <span className={cell.kind === 'name' ? 'cell-name' : ''} title={label}>
+    <span
+      className={[cell.kind === 'name' ? 'cell-name' : '', cell.wrap ? 'cell-wrap' : '']
+        .filter(Boolean)
+        .join(' ')}
+      title={label}
+    >
       {label || (preview ? tr('（此筆沒有值）') : '\u00a0')}
     </span>
   )

@@ -1,6 +1,6 @@
 // One-command screenshot of a sample project, for checking a UI change without writing a throwaway script.
 //   pnpm shot <game|manga|album|other> [--width 1000] [--height 800] [--mode CARD|TABLE|TREE]
-//                                      [--child <folder name>] [--settings] [--editor [--select N]] [--fields] [--out path.png]
+//                                      [--child <folder name>] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--out path.png]
 // Needs a current build (`pnpm build`). Writes the PNG under .test-output/shot/ and prints its path.
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -15,7 +15,7 @@ const option = (name: string) => {
 }
 if (!kind) {
   console.error(
-    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--editor [--select N]] [--fields] [--out FILE]'
+    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--out FILE]'
   )
   process.exit(2)
 }
@@ -106,6 +106,8 @@ try {
     await page.locator('.editor-page').waitFor()
     const select = option('select')
     if (select) await page.locator('.editor-cell').nth(Number(select)).click()
+    const section = option('section')
+    if (section) await page.getByRole('button', { name: section, exact: true }).click()
   }
   if (args.includes('--settings'))
     await page

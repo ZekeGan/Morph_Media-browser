@@ -15,8 +15,21 @@ export function cellVisible(cell: Cell, row?: FolderRow): boolean {
       copyableValue(value) !== undefined && (typeof value !== 'string' || value.trim().length > 0)
   if (cell.condition.operator === 'set') return set
   if (cell.condition.operator === 'unset') return !set
+  if (!set) return false
+  if (cell.condition.operator === 'gt' || cell.condition.operator === 'lt') {
+    const own =
+        typeof value === 'number' ? value : typeof value === 'string' ? Date.parse(value) : NaN,
+      target =
+        typeof cell.condition.value === 'number'
+          ? cell.condition.value
+          : typeof cell.condition.value === 'string'
+            ? Date.parse(cell.condition.value)
+            : NaN
+    if (typeof value !== typeof cell.condition.value || Number.isNaN(own) || Number.isNaN(target))
+      return false
+    return cell.condition.operator === 'gt' ? own > target : own < target
+  }
   return (
-    set &&
     typeof value === typeof cell.condition.value &&
     (cell.condition.operator === 'equals'
       ? value === cell.condition.value

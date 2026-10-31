@@ -5530,5 +5530,119 @@
     "en": "Style",
     "ja": "スタイル",
     "es": "Estilo"
+  },
+  "小數位數": {
+    "zh-CN": "小数位数",
+    "en": "Decimal places",
+    "ja": "小数点以下の桁数",
+    "es": "Decimales"
+  },
+  "留空則依數值原樣顯示": {
+    "zh-CN": "留空则按数值原样显示",
+    "en": "Leave empty to show the value as is",
+    "ja": "空欄の場合は値をそのまま表示します",
+    "es": "Déjalo vacío para mostrar el valor tal cual"
+  },
+  "單位文字": {
+    "zh-CN": "单位文字",
+    "en": "Unit text",
+    "ja": "単位",
+    "es": "Texto de unidad"
+  },
+  "例如：分、集、%、$": {
+    "zh-CN": "例如：分、集、%、$",
+    "en": "e.g. pts, ep, %, $",
+    "ja": "例：点、話、%、$",
+    "es": "p. ej.: pts, ep., %, $"
+  },
+  "單位位置": {
+    "zh-CN": "单位位置",
+    "en": "Unit position",
+    "ja": "単位の位置",
+    "es": "Posición de la unidad"
+  },
+  "數字前": {
+    "zh-CN": "数字前",
+    "en": "Before number",
+    "ja": "数字の前",
+    "es": "Antes del número"
+  },
+  "數字後": {
+    "zh-CN": "数字后",
+    "en": "After number",
+    "ja": "数字の後",
+    "es": "Después del número"
+  },
+  "大於": {
+    "zh-CN": "大于",
+    "en": "Greater than",
+    "ja": "より大きい",
+    "es": "Mayor que"
+  },
+  "小於": {
+    "zh-CN": "小于",
+    "en": "Less than",
+    "ja": "より小さい",
+    "es": "Menor que"
+  },
+  "字級": {
+    "zh-CN": "字号",
+    "en": "Text size",
+    "ja": "文字サイズ",
+    "es": "Tamaño del texto"
+  },
+  "小": {
+    "zh-CN": "小",
+    "en": "S",
+    "ja": "小",
+    "es": "P"
+  },
+  "中": {
+    "zh-CN": "中",
+    "en": "M",
+    "ja": "中",
+    "es": "M"
+  },
+  "大": {
+    "zh-CN": "大",
+    "en": "L",
+    "ja": "大",
+    "es": "G"
+  },
+  "對齊": {
+    "zh-CN": "对齐",
+    "en": "Alignment",
+    "ja": "配置",
+    "es": "Alineación"
+  },
+  "靠左": {
+    "zh-CN": "靠左",
+    "en": "Left",
+    "ja": "左",
+    "es": "Izquierda"
+  },
+  "置中": {
+    "zh-CN": "居中",
+    "en": "Center",
+    "ja": "中央",
+    "es": "Centro"
+  },
+  "靠右": {
+    "zh-CN": "靠右",
+    "en": "Right",
+    "ja": "右",
+    "es": "Derecha"
+  },
+  "長文字換行顯示": {
+    "zh-CN": "长文本换行显示",
+    "en": "Wrap long text",
+    "ja": "長い文字を折り返す",
+    "es": "Ajustar texto largo"
+  },
+  "關閉時只顯示一行，過長的部分以「…」截斷": {
+    "zh-CN": "关闭时只显示一行，过长的部分以“…”截断",
+    "en": "When off, only one line is shown and the rest is cut with \"…\"",
+    "ja": "オフの場合は1行のみ表示し、はみ出す部分は「…」で省略します",
+    "es": "Si está desactivado, solo se muestra una línea y el resto se corta con «…»"
   }
 }

@@ -279,3 +279,56 @@ test('group cells were removed: they are invalid, and older saved projects load 
     true
   )
 })
+
+test('cell presentation extras are limited to the kinds that use them', () => {
+  const withCell = (extra: Record<string, unknown>, kind = 'field-number') => {
+    const project = modelProject()
+    project.fieldBindings.push({ alias: 'N', attributeId: 'n-field', type: 'number' })
+    project.cells.push({
+      cellId: 'extra',
+      kind,
+      attributeId: kind.startsWith('field-') ? 'n-field' : undefined,
+      grid: { x: 0, y: 9, w: 12, h: 1 },
+      style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
+      ...extra,
+    } as never)
+    return project
+  }
+  const bad = '專案設定不合法或版本不支援'
+  assert.doesNotThrow(() =>
+    validateProject(withCell({ unit: '分', unitPosition: 'prefix', decimals: 2 }))
+  )
+  reject(validateProject, withCell({ decimals: 7 }), bad)
+  reject(validateProject, withCell({ unit: 'x'.repeat(21) }), bad)
+  reject(validateProject, withCell({ unitPosition: 'left' }), bad)
+  reject(validateProject, withCell({ unit: '分' }, 'static-text'), bad)
+  assert.doesNotThrow(() => validateProject(withCell({ wrap: true }, 'name')))
+  reject(validateProject, withCell({ wrap: true }), bad)
+  const styled = (style: Record<string, unknown>) =>
+    withCell({ style: { textColor: '#e4e6e8', backgroundColor: 'transparent', ...style } })
+  assert.doesNotThrow(() => validateProject(styled({ fontSize: 'large', align: 'center' })))
+  reject(validateProject, styled({ fontSize: 'huge' }), bad)
+  reject(validateProject, styled({ align: 'justify' }), bad)
+})
+
+test('greater/less display conditions need a number or date field and a value of that type', () => {
+  const build = (type: string, value: unknown, operator = 'gt') => {
+    const project = modelProject()
+    project.fieldBindings.push({ alias: 'M', attributeId: 'metric', type } as never)
+    project.cells.push({
+      cellId: 'cond',
+      kind: 'static-text',
+      text: 'x',
+      grid: { x: 0, y: 9, w: 12, h: 1 },
+      style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
+      condition: { attributeId: 'metric', operator, value },
+    } as never)
+    return project
+  }
+  assert.doesNotThrow(() => validateProject(build('number', 3)))
+  assert.doesNotThrow(() => validateProject(build('date', '2026-01-31', 'lt')))
+  reject(validateProject, build('string', 'a'), '組件顯示條件不合法')
+  reject(validateProject, build('boolean', true), '組件顯示條件不合法')
+  reject(validateProject, build('date', 'not a date'), '組件顯示條件不合法')
+  reject(validateProject, build('number', 'three'), '組件顯示條件不合法')
+})

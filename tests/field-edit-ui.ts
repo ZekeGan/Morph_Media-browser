@@ -22,12 +22,14 @@ const created = await library.create(media, {
 const project = created.projects[0].project!,
   style = { textColor: '#e4e6e8', backgroundColor: 'transparent' },
   status = crypto.randomUUID(),
-  note = crypto.randomUUID()
+  note = crypto.randomUUID(),
+  score = crypto.randomUUID()
 await library.saveProject({
   ...project,
   fieldBindings: [
     { alias: '狀態', attributeId: status, type: 'enum', options: ['進行中', '已完成'] },
     { alias: '備註', attributeId: note, type: 'string' },
+    { alias: '分數', attributeId: score, type: 'number' },
   ],
   cells: [
     ...project.cells,
@@ -46,6 +48,13 @@ await library.saveProject({
       style,
       condition: { attributeId: status, operator: 'equals', value: '進行中' },
     },
+    {
+      cellId: crypto.randomUUID(),
+      kind: 'field-number',
+      attributeId: score,
+      grid: { x: 0, y: 8, w: 12, h: 1 },
+      style,
+    },
   ],
 })
 
@@ -58,7 +67,7 @@ try {
   await page.locator('.editor-page').waitFor()
 
   // The component with a display condition opens its condition section and offers the enum's options.
-  await page.locator('.editor-cell').last().click()
+  await page.locator('.editor-cell').nth(-2).click()
   const compare = page.getByRole('textbox', { name: '比較值', exact: true })
   await compare.waitFor()
   await compare.click()
@@ -84,6 +93,45 @@ try {
   await dialog.getByLabel('欄位名稱').fill('創作者')
   await dialog.getByRole('button', { name: '確認', exact: true }).click()
   await page.locator('.palette-field').filter({ hasText: '創作者' }).waitFor()
+
+  // Text style, wrapping and number settings.
+  await page.locator('.editor-cell').nth(-2).click()
+  await page.getByRole('button', { name: '樣式', exact: true }).click()
+  const textCell = page.locator('.editor-cell').nth(-2)
+  const size = () =>
+    textCell
+      .locator('span')
+      .first()
+      .evaluate((node) => parseFloat(getComputedStyle(node).fontSize))
+  const before = await size()
+  await page.getByRole('radiogroup', { name: '字級' }).getByText('大', { exact: true }).click()
+  assert.ok((await size()) > before * 1.2, 'large text is bigger')
+  await page.getByRole('radiogroup', { name: '對齊' }).getByText('置中', { exact: true }).click()
+  assert.equal(await textCell.evaluate((node) => getComputedStyle(node).justifyContent), 'center')
+  // Wrapping applies to name, path and text cells; the folder name cell renders without data.
+  await page.locator('.editor-cell').first().click()
+  await page.getByLabel('長文字換行顯示').check()
+  assert.equal(
+    await page
+      .locator('.editor-cell .cell-name')
+      .first()
+      .evaluate((node) => getComputedStyle(node).whiteSpace),
+    'pre-wrap'
+  )
+  await page.getByRole('button', { name: '樣式', exact: true }).click()
+
+  await page.locator('.editor-cell').last().click()
+  await page.getByLabel('小數位數').fill('2')
+  await page.getByLabel('單位文字').fill('分')
+  await page.getByRole('radiogroup', { name: '單位位置' }).waitFor()
+
+  // Greater/less conditions are offered for number fields only.
+  await page.getByRole('textbox', { name: '顯示條件欄位' }).click()
+  await page.getByRole('option', { name: '創作者', exact: true }).click()
+  await page.getByRole('textbox', { name: '顯示條件', exact: true }).click()
+  const operators = await page.getByRole('option').allInnerTexts()
+  assert.ok(operators.includes('大於') && operators.includes('小於'))
+  await page.keyboard.press('Escape')
 
   // Sections collapse and expand.
   const style_ = page.getByRole('button', { name: '樣式', exact: true })
