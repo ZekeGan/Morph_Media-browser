@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { Library } from '../electron/library'
-import { closeApp, launchApp } from './support/app'
+import { closeApp, launchApp, reportFailure, removeTestRoot } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -24,6 +24,7 @@ const launch = () => launchApp(local, errors)
 const close = closeApp
 let { app, page } = await launch()
 const button = (name: string) => page.getByRole('button', { name, exact: true })
+let passed = false
 try {
   await button('開啟專案 Dock Test').first().click()
   await page.locator('.folder-panel-header').waitFor()
@@ -57,14 +58,15 @@ try {
   await page.locator('.folder-panel-dock-settings').waitFor()
   assert.equal(await fs.readFile(path.join(media, 'original.txt'), 'utf8'), 'PRESERVE ORIGINAL')
   assert.deepEqual(errors, [])
+  passed = true
   console.log(
     'PASS settings dock: always docked, tab switching, narrow window, close button and restart. ' +
       root
   )
 } catch (error) {
-  await page.screenshot({ path: path.join(root, 'failure.png') }).catch(() => {})
-  console.error('Artifacts: ' + root)
+  await reportFailure(page, root)
   throw error
 } finally {
   await close(app)
+  if (passed) await removeTestRoot(root)
 }

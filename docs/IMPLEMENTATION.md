@@ -14,7 +14,8 @@
 | `pnpm test` | 所有 `tests/*.test.ts`，適用跨模組風險／交付 |
 | `pnpm format`／`pnpm format:check` | Prettier（設定見 prettier.config.cjs）；只涵蓋 src、shared、electron、tests、scripts 的 ts／tsx／mjs，不含 CSS、JSON 與文件。提交前跑 format:check |
 | `pnpm test:workspace` | 現行完整 Electron UI：`tests/workspace-ui.ts`；需相符建置 |
-| `pnpm test:ui:all` | 依序執行全部 `tests/*-ui.ts` 並計時（約 10 分鐘），可加檔名片段篩選，如 `pnpm test:ui:all video`；任一失敗即非零結束 |
+| `pnpm test:ui:all`／`:smoke`／`:changed` | 依序執行 `tests/*-ui.ts` 並計時；`:smoke` 為核心 6 項（約 1～2 分鐘），`:changed` 依改動檔（對比 origin/main 與工作樹）對應測試，未對應的 UI／主程序改動退回 smoke，也可加檔名片段如 `pnpm test:ui:all video`；任一失敗即非零結束。對應表在 `scripts/run-ui-tests.mjs` |
+| `pnpm shot <類型>` | `tests/support/shot.ts`：以內建範例資料（game／manga／album／other）開專案並截圖，可設 `--width`、`--height`、`--mode`、`--child`、`--settings`、`--out`；輸出於 `.test-output/shot/`，執行完自動清除暫存資料 |
 
 `test:ui` 與 `test:workspace` 是同一 runner，選一個即可。不要臆造 lint／舊 UI script；需新命令先查 package.json。未改依賴且環境可用，不例行安裝或更新套件。
 

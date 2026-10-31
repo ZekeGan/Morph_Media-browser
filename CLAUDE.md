@@ -45,7 +45,7 @@ Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC �
 
 ## 命令與驗證
 
-`pnpm dev`／`pnpm build`（含 tsc）／`pnpm typecheck`／`pnpm exec tsx --test tests/<name>.test.ts`／`pnpm test`（全部資料測試）／`pnpm test:workspace`（單一 Electron UI 流程，需相符建置）／`pnpm test:ui:all`（依序跑全部 `tests/*-ui.ts` 並計時，約 10 分鐘，可加名稱片段篩選）。格式用 `pnpm format`（提交前 `pnpm format:check`）；不臆造 lint 或其他 script；未改依賴不重裝。
+`pnpm dev`／`pnpm build`（含 tsc）／`pnpm typecheck`／`pnpm exec tsx --test tests/<name>.test.ts`／`pnpm test`（全部資料測試）／`pnpm test:workspace`（單一 Electron UI 流程，需相符建置）／`pnpm test:ui:changed`（依改動檔對應測試，平常用）／`pnpm test:ui:smoke`（核心 6 項，約 1～2 分鐘）／`pnpm test:ui:all`（全部，約 12 分鐘，發布前或使用者要求才跑；可加名稱片段篩選）／`pnpm shot <game|manga|album|other> [--width --mode --child --settings]`（內建範例資料一行截圖，檢查 UI 外觀用，取代臨時腳本）。格式用 `pnpm format`（提交前 `pnpm format:check`）；不臆造 lint 或其他 script；未改依賴不重裝。
 
 依風險選最小有效驗證（完整表：`docs/IMPLEMENTATION.md#驗證選擇`）：
 
@@ -53,7 +53,7 @@ Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC �
 | --- | --- |
 | 純文件 | 連結檢查 `node scripts/check-docs.mjs [檔案…]` ＋ diff，不啟動應用 |
 | 純邏輯／型別 | 對應測試 ＋ typecheck（已 build 則免） |
-| UI／導覽／CELL | 目標操作的 UI runner，穩定後 build 一次 |
+| UI／導覽／CELL | `pnpm shot` 看畫面；需要時 `pnpm test:ui:changed`；穩定後 build 一次 |
 | main／preload／IPC／媒體 | build ＋ 受控 Electron 路徑 |
 | 可攜寫入／身分／清理／遷移 | 受控資料樹成功、失敗、取消、復原，確認原檔保留 |
 | 發版 | build ＋ `pnpm test` ＋ UI runner ＋ **R-I18N 文案語系關卡** |

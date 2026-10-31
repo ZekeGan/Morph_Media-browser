@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.15.1 — 2026-11-01
+
+- Tooling only: `.gitattributes` normalizes line endings to LF; `pnpm test:ui:smoke` / `test:ui:changed` pick UI tests by changed files; `pnpm shot` takes a screenshot of sample data in one command; test helpers report failures and delete their own folders.
+
 ## 0.15.0 — 2026-11-01
 
 - Remove CELL groups (older projects load without them) and the video project autoplay/auto-next fields.

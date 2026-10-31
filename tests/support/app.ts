@@ -1,3 +1,5 @@
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { _electron as electron, type ElectronApplication, type Page } from 'playwright-core'
 
 // Shared Electron UI test harness: environment, launch with a fixed window size, and a close that
@@ -38,4 +40,25 @@ export async function closeApp(app: ElectronApplication) {
     }
   })
   await app.close()
+}
+
+// On failure: a screenshot plus what the page was saying (alerts, toasts, dialogs), so one run explains the failure.
+export async function reportFailure(page: Page, dir: string) {
+  await page.screenshot({ path: path.join(dir, 'failure.png') }).catch(() => {})
+  const said = await page
+    .evaluate(() =>
+      [...document.querySelectorAll('[role=alert],[role=dialog],.app-toasts')]
+        .map((node) => node.textContent?.trim().slice(0, 300))
+        .filter(Boolean)
+    )
+    .catch(() => [])
+  console.error('Artifacts: ' + dir + (said.length ? '\nPage said: ' + said.join(' | ') : ''))
+}
+
+// Deletes a test's own folder; refuses anything outside .test-output.
+export async function removeTestRoot(root: string) {
+  const base = path.resolve('.test-output'),
+    target = path.resolve(root)
+  if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup: ' + target)
+  await fs.rm(target, { recursive: true, force: true })
 }
