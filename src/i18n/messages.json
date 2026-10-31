@@ -5644,5 +5644,89 @@
     "en": "When off, only one line is shown and the rest is cut with \"…\"",
     "ja": "オフの場合は1行のみ表示し、はみ出す部分は「…」で省略します",
     "es": "Si está desactivado, solo se muestra una línea y el resto se corta con «…»"
+  },
+  "沒有權限完成這個操作": {
+    "zh-CN": "没有权限完成这个操作",
+    "en": "You do not have permission for this operation",
+    "ja": "この操作を行う権限がありません",
+    "es": "No tienes permiso para esta operación"
+  },
+  "請確認檔案或資料夾沒有設為唯讀，也沒有被其他程式開啟，然後再試一次。": {
+    "zh-CN": "请确认文件或文件夹没有设为只读，也没有被其他程序打开，然后再试一次。",
+    "en": "Make sure the file or folder is not read-only and not open in another program, then try again.",
+    "ja": "ファイルやフォルダーが読み取り専用でないこと、他のプログラムで開かれていないことを確認して、もう一度お試しください。",
+    "es": "Comprueba que el archivo o la carpeta no sea de solo lectura ni esté abierto en otro programa y vuelve a intentarlo."
+  },
+  "檔案正被其他程式使用": {
+    "zh-CN": "文件正被其他程序使用",
+    "en": "The file is in use by another program",
+    "ja": "ファイルが他のプログラムで使用中です",
+    "es": "Otro programa está usando el archivo"
+  },
+  "關閉正在使用它的程式後再試一次。": {
+    "zh-CN": "关闭正在使用它的程序后再试一次。",
+    "en": "Close the program using it and try again.",
+    "ja": "使用しているプログラムを閉じて、もう一度お試しください。",
+    "es": "Cierra el programa que lo usa y vuelve a intentarlo."
+  },
+  "磁碟空間不足": {
+    "zh-CN": "磁盘空间不足",
+    "en": "Not enough disk space",
+    "ja": "ディスクの空き容量が不足しています",
+    "es": "No hay suficiente espacio en disco"
+  },
+  "清出空間後再試一次；原始檔案沒有被改動。": {
+    "zh-CN": "腾出空间后再试一次；原始文件没有被改动。",
+    "en": "Free up some space and try again; your original files were not changed.",
+    "ja": "空き容量を確保してからもう一度お試しください。元のファイルは変更されていません。",
+    "es": "Libera espacio y vuelve a intentarlo; tus archivos originales no se han modificado."
+  },
+  "找不到檔案或資料夾": {
+    "zh-CN": "找不到文件或文件夹",
+    "en": "File or folder not found",
+    "ja": "ファイルまたはフォルダーが見つかりません",
+    "es": "No se encuentra el archivo o la carpeta"
+  },
+  "它可能已被移動或刪除；重新整理，或重新連結專案後再試。": {
+    "zh-CN": "它可能已被移动或删除；刷新，或重新链接项目后再试。",
+    "en": "It may have been moved or deleted; refresh, or relink the project, then try again.",
+    "ja": "移動または削除された可能性があります。更新するか、プロジェクトを再リンクしてからお試しください。",
+    "es": "Puede que se haya movido o eliminado; actualiza o vuelve a vincular el proyecto e inténtalo de nuevo."
+  },
+  "無法連線": {
+    "zh-CN": "无法连接",
+    "en": "Cannot connect",
+    "ja": "接続できません",
+    "es": "No se puede conectar"
+  },
+  "請檢查網路連線與網址是否正確，然後再試一次。": {
+    "zh-CN": "请检查网络连接与网址是否正确，然后再试一次。",
+    "en": "Check your network connection and the address, then try again.",
+    "ja": "ネットワーク接続とアドレスが正しいか確認して、もう一度お試しください。",
+    "es": "Comprueba tu conexión de red y la dirección y vuelve a intentarlo."
+  },
+  "資料已在別處更新，請重新載入後再試一次；你的修改不會被自動覆蓋。": {
+    "zh-CN": "数据已在别处更新，请重新加载后再试一次；你的修改不会被自动覆盖。",
+    "en": "The data was updated elsewhere. Reload and try again; your changes are not overwritten automatically.",
+    "ja": "データが別の場所で更新されました。再読み込みしてからお試しください。変更が自動的に上書きされることはありません。",
+    "es": "Los datos se actualizaron en otro lugar. Recarga y vuelve a intentarlo; tus cambios no se sobrescriben automáticamente."
+  },
+  "技術細節": {
+    "zh-CN": "技术细节",
+    "en": "Technical details",
+    "ja": "技術的な詳細",
+    "es": "Detalles técnicos"
+  },
+  "畫面發生未預期的錯誤": {
+    "zh-CN": "界面发生意外错误",
+    "en": "Something went wrong in the window",
+    "ja": "画面で予期しないエラーが発生しました",
+    "es": "Se produjo un error inesperado en la ventana"
+  },
+  "你的資料夾與記錄不會因此被改動。重新載入後可以繼續使用。": {
+    "zh-CN": "你的文件夹与记录不会因此被改动。重新加载后可以继续使用。",
+    "en": "Your folders and records are not changed by this. Reload to keep working.",
+    "ja": "フォルダーや記録がこれによって変更されることはありません。再読み込みすると続けて使えます。",
+    "es": "Tus carpetas y registros no se modifican por esto. Recarga para seguir trabajando."
   }
 }

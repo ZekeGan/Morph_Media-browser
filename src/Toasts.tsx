@@ -47,6 +47,13 @@ export function Toasts({
             data-level={notice.level}
           >
             <div className="message">{notice.message}</div>
+            {notice.hint && <div className="notice-hint">{notice.hint}</div>}
+            {notice.detail && (
+              <details className="notice-detail">
+                <summary>{tr('技術細節')}</summary>
+                <code>{notice.detail}</code>
+              </details>
+            )}
           </Notification>
         )}
       </div>

@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.18.0 — 2026-11-01
+
+- Error and recovery experience: system errors (permission, file in use, disk full, not found, offline, revision conflict) now say what happened and what to do next, with the original text under "technical details".
+- Uncaught async failures show a toast instead of vanishing; interrupted work (aborts) stays quiet.
+- A render failure shows a recovery screen with a reload button instead of a blank window, and a crashed renderer reloads automatically.
+- Docs: stale references to removed groups, tests and the drawer cleaned up; architecture and test tables list the split editor and browse components.
+
 ## 0.17.2 — 2026-11-01
 
 - Refactor only: `BrowseWorkspace.tsx` (1450 → 999 lines) is split into `BrowseToolbar.tsx` and `BrowsePanel.tsx`; behavior is unchanged.

@@ -82,6 +82,12 @@
 | `tests/revision.test.ts` | 模式／方案、有效記錄與遊戲邊界、小數尺寸、Windows 保留目錄大小寫 |
 | `tests/workspace-ui.ts` | 目前外框／瀏覽／媒體整合；測試資料與截圖在 `.test-output/` |
 | `tests/folder-navigation-ui.ts` | `pnpm exec tsx tests/folder-navigation-ui.ts`：左右共用歷史／停用狀態、資料夾圖示、原生命令加 DOM 序列不重複導覽、跨模式／縮放／專案隔離、可見浮層阻擋、缺失記錄拒絕與原檔／可攜記錄比對；原生命令採受控事件注入，不代表各實體滑鼠驅動已驗收 |
+| `tests/error-recovery-ui.ts` | 未被捕捉的非同步失敗顯示為錯誤提示：白話訊息、下一步建議與可展開的技術細節；中斷類錯誤（AbortError）不打擾使用者 |
+| `tests/error-message.test.ts` | IPC 前綴移除與系統錯誤（權限、佔用、空間不足、找不到、離線、版本衝突）分類 |
+| `tests/field-edit-ui.ts` | CELL 編輯器欄位改名（清單與設定面板兩處）、重複名稱拒絕、單選比較值選項、字級／對齊／換行、數字單位、大於小於條件選項與設定區塊收合 |
+| `tests/game-cover-cell-ui.ts` | 遊戲封面組件在卡片與編輯器各種格位大小下填滿容器，含填滿方式 |
+| `tests/game-folder-page-ui.ts` | 遊戲專案內非遊戲根資料夾使用共用的詳情／子資料夾／檔案頁 |
+| `tests/settings-dock-ui.ts` | 資料夾設定一律停靠右側面板：分頁切換、窄窗、關閉圖示與重啟 |
 | `tests/gallery-performance-ui.ts` | `pnpm exec tsx tests/gallery-performance-ui.ts`：1,200 張受控圖片的首批／首圖時間、捲動幀距、DOM／請求上界、相簿與漫畫翻組及開啟；`GALLERY_BENCH_BASELINE=1` 僅供比較，略過新能力斷言 |
 | `tests/gallery.test.ts` | 圖庫可見範圍、鍵盤焦點保留、比例到達後欄位穩定與調寬 |
 | `tests/media-feedback-ui.ts` | `pnpm exec tsx tests/media-feedback-ui.ts`：音樂篩選後的封面自動展示／選擇／壞圖復原、影片佇列清單／圖片切換及鍵盤提示、相同影片元件保留、漫畫舊檔案偏好回退；受控素材與可攜記錄逐位元比對，不代表音樂發聲驗收 |

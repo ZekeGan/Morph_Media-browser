@@ -33,7 +33,8 @@ import { saveCardPreset, visibleCells } from '../shared/layouts'
 import { BrowseWorkspace } from './BrowseWorkspace'
 import { contentCells, type ExplorerRequest, type ExplorerResponse } from '../shared/explorer'
 import type { WorkspacePrefs } from '../shared/workspace'
-import { errorMessage, type Notice } from '../shared/notifications'
+import { describeError } from './errors'
+import type { Notice } from '../shared/notifications'
 
 const empty: Snapshot = {
   projects: [],
@@ -98,9 +99,20 @@ export function App() {
   }, [])
   const dismissNotice = useCallback(() => setNoticeState(undefined), [])
   const notifyError = useCallback(
-    (message: string) => setNotice({ level: 'error', message: errorMessage(message) }),
+    (message: string) => setNotice({ level: 'error', ...describeError(message) }),
     [setNotice]
   )
+  // Async failures nobody caught used to vanish silently; surface them instead.
+  useEffect(() => {
+    const onRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason instanceof Error ? event.reason.message : String(event.reason)
+      if (/AbortError|aborted|interrupted/i.test(reason + String(event.reason?.name))) return
+      event.preventDefault()
+      notifyError(reason)
+    }
+    window.addEventListener('unhandledrejection', onRejection)
+    return () => window.removeEventListener('unhandledrejection', onRejection)
+  }, [notifyError])
   const [settingsOverlay, setSettingsOverlay] = useState(false)
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(null)
   const [createOpen, setCreateOpen] = useState(false),

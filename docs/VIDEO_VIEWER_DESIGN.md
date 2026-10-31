@@ -170,7 +170,7 @@ Vidstack 官方目前已轉安全修補維護，並說明團隊轉往 Video.js 1
 
 本次控制列／更多面板改版：build、typecheck、外觀字典與 workspace 相關測試 11 項、播放器五組 UI 與既有媒體整合通過。涵蓋音量 hover／拖曳、透明外層、移除重複入口與快進退按鈕、內嵌字幕／編碼／保存、兩個獨立播放偏好、接續／生命週期、三主題及窄視窗／全螢幕；受控原始影片與字幕保留。完整資料回歸與實際收藏格式相容性本次未執行。驗證入口沿用上述 runner，截圖在 `.test-output/video-controls-*/screens/`。
 
-改版前的驗證：`pnpm build`、`pnpm test`（77 項）、`tests/video-player-ui.ts` 與既有 `tests/media-ui.ts` 通過。專項 UI 使用受控 MP4／SRT／損壞影片，涵蓋控制列、字幕、全螢幕、音量保存、預設停止／接續順序／最後一部、倒數取消、離開釋放、隱藏／最小化、窄視窗及淺色主題／英文；原影片、字幕與資料夾記錄逐位元比較未變。截圖：`.test-output/video-controls-u8Onew/screens/`。既有媒體 UI 的 GIF 尺寸量測曾早於解碼／比例排版完成而失敗，已補等待條件後通過，保留原捲動前後小於 1 像素的斷言（`.test-output/media-ui-XIQMzG`）；產品相簿程式未改。未執行實際收藏、macOS 與新增編碼相容性驗證。
+改版前的驗證：`pnpm build`、`pnpm test`（77 項）、`tests/video-player-ui.ts` 通過（`tests/media-ui.ts` 已於 2026-11-01 移除）。專項 UI 使用受控 MP4／SRT／損壞影片，涵蓋控制列、字幕、全螢幕、音量保存、預設停止／接續順序／最後一部、倒數取消、離開釋放、隱藏／最小化、窄視窗及淺色主題／英文；原影片、字幕與資料夾記錄逐位元比較未變。截圖：`.test-output/video-controls-u8Onew/screens/`。既有媒體 UI 的 GIF 尺寸量測曾早於解碼／比例排版完成而失敗，已補等待條件後通過，保留原捲動前後小於 1 像素的斷言（`.test-output/media-ui-XIQMzG`）；產品相簿程式未改。未執行實際收藏、macOS 與新增編碼相容性驗證。
 
 日期：2026-10-26。來源：使用者影片線稿及 O-100～O-102 回覆。C-85 採 Video.js 優先、SRT／VTT 首輪、字幕校正／外觀與逐片保存、原續播選擇（本輪已移除）及不自動下一支；MKV／HEVC 相容性與 ASS 後續。資料契約查 shared/explorer.ts、shared/subtitles.ts，視覺風格未定案。
 

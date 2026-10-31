@@ -33,7 +33,10 @@ const coverage = [
   ],
   [/src\/(Reader|DocumentViewer)/, ['reader-ui']],
   [/src\/SearchDialog/, ['search-dialog-ui']],
-  [/src\/(Toasts|App\.tsx)|shared\/notifications/, ['notifications-ui']],
+  [
+    /src\/(Toasts|App\.tsx|errors|ErrorBoundary)|shared\/notifications/,
+    ['notifications-ui', 'error-recovery-ui'],
+  ],
   [/src\/(Application|themes|i18n)/, ['appearance-ui']],
   [/src\/(GameActions|game-actions)/, ['game-actions-ui']],
   [/src\/(ProjectSettings|SettingsPreview)|electron\/settings/, ['decided-ui']],

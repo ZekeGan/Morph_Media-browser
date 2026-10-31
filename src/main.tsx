@@ -8,12 +8,15 @@ import './video-player.css'
 import './themes/themes.css'
 import { App } from './App'
 import { PlaybackProvider } from './Playback'
+import { ErrorBoundary } from './ErrorBoundary'
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AppThemeProvider>
-      <PlaybackProvider>
-        <App />
-      </PlaybackProvider>
+      <ErrorBoundary>
+        <PlaybackProvider>
+          <App />
+        </PlaybackProvider>
+      </ErrorBoundary>
     </AppThemeProvider>
   </React.StrictMode>
 )

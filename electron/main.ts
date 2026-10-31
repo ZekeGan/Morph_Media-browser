@@ -562,6 +562,14 @@ else {
         (contents, permission, callback, details) =>
           callback(allowFullscreen(contents, permission, details))
       )
+      // A crashed renderer would leave a blank window; reload it (the data on disk is untouched).
+      win.webContents.on('render-process-gone', (_event, details) => {
+        console.error('Renderer process gone:', details.reason)
+        if (details.reason === 'clean-exit') return
+        setTimeout(() => {
+          if (win && !win.isDestroyed()) win.webContents.reload()
+        }, 300)
+      })
       win.once('ready-to-show', () => win?.show())
       await win.loadURL(devUrl ?? 'app://ui/index.html')
     })
