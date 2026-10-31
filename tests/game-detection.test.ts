@@ -522,8 +522,9 @@ test('visiting ASAR and Unreal roots never publishes internal folders in CARD/TA
         media,
         'CARD',
         game.path
-      ),
-      []
+      ).map((row) => row.path),
+      [game.path],
+      'a folder without published children shows only its own card, never its internals'
     )
     for (const mode of ['TREE', 'CARD'] as const)
       assert.ok(

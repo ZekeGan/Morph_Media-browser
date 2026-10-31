@@ -55,9 +55,19 @@ export function browserRows(
   const display = cardDisplay(project)
   const known = rows.filter((r) => !r.readonly && (r.record || r.error || r.stopped))
   if (mode === 'TREE') return known
-  if (mode === 'TABLE' || (mode === 'CARD' && display.mode === 'single' && location))
-    return rows.filter((r) => pathKey(parentPath(r.path)) === pathKey(location || root))
-  if (display.mode === 'single') return known.filter((r) => r.depth === display.level)
+  if (mode === 'TABLE' || (mode === 'CARD' && display.mode === 'single' && location)) {
+    const children = rows.filter((r) => pathKey(parentPath(r.path)) === pathKey(location || root))
+    // A folder without subfolders shows its own card instead of an empty page.
+    if (mode === 'CARD' && !children.length)
+      return rows.filter((r) => pathKey(r.path) === pathKey(location || root))
+    return children
+  }
+  if (display.mode === 'single') {
+    // Landing on level 1 means the project root, which alone would be one lone card: show its folders.
+    const level =
+      display.level === 1 && known.some((r) => r.depth === 2) ? 2 : (display.level as number)
+    return known.filter((r) => r.depth === level)
+  }
   return known.filter((r) => display.level === 'all' || r.depth <= display.level)
 }
 

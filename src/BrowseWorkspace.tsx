@@ -951,7 +951,10 @@ export function BrowseWorkspace({
             </div>
           )}
           {!current.length && browse.mode !== 'TREE' && (
-            <div className="empty-folder">{tr('此層沒有可顯示的子資料夾')}</div>
+            <div className="empty-folder">
+              {tr('此資料夾沒有子資料夾')}
+              <small>{tr('資料夾的內容顯示在右側面板。')}</small>
+            </div>
           )}
         </div>
         {folderMode && browse.mode !== 'TREE' && (
@@ -964,6 +967,7 @@ export function BrowseWorkspace({
           </div>
         )}
       </section>
+      {panelOpen && <div className="panel-scrim" aria-hidden="true" onClick={togglePanel} />}
       <BrowsePanel
         act={act}
         all={all}

@@ -1075,3 +1075,59 @@
         display: flex;
     }
 }
+
+.card-display-button {
+    font-weight: 500;
+    font-size: 12px;
+    height: 30px;
+}
+
+.mantine-Popover-dropdown .card-inline-controls {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 10px;
+    padding: 0;
+    border-bottom: 0;
+    overflow: visible;
+}
+
+.mantine-Popover-dropdown .card-inline-controls .mantine-NumberInput-root {
+    display: block;
+    width: 100%;
+}
+
+.mantine-Popover-dropdown .card-inline-controls .mantine-NumberInput-label {
+    margin-bottom: 4px;
+}
+
+.mantine-Popover-dropdown .card-inline-controls .mantine-NumberInput-wrapper {
+    width: 100%;
+}
+
+@container center (max-width: 620px) {
+    .card-display-summary {
+        display: none;
+    }
+}
+
+.panel-scrim {
+    display: none;
+}
+
+@media (max-width: 1100px) {
+    /* The content panel overlays the folder list on narrow windows: dim what it covers and let a click dismiss it. */
+    .panel-scrim {
+        display: block;
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        background: var(--overlay);
+    }
+}
+
+.empty-folder small {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+}

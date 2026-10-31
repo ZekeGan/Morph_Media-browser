@@ -117,7 +117,8 @@ export function App() {
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(null)
   const [createOpen, setCreateOpen] = useState(false),
     [input, setInput] = useState<ProjectInput>({
-      name: tr('我的媒體'),
+      // Filled with the localized default when the dialog opens (the locale is not loaded yet at first render).
+      name: '',
       mediaCategory: 'manga',
       depth: { mode: 'through', level: 50 },
       scanAll: true,
@@ -126,6 +127,10 @@ export function App() {
     [createGroup, setCreateGroup] = useState(''),
     [groups, setGroups] = useState<WorkspacePrefs['groups']>([]),
     [settingsOpen, setSettingsOpen] = useState(false)
+  useEffect(() => {
+    if (createOpen)
+      setInput((current) => (current.name ? current : { ...current, name: tr('我的媒體') }))
+  }, [createOpen])
   useEffect(() => {
     if (createOpen)
       void window.desktop
@@ -573,6 +578,11 @@ export function App() {
           >
             {tr('完成建立')}
           </Button>
+          {(!rootChoice || !input.name.trim()) && (
+            <small className="muted" role="status">
+              {!input.name.trim() ? tr('請輸入專案名稱') : tr('請先選擇要瀏覽的資料夾')}
+            </small>
+          )}
         </Stack>
       </Modal>
       <ApplicationSettings

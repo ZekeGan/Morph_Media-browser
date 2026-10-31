@@ -36,9 +36,13 @@ try {
     w.setBounds({ width: 1440, height: 900 })
   })
   await button('開啟專案 Toolbar').first().click()
+  // Display settings live in one popover button instead of a permanent row.
+  assert.equal(await page.locator('.card-inline-controls').count(), 0)
+  await button('卡片顯示設定').click()
   await page.locator('.card-inline-controls').waitFor()
-  assert.equal(await button('CARD 顯示設定').count(), 0)
   assert.equal(await page.getByLabel('每頁筆數', { exact: true }).count(), 1)
+  await button('卡片顯示設定').click()
+  await page.locator('.card-inline-controls').waitFor({ state: 'detached' })
   await page.locator('.center-mode').getByText('表格', { exact: true }).click()
   await button('選擇表格欄位').click()
   await page.getByRole('checkbox', { name: '目前路徑', exact: true }).uncheck()
@@ -61,7 +65,7 @@ try {
   await page.locator('.workspace-toolbar').getByText('檔案', { exact: true }).click()
   await page.locator('.workspace-file-tools .overview-folder-select').waitFor()
   assert.equal(await page.locator('.file-overview .file-overview-toolbar').count(), 0)
-  assert.equal(await page.locator('.card-inline-controls').count(), 0)
+  assert.equal(await button('卡片顯示設定').count(), 0)
   await app.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].setBounds({ width: 700, height: 760 })
   )

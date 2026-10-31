@@ -5728,5 +5728,41 @@
     "en": "Your folders and records are not changed by this. Reload to keep working.",
     "ja": "フォルダーや記録がこれによって変更されることはありません。再読み込みすると続けて使えます。",
     "es": "Tus carpetas y registros no se modifican por esto. Recarga para seguir trabajando."
+  },
+  "卡片顯示設定": {
+    "zh-CN": "卡片显示设置",
+    "en": "Card display settings",
+    "ja": "カード表示設定",
+    "es": "Ajustes de visualización de tarjetas"
+  },
+  "每列 {0}": {
+    "zh-CN": "每行 {0}",
+    "en": "{0} per row",
+    "ja": "1行に {0} 件",
+    "es": "{0} por fila"
+  },
+  "此資料夾沒有子資料夾": {
+    "zh-CN": "此文件夹没有子文件夹",
+    "en": "This folder has no subfolders",
+    "ja": "このフォルダーにはサブフォルダーがありません",
+    "es": "Esta carpeta no tiene subcarpetas"
+  },
+  "資料夾的內容顯示在右側面板。": {
+    "zh-CN": "文件夹的内容显示在右侧面板。",
+    "en": "Its contents are shown in the right panel.",
+    "ja": "内容は右側のパネルに表示されます。",
+    "es": "Su contenido se muestra en el panel derecho."
+  },
+  "請輸入專案名稱": {
+    "zh-CN": "请输入项目名称",
+    "en": "Enter a project name",
+    "ja": "プロジェクト名を入力してください",
+    "es": "Introduce un nombre de proyecto"
+  },
+  "請先選擇要瀏覽的資料夾": {
+    "zh-CN": "请先选择要浏览的文件夹",
+    "en": "Choose the folder to browse first",
+    "ja": "先に閲覧するフォルダーを選択してください",
+    "es": "Elige primero la carpeta que quieres explorar"
   }
 }

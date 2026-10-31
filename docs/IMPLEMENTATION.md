@@ -84,6 +84,7 @@
 | `tests/folder-navigation-ui.ts` | `pnpm exec tsx tests/folder-navigation-ui.ts`：左右共用歷史／停用狀態、資料夾圖示、原生命令加 DOM 序列不重複導覽、跨模式／縮放／專案隔離、可見浮層阻擋、缺失記錄拒絕與原檔／可攜記錄比對；原生命令採受控事件注入，不代表各實體滑鼠驅動已驗收 |
 | `tests/error-recovery-ui.ts` | 未被捕捉的非同步失敗顯示為錯誤提示：白話訊息、下一步建議與可展開的技術細節；中斷類錯誤（AbortError）不打擾使用者 |
 | `tests/error-message.test.ts` | IPC 前綴移除與系統錯誤（權限、佔用、空間不足、找不到、離線、版本衝突）分類 |
+| `tests/browse.test.ts` | CARD 單層開專案落點（列出根的子資料夾、無子資料夾時顯示根）、末層資料夾顯示自己的卡片、TABLE 維持子資料夾清單 |
 | `tests/field-edit-ui.ts` | CELL 編輯器欄位改名（清單與設定面板兩處）、重複名稱拒絕、單選比較值選項、字級／對齊／換行、數字單位、大於小於條件選項與設定區塊收合 |
 | `tests/game-cover-cell-ui.ts` | 遊戲封面組件在卡片與編輯器各種格位大小下填滿容器，含填滿方式 |
 | `tests/game-folder-page-ui.ts` | 遊戲專案內非遊戲根資料夾使用共用的詳情／子資料夾／檔案頁 |

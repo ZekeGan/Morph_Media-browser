@@ -4,13 +4,15 @@ import { Icon } from './icons'
 import {
   ActionIcon,
   Button,
-  Menu,
   Checkbox,
-  TextInput,
+  Menu,
   NumberInput,
+  Popover,
   SegmentedControl,
   Select,
   Stack,
+  Text,
+  TextInput,
   Tooltip,
 } from '@mantine/core'
 import { cardPresets } from '../shared/layouts'
@@ -236,6 +238,104 @@ export function BrowseToolbar(props: Props) {
           style={{ display: folderMode ? 'none' : undefined }}
         />
         <div className="toolbar-right">
+          {folderMode && browse.mode === 'CARD' && (
+            <Popover position="bottom-end" withArrow shadow="md" width={260}>
+              <Popover.Target>
+                <Button
+                  className="card-display-button"
+                  size="compact-sm"
+                  variant="default"
+                  aria-label={tr('卡片顯示設定')}
+                  leftSection={<Icon name="sliders" size={14} />}
+                >
+                  <span className="card-display-summary">
+                    {(display.mode === 'multi' ? tr('多層') : tr('單層')) +
+                      ' · ' +
+                      (display.level === 'all'
+                        ? tr('全部')
+                        : tr('第 ') + display.level + tr(' 層')) +
+                      ' · ' +
+                      tr('每列 {0}', density.itemsPerRow)}
+                  </span>
+                </Button>
+              </Popover.Target>
+              <Popover.Dropdown>
+                <div className="card-inline-controls">
+                  <div>
+                    <Text size="xs" c="dimmed" mb={4}>
+                      {tr('層級顯示')}
+                    </Text>
+                    <SegmentedControl
+                      size="xs"
+                      fullWidth
+                      aria-label={tr('層級顯示')}
+                      value={display.mode}
+                      data={[
+                        { value: 'multi', label: tr('多層') },
+                        { value: 'single', label: tr('單層') },
+                      ]}
+                      onChange={(mode) => {
+                        setDisplay({
+                          mode: mode as 'multi' | 'single',
+                          level: mode === 'single' && display.level === 'all' ? 1 : display.level,
+                        })
+                        changedCard()
+                      }}
+                    />
+                  </div>
+                  <Select
+                    size="xs"
+                    label={tr('顯示層數')}
+                    aria-label={tr('顯示層數')}
+                    value={String(display.level)}
+                    allowDeselect={false}
+                    data={[
+                      ...(display.mode === 'multi' ? [{ value: 'all', label: tr('全部') }] : []),
+                      ...Array.from({ length: deepest }, (_, index) => ({
+                        value: String(index + 1),
+                        label: tr('第 ') + (index + 1) + tr(' 層'),
+                      })),
+                    ]}
+                    onChange={(value) => {
+                      if (value) {
+                        setDisplay({ ...display, level: value === 'all' ? 'all' : Number(value) })
+                        changedCard()
+                      }
+                    }}
+                  />
+                  <NumberInput
+                    size="xs"
+                    label={tr('每列卡片數')}
+                    min={1}
+                    max={6}
+                    allowDecimal={false}
+                    value={density.itemsPerRow}
+                    onChange={(value) => {
+                      setDensity({ ...density, itemsPerRow: value })
+                      changedCard()
+                    }}
+                  />
+                  <NumberInput
+                    size="xs"
+                    label={tr('每頁筆數')}
+                    min={1}
+                    max={500}
+                    allowDecimal={false}
+                    value={density.pageSize}
+                    onChange={(value) => {
+                      setDensity({ ...density, pageSize: value })
+                      changedCard()
+                    }}
+                  />
+                  {cardSaveError && (
+                    <Button size="compact-xs" color="red" variant="subtle" onClick={changedCard}>
+                      {cardSaveError}
+                    </Button>
+                  )}
+                </div>
+              </Popover.Dropdown>
+            </Popover>
+          )}
           {folderMode && browse.mode === 'TABLE' && (
             <Menu closeOnItemClick={false}>
               <Menu.Target>
@@ -306,74 +406,6 @@ export function BrowseToolbar(props: Props) {
           </Tooltip>
         </div>
       </div>
-      {folderMode && browse.mode === 'CARD' && (
-        <div className="card-inline-controls">
-          <SegmentedControl
-            size="xs"
-            aria-label={tr('層級顯示')}
-            value={display.mode}
-            data={[
-              { value: 'multi', label: tr('多層') },
-              { value: 'single', label: tr('單層') },
-            ]}
-            onChange={(mode) => {
-              setDisplay({
-                mode: mode as 'multi' | 'single',
-                level: mode === 'single' && display.level === 'all' ? 1 : display.level,
-              })
-              changedCard()
-            }}
-          />
-          <Select
-            size="xs"
-            aria-label={tr('顯示層數')}
-            value={String(display.level)}
-            allowDeselect={false}
-            data={[
-              ...(display.mode === 'multi' ? [{ value: 'all', label: tr('全部') }] : []),
-              ...Array.from({ length: deepest }, (_, index) => ({
-                value: String(index + 1),
-                label: tr('第 ') + (index + 1) + tr(' 層'),
-              })),
-            ]}
-            onChange={(value) => {
-              if (value) {
-                setDisplay({ ...display, level: value === 'all' ? 'all' : Number(value) })
-                changedCard()
-              }
-            }}
-          />
-          <NumberInput
-            size="xs"
-            label={tr('每列卡片數')}
-            min={1}
-            max={6}
-            allowDecimal={false}
-            value={density.itemsPerRow}
-            onChange={(value) => {
-              setDensity({ ...density, itemsPerRow: value })
-              changedCard()
-            }}
-          />
-          <NumberInput
-            size="xs"
-            label={tr('每頁筆數')}
-            min={1}
-            max={500}
-            allowDecimal={false}
-            value={density.pageSize}
-            onChange={(value) => {
-              setDensity({ ...density, pageSize: value })
-              changedCard()
-            }}
-          />
-          {cardSaveError && (
-            <Button size="compact-xs" color="red" variant="subtle" onClick={changedCard}>
-              {cardSaveError}
-            </Button>
-          )}
-        </div>
-      )}
     </>
   )
 }

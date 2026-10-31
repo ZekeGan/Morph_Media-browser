@@ -25,6 +25,7 @@ const coverage = [
     /src\/(BrowseWorkspace|RightPanel|FolderPanel|FolderParts|FolderContent)/,
     ['folder-navigation-ui', 'settings-dock-ui', 'game-folder-page-ui', 'workspace-toolbar-ui'],
   ],
+  [/shared\/browse|src\/BrowseToolbar/, ['workspace-toolbar-ui', 'folder-navigation-ui']],
   [/src\/(Playback|FileMenu|ViewToggle|DesktopShell)/, ['audio-playback-ui']],
   [/src\/(Video|Subtitle)|video-player\.css/, ['video-player-ui']],
   [

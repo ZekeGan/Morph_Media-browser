@@ -244,7 +244,6 @@ try {
     async () => (await firstInGroup()) === '遊戲收藏'
   )
   console.log('PASS project drag/drop across groups and manual ordering')
-  await card('Album').dblclick()
   await card('A').dblclick()
   await header().getByText('A', { exact: true }).waitFor()
   assert.equal(await card('B').count(), 1)
@@ -368,7 +367,6 @@ try {
   // The boundary filter lives in the top toolbar, not in its own row.
   assert.equal(await page.locator('.toolbar-left .game-boundary-filter').count(), 1)
   assert.equal(await page.locator('.game-boundary-filter').count(), 1)
-  await card('Games').dblclick()
   await card('Game').dblclick()
   await header().getByText('Game', { exact: true }).waitFor()
   await page.locator('.game-fields').waitFor()

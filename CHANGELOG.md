@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.19.0 — 2026-11-01
+
+- Opening a project lists the root's folders instead of one lone root card; a folder without subfolders shows its own card instead of an empty page.
+- CARD display settings (levels, cards per row, page size) moved into one "card display settings" popover with a summary button, freeing a toolbar row.
+- On narrow windows the overlaid right panel dims the folder list behind it, and clicking the dimmed area closes the panel.
+- Create-project dialog: the default name follows the interface language (it showed English in Chinese), and a line says what is still missing before "create" is enabled.
+
 ## 0.18.1 — 2026-11-01
 
 - Tooling only: `pnpm shot` can switch the real app theme (`--theme dark|glass|paper`), stay on the home screen (`--home`), click a button (`--click`) and press a key (`--press`).
