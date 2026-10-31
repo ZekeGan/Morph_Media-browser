@@ -124,12 +124,12 @@ export function BrowsePanel(props: Props) {
               </Tooltip>
               {project.mediaCategory !== 'video' && <strong>{detail.name}</strong>}
 
-              <Tooltip label={tr('前往此資料夾')}>
+              <Tooltip label={tr('在檔案總管開啟')}>
                 <ActionIcon
-                  aria-label={tr('前往資料夾 {0}', detail.name)}
+                  aria-label={tr('在檔案總管開啟資料夾 {0}', detail.name)}
                   variant="subtle"
                   disabled={busy}
-                  onClick={() => void open(detail.rowId)}
+                  onClick={() => void act({ action: 'open', rowId: detail.rowId })}
                 >
                   <Icon name="folder-go" />
                 </ActionIcon>

@@ -5764,5 +5764,11 @@
     "en": "Choose the folder to browse first",
     "ja": "先に閲覧するフォルダーを選択してください",
     "es": "Elige primero la carpeta que quieres explorar"
+  },
+  "在檔案總管開啟資料夾 {0}": {
+    "zh-CN": "在文件资源管理器中打开文件夹 {0}",
+    "en": "Open folder {0} in File Explorer",
+    "ja": "フォルダー {0} をエクスプローラーで開く",
+    "es": "Abrir la carpeta {0} en el Explorador de archivos"
   }
 }

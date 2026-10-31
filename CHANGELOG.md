@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.20.2 — 2026-11-01
+
+- The folder icon in the right panel header now opens the folder in Windows Explorer (it used to only navigate inside the app, which looked like "nothing happened").
+
 ## 0.20.1 — 2026-11-01
 
 - Video previews are now generated at up to 480 px (was 160×90) and JPEG quality 85, so they stay sharp at tile size; previously cached low-resolution video previews are regenerated automatically.

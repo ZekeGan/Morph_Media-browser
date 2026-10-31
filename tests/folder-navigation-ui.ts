@@ -209,10 +209,19 @@ try {
   await page.locator('.mixed-media-browser').waitFor()
   await current('Media')
   await buttons(false, false)
-  const currentFolder = right().getByRole('button', { name: '前往資料夾 Media', exact: true })
-  await currentFolder.focus()
-  await currentFolder.press('Enter')
-  await current('Media')
+  // The header icon opens the folder in Windows Explorer; it never navigates inside the app.
+  assert.equal(
+    await right()
+      .getByRole('button', { name: '在檔案總管開啟資料夾 Media', exact: true })
+      .isEnabled(),
+    true
+  )
+  assert.equal(
+    await right()
+      .getByRole('button', { name: /^前往資料夾/ })
+      .count(),
+    0
+  )
   await buttons(false, false)
   assert.equal(
     await page
@@ -224,7 +233,6 @@ try {
   await go('A')
   await go('B')
   await buttons(true, false)
-  await right().getByRole('button', { name: '前往資料夾 B', exact: true }).click()
   await current('B')
   await buttons(true, false)
   await side(-1, '.folder-panel-body', true, 'dom')
