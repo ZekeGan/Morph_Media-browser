@@ -2,6 +2,11 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.17.1 — 2026-11-01
+
+- Refactor only: the CELL editor is split into `Editor.tsx` (1632 → 847 lines), `EditorInspector.tsx` and `EditorPalette.tsx`; behavior is unchanged.
+- Tests: cell-editor-ui retries missed drags instead of failing on a busy machine.
+
 ## 0.17.0 — 2026-11-01
 
 - CELL: long-text wrapping (name, path and text cells), text size (S/M/L) and alignment for every cell, decimals and unit text for number cells, and greater/less display conditions for number and date fields.

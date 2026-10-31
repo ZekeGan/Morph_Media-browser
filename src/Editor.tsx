@@ -3,23 +3,15 @@ import { t as tr, useLocale } from './i18n'
 import { cellColors } from './themes/cellStyle'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
-  Accordion,
   ActionIcon,
   Alert,
-  Badge,
   Button,
-  Checkbox,
-  ColorInput,
   Group,
   Menu,
   Modal,
-  NumberInput,
-  SegmentedControl,
   Select,
   Stack,
-  TagsInput,
   Text,
-  Textarea,
   TextInput,
   Tooltip,
 } from '@mantine/core'
@@ -37,9 +29,10 @@ import {
   fieldValue,
 } from '../shared/model'
 import { CellContent } from './Card'
+import { EditorInspector } from './EditorInspector'
+import { EditorPalette } from './EditorPalette'
 import { cellType, isFieldKind } from '../shared/explorer'
 import {
-  cardPresets,
   editorFields,
   presetDraft,
   syncPresetDraft,
@@ -49,16 +42,6 @@ import {
   removePreset,
 } from '../shared/layouts'
 
-const typeKinds: Record<string, CellKind> = {
-  string: 'field-text',
-  tags: 'field-tags',
-  number: 'field-number',
-  datetime: 'field-date',
-  boolean: 'field-boolean',
-  enum: 'field-enum',
-  url: 'field-url',
-  date: 'field-date-only',
-}
 export function Editor({
   project,
   rows,
@@ -150,10 +133,7 @@ export function Editor({
     [future, setFuture] = useState<Project[]>([])
   const [selected, setSelected] = useState(''),
     [previewId, setPreviewId] = useState<string | undefined>(rows[0]?.rowId)
-  const [newField, setNewField] = useState(''),
-    [error, setError] = useState('')
-  const [newType, setNewType] = useState('string')
-  const [newOptions, setNewOptions] = useState('')
+  const [error, setError] = useState('')
   const [openSections, setOpenSections] = useState<string[]>(['content', 'position']),
     [optionError, setOptionError] = useState(''),
     [renaming, setRenaming] = useState<{ id: string; name: string }>()
@@ -396,83 +376,6 @@ export function Editor({
     return () => window.removeEventListener('keydown', key)
   }, [draft, selected, past, busy])
   type Binding = Project['fieldBindings'][number]
-  const paletteField = (binding: Binding) => {
-    const source = sources.find((f) => f.attributeId === binding.attributeId),
-      kind = typeKinds[binding.type]
-    if (!kind) return null
-    return (
-      <div
-        key={binding.attributeId}
-        className="palette-item palette-field"
-        data-attribute-id={binding.attributeId}
-        draggable={!source?.conflict}
-        onDragStart={(e) => {
-          e.dataTransfer.setData('text/plain', kind)
-          e.dataTransfer.setData('application/x-media-viewer-field', binding.attributeId)
-          e.dataTransfer.effectAllowed = 'copy'
-          dragImage(e)
-        }}
-      >
-        <Button
-          fullWidth
-          variant="default"
-          disabled={source?.conflict}
-          title={source?.conflict ? tr('同一欄位的型別不一致，請先處理資料衝突') : binding.alias}
-          onClick={() => add(kind, undefined, undefined, binding)}
-        >
-          <span className="palette-field-name">{binding.alias || tr('未命名欄位')}</span>
-          <span className="palette-field-meta">
-            <span>{typeLabels[binding.type]}</span>
-            <span>
-              {tr(
-                '使用 {0} 次',
-                draft.cells.filter((cell) => cell.attributeId === binding.attributeId).length
-              )}
-            </span>
-            <Badge size="xs" color={source?.shared === false && source.private ? 'orange' : 'gray'}>
-              {source?.shared === false && source.private ? tr('專案私有') : tr('共用')}
-            </Badge>
-            {source?.shared && source.private && (
-              <Badge size="xs" color="orange">
-                {tr('有專案覆寫')}
-              </Badge>
-            )}
-          </span>
-        </Button>
-        <Tooltip label={tr('重新命名欄位')}>
-          <ActionIcon
-            className="field-rename"
-            variant="subtle"
-            color="gray"
-            aria-label={tr('重新命名欄位 {0}', binding.alias)}
-            disabled={busy}
-            onClick={() => setRenaming({ id: binding.attributeId, name: binding.alias })}
-          >
-            <Icon name="edit" size={14} />
-          </ActionIcon>
-        </Tooltip>
-        <Tooltip label={dirty ? tr('先保存版面後才能刪除欄位') : tr('刪除欄位及資料')}>
-          <ActionIcon
-            className="field-delete"
-            variant="subtle"
-            color="red"
-            aria-label={tr('刪除欄位 {0}', binding.alias)}
-            disabled={busy || dirty}
-            onClick={async () => {
-              const result = await act({
-                action: 'deleteFieldPreview',
-                projectId: project.projectId,
-                attributeId: binding.attributeId,
-              })
-              if (result?.fieldDeletionPreview) setFieldDeletion(result.fieldDeletionPreview)
-            }}
-          >
-            <Icon name="close" size={14} />
-          </ActionIcon>
-        </Tooltip>
-      </div>
-    )
-  }
   const switchTo = (id: string) => {
     const current = draft.layoutPresets?.find((preset) => preset.id === draft.activeLayoutId)
     if (current && JSON.stringify(current.cells) !== JSON.stringify(draft.cells)) {
@@ -815,169 +718,25 @@ export function Editor({
         </p>
       )}
       <div className="editor">
-        <aside className="editor-palette" aria-label={tr('拖入組件')}>
-          <h3>{tr('組件')}</h3>
-          <section className="palette-section">
-            <h4>{tr('基礎組件')}</h4>
-            <div className="basic-palette">
-              {(
-                [
-                  'name',
-                  'path',
-                  'static-text',
-                  'spacer',
-                  'system-info',
-                  'image',
-                  ...(draft.mediaCategory === 'game' ? ['game-cover' as const] : []),
-                  'divider',
-                  'open-folder',
-                ] as CellKind[]
-              ).map((kind) => (
-                <div
-                  key={kind}
-                  className="palette-item"
-                  draggable
-                  onDragStart={(e) => {
-                    e.dataTransfer.setData('text/plain', kind)
-                    e.dataTransfer.effectAllowed = 'copy'
-                    dragImage(e)
-                  }}
-                >
-                  <Tooltip label={hints[kind]} openDelay={300} multiline maw={220}>
-                    <Button fullWidth size="xs" variant="default" onClick={() => add(kind)}>
-                      {labels[kind]}
-                    </Button>
-                  </Tooltip>
-                </div>
-              ))}
-            </div>
-          </section>
-          <section className="project-field-palette">
-            <h4>{tr('專案欄位')}</h4>
-            <Stack gap="xs">{draft.fieldBindings.map((binding) => paletteField(binding))}</Stack>
-          </section>
-          <Accordion variant="separated" className="existing-fields">
-            <Accordion.Item value="existing">
-              <Accordion.Control>
-                {tr('引用資料夾既有欄位')}
-                <Badge size="xs" color="gray">
-                  {availableFields.length}
-                </Badge>
-              </Accordion.Control>
-              <Accordion.Panel>
-                {availableFields.some((f) => f.shared) && (
-                  <>
-                    <Text size="sm" fw={600} mb="xs">
-                      {tr('共用欄位')}
-                    </Text>
-                    <Stack gap="xs" mb="sm">
-                      {availableFields
-                        .filter((f) => f.shared)
-                        .map((f) =>
-                          paletteField({ attributeId: f.attributeId, alias: f.key, type: f.type })
-                        )}
-                    </Stack>
-                  </>
-                )}
-                {availableFields.some((f) => !f.shared && f.private) && (
-                  <>
-                    <Text size="sm" fw={600} mb="xs">
-                      {tr('本專案私有欄位')}
-                    </Text>
-                    <Stack gap="xs">
-                      {availableFields
-                        .filter((f) => !f.shared && f.private)
-                        .map((f) =>
-                          paletteField({ attributeId: f.attributeId, alias: f.key, type: f.type })
-                        )}
-                    </Stack>
-                  </>
-                )}
-                {!availableFields.length && (
-                  <Text size="xs" c="dimmed">
-                    {tr('沒有尚未引用的既有欄位。')}
-                  </Text>
-                )}
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
-          <form
-            className="new-field-form"
-            aria-label={tr('新增欄位')}
-            onSubmit={(e) => {
-              e.preventDefault()
-              const alias = newField.trim()
-              if (
-                !alias ||
-                draft.fieldBindings.some(
-                  (f) => f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()
-                )
-              ) {
-                setError(tr('請輸入未使用的欄位名稱'))
-                return
-              }
-              change({
-                ...draft,
-                fieldBindings: [
-                  ...draft.fieldBindings,
-                  {
-                    alias,
-                    attributeId: crypto.randomUUID(),
-                    type: newType,
-                    ...(newType === 'enum'
-                      ? {
-                          options: [
-                            ...new Set(
-                              newOptions
-                                .split(/[,，\n]/)
-                                .map((option) => option.trim())
-                                .filter(Boolean)
-                            ),
-                          ],
-                        }
-                      : {}),
-                  },
-                ],
-              })
-              setNewField('')
-              setNewOptions('')
-              setError('')
-            }}
-          >
-            <h4>{tr('新增欄位')}</h4>
-            <TextInput
-              label={tr('欄位名稱')}
-              placeholder={tr('例如：作者、評分')}
-              value={newField}
-              maxLength={100}
-              required
-              onChange={(e) => setNewField(e.currentTarget.value)}
-            />
-            <Select
-              label={tr('欄位型別')}
-              allowDeselect={false}
-              value={newType}
-              onChange={(v) => v && setNewType(v)}
-              description={typeHints[newType]}
-              data={Object.entries(typeLabels).map(([value, label]) => ({ value, label }))}
-            />
-            {newType === 'enum' && (
-              <Textarea
-                label={tr('選項（逗號或換行分隔）')}
-                value={newOptions}
-                onChange={(event) => setNewOptions(event.currentTarget.value)}
-              />
-            )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="default"
-              disabled={!newField.trim() || (newType === 'enum' && !newOptions.trim())}
-            >
-              {tr('新增欄位')}
-            </Button>
-          </form>
-        </aside>
+        <EditorPalette
+          project={project}
+          draft={draft}
+          busy={busy}
+          dirty={dirty}
+          hints={hints}
+          labels={labels}
+          typeLabels={typeLabels}
+          typeHints={typeHints}
+          sources={sources}
+          availableFields={availableFields}
+          dragImage={dragImage}
+          act={act}
+          add={add}
+          change={change}
+          setError={setError}
+          setFieldDeletion={setFieldDeletion}
+          setRenaming={setRenaming}
+        />
         <main className="canvas-wrap">
           <Select
             label={tr('使用真實資料預覽')}
@@ -1064,568 +823,24 @@ export function Editor({
             )}
           </div>
         </main>
-        <aside className="editor-inspector" aria-label={tr('組件設定')}>
-          <h3>{tr('組件設定')}</h3>
-          {selectedCell ? (
-            <Stack gap="sm">
-              <Group justify="space-between" align="flex-start" wrap="nowrap">
-                <div>
-                  <strong>{labels[selectedCell.kind]}</strong>
-                  <Text size="xs" c="dimmed">
-                    {hints[selectedCell.kind]}
-                  </Text>
-                </div>
-                <Tooltip label={tr('移除組件') + ' (Delete)'}>
-                  <ActionIcon
-                    color="red"
-                    variant="light"
-                    aria-label={tr('移除組件')}
-                    onClick={removeSelected}
-                  >
-                    <Icon name="close" size={16} />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-              <Accordion
-                multiple
-                variant="separated"
-                value={openSections}
-                onChange={setOpenSections}
-              >
-                {hasContent && (
-                  <Accordion.Item value="content">
-                    <Accordion.Control>{tr('內容')}</Accordion.Control>
-                    <Accordion.Panel>
-                      <Stack gap="sm">
-                        {isFieldKind(selectedCell.kind) && (
-                          <Group gap="xs" align="flex-end" wrap="nowrap">
-                            <Select
-                              style={{ flex: 1 }}
-                              label={tr('綁定欄位')}
-                              description={tr('這個組件顯示哪一個欄位的值')}
-                              value={selectedCell.attributeId}
-                              data={draft.fieldBindings
-                                .filter((f) => f.type === cellType(selectedCell.kind))
-                                .map((f) => ({ value: f.attributeId, label: f.alias }))}
-                              onChange={(v) => v && updateCell({ attributeId: v })}
-                            />
-                            <Tooltip label={tr('重新命名此欄位')}>
-                              <ActionIcon
-                                variant="default"
-                                size="lg"
-                                aria-label={tr('重新命名此欄位')}
-                                disabled={!selectedCell.attributeId}
-                                onClick={() => {
-                                  const field = draft.fieldBindings.find(
-                                    (f) => f.attributeId === selectedCell.attributeId
-                                  )
-                                  if (field)
-                                    setRenaming({ id: field.attributeId, name: field.alias })
-                                }}
-                              >
-                                <Icon name="edit" size={16} />
-                              </ActionIcon>
-                            </Tooltip>
-                          </Group>
-                        )}
-                        {(selectedCell.kind === 'static-text' ||
-                          selectedCell.kind === 'field-url') && (
-                          <Textarea
-                            label={
-                              selectedCell.kind === 'static-text'
-                                ? tr('版面文字內容')
-                                : tr('連結顯示文字')
-                            }
-                            value={selectedCell.text ?? ''}
-                            maxLength={10000}
-                            onChange={(event) => updateCell({ text: event.currentTarget.value })}
-                          />
-                        )}
-                        {selectedCell.kind === 'system-info' && (
-                          <Select
-                            label={tr('系統資訊')}
-                            allowDeselect={false}
-                            value={selectedCell.systemInfo ?? 'category'}
-                            data={[
-                              { value: 'category', label: tr('分類') },
-                              { value: 'files', label: tr('檔案數') },
-                              { value: 'size', label: tr('容量') },
-                            ]}
-                            onChange={(value) =>
-                              updateCell({ systemInfo: value as Cell['systemInfo'] })
-                            }
-                          />
-                        )}
-                        {selectedCell.kind === 'field-enum' && (
-                          <div>
-                            <TagsInput
-                              label={tr('選項')}
-                              description={tr(
-                                '選項會成為資料夾設定中的下拉選單；使用中的選項不能移除。'
-                              )}
-                              error={optionError || undefined}
-                              value={enumOptions}
-                              onChange={(options) => {
-                                const used = enumOptions.filter(
-                                  (option) => !options.includes(option) && optionUsage(option) > 0
-                                )
-                                if (used.length) {
-                                  setOptionError(
-                                    tr(
-                                      '「{0}」仍有 {1} 個資料夾使用，請先把這些資料夾改成其他值再移除。',
-                                      used[0],
-                                      optionUsage(used[0])
-                                    )
-                                  )
-                                  return
-                                }
-                                if (!options.length) {
-                                  setOptionError(tr('單選至少需要一個選項'))
-                                  return
-                                }
-                                setOptionError('')
-                                change({
-                                  ...draft,
-                                  fieldBindings: draft.fieldBindings.map((field) =>
-                                    field.attributeId === selectedCell.attributeId
-                                      ? { ...field, options }
-                                      : field
-                                  ),
-                                })
-                              }}
-                            />
-                            {enumOptions.some((option) => optionUsage(option) > 0) && (
-                              <Text size="xs" c="dimmed" mt={4}>
-                                {tr(
-                                  '使用中：{0}',
-                                  enumOptions
-                                    .filter((option) => optionUsage(option) > 0)
-                                    .map((option) => `${option} × ${optionUsage(option)}`)
-                                    .join('、')
-                                )}
-                              </Text>
-                            )}
-                          </div>
-                        )}
-                        {['image', 'game-cover'].includes(selectedCell.kind) && (
-                          <Select
-                            label={tr('圖片填滿方式')}
-                            allowDeselect={false}
-                            value={
-                              selectedCell.imageFit ??
-                              (selectedCell.kind === 'game-cover' ? 'cover' : 'contain')
-                            }
-                            data={[
-                              { value: 'cover', label: tr('填滿容器（裁切多餘部分）') },
-                              { value: 'contain', label: tr('完整顯示（保留空白）') },
-                            ]}
-                            onChange={(value) =>
-                              updateCell({ imageFit: value as Cell['imageFit'] })
-                            }
-                          />
-                        )}
-                        {selectedCell.kind === 'image' && (
-                          <Text size="sm" c="dimmed">
-                            {tr(
-                              '這是選用圖片組件。可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。'
-                            )}
-                          </Text>
-                        )}
-                        {['field-number', 'field-enum', 'field-boolean'].includes(
-                          selectedCell.kind
-                        ) && (
-                          <Select
-                            label={tr('顯示方式')}
-                            allowDeselect={false}
-                            value={selectedCell.presentation ?? 'plain'}
-                            data={[
-                              { value: 'plain', label: tr('一般文字') },
-                              ...(selectedCell.kind === 'field-number'
-                                ? [
-                                    { value: 'rating', label: tr('評分') },
-                                    { value: 'progress', label: tr('進度') },
-                                  ]
-                                : [{ value: 'badge', label: tr('狀態徽章') }]),
-                            ]}
-                            onChange={(value) =>
-                              updateCell({
-                                presentation:
-                                  value === 'plain' ? undefined : (value as Cell['presentation']),
-                              })
-                            }
-                          />
-                        )}
-                        {selectedCell.kind === 'field-number' && selectedCell.presentation && (
-                          <NumberInput
-                            label={tr('滿分／總量')}
-                            min={0.001}
-                            max={1e9}
-                            value={
-                              selectedCell.maximum ??
-                              (selectedCell.presentation === 'rating' ? 5 : 100)
-                            }
-                            onChange={(value) =>
-                              typeof value === 'number' &&
-                              value > 0 &&
-                              updateCell({ maximum: value })
-                            }
-                          />
-                        )}
-                        {selectedCell.kind === 'field-number' && (
-                          <NumberInput
-                            label={tr('小數位數')}
-                            description={tr('留空則依數值原樣顯示')}
-                            min={0}
-                            max={6}
-                            allowDecimal={false}
-                            value={selectedCell.decimals ?? ''}
-                            onChange={(value) =>
-                              updateCell({
-                                decimals: typeof value === 'number' ? value : undefined,
-                              })
-                            }
-                          />
-                        )}
-                        {selectedCell.kind === 'field-number' && !selectedCell.presentation && (
-                          <div>
-                            <TextInput
-                              label={tr('單位文字')}
-                              description={tr('例如：分、集、%、$')}
-                              maxLength={20}
-                              value={selectedCell.unit ?? ''}
-                              onChange={(event) =>
-                                updateCell({ unit: event.currentTarget.value || undefined })
-                              }
-                            />
-                            {selectedCell.unit && (
-                              <SegmentedControl
-                                mt="xs"
-                                size="xs"
-                                fullWidth
-                                aria-label={tr('單位位置')}
-                                value={selectedCell.unitPosition ?? 'suffix'}
-                                data={[
-                                  { value: 'prefix', label: tr('數字前') },
-                                  { value: 'suffix', label: tr('數字後') },
-                                ]}
-                                onChange={(value) =>
-                                  updateCell({
-                                    unitPosition: value === 'suffix' ? undefined : 'prefix',
-                                  })
-                                }
-                              />
-                            )}
-                          </div>
-                        )}
-                        {isFieldKind(selectedCell.kind) && (
-                          <Checkbox
-                            label={tr('顯示複製按鈕')}
-                            checked={selectedCell.copyValue ?? false}
-                            onChange={(event) =>
-                              updateCell({ copyValue: event.currentTarget.checked })
-                            }
-                          />
-                        )}
-                      </Stack>
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                )}
-                <Accordion.Item value="condition">
-                  <Accordion.Control>
-                    {tr('顯示條件')}
-                    {selectedCell.condition && (
-                      <Badge size="xs" ml="xs" color="teal">
-                        {tr('已啟用')}
-                      </Badge>
-                    )}
-                  </Accordion.Control>
-                  <Accordion.Panel>
-                    <Stack gap="sm">
-                      <Select
-                        label={tr('顯示條件欄位')}
-                        description={tr('只在所選欄位符合條件時顯示這個組件；不符合時保留空位。')}
-                        placeholder={tr('一律顯示')}
-                        clearable
-                        value={selectedCell.condition?.attributeId ?? null}
-                        data={draft.fieldBindings
-                          .filter((field) => Object.hasOwn(typeKinds, field.type))
-                          .map((field) => ({ value: field.attributeId, label: field.alias }))}
-                        onChange={(attributeId) =>
-                          updateCell({
-                            condition: attributeId ? { attributeId, operator: 'set' } : undefined,
-                          })
-                        }
-                      />
-                      {selectedCell.condition && (
-                        <>
-                          <Select
-                            label={tr('顯示條件')}
-                            allowDeselect={false}
-                            value={selectedCell.condition.operator}
-                            data={[
-                              { value: 'set', label: tr('已有值') },
-                              { value: 'unset', label: tr('未填') },
-                              ...(conditionField?.type === 'tags'
-                                ? []
-                                : [
-                                    { value: 'equals', label: tr('等於') },
-                                    { value: 'not-equals', label: tr('不等於') },
-                                  ]),
-                              ...(['number', 'date', 'datetime'].includes(
-                                conditionField?.type ?? ''
-                              )
-                                ? [
-                                    { value: 'gt', label: tr('大於') },
-                                    { value: 'lt', label: tr('小於') },
-                                  ]
-                                : []),
-                            ]}
-                            onChange={(operator) => {
-                              if (!operator) return
-                              const condition = {
-                                ...selectedCell.condition!,
-                                operator: operator as NonNullable<Cell['condition']>['operator'],
-                              }
-                              if (operator === 'set' || operator === 'unset') delete condition.value
-                              else
-                                condition.value =
-                                  conditionField?.type === 'boolean'
-                                    ? false
-                                    : conditionField?.type === 'number'
-                                      ? 0
-                                      : conditionField?.type === 'enum'
-                                        ? (conditionField.options?.[0] ?? '')
-                                        : ''
-                              updateCell({ condition })
-                            }}
-                          />
-                          {['equals', 'not-equals', 'gt', 'lt'].includes(
-                            selectedCell.condition.operator
-                          ) &&
-                            (conditionField?.type === 'boolean' ? (
-                              <Select
-                                label={tr('比較值')}
-                                allowDeselect={false}
-                                value={String(selectedCell.condition.value)}
-                                data={[
-                                  { value: 'true', label: tr('是') },
-                                  { value: 'false', label: tr('否') },
-                                ]}
-                                onChange={(value) =>
-                                  value &&
-                                  updateCell({
-                                    condition: {
-                                      ...selectedCell.condition!,
-                                      value: value === 'true',
-                                    },
-                                  })
-                                }
-                              />
-                            ) : conditionField?.type === 'enum' ? (
-                              <Select
-                                label={tr('比較值')}
-                                allowDeselect={false}
-                                value={String(selectedCell.condition.value ?? '')}
-                                data={(conditionField.options ?? []).map((option) => ({
-                                  value: option,
-                                  label: option,
-                                }))}
-                                onChange={(value) =>
-                                  value &&
-                                  updateCell({ condition: { ...selectedCell.condition!, value } })
-                                }
-                              />
-                            ) : conditionField?.type === 'number' ? (
-                              <NumberInput
-                                label={tr('比較值')}
-                                value={selectedCell.condition.value as number}
-                                onChange={(value) =>
-                                  typeof value === 'number' &&
-                                  updateCell({ condition: { ...selectedCell.condition!, value } })
-                                }
-                              />
-                            ) : (
-                              <TextInput
-                                label={tr('比較值')}
-                                value={String(selectedCell.condition.value ?? '')}
-                                maxLength={10000}
-                                type={
-                                  conditionField?.type === 'date'
-                                    ? 'date'
-                                    : conditionField?.type === 'datetime'
-                                      ? 'datetime-local'
-                                      : conditionField?.type === 'url'
-                                        ? 'url'
-                                        : 'text'
-                                }
-                                onChange={(event) =>
-                                  updateCell({
-                                    condition: {
-                                      ...selectedCell.condition!,
-                                      value: event.currentTarget.value,
-                                    },
-                                  })
-                                }
-                              />
-                            ))}
-                        </>
-                      )}
-                    </Stack>
-                  </Accordion.Panel>
-                </Accordion.Item>
-                <Accordion.Item value="position">
-                  <Accordion.Control>{tr('位置與大小')}</Accordion.Control>
-                  <Accordion.Panel>
-                    <div className="coordinates">
-                      {(['x', 'y', 'w', 'h'] as const).map((key) => (
-                        <NumberInput
-                          key={key}
-                          label={
-                            {
-                              x: tr('水平位置 X'),
-                              y: tr('垂直位置 Y'),
-                              w: tr('寬度'),
-                              h: tr('高度'),
-                            }[key]
-                          }
-                          min={key === 'w' || key === 'h' ? 1 : 0}
-                          max={
-                            key === 'x'
-                              ? 12 - selectedCell.grid.w
-                              : key === 'w'
-                                ? 12 - selectedCell.grid.x
-                                : 100
-                          }
-                          value={selectedCell.grid[key]}
-                          onChange={(v) =>
-                            typeof v === 'number' &&
-                            updateCell({ grid: { ...selectedCell.grid, [key]: v } })
-                          }
-                        />
-                      ))}
-                    </div>
-                  </Accordion.Panel>
-                </Accordion.Item>
-                <Accordion.Item value="style">
-                  <Accordion.Control>{tr('樣式')}</Accordion.Control>
-                  <Accordion.Panel>
-                    <Stack gap="sm">
-                      <div>
-                        <Text size="sm" fw={500} mb={4}>
-                          {tr('字級')}
-                        </Text>
-                        <SegmentedControl
-                          size="xs"
-                          fullWidth
-                          aria-label={tr('字級')}
-                          value={selectedCell.style.fontSize ?? 'medium'}
-                          data={[
-                            { value: 'small', label: tr('小') },
-                            { value: 'medium', label: tr('中') },
-                            { value: 'large', label: tr('大') },
-                          ]}
-                          onChange={(value) =>
-                            updateCell({
-                              style: {
-                                ...selectedCell.style,
-                                fontSize:
-                                  value === 'medium' ? undefined : (value as 'small' | 'large'),
-                              },
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Text size="sm" fw={500} mb={4}>
-                          {tr('對齊')}
-                        </Text>
-                        <SegmentedControl
-                          size="xs"
-                          fullWidth
-                          aria-label={tr('對齊')}
-                          value={selectedCell.style.align ?? 'left'}
-                          data={[
-                            { value: 'left', label: tr('靠左') },
-                            { value: 'center', label: tr('置中') },
-                            { value: 'right', label: tr('靠右') },
-                          ]}
-                          onChange={(value) =>
-                            updateCell({
-                              style: {
-                                ...selectedCell.style,
-                                align: value === 'left' ? undefined : (value as 'center' | 'right'),
-                              },
-                            })
-                          }
-                        />
-                      </div>
-                      {['name', 'path', 'field-text'].includes(selectedCell.kind) && (
-                        <Checkbox
-                          label={tr('長文字換行顯示')}
-                          description={tr('關閉時只顯示一行，過長的部分以「…」截斷')}
-                          checked={selectedCell.wrap ?? false}
-                          onChange={(event) =>
-                            updateCell({ wrap: event.currentTarget.checked || undefined })
-                          }
-                        />
-                      )}
-                      <ColorInput
-                        label={tr('文字顏色')}
-                        format="hex"
-                        value={selectedCell.style.textColor}
-                        onChange={(v) =>
-                          /^#[0-9a-f]{6}$/i.test(v) &&
-                          updateCell({ style: { ...selectedCell.style, textColor: v } })
-                        }
-                      />
-                      <Checkbox
-                        label={tr('背景透明')}
-                        checked={selectedCell.style.backgroundColor === 'transparent'}
-                        onChange={(e) =>
-                          updateCell({
-                            style: {
-                              ...selectedCell.style,
-                              backgroundColor: e.currentTarget.checked ? 'transparent' : '#282a2e',
-                            },
-                          })
-                        }
-                      />
-                      <ColorInput
-                        label={tr('背景顏色')}
-                        format="hex"
-                        disabled={selectedCell.style.backgroundColor === 'transparent'}
-                        value={
-                          selectedCell.style.backgroundColor === 'transparent'
-                            ? '#282a2e'
-                            : selectedCell.style.backgroundColor
-                        }
-                        onChange={(v) =>
-                          /^#[0-9a-f]{6}$/i.test(v) &&
-                          updateCell({ style: { ...selectedCell.style, backgroundColor: v } })
-                        }
-                      />
-                    </Stack>
-                  </Accordion.Panel>
-                </Accordion.Item>
-              </Accordion>
-            </Stack>
-          ) : (
-            <Stack gap={6} className="inspector-empty">
-              <Text size="sm" fw={600}>
-                {tr('選擇畫布上的組件')}
-              </Text>
-              <Text size="xs" c="dimmed">
-                {tr('點選畫布上的組件，就能在這裡調整內容、條件、位置與樣式。')}
-              </Text>
-              <Text size="xs" c="dimmed">
-                {tr('拖曳移動、拉邊角縮放；按 Delete 可移除。')}
-              </Text>
-              <Text size="xs" c="dimmed">
-                {tr('要加入新組件或欄位，請從左側拖入畫布，或直接點選。')}
-              </Text>
-            </Stack>
-          )}
-        </aside>
+        <EditorInspector
+          selectedCell={selectedCell}
+          draft={draft}
+          conditionField={conditionField}
+          enumOptions={enumOptions}
+          hasContent={hasContent}
+          hints={hints}
+          labels={labels}
+          openSections={openSections}
+          setOpenSections={setOpenSections}
+          optionError={optionError}
+          setOptionError={setOptionError}
+          optionUsage={optionUsage}
+          change={change}
+          updateCell={updateCell}
+          removeSelected={removeSelected}
+          setRenaming={setRenaming}
+        />
       </div>
     </section>
   )

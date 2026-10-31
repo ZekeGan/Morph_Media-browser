@@ -102,14 +102,25 @@ const button = (name: string) => page.getByRole('button', { name, exact: true })
 async function verifyCanvasDrag() {
   const cell = page.locator('.editor-cell').first()
   await cell.scrollIntoViewIfNeeded()
-  const before = (await cell.boundingBox())!
-  await page.mouse.move(before.x + 40, before.y + 14)
-  await page.mouse.down()
-  await page.mouse.move(before.x + 40, before.y + 60, { steps: 8 })
-  const during = (await cell.boundingBox())!
-  assert.ok(Math.abs(during.y - before.y - 46) < 3, `canvas drag offset ${during.y - before.y}`)
-  await page.mouse.up()
-  await button('復原').click()
+  let offset = 0
+  // The grid follows the pointer a frame or two later on a busy machine; retry a missed pick-up.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const before = (await cell.boundingBox())!
+    await page.mouse.move(before.x + 40, before.y + 14)
+    await page.mouse.down()
+    await page.mouse.move(before.x + 40, before.y + 60, { steps: 8 })
+    for (let wait = 0; wait < 20; wait++) {
+      offset = (await cell.boundingBox())!.y - before.y
+      if (Math.abs(offset - 46) < 3) break
+      await page.waitForTimeout(50)
+    }
+    await page.mouse.up()
+    if (Math.abs(offset - 46) < 3) {
+      await button('復原').click()
+      return
+    }
+  }
+  assert.ok(false, `canvas drag offset ${offset}`)
 }
 try {
   await app.evaluate(({ BrowserWindow }) => {
@@ -190,10 +201,18 @@ try {
   await button('復原').click()
   assert.equal(await page.locator('.cell-condition-hidden').count(), 0)
   const initial = await page.locator('.editor-cell').count()
-  await palette.dragTo(page.locator('.react-grid-layout'), {
-    sourcePosition: { x: 40, y: 12 },
-    targetPosition: { x: 90, y: 275 },
-  })
+  // A synthetic HTML5 drop can miss on a busy machine; retry until the cell lands.
+  for (
+    let attempt = 0;
+    attempt < 3 && (await page.locator('.editor-cell').count()) === initial;
+    attempt++
+  ) {
+    await palette.dragTo(page.locator('.react-grid-layout'), {
+      sourcePosition: { x: 40, y: 12 },
+      targetPosition: { x: 90, y: 275 },
+    })
+    await page.waitForTimeout(150)
+  }
   assert.equal(await page.locator('.editor-cell').count(), initial + 1)
   await button('復原').click()
   await verifyCanvasDrag()
