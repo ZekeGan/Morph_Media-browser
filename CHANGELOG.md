@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.23.0 — 2026-11-02
+
+- New "launch game" cell for game projects: a button on the card that starts the game with the folder's bound launch file (disabled with a hint while nothing is bound, confirmation before starting, same validation as the game page).
+
 ## 0.22.0 — 2026-11-02
 
 - Cover and image cells have a third fit, "show everything, fill the gaps with a blurred background" (`blur`). Game cover cells use it by default, so tall and wide covers are no longer cropped (titles stay visible); cells that explicitly chose "fill and crop" or "show whole" keep their choice.

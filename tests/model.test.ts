@@ -225,7 +225,7 @@ test('game cover cells are accepted only by game projects', () => {
   }
   for (const where of ['cells', 'preset', 'content'] as const) {
     assert.doesNotThrow(() => validateProject(withCover('game', where)))
-    reject(validateProject, withCover('manga', where), '遊戲封面組件只能用於遊戲專案')
+    reject(validateProject, withCover('manga', where), '遊戲組件只能用於遊戲專案')
   }
 })
 

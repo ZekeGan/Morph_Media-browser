@@ -2,6 +2,8 @@ import { t as tr, useLocale, currentLocale } from './i18n'
 import { Badge, Button, Group, Progress, Rating } from '@mantine/core'
 import { fieldValue, type Cell, type FolderRow, type Project } from '../shared/model'
 import { cellVisible, copyableValue, numericDisplay } from '../shared/cells'
+import { describeError } from './errors'
+import { gameActionTemplates } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
 import { useState } from 'react'
 import { httpUrl } from '../shared/fields'
@@ -139,6 +141,46 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
         {tr('開啟資料夾')}
       </Button>
     )
+  if (cell.kind === 'game-launch') {
+    // The same launch the game page offers: the project's default launch action and the folder's bound target.
+    const template = gameActionTemplates(project ?? {}).find((t) => t.id === 'default-launch-game'),
+      target = row?.record?.details?.targets?.['default-launch-game'],
+      ready = !!template && !!target && target.kind === template.kind
+    return (
+      <span className="cell-launch">
+        <Button
+          size="compact-sm"
+          color={template?.color}
+          disabled={!row || preview || !ready}
+          title={ready ? target.path : tr('尚未綁定')}
+          onClick={async (e) => {
+            e.stopPropagation()
+            if (!row || !template) return
+            if (
+              ['exe', 'file-app'].includes(template.kind) &&
+              !window.confirm(tr('啟動「{0}」？', tr(template.label)))
+            )
+              return
+            try {
+              await window.explorer.request({
+                action: 'runTarget',
+                rowId: row.rowId,
+                templateId: template.id,
+              })
+              setLinkError('')
+            } catch (reason) {
+              setLinkError(describeError(reason).message)
+            }
+          }}
+          onDoubleClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          {tr('啟動遊戲')}
+        </Button>
+        {linkError && <small role="alert">{linkError}</small>}
+      </span>
+    )
+  }
   if (cell.kind === 'divider') return <hr className="cell-divider" />
   if (cell.kind === 'game-cover') {
     const asset =

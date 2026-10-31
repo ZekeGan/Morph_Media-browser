@@ -5884,5 +5884,17 @@
     "en": "Show everything; fill the gaps with a blurred background",
     "ja": "全体を表示し、余白はぼかした背景で埋める",
     "es": "Mostrar todo y rellenar los huecos con un fondo desenfocado"
+  },
+  "一鍵啟動這個遊戲（使用資料夾綁定的啟動檔）": {
+    "zh-CN": "一键启动这个游戏（使用文件夹绑定的启动文件）",
+    "en": "Launch this game in one click (uses the folder's bound launch file)",
+    "ja": "ワンクリックでこのゲームを起動（フォルダーに設定した起動ファイルを使用）",
+    "es": "Inicia este juego con un clic (usa el archivo de inicio vinculado a la carpeta)"
+  },
+  "遊戲組件只能用於遊戲專案": {
+    "zh-CN": "游戏组件只能用于游戏项目",
+    "en": "Game components can only be used in game projects",
+    "ja": "ゲーム用コンポーネントはゲームプロジェクトでのみ使えます",
+    "es": "Los componentes de juego solo se pueden usar en proyectos de juego"
   }
 }

@@ -22,6 +22,7 @@ export type CellKind =
   | 'divider'
   | 'open-folder'
   | 'game-cover'
+  | 'game-launch'
 export interface Cell {
   cellId: string
   kind: CellKind
@@ -333,6 +334,7 @@ function validCell(c: unknown): boolean {
       'divider',
       'open-folder',
       'game-cover',
+      'game-launch',
     ].includes(c.kind) &&
     (c.text === undefined || text(c.text, 10000)) &&
     (c.systemInfo === undefined || ['category', 'files', 'size'].includes(c.systemInfo)) &&
@@ -566,9 +568,9 @@ export function validateProject(v: unknown): asserts v is Project {
       ...(obj(v.contentCells)
         ? Object.values(v.contentCells).flatMap((cells) => (Array.isArray(cells) ? cells : []))
         : []),
-    ].some((c: unknown) => obj(c) && c.kind === 'game-cover')
+    ].some((c: unknown) => obj(c) && (c.kind === 'game-cover' || c.kind === 'game-launch'))
   )
-    throw new Error('遊戲封面組件只能用於遊戲專案')
+    throw new Error('遊戲組件只能用於遊戲專案')
   for (const cell of v.cells)
     if (cell.condition) {
       const condition = cell.condition
