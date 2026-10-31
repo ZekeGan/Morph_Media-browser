@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.20.0 — 2026-11-01
+
+- Game detection now recognises Japanese visual-novel engines (Artemis, AI6WIN, BGI/Ethornell, ONScripter/NScripter, RealLive/AVG32, SiglusEngine, YU-RIS, Nitroplus NPA), and lists `.npk`-packaged and Steam releases of unknown engines as candidates. A game folder is now protected instead of publishing its internal folders (backups, patches, `files`, `data`) as folders of their own.
+
 ## 0.19.0 — 2026-11-01
 
 - Opening a project lists the root's folders instead of one lone root card; a folder without subfolders shows its own card instead of an empty page.

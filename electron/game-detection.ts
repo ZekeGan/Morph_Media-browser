@@ -170,11 +170,44 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
     if (await file('www/c2runtime.js')) add('Construct', 'c2runtime.js + EXE（候選）')
     if ((await files('', /\.xp3$/i)).length)
       add('KiriKiri', 'XP3 + EXE（可能為補丁／工具，需確認）')
+    // Japanese visual-novel engines: each needs its own runtime/launcher name or archive set next to an EXE.
+    const rootFiles = [...root.values()].filter((e) => e.kind === 'file'),
+      hasFile = (pattern: RegExp) => rootFiles.some((e) => pattern.test(e.name)),
+      hasExe = (pattern: RegExp) => exes.some((e) => pattern.test(e.name)),
+      countFiles = (pattern: RegExp) => rootFiles.filter((e) => pattern.test(e.name)).length
+    if (hasFile(/\.pfs(\.\d+)?$/i)) add('Artemis', 'EXE + .pfs 封包（Artemis；補丁／工具需確認）')
+    // Patched releases move or rename the archives, so the runtime name alone is the evidence.
+    if (hasExe(/^ai6win/i))
+      add('AI6WIN', 'AI6WIN*.EXE（Silky’s／Elf 引擎；封包可能被移到子資料夾）')
+    if (hasExe(/^bgi/i) && hasFile(/\.arc$/i)) add('BGI／Ethornell', 'BGI*.EXE + .arc 封包')
+    if (
+      hasExe(/^onscripter/i) ||
+      ((hasFile(/^(nscript\.dat|nscr_sec\.dat|0?0\.txt)$/i) || hasFile(/^ons\.cfg$/i)) &&
+        hasFile(/\.(nsa|sar)$/i))
+    )
+      add('ONScripter／NScripter', 'ONScripter 執行檔，或 nscript／ons.cfg + nsa／sar 封包')
+    if (
+      (await file('GAMEEXE.INI')) &&
+      ((await file('SEEN.TXT')) || (await folder('PDT')) || hasExe(/^(avg32|reallive)/i))
+    )
+      add('RealLive／AVG32', 'GAMEEXE.INI + SEEN.TXT／PDT／AVG32 執行檔')
+    if ((await file('Scene.pck')) && (await file('Gameexe.dat')))
+      add('SiglusEngine', 'Scene.pck + Gameexe.dat + EXE')
+    if (hasFile(/\.ypf$/i)) add('YU-RIS', 'YPF 封包 + EXE（可能為補丁／工具，需確認）')
+    if (countFiles(/\.npa$/i) >= 2) add('Nitroplus NPA', '多個 .npa 封包 + EXE')
+    if (countFiles(/\.npk$/i) >= 3)
+      add(undefined, 'EXE + 多個 .npk 資源封包：引擎未確認，請確認 ROOT／非遊戲')
     if (packedApp)
       add(
         undefined,
         'EXE + resources/app.asar：封裝應用候選，不解包或推定引擎；請確認遊戲 ROOT 或標記非遊戲'
       )
+    // Last resort for store releases of unknown engines: never overrides a specific engine rule.
+    if (
+      !result.evidence.length &&
+      ((await file('steam_api.dll')) || (await file('steam_api64.dll')))
+    )
+      add(undefined, 'EXE + steam_api*.dll：Steam 發行版候選；引擎未確認，請確認 ROOT／非遊戲')
   }
   async function unreal(base: string) {
     if (!(await folder(base + 'Binaries/Win64')) || !(await folder(base + 'Content/Paks')))

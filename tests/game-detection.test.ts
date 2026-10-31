@@ -792,3 +792,75 @@ test('probe limits, permission failure and junction markers fail closed without 
   assert.ok(state.rows.find((row) => row.path === linked)!.error)
   assert.deepEqual(await fs.readdir(outside), [])
 })
+
+test('Japanese visual-novel engines are recognised from their runtime and archive layout, tools are not', async (t) => {
+  const { media, files } = await fixture(t)
+  const samples: { name: string; names: string[]; engines?: string[] }[] = [
+    {
+      name: 'Artemis',
+      names: ['Game.exe', 'Game.pfs', 'Game.pfs.000', 'iarsys64.dll'],
+      engines: ['Artemis'],
+    },
+    {
+      name: 'AI6',
+      names: ['AI6WIN.exe', 'AI6WIN_CN.exe', 'AI6Win.ini', 'data.arc', 'effect.arc'],
+      engines: ['AI6WIN'],
+    },
+    {
+      name: 'BGI',
+      names: ['BGI.exe', 'BHVC.exe', 'BGI.hvl', 'data01098.arc', 'data02099.arc'],
+      engines: ['BGI／Ethornell'],
+    },
+    {
+      name: 'ONS',
+      names: ['onscripter-ru.exe', 'ons.cfg', 'default.cfg', 'sound/a.ogg'],
+      engines: ['ONScripter／NScripter'],
+    },
+    {
+      name: 'AVG32',
+      names: ['AVG3217D.EXE', 'GAMEEXE.INI', 'PDT/a.pdt', 'DAT/x.dat'],
+      engines: ['RealLive／AVG32'],
+    },
+    { name: 'Siglus', names: ['Game.exe', 'Scene.pck', 'Gameexe.dat'], engines: ['SiglusEngine'] },
+    { name: 'Yuris', names: ['Game.exe', 'ysbin.ypf', 'bgm.ypf'], engines: ['YU-RIS'] },
+    {
+      name: 'Nitro',
+      names: ['game_cn.exe', 'cg.npa', 'nss.npa', 'sound.npa'],
+      engines: ['Nitroplus NPA'],
+    },
+    { name: 'NpkUnknown', names: ['launcher.exe', 'cg.npk', 'dx.npk', 'script.npk'], engines: [] },
+    {
+      name: 'SteamUnknown',
+      names: ['Game.exe', 'steam_api64.dll', 'files/image/a.pak'],
+      engines: [],
+    },
+    {
+      name: 'AI6Patched',
+      names: ['AI6WIN.exe', 'AI6WIN_cn.exe', 'config.ini', 'ELFIMAGE/a.arc'],
+      engines: ['AI6WIN'],
+    },
+    { name: 'ToolOnly', names: ['Tool.exe', 'notes.txt'] },
+    { name: 'ArcWithoutRuntime', names: ['Viewer.exe', 'data.arc'] },
+    { name: 'PfsWithoutExe', names: ['readme.txt', 'Game.pfs'] },
+    { name: 'SingleNpa', names: ['Archiver.exe', 'pack.npa'] },
+  ]
+  for (const sample of samples) {
+    const dir = path.join(media, sample.name)
+    await files(dir, sample.names)
+    const detected = await detectGame(dir)
+    if (sample.engines === undefined) assert.equal(detected, undefined, sample.name)
+    else {
+      assert.ok(detected, sample.name)
+      assert.deepEqual(detected.engines, sample.engines, sample.name)
+    }
+  }
+  const steam = await detectGame(path.join(media, 'SteamUnknown'))
+  assert.match(steam!.evidence.join(' '), /Steam/)
+  const specific = path.join(media, 'SteamSiglus')
+  await files(specific, ['Game.exe', 'steam_api64.dll', 'Scene.pck', 'Gameexe.dat'])
+  assert.deepEqual(
+    (await detectGame(specific))!.engines,
+    ['SiglusEngine'],
+    'a named engine wins over the Steam fallback'
+  )
+})
