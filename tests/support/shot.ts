@@ -1,6 +1,6 @@
 // One-command screenshot of a sample project, for checking a UI change without writing a throwaway script.
 //   pnpm shot <game|manga|album|other> [--width 1000] [--height 800] [--mode CARD|TABLE|TREE]
-//                                      [--child <folder name>] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--out path.png]
+//                                      [--child <folder name>] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out path.png]
 // Needs a current build (`pnpm build`). Writes the PNG under .test-output/shot/ and prints its path.
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -15,7 +15,7 @@ const option = (name: string) => {
 }
 if (!kind) {
   console.error(
-    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--out FILE]'
+    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out FILE]'
   )
   process.exit(2)
 }
@@ -91,8 +91,19 @@ if (args.includes('--fields')) {
 const errors: string[] = []
 const { app, page } = await launchApp(local, errors, { width, height })
 try {
-  await page.getByRole('button', { name: '開啟專案 Shot', exact: true }).first().click()
-  await page.locator('.workspace-toolbar').waitFor()
+  const theme = option('theme')
+  if (theme) {
+    // Switch through the real appearance dialog so Mantine's color scheme follows the app theme.
+    const name = { glass: '霧白玻璃', paper: '暖紙墨橘', dark: '深色經典' }[theme as 'dark']
+    await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
+    await page.getByRole('button', { name: name + ' 主題', exact: true }).click()
+    await page.getByRole('button', { name: '保存外觀設定', exact: true }).click()
+    await page.getByRole('dialog').waitFor({ state: 'hidden' })
+  }
+  if (!args.includes('--home')) {
+    await page.getByRole('button', { name: '開啟專案 Shot', exact: true }).first().click()
+    await page.locator('.workspace-toolbar').waitFor()
+  }
   const mode = option('mode')
   if (mode) {
     const label = { CARD: '卡片', TABLE: '表格', TREE: '樹狀圖' }[mode as 'CARD']
@@ -114,6 +125,10 @@ try {
       .locator('.folder-panel-header')
       .getByRole('button', { name: '資料夾設定', exact: true })
       .click()
+  const click = option('click')
+  if (click) await page.getByRole('button', { name: click, exact: true }).first().click()
+  const press = option('press')
+  if (press) await page.keyboard.press(press)
   await page.waitForTimeout(900)
   const out = path.resolve(
     option('out') ??

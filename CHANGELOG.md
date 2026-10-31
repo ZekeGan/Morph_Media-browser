@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.18.1 — 2026-11-01
+
+- Tooling only: `pnpm shot` can switch the real app theme (`--theme dark|glass|paper`), stay on the home screen (`--home`), click a button (`--click`) and press a key (`--press`).
+
 ## 0.18.0 — 2026-11-01
 
 - Error and recovery experience: system errors (permission, file in use, disk full, not found, offline, revision conflict) now say what happened and what to do next, with the original text under "technical details".
