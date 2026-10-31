@@ -7,7 +7,7 @@ The application version is independent of portable record `schemaVersion`.
 - Folder settings always dock into the right panel as a tab (drawer and dock toggle removed), follow the folder being viewed, and have a close icon in the tab row.
 - Copy full path now works (clipboard write moved to the main process).
 - Manga page no longer repeats the folder name and path; the game page uses the same spacing and framing as other folder pages.
-- The game boundary-folder filter moved into the top toolbar.
+- The game boundary-folder filter moved into the top toolbar, next to the layout selector.
 
 ## 0.13.5 — 2026-11-01
 

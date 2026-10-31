@@ -366,7 +366,7 @@ try {
   )
   await open('遊戲收藏')
   // The boundary filter lives in the top toolbar, not in its own row.
-  assert.equal(await page.locator('.toolbar-right .game-boundary-filter').count(), 1)
+  assert.equal(await page.locator('.toolbar-left .game-boundary-filter').count(), 1)
   assert.equal(await page.locator('.game-boundary-filter').count(), 1)
   await card('Games').dblclick()
   await card('Game').dblclick()

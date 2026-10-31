@@ -736,6 +736,23 @@ export function BrowseWorkspace({
                 </Menu>
               </>
             )}
+            {folderMode && project.mediaCategory === 'game' && browse.mode !== 'TREE' && (
+              <Select
+                className="game-boundary-filter"
+                size="xs"
+                aria-label={tr('遊戲資料夾篩選')}
+                allowDeselect={false}
+                value={boundariesOnly ? 'boundaries' : 'all'}
+                data={[
+                  { value: 'all', label: tr('全部資料夾') },
+                  { value: 'boundaries', label: tr('邊界的資料夾') },
+                ]}
+                onChange={(value) => {
+                  setBoundariesOnly(value === 'boundaries')
+                  setPage(1)
+                }}
+              />
+            )}
           </div>
           <SegmentedControl
             style={{ display: folderMode ? undefined : 'none' }}
@@ -764,23 +781,6 @@ export function BrowseWorkspace({
             style={{ display: folderMode ? 'none' : undefined }}
           />
           <div className="toolbar-right">
-            {folderMode && project.mediaCategory === 'game' && browse.mode !== 'TREE' && (
-              <Select
-                className="game-boundary-filter"
-                size="xs"
-                aria-label={tr('遊戲資料夾篩選')}
-                allowDeselect={false}
-                value={boundariesOnly ? 'boundaries' : 'all'}
-                data={[
-                  { value: 'all', label: tr('全部資料夾') },
-                  { value: 'boundaries', label: tr('邊界的資料夾') },
-                ]}
-                onChange={(value) => {
-                  setBoundariesOnly(value === 'boundaries')
-                  setPage(1)
-                }}
-              />
-            )}
             {folderMode && browse.mode === 'TABLE' && (
               <Menu closeOnItemClick={false}>
                 <Menu.Target>

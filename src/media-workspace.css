@@ -1083,3 +1083,10 @@
 .media-info-template:empty {
     display: none;
 }
+
+@container center (max-width: 620px) {
+    .game-boundary-filter {
+        flex-basis: 104px;
+        max-width: 104px;
+    }
+}
