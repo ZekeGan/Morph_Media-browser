@@ -267,7 +267,7 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .editor-toolbar>strong { font-size:13px; }.editor-toolbar .scheme-toolbar { flex:1; min-width:280px; margin:0; }.editor-toolbar .scheme-toolbar .mantine-InputWrapper-label { display:none; }.editor-save { margin-left:auto; }.editor-history { flex-shrink:0; }.palette-item,.editor-cell { isolation:isolate; }.editor-cell { overflow:hidden; }
 .single-file-image-open { display:block; padding:0; border:0; width:100%; background:transparent; cursor:zoom-in; }
 
-.palette-field { position:relative; }.palette-field>.mantine-Button-root { padding-right:32px; }.field-delete { position:absolute; right:3px; top:5px; }
+.palette-field { position:relative; }.palette-field>.mantine-Button-root { padding-right:58px; }.field-delete { position:absolute; right:3px; top:5px; }.field-rename { position:absolute; right:30px; top:5px; }.inspector-empty { padding:4px 2px; }.canvas-empty { padding:24px 8px; }
 
 .card-inline-controls { display:flex; flex-wrap:wrap; align-items:end; gap:8px; padding:8px 10px; border-bottom:1px solid var(--line); }.card-inline-controls>.mantine-Select-root { width:110px; }.card-inline-controls>.mantine-NumberInput-root { width:110px; }.workspace-file-tools { padding:8px; border-bottom:1px solid var(--line); }.workspace-file-tools .file-overview-toolbar { flex-wrap:wrap; }.workspace-file-tools .mantine-Select-root { min-width:100px; flex:1; }.folder-settings .path { overflow-wrap:anywhere; }
 

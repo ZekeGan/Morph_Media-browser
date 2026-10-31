@@ -1,6 +1,6 @@
 // One-command screenshot of a sample project, for checking a UI change without writing a throwaway script.
 //   pnpm shot <game|manga|album|other> [--width 1000] [--height 800] [--mode CARD|TABLE|TREE]
-//                                      [--child <folder name>] [--settings] [--out path.png]
+//                                      [--child <folder name>] [--settings] [--editor [--select N]] [--fields] [--out path.png]
 // Needs a current build (`pnpm build`). Writes the PNG under .test-output/shot/ and prints its path.
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -15,7 +15,7 @@ const option = (name: string) => {
 }
 if (!kind) {
   console.error(
-    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--out FILE]'
+    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--editor [--select N]] [--fields] [--out FILE]'
   )
   process.exit(2)
 }
@@ -49,13 +49,45 @@ if (kind === 'game') {
 }
 const library = new Library(local, undefined, false)
 await library.init()
-await library.create(media, {
+const created = await library.create(media, {
   name: 'Shot',
   mediaCategory: kind,
   scanAll: true,
   depth: { mode: 'through', level: 2 },
 })
 
+if (args.includes('--fields')) {
+  // Sample fields and bound components so the editor's field settings can be inspected.
+  const project = created.projects[0].project!
+  const style = { textColor: '#e4e6e8', backgroundColor: 'transparent' }
+  const status = crypto.randomUUID(),
+    score = crypto.randomUUID()
+  await library.saveProject({
+    ...project,
+    fieldBindings: [
+      { alias: '狀態', attributeId: status, type: 'enum', options: ['進行中', '已完成'] },
+      { alias: '評分', attributeId: score, type: 'number' },
+    ],
+    cells: [
+      ...project.cells,
+      {
+        cellId: crypto.randomUUID(),
+        kind: 'field-enum',
+        attributeId: status,
+        grid: { x: 0, y: 6, w: 6, h: 1 },
+        style,
+      },
+      {
+        cellId: crypto.randomUUID(),
+        kind: 'field-number',
+        attributeId: score,
+        grid: { x: 6, y: 6, w: 6, h: 1 },
+        style,
+        presentation: 'rating',
+      },
+    ],
+  })
+}
 const errors: string[] = []
 const { app, page } = await launchApp(local, errors, { width, height })
 try {
@@ -69,6 +101,12 @@ try {
   const child = option('child')
   if (child)
     await page.locator('.media-subfolder').getByRole('button', { name: child, exact: true }).click()
+  if (args.includes('--editor')) {
+    await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+    await page.locator('.editor-page').waitFor()
+    const select = option('select')
+    if (select) await page.locator('.editor-cell').nth(Number(select)).click()
+  }
   if (args.includes('--settings'))
     await page
       .locator('.folder-panel-header')

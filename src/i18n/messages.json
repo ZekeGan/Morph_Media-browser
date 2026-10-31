@@ -5254,5 +5254,281 @@
     "en": "Dock to the right panel",
     "ja": "右パネルに固定",
     "es": "Anclar al panel derecho"
+  },
+  "顯示資料夾名稱": {
+    "zh-CN": "显示文件夹名称",
+    "en": "Shows the folder name",
+    "ja": "フォルダー名を表示します",
+    "es": "Muestra el nombre de la carpeta"
+  },
+  "顯示資料夾的完整路徑": {
+    "zh-CN": "显示文件夹的完整路径",
+    "en": "Shows the full folder path",
+    "ja": "フォルダーの完全なパスを表示します",
+    "es": "Muestra la ruta completa de la carpeta"
+  },
+  "顯示一個文字欄位的值": {
+    "zh-CN": "显示一个文本字段的值",
+    "en": "Shows the value of a text field",
+    "ja": "テキスト項目の値を表示します",
+    "es": "Muestra el valor de un campo de texto"
+  },
+  "顯示一個標籤欄位的值": {
+    "zh-CN": "显示一个标签字段的值",
+    "en": "Shows the value of a tags field",
+    "ja": "タグ項目の値を表示します",
+    "es": "Muestra el valor de un campo de etiquetas"
+  },
+  "顯示一個數字欄位，可呈現為評分或進度": {
+    "zh-CN": "显示一个数字字段，可呈现为评分或进度",
+    "en": "Shows a number field, optionally as a rating or progress bar",
+    "ja": "数値項目を表示します。評価や進捗として表示もできます",
+    "es": "Muestra un campo numérico, opcionalmente como valoración o progreso"
+  },
+  "顯示一個日期時間欄位的值": {
+    "zh-CN": "显示一个日期时间字段的值",
+    "en": "Shows the value of a date-time field",
+    "ja": "日時項目の値を表示します",
+    "es": "Muestra el valor de un campo de fecha y hora"
+  },
+  "顯示一個是／否欄位的值": {
+    "zh-CN": "显示一个是／否字段的值",
+    "en": "Shows the value of a yes/no field",
+    "ja": "はい／いいえ項目の値を表示します",
+    "es": "Muestra el valor de un campo sí/no"
+  },
+  "顯示一個單選欄位的值": {
+    "zh-CN": "显示一个单选字段的值",
+    "en": "Shows the value of a single-choice field",
+    "ja": "単一選択項目の値を表示します",
+    "es": "Muestra el valor de un campo de selección única"
+  },
+  "顯示一個網址欄位，可自訂連結文字": {
+    "zh-CN": "显示一个网址字段，可自定义链接文字",
+    "en": "Shows a URL field with optional link text",
+    "ja": "URL 項目を表示します。リンク文字を指定できます",
+    "es": "Muestra un campo de URL con texto de enlace opcional"
+  },
+  "顯示一個日期欄位的值": {
+    "zh-CN": "显示一个日期字段的值",
+    "en": "Shows the value of a date field",
+    "ja": "日付項目の値を表示します",
+    "es": "Muestra el valor de un campo de fecha"
+  },
+  "只存在版面的標題或說明，不是資料夾的資料": {
+    "zh-CN": "只存在于版面的标题或说明，不是文件夹的数据",
+    "en": "A title or note that lives only in the layout, not folder data",
+    "ja": "レイアウトだけに存在する見出しや説明で、フォルダーのデータではありません",
+    "es": "Un título o nota que solo existe en el diseño, no es dato de la carpeta"
+  },
+  "空白位置，用來撐開版面": {
+    "zh-CN": "空白位置，用来撑开版面",
+    "en": "Blank space to keep the layout open",
+    "ja": "レイアウトを広げるための空白です",
+    "es": "Espacio en blanco para separar el diseño"
+  },
+  "顯示分類、檔案數或容量": {
+    "zh-CN": "显示分类、文件数或容量",
+    "en": "Shows the category, file count or size",
+    "ja": "カテゴリ、ファイル数、容量を表示します",
+    "es": "Muestra la categoría, el número de archivos o el tamaño"
+  },
+  "可為每個資料夾各自選圖，也可留空": {
+    "zh-CN": "可为每个文件夹各自选图，也可留空",
+    "en": "Each folder can pick its own image, or leave it empty",
+    "ja": "フォルダーごとに画像を選べます。空のままでも構いません",
+    "es": "Cada carpeta puede elegir su imagen o dejarla vacía"
+  },
+  "一鍵開啟這個資料夾": {
+    "zh-CN": "一键打开这个文件夹",
+    "en": "Opens this folder in one click",
+    "ja": "ワンクリックでこのフォルダーを開きます",
+    "es": "Abre esta carpeta con un clic"
+  },
+  "顯示這個遊戲資料夾的封面": {
+    "zh-CN": "显示这个游戏文件夹的封面",
+    "en": "Shows this game folder's cover",
+    "ja": "このゲームフォルダーのカバーを表示します",
+    "es": "Muestra la portada de esta carpeta de juego"
+  },
+  "一般文字，例如備註、作者": {
+    "zh-CN": "普通文本，例如备注、作者",
+    "en": "Plain text, e.g. notes or author",
+    "ja": "通常のテキスト（例：メモ、作者）",
+    "es": "Texto simple, p. ej. notas o autor"
+  },
+  "多個標籤，例如類型、角色": {
+    "zh-CN": "多个标签，例如类型、角色",
+    "en": "Several tags, e.g. genre or characters",
+    "ja": "複数のタグ（例：ジャンル、キャラクター）",
+    "es": "Varias etiquetas, p. ej. género o personajes"
+  },
+  "數字，組件可呈現為評分或進度": {
+    "zh-CN": "数字，组件可呈现为评分或进度",
+    "en": "A number; the cell can show it as a rating or progress",
+    "ja": "数値。セルで評価や進捗として表示できます",
+    "es": "Un número; la celda puede mostrarlo como valoración o progreso"
+  },
+  "日期加時間": {
+    "zh-CN": "日期加时间",
+    "en": "Date and time",
+    "ja": "日付と時刻",
+    "es": "Fecha y hora"
+  },
+  "是／否／未填": {
+    "zh-CN": "是／否／未填",
+    "en": "Yes / no / not set",
+    "ja": "はい／いいえ／未入力",
+    "es": "Sí / no / sin definir"
+  },
+  "從固定選項中選一個，例如狀態": {
+    "zh-CN": "从固定选项中选一个，例如状态",
+    "en": "Pick one from fixed options, e.g. status",
+    "ja": "固定の選択肢から1つ選びます（例：状態）",
+    "es": "Elige una de varias opciones fijas, p. ej. estado"
+  },
+  "網址，可自訂連結文字": {
+    "zh-CN": "网址，可自定义链接文字",
+    "en": "A URL with optional link text",
+    "ja": "URL。リンク文字を指定できます",
+    "es": "Una URL con texto de enlace opcional"
+  },
+  "只有日期，例如發售日": {
+    "zh-CN": "只有日期，例如发售日",
+    "en": "A date only, e.g. release date",
+    "ja": "日付のみ（例：発売日）",
+    "es": "Solo fecha, p. ej. fecha de lanzamiento"
+  },
+  "文字欄位": {
+    "zh-CN": "文本字段",
+    "en": "Text field",
+    "ja": "テキスト項目",
+    "es": "Campo de texto"
+  },
+  "版面文字": {
+    "zh-CN": "版面文字",
+    "en": "Layout text",
+    "ja": "レイアウト文字",
+    "es": "Texto de diseño"
+  },
+  "版面文字內容": {
+    "zh-CN": "版面文字内容",
+    "en": "Layout text content",
+    "ja": "レイアウト文字の内容",
+    "es": "Contenido del texto de diseño"
+  },
+  "重新命名欄位": {
+    "zh-CN": "重命名字段",
+    "en": "Rename field",
+    "ja": "項目名を変更",
+    "es": "Renombrar campo"
+  },
+  "重新命名欄位 {0}": {
+    "zh-CN": "重命名字段 {0}",
+    "en": "Rename field {0}",
+    "ja": "項目「{0}」の名前を変更",
+    "es": "Renombrar campo {0}"
+  },
+  "重新命名此欄位": {
+    "zh-CN": "重命名此字段",
+    "en": "Rename this field",
+    "ja": "この項目の名前を変更",
+    "es": "Renombrar este campo"
+  },
+  "請輸入欄位名稱": {
+    "zh-CN": "请输入字段名称",
+    "en": "Enter a field name",
+    "ja": "項目名を入力してください",
+    "es": "Introduce un nombre de campo"
+  },
+  "已有同名欄位": {
+    "zh-CN": "已有同名字段",
+    "en": "A field with this name already exists",
+    "ja": "同名の項目が既にあります",
+    "es": "Ya existe un campo con ese nombre"
+  },
+  "只改顯示名稱，不會改動任何資料夾的資料；搜尋語法中的欄位名稱也會一併改變。": {
+    "zh-CN": "只改显示名称，不会改动任何文件夹的数据；搜索语法中的字段名称也会一并改变。",
+    "en": "Only the display name changes; no folder data is touched. The field name used in search syntax changes too.",
+    "ja": "表示名だけが変わり、フォルダーのデータは変更されません。検索構文の項目名も一緒に変わります。",
+    "es": "Solo cambia el nombre mostrado; no se modifica ningún dato de carpeta. El nombre usado en la sintaxis de búsqueda también cambia."
+  },
+  "選項會成為資料夾設定中的下拉選單；使用中的選項不能移除。": {
+    "zh-CN": "选项会成为文件夹设置中的下拉菜单；使用中的选项不能移除。",
+    "en": "Options become the dropdown in folder settings; options in use cannot be removed.",
+    "ja": "選択肢はフォルダー設定のドロップダウンになります。使用中の選択肢は削除できません。",
+    "es": "Las opciones forman el menú desplegable de los ajustes de carpeta; no se pueden quitar las que están en uso."
+  },
+  "「{0}」仍有 {1} 個資料夾使用，請先把這些資料夾改成其他值再移除。": {
+    "zh-CN": "“{0}”仍有 {1} 个文件夹在使用，请先把这些文件夹改成其他值再移除。",
+    "en": "\"{0}\" is still used by {1} folder(s). Change those folders to another value before removing it.",
+    "ja": "「{0}」は {1} 個のフォルダーで使用中です。先にそれらを別の値に変更してから削除してください。",
+    "es": "«{0}» sigue en uso en {1} carpeta(s). Cámbialas a otro valor antes de quitarla."
+  },
+  "單選至少需要一個選項": {
+    "zh-CN": "单选至少需要一个选项",
+    "en": "A single-choice field needs at least one option",
+    "ja": "単一選択には選択肢が1つ以上必要です",
+    "es": "Un campo de selección única necesita al menos una opción"
+  },
+  "使用中：{0}": {
+    "zh-CN": "使用中：{0}",
+    "en": "In use: {0}",
+    "ja": "使用中：{0}",
+    "es": "En uso: {0}"
+  },
+  "這個組件顯示哪一個欄位的值": {
+    "zh-CN": "这个组件显示哪一个字段的值",
+    "en": "Which field this component shows",
+    "ja": "このコンポーネントが表示する項目",
+    "es": "Qué campo muestra este componente"
+  },
+  "只在所選欄位符合條件時顯示這個組件；不符合時保留空位。": {
+    "zh-CN": "只在所选字段符合条件时显示这个组件；不符合时保留空位。",
+    "en": "Shown only when the chosen field matches; otherwise the space stays empty.",
+    "ja": "選んだ項目が条件に合うときだけ表示します。合わないときは空白のままです。",
+    "es": "Se muestra solo si el campo elegido cumple la condición; si no, el espacio queda vacío."
+  },
+  "位置與大小": {
+    "zh-CN": "位置与大小",
+    "en": "Position and size",
+    "ja": "位置とサイズ",
+    "es": "Posición y tamaño"
+  },
+  "已啟用": {
+    "zh-CN": "已启用",
+    "en": "On",
+    "ja": "有効",
+    "es": "Activa"
+  },
+  "點選畫布上的組件，就能在這裡調整內容、條件、位置與樣式。": {
+    "zh-CN": "点选画布上的组件，就能在这里调整内容、条件、位置与样式。",
+    "en": "Click a component on the canvas to adjust its content, condition, position and style here.",
+    "ja": "キャンバス上のコンポーネントをクリックすると、ここで内容・条件・位置・スタイルを調整できます。",
+    "es": "Haz clic en un componente del lienzo para ajustar aquí su contenido, condición, posición y estilo."
+  },
+  "拖曳移動、拉邊角縮放；按 Delete 可移除。": {
+    "zh-CN": "拖动移动、拉边角缩放；按 Delete 可移除。",
+    "en": "Drag to move, pull a corner to resize, press Delete to remove.",
+    "ja": "ドラッグで移動、角を引いてサイズ変更、Delete キーで削除します。",
+    "es": "Arrastra para mover, tira de una esquina para redimensionar, pulsa Supr para quitar."
+  },
+  "要加入新組件或欄位，請從左側拖入畫布，或直接點選。": {
+    "zh-CN": "要添加新组件或字段，请从左侧拖入画布，或直接点选。",
+    "en": "To add a component or field, drag it from the left onto the canvas, or click it.",
+    "ja": "新しいコンポーネントや項目は、左から画布へドラッグするか、クリックで追加します。",
+    "es": "Para añadir un componente o campo, arrástralo desde la izquierda al lienzo o haz clic en él."
+  },
+  "或從左側把組件、欄位拖進這裡": {
+    "zh-CN": "或从左侧把组件、字段拖进这里",
+    "en": "Or drag components and fields here from the left",
+    "ja": "または左からコンポーネントや項目をここへドラッグ",
+    "es": "O arrastra aquí componentes y campos desde la izquierda"
+  },
+  "樣式": {
+    "zh-CN": "样式",
+    "en": "Style",
+    "ja": "スタイル",
+    "es": "Estilo"
   }
 }

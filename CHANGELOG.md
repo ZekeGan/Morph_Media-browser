@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.16.0 — 2026-11-01
+
+- CELL editor: rename fields from the field list or the inspector (display name only; duplicate names refused inline).
+- Single-choice options in use cannot be removed (usage counts shown); enum display conditions compare against a dropdown of the options.
+- Inspector grouped into collapsible Content / Condition / Position / Style sections with the remove button beside the title; position inputs keep X + width within 12 columns.
+- Clearer names and hints: "版面文字" (layout text) vs "文字欄位" (text field), one-line purpose tooltips, field-type descriptions in the new-field form, and guidance when nothing is selected or the canvas is empty.
+
 ## 0.15.1 — 2026-11-01
 
 - Tooling only: `.gitattributes` normalizes line endings to LF; `pnpm test:ui:smoke` / `test:ui:changed` pick UI tests by changed files; `pnpm shot` takes a screenshot of sample data in one command; test helpers report failures and delete their own folders.

@@ -33,6 +33,7 @@ import {
   type Request,
   type Response,
   type FieldDeletionPreview,
+  fieldValue,
 } from '../shared/model'
 import { CellContent } from './Card'
 import { cellType, isFieldKind } from '../shared/explorer'
@@ -81,7 +82,7 @@ export function Editor({
   const labels: Record<CellKind, string> = {
     name: tr('資料夾名稱'),
     path: tr('目前路徑'),
-    'field-text': tr('自訂文字'),
+    'field-text': tr('文字欄位'),
     'field-tags': tr('標籤'),
     'field-number': tr('數字'),
     'field-date': tr('日期時間'),
@@ -89,13 +90,43 @@ export function Editor({
     'field-enum': tr('單選'),
     'field-url': tr('網址'),
     'field-date-only': tr('日期'),
-    'static-text': tr('固定文字'),
+    'static-text': tr('版面文字'),
     spacer: tr('空白間距'),
     'system-info': tr('系統資訊'),
     image: tr('圖片'),
     divider: tr('分隔線'),
     'open-folder': tr('開啟資料夾'),
     'game-cover': tr('遊戲封面'),
+  }
+  // One line saying what each component is for; shown as palette tooltips and under the inspector title.
+  const hints: Record<CellKind, string> = {
+    name: tr('顯示資料夾名稱'),
+    path: tr('顯示資料夾的完整路徑'),
+    'field-text': tr('顯示一個文字欄位的值'),
+    'field-tags': tr('顯示一個標籤欄位的值'),
+    'field-number': tr('顯示一個數字欄位，可呈現為評分或進度'),
+    'field-date': tr('顯示一個日期時間欄位的值'),
+    'field-boolean': tr('顯示一個是／否欄位的值'),
+    'field-enum': tr('顯示一個單選欄位的值'),
+    'field-url': tr('顯示一個網址欄位，可自訂連結文字'),
+    'field-date-only': tr('顯示一個日期欄位的值'),
+    'static-text': tr('只存在版面的標題或說明，不是資料夾的資料'),
+    spacer: tr('空白位置，用來撐開版面'),
+    'system-info': tr('顯示分類、檔案數或容量'),
+    image: tr('可為每個資料夾各自選圖，也可留空'),
+    divider: tr('分隔線'),
+    'open-folder': tr('一鍵開啟這個資料夾'),
+    'game-cover': tr('顯示這個遊戲資料夾的封面'),
+  }
+  const typeHints: Record<string, string> = {
+    string: tr('一般文字，例如備註、作者'),
+    tags: tr('多個標籤，例如類型、角色'),
+    number: tr('數字，組件可呈現為評分或進度'),
+    datetime: tr('日期加時間'),
+    boolean: tr('是／否／未填'),
+    enum: tr('從固定選項中選一個，例如狀態'),
+    url: tr('網址，可自訂連結文字'),
+    date: tr('只有日期，例如發售日'),
   }
   const typeLabels: Record<string, string> = {
     string: tr('文字'),
@@ -122,6 +153,9 @@ export function Editor({
     [error, setError] = useState('')
   const [newType, setNewType] = useState('string')
   const [newOptions, setNewOptions] = useState('')
+  const [openSections, setOpenSections] = useState<string[]>(['content', 'position']),
+    [optionError, setOptionError] = useState(''),
+    [renaming, setRenaming] = useState<{ id: string; name: string }>()
   const [schemeAction, setSchemeAction] = useState<'new' | 'copy' | 'rename'>(),
     [schemeName, setSchemeName] = useState('')
   const [pendingPreset, setPendingPreset] = useState<string>()
@@ -187,6 +221,44 @@ export function Editor({
   const conditionField = draft.fieldBindings.find(
     (field) => field.attributeId === selectedCell?.condition?.attributeId
   )
+  const hasContent =
+    !!selectedCell &&
+    (isFieldKind(selectedCell.kind) ||
+      ['static-text', 'system-info', 'image', 'game-cover'].includes(selectedCell.kind))
+  const enumOptions =
+    draft.fieldBindings.find((field) => field.attributeId === selectedCell?.attributeId)?.options ??
+    []
+  // Folders (of this project) whose value is currently this option, so a used option is never silently orphaned.
+  const optionUsage = (option: string) =>
+    rows.filter((row) => fieldValue(row, selectedCell?.attributeId ?? '') === option).length
+  useEffect(() => setOptionError(''), [selected])
+  // A component that has a display condition opens the condition section, so the reason it may be hidden is visible.
+  useEffect(() => {
+    if (selectedCell?.condition)
+      setOpenSections((open) => (open.includes('condition') ? open : [...open, 'condition']))
+  }, [selected])
+  const renameError = (name: string, id: string) => {
+    const alias = name.trim()
+    if (!alias) return tr('請輸入欄位名稱')
+    if (
+      draft.fieldBindings.some(
+        (f) => f.attributeId !== id && f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()
+      )
+    )
+      return tr('已有同名欄位')
+    return ''
+  }
+  const applyRename = () => {
+    if (!renaming || renameError(renaming.name, renaming.id)) return
+    const alias = renaming.name.trim()
+    change({
+      ...draft,
+      fieldBindings: draft.fieldBindings.map((f) =>
+        f.attributeId === renaming.id ? { ...f, alias } : f
+      ),
+    })
+    setRenaming(undefined)
+  }
   const sources = useMemo(() => editorFields(rows, project.projectId), [rows, project.projectId])
   const availableFields = sources.filter(
     (a) => !draft.fieldBindings.some((f) => f.attributeId === a.attributeId)
@@ -366,6 +438,18 @@ export function Editor({
             )}
           </span>
         </Button>
+        <Tooltip label={tr('重新命名欄位')}>
+          <ActionIcon
+            className="field-rename"
+            variant="subtle"
+            color="gray"
+            aria-label={tr('重新命名欄位 {0}', binding.alias)}
+            disabled={busy}
+            onClick={() => setRenaming({ id: binding.attributeId, name: binding.alias })}
+          >
+            <Icon name="edit" size={14} />
+          </ActionIcon>
+        </Tooltip>
         <Tooltip label={dirty ? tr('先保存版面後才能刪除欄位') : tr('刪除欄位及資料')}>
           <ActionIcon
             className="field-delete"
@@ -683,6 +767,47 @@ export function Editor({
           </Button>
         </Stack>
       </Modal>
+      <Modal
+        opened={!!renaming}
+        onClose={() => setRenaming(undefined)}
+        title={tr('重新命名欄位')}
+        size="sm"
+      >
+        {renaming && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault()
+              applyRename()
+            }}
+          >
+            <Stack gap="sm">
+              <TextInput
+                data-autofocus
+                label={tr('欄位名稱')}
+                value={renaming.name}
+                maxLength={100}
+                error={
+                  renaming.name === ''
+                    ? undefined
+                    : renameError(renaming.name, renaming.id) || undefined
+                }
+                onChange={(event) => setRenaming({ ...renaming, name: event.currentTarget.value })}
+              />
+              <Text size="xs" c="dimmed">
+                {tr('只改顯示名稱，不會改動任何資料夾的資料；搜尋語法中的欄位名稱也會一併改變。')}
+              </Text>
+              <Group justify="flex-end">
+                <Button variant="default" onClick={() => setRenaming(undefined)}>
+                  {tr('取消')}
+                </Button>
+                <Button type="submit" disabled={!!renameError(renaming.name, renaming.id)}>
+                  {tr('確認')}
+                </Button>
+              </Group>
+            </Stack>
+          </form>
+        )}
+      </Modal>
       {error && (
         <p role="alert" className="error">
           {error}
@@ -717,9 +842,11 @@ export function Editor({
                     dragImage(e)
                   }}
                 >
-                  <Button fullWidth size="xs" variant="default" onClick={() => add(kind)}>
-                    {labels[kind]}
-                  </Button>
+                  <Tooltip label={hints[kind]} openDelay={300} multiline maw={220}>
+                    <Button fullWidth size="xs" variant="default" onClick={() => add(kind)}>
+                      {labels[kind]}
+                    </Button>
+                  </Tooltip>
                 </div>
               ))}
             </div>
@@ -830,6 +957,7 @@ export function Editor({
               allowDeselect={false}
               value={newType}
               onChange={(v) => v && setNewType(v)}
+              description={typeHints[newType]}
               data={Object.entries(typeLabels).map(([value, label]) => ({ value, label }))}
             />
             {newType === 'enum' && (
@@ -861,9 +989,14 @@ export function Editor({
           />
           <div ref={containerRef as React.RefObject<HTMLDivElement>} className="canvas">
             {!level.length && (
-              <Button variant="light" onClick={() => add('static-text')}>
-                {tr('加入第一個組件')}
-              </Button>
+              <Stack gap={6} align="center" className="canvas-empty">
+                <Button variant="light" onClick={() => add('static-text')}>
+                  {tr('加入第一個組件')}
+                </Button>
+                <Text size="xs" c="dimmed">
+                  {tr('或從左側把組件、欄位拖進這裡')}
+                </Text>
+              </Stack>
             )}
             {mounted && (
               <GridLayout
@@ -934,282 +1067,447 @@ export function Editor({
           <h3>{tr('組件設定')}</h3>
           {selectedCell ? (
             <Stack gap="sm">
-              <strong>{labels[selectedCell.kind]}</strong>
-              <Text size="xs" c="dimmed">
-                {tr('調整這個組件的呈現，不會改動資料夾原值。')}
-              </Text>
-              {(selectedCell.kind === 'static-text' || selectedCell.kind === 'field-url') && (
-                <Textarea
-                  label={selectedCell.kind === 'static-text' ? tr('固定文字') : tr('連結顯示文字')}
-                  value={selectedCell.text ?? ''}
-                  maxLength={10000}
-                  onChange={(event) => updateCell({ text: event.currentTarget.value })}
-                />
-              )}
-              {selectedCell.kind === 'system-info' && (
-                <Select
-                  label={tr('系統資訊')}
-                  allowDeselect={false}
-                  value={selectedCell.systemInfo ?? 'category'}
-                  data={[
-                    { value: 'category', label: tr('分類') },
-                    { value: 'files', label: tr('檔案數') },
-                    { value: 'size', label: tr('容量') },
-                  ]}
-                  onChange={(value) => updateCell({ systemInfo: value as Cell['systemInfo'] })}
-                />
-              )}
-              {selectedCell.kind === 'field-enum' && (
-                <TagsInput
-                  label={tr('選項')}
-                  value={
-                    draft.fieldBindings.find(
-                      (field) => field.attributeId === selectedCell.attributeId
-                    )?.options ?? []
-                  }
-                  onChange={(options) =>
-                    change({
-                      ...draft,
-                      fieldBindings: draft.fieldBindings.map((field) =>
-                        field.attributeId === selectedCell.attributeId
-                          ? { ...field, options }
-                          : field
-                      ),
-                    })
-                  }
-                />
-              )}
-
-              {['image', 'game-cover'].includes(selectedCell.kind) && (
-                <Select
-                  label={tr('圖片填滿方式')}
-                  allowDeselect={false}
-                  value={
-                    selectedCell.imageFit ??
-                    (selectedCell.kind === 'game-cover' ? 'cover' : 'contain')
-                  }
-                  data={[
-                    { value: 'cover', label: tr('填滿容器（裁切多餘部分）') },
-                    { value: 'contain', label: tr('完整顯示（保留空白）') },
-                  ]}
-                  onChange={(value) => updateCell({ imageFit: value as Cell['imageFit'] })}
-                />
-              )}
-              {selectedCell.kind === 'image' && (
-                <Text size="sm" c="dimmed">
-                  {tr(
-                    '這是選用圖片組件。可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。'
-                  )}
-                </Text>
-              )}
-              {isFieldKind(selectedCell.kind) && (
-                <Select
-                  label={tr('綁定欄位')}
-                  value={selectedCell.attributeId}
-                  data={draft.fieldBindings
-                    .filter((f) => f.type === cellType(selectedCell.kind))
-                    .map((f) => ({ value: f.attributeId, label: f.alias }))}
-                  onChange={(v) => v && updateCell({ attributeId: v })}
-                />
-              )}
-              {['field-number', 'field-enum', 'field-boolean'].includes(selectedCell.kind) && (
-                <Select
-                  label={tr('顯示方式')}
-                  allowDeselect={false}
-                  value={selectedCell.presentation ?? 'plain'}
-                  data={[
-                    { value: 'plain', label: tr('一般文字') },
-                    ...(selectedCell.kind === 'field-number'
-                      ? [
-                          { value: 'rating', label: tr('評分') },
-                          { value: 'progress', label: tr('進度') },
-                        ]
-                      : [{ value: 'badge', label: tr('狀態徽章') }]),
-                  ]}
-                  onChange={(value) =>
-                    updateCell({
-                      presentation: value === 'plain' ? undefined : (value as Cell['presentation']),
-                    })
-                  }
-                />
-              )}
-              {selectedCell.kind === 'field-number' && selectedCell.presentation && (
-                <NumberInput
-                  label={tr('滿分／總量')}
-                  min={0.001}
-                  max={1e9}
-                  value={selectedCell.maximum ?? (selectedCell.presentation === 'rating' ? 5 : 100)}
-                  onChange={(value) =>
-                    typeof value === 'number' && value > 0 && updateCell({ maximum: value })
-                  }
-                />
-              )}
-              {isFieldKind(selectedCell.kind) && (
-                <Checkbox
-                  label={tr('顯示複製按鈕')}
-                  checked={selectedCell.copyValue ?? false}
-                  onChange={(event) => updateCell({ copyValue: event.currentTarget.checked })}
-                />
-              )}
-              <Select
-                label={tr('顯示條件欄位')}
-                placeholder={tr('一律顯示')}
-                clearable
-                value={selectedCell.condition?.attributeId ?? null}
-                data={draft.fieldBindings
-                  .filter((field) => Object.hasOwn(typeKinds, field.type))
-                  .map((field) => ({ value: field.attributeId, label: field.alias }))}
-                onChange={(attributeId) =>
-                  updateCell({
-                    condition: attributeId ? { attributeId, operator: 'set' } : undefined,
-                  })
-                }
-              />
-              {selectedCell.condition && (
-                <>
-                  <Select
-                    label={tr('顯示條件')}
-                    allowDeselect={false}
-                    value={selectedCell.condition.operator}
-                    data={[
-                      { value: 'set', label: tr('已有值') },
-                      { value: 'unset', label: tr('未填') },
-                      ...(conditionField?.type === 'tags'
-                        ? []
-                        : [
-                            { value: 'equals', label: tr('等於') },
-                            { value: 'not-equals', label: tr('不等於') },
-                          ]),
-                    ]}
-                    onChange={(operator) => {
-                      if (!operator) return
-                      const condition = {
-                        ...selectedCell.condition!,
-                        operator: operator as NonNullable<Cell['condition']>['operator'],
-                      }
-                      if (operator === 'set' || operator === 'unset') delete condition.value
-                      else
-                        condition.value =
-                          conditionField?.type === 'boolean'
-                            ? false
-                            : conditionField?.type === 'number'
-                              ? 0
-                              : ''
-                      updateCell({ condition })
-                    }}
-                  />
-                  {['equals', 'not-equals'].includes(selectedCell.condition.operator) &&
-                    (conditionField?.type === 'boolean' ? (
+              <Group justify="space-between" align="flex-start" wrap="nowrap">
+                <div>
+                  <strong>{labels[selectedCell.kind]}</strong>
+                  <Text size="xs" c="dimmed">
+                    {hints[selectedCell.kind]}
+                  </Text>
+                </div>
+                <Tooltip label={tr('移除組件') + ' (Delete)'}>
+                  <ActionIcon
+                    color="red"
+                    variant="light"
+                    aria-label={tr('移除組件')}
+                    onClick={removeSelected}
+                  >
+                    <Icon name="close" size={16} />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
+              <Accordion
+                multiple
+                variant="separated"
+                value={openSections}
+                onChange={setOpenSections}
+              >
+                {hasContent && (
+                  <Accordion.Item value="content">
+                    <Accordion.Control>{tr('內容')}</Accordion.Control>
+                    <Accordion.Panel>
+                      <Stack gap="sm">
+                        {isFieldKind(selectedCell.kind) && (
+                          <Group gap="xs" align="flex-end" wrap="nowrap">
+                            <Select
+                              style={{ flex: 1 }}
+                              label={tr('綁定欄位')}
+                              description={tr('這個組件顯示哪一個欄位的值')}
+                              value={selectedCell.attributeId}
+                              data={draft.fieldBindings
+                                .filter((f) => f.type === cellType(selectedCell.kind))
+                                .map((f) => ({ value: f.attributeId, label: f.alias }))}
+                              onChange={(v) => v && updateCell({ attributeId: v })}
+                            />
+                            <Tooltip label={tr('重新命名此欄位')}>
+                              <ActionIcon
+                                variant="default"
+                                size="lg"
+                                aria-label={tr('重新命名此欄位')}
+                                disabled={!selectedCell.attributeId}
+                                onClick={() => {
+                                  const field = draft.fieldBindings.find(
+                                    (f) => f.attributeId === selectedCell.attributeId
+                                  )
+                                  if (field)
+                                    setRenaming({ id: field.attributeId, name: field.alias })
+                                }}
+                              >
+                                <Icon name="edit" size={16} />
+                              </ActionIcon>
+                            </Tooltip>
+                          </Group>
+                        )}
+                        {(selectedCell.kind === 'static-text' ||
+                          selectedCell.kind === 'field-url') && (
+                          <Textarea
+                            label={
+                              selectedCell.kind === 'static-text'
+                                ? tr('版面文字內容')
+                                : tr('連結顯示文字')
+                            }
+                            value={selectedCell.text ?? ''}
+                            maxLength={10000}
+                            onChange={(event) => updateCell({ text: event.currentTarget.value })}
+                          />
+                        )}
+                        {selectedCell.kind === 'system-info' && (
+                          <Select
+                            label={tr('系統資訊')}
+                            allowDeselect={false}
+                            value={selectedCell.systemInfo ?? 'category'}
+                            data={[
+                              { value: 'category', label: tr('分類') },
+                              { value: 'files', label: tr('檔案數') },
+                              { value: 'size', label: tr('容量') },
+                            ]}
+                            onChange={(value) =>
+                              updateCell({ systemInfo: value as Cell['systemInfo'] })
+                            }
+                          />
+                        )}
+                        {selectedCell.kind === 'field-enum' && (
+                          <div>
+                            <TagsInput
+                              label={tr('選項')}
+                              description={tr(
+                                '選項會成為資料夾設定中的下拉選單；使用中的選項不能移除。'
+                              )}
+                              error={optionError || undefined}
+                              value={enumOptions}
+                              onChange={(options) => {
+                                const used = enumOptions.filter(
+                                  (option) => !options.includes(option) && optionUsage(option) > 0
+                                )
+                                if (used.length) {
+                                  setOptionError(
+                                    tr(
+                                      '「{0}」仍有 {1} 個資料夾使用，請先把這些資料夾改成其他值再移除。',
+                                      used[0],
+                                      optionUsage(used[0])
+                                    )
+                                  )
+                                  return
+                                }
+                                if (!options.length) {
+                                  setOptionError(tr('單選至少需要一個選項'))
+                                  return
+                                }
+                                setOptionError('')
+                                change({
+                                  ...draft,
+                                  fieldBindings: draft.fieldBindings.map((field) =>
+                                    field.attributeId === selectedCell.attributeId
+                                      ? { ...field, options }
+                                      : field
+                                  ),
+                                })
+                              }}
+                            />
+                            {enumOptions.some((option) => optionUsage(option) > 0) && (
+                              <Text size="xs" c="dimmed" mt={4}>
+                                {tr(
+                                  '使用中：{0}',
+                                  enumOptions
+                                    .filter((option) => optionUsage(option) > 0)
+                                    .map((option) => `${option} × ${optionUsage(option)}`)
+                                    .join('、')
+                                )}
+                              </Text>
+                            )}
+                          </div>
+                        )}
+                        {['image', 'game-cover'].includes(selectedCell.kind) && (
+                          <Select
+                            label={tr('圖片填滿方式')}
+                            allowDeselect={false}
+                            value={
+                              selectedCell.imageFit ??
+                              (selectedCell.kind === 'game-cover' ? 'cover' : 'contain')
+                            }
+                            data={[
+                              { value: 'cover', label: tr('填滿容器（裁切多餘部分）') },
+                              { value: 'contain', label: tr('完整顯示（保留空白）') },
+                            ]}
+                            onChange={(value) =>
+                              updateCell({ imageFit: value as Cell['imageFit'] })
+                            }
+                          />
+                        )}
+                        {selectedCell.kind === 'image' && (
+                          <Text size="sm" c="dimmed">
+                            {tr(
+                              '這是選用圖片組件。可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。'
+                            )}
+                          </Text>
+                        )}
+                        {['field-number', 'field-enum', 'field-boolean'].includes(
+                          selectedCell.kind
+                        ) && (
+                          <Select
+                            label={tr('顯示方式')}
+                            allowDeselect={false}
+                            value={selectedCell.presentation ?? 'plain'}
+                            data={[
+                              { value: 'plain', label: tr('一般文字') },
+                              ...(selectedCell.kind === 'field-number'
+                                ? [
+                                    { value: 'rating', label: tr('評分') },
+                                    { value: 'progress', label: tr('進度') },
+                                  ]
+                                : [{ value: 'badge', label: tr('狀態徽章') }]),
+                            ]}
+                            onChange={(value) =>
+                              updateCell({
+                                presentation:
+                                  value === 'plain' ? undefined : (value as Cell['presentation']),
+                              })
+                            }
+                          />
+                        )}
+                        {selectedCell.kind === 'field-number' && selectedCell.presentation && (
+                          <NumberInput
+                            label={tr('滿分／總量')}
+                            min={0.001}
+                            max={1e9}
+                            value={
+                              selectedCell.maximum ??
+                              (selectedCell.presentation === 'rating' ? 5 : 100)
+                            }
+                            onChange={(value) =>
+                              typeof value === 'number' &&
+                              value > 0 &&
+                              updateCell({ maximum: value })
+                            }
+                          />
+                        )}
+                        {isFieldKind(selectedCell.kind) && (
+                          <Checkbox
+                            label={tr('顯示複製按鈕')}
+                            checked={selectedCell.copyValue ?? false}
+                            onChange={(event) =>
+                              updateCell({ copyValue: event.currentTarget.checked })
+                            }
+                          />
+                        )}
+                      </Stack>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                )}
+                <Accordion.Item value="condition">
+                  <Accordion.Control>
+                    {tr('顯示條件')}
+                    {selectedCell.condition && (
+                      <Badge size="xs" ml="xs" color="teal">
+                        {tr('已啟用')}
+                      </Badge>
+                    )}
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Stack gap="sm">
                       <Select
-                        label={tr('比較值')}
-                        allowDeselect={false}
-                        value={String(selectedCell.condition.value)}
-                        data={[
-                          { value: 'true', label: tr('是') },
-                          { value: 'false', label: tr('否') },
-                        ]}
-                        onChange={(value) =>
-                          value &&
+                        label={tr('顯示條件欄位')}
+                        description={tr('只在所選欄位符合條件時顯示這個組件；不符合時保留空位。')}
+                        placeholder={tr('一律顯示')}
+                        clearable
+                        value={selectedCell.condition?.attributeId ?? null}
+                        data={draft.fieldBindings
+                          .filter((field) => Object.hasOwn(typeKinds, field.type))
+                          .map((field) => ({ value: field.attributeId, label: field.alias }))}
+                        onChange={(attributeId) =>
                           updateCell({
-                            condition: { ...selectedCell.condition!, value: value === 'true' },
+                            condition: attributeId ? { attributeId, operator: 'set' } : undefined,
                           })
                         }
                       />
-                    ) : conditionField?.type === 'number' ? (
-                      <NumberInput
-                        label={tr('比較值')}
-                        value={selectedCell.condition.value as number}
-                        onChange={(value) =>
-                          typeof value === 'number' &&
-                          updateCell({ condition: { ...selectedCell.condition!, value } })
+                      {selectedCell.condition && (
+                        <>
+                          <Select
+                            label={tr('顯示條件')}
+                            allowDeselect={false}
+                            value={selectedCell.condition.operator}
+                            data={[
+                              { value: 'set', label: tr('已有值') },
+                              { value: 'unset', label: tr('未填') },
+                              ...(conditionField?.type === 'tags'
+                                ? []
+                                : [
+                                    { value: 'equals', label: tr('等於') },
+                                    { value: 'not-equals', label: tr('不等於') },
+                                  ]),
+                            ]}
+                            onChange={(operator) => {
+                              if (!operator) return
+                              const condition = {
+                                ...selectedCell.condition!,
+                                operator: operator as NonNullable<Cell['condition']>['operator'],
+                              }
+                              if (operator === 'set' || operator === 'unset') delete condition.value
+                              else
+                                condition.value =
+                                  conditionField?.type === 'boolean'
+                                    ? false
+                                    : conditionField?.type === 'number'
+                                      ? 0
+                                      : conditionField?.type === 'enum'
+                                        ? (conditionField.options?.[0] ?? '')
+                                        : ''
+                              updateCell({ condition })
+                            }}
+                          />
+                          {['equals', 'not-equals'].includes(selectedCell.condition.operator) &&
+                            (conditionField?.type === 'boolean' ? (
+                              <Select
+                                label={tr('比較值')}
+                                allowDeselect={false}
+                                value={String(selectedCell.condition.value)}
+                                data={[
+                                  { value: 'true', label: tr('是') },
+                                  { value: 'false', label: tr('否') },
+                                ]}
+                                onChange={(value) =>
+                                  value &&
+                                  updateCell({
+                                    condition: {
+                                      ...selectedCell.condition!,
+                                      value: value === 'true',
+                                    },
+                                  })
+                                }
+                              />
+                            ) : conditionField?.type === 'enum' ? (
+                              <Select
+                                label={tr('比較值')}
+                                allowDeselect={false}
+                                value={String(selectedCell.condition.value ?? '')}
+                                data={(conditionField.options ?? []).map((option) => ({
+                                  value: option,
+                                  label: option,
+                                }))}
+                                onChange={(value) =>
+                                  value &&
+                                  updateCell({ condition: { ...selectedCell.condition!, value } })
+                                }
+                              />
+                            ) : conditionField?.type === 'number' ? (
+                              <NumberInput
+                                label={tr('比較值')}
+                                value={selectedCell.condition.value as number}
+                                onChange={(value) =>
+                                  typeof value === 'number' &&
+                                  updateCell({ condition: { ...selectedCell.condition!, value } })
+                                }
+                              />
+                            ) : (
+                              <TextInput
+                                label={tr('比較值')}
+                                value={String(selectedCell.condition.value ?? '')}
+                                maxLength={10000}
+                                type={
+                                  conditionField?.type === 'date'
+                                    ? 'date'
+                                    : conditionField?.type === 'datetime'
+                                      ? 'datetime-local'
+                                      : conditionField?.type === 'url'
+                                        ? 'url'
+                                        : 'text'
+                                }
+                                onChange={(event) =>
+                                  updateCell({
+                                    condition: {
+                                      ...selectedCell.condition!,
+                                      value: event.currentTarget.value,
+                                    },
+                                  })
+                                }
+                              />
+                            ))}
+                        </>
+                      )}
+                    </Stack>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item value="position">
+                  <Accordion.Control>{tr('位置與大小')}</Accordion.Control>
+                  <Accordion.Panel>
+                    <div className="coordinates">
+                      {(['x', 'y', 'w', 'h'] as const).map((key) => (
+                        <NumberInput
+                          key={key}
+                          label={
+                            {
+                              x: tr('水平位置 X'),
+                              y: tr('垂直位置 Y'),
+                              w: tr('寬度'),
+                              h: tr('高度'),
+                            }[key]
+                          }
+                          min={key === 'w' || key === 'h' ? 1 : 0}
+                          max={
+                            key === 'x'
+                              ? 12 - selectedCell.grid.w
+                              : key === 'w'
+                                ? 12 - selectedCell.grid.x
+                                : 100
+                          }
+                          value={selectedCell.grid[key]}
+                          onChange={(v) =>
+                            typeof v === 'number' &&
+                            updateCell({ grid: { ...selectedCell.grid, [key]: v } })
+                          }
+                        />
+                      ))}
+                    </div>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item value="style">
+                  <Accordion.Control>{tr('樣式')}</Accordion.Control>
+                  <Accordion.Panel>
+                    <Stack gap="sm">
+                      <ColorInput
+                        label={tr('文字顏色')}
+                        format="hex"
+                        value={selectedCell.style.textColor}
+                        onChange={(v) =>
+                          /^#[0-9a-f]{6}$/i.test(v) &&
+                          updateCell({ style: { ...selectedCell.style, textColor: v } })
                         }
                       />
-                    ) : (
-                      <TextInput
-                        label={tr('比較值')}
-                        value={String(selectedCell.condition.value ?? '')}
-                        maxLength={10000}
-                        type={
-                          conditionField?.type === 'date'
-                            ? 'date'
-                            : conditionField?.type === 'datetime'
-                              ? 'datetime-local'
-                              : conditionField?.type === 'url'
-                                ? 'url'
-                                : 'text'
-                        }
-                        onChange={(event) =>
+                      <Checkbox
+                        label={tr('背景透明')}
+                        checked={selectedCell.style.backgroundColor === 'transparent'}
+                        onChange={(e) =>
                           updateCell({
-                            condition: {
-                              ...selectedCell.condition!,
-                              value: event.currentTarget.value,
+                            style: {
+                              ...selectedCell.style,
+                              backgroundColor: e.currentTarget.checked ? 'transparent' : '#282a2e',
                             },
                           })
                         }
                       />
-                    ))}
-                </>
-              )}
-              <div className="coordinates">
-                {(['x', 'y', 'w', 'h'] as const).map((key) => (
-                  <NumberInput
-                    key={key}
-                    label={
-                      { x: tr('水平位置 X'), y: tr('垂直位置 Y'), w: tr('寬度'), h: tr('高度') }[
-                        key
-                      ]
-                    }
-                    min={key === 'w' || key === 'h' ? 1 : 0}
-                    max={key === 'x' || key === 'w' ? 12 : 100}
-                    value={selectedCell.grid[key]}
-                    onChange={(v) =>
-                      typeof v === 'number' &&
-                      updateCell({ grid: { ...selectedCell.grid, [key]: v } })
-                    }
-                  />
-                ))}
-              </div>
-              <ColorInput
-                label={tr('文字顏色')}
-                format="hex"
-                value={selectedCell.style.textColor}
-                onChange={(v) =>
-                  /^#[0-9a-f]{6}$/i.test(v) &&
-                  updateCell({ style: { ...selectedCell.style, textColor: v } })
-                }
-              />
-              <Checkbox
-                label={tr('背景透明')}
-                checked={selectedCell.style.backgroundColor === 'transparent'}
-                onChange={(e) =>
-                  updateCell({
-                    style: {
-                      ...selectedCell.style,
-                      backgroundColor: e.currentTarget.checked ? 'transparent' : '#282a2e',
-                    },
-                  })
-                }
-              />
-              <ColorInput
-                label={tr('背景顏色')}
-                format="hex"
-                disabled={selectedCell.style.backgroundColor === 'transparent'}
-                value={
-                  selectedCell.style.backgroundColor === 'transparent'
-                    ? '#282a2e'
-                    : selectedCell.style.backgroundColor
-                }
-                onChange={(v) =>
-                  /^#[0-9a-f]{6}$/i.test(v) &&
-                  updateCell({ style: { ...selectedCell.style, backgroundColor: v } })
-                }
-              />
-              <Button color="red" variant="light" onClick={removeSelected}>
-                {tr('移除組件')}
-              </Button>
+                      <ColorInput
+                        label={tr('背景顏色')}
+                        format="hex"
+                        disabled={selectedCell.style.backgroundColor === 'transparent'}
+                        value={
+                          selectedCell.style.backgroundColor === 'transparent'
+                            ? '#282a2e'
+                            : selectedCell.style.backgroundColor
+                        }
+                        onChange={(v) =>
+                          /^#[0-9a-f]{6}$/i.test(v) &&
+                          updateCell({ style: { ...selectedCell.style, backgroundColor: v } })
+                        }
+                      />
+                    </Stack>
+                  </Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
             </Stack>
           ) : (
-            <p className="muted">{tr('選擇畫布上的組件')}</p>
+            <Stack gap={6} className="inspector-empty">
+              <Text size="sm" fw={600}>
+                {tr('選擇畫布上的組件')}
+              </Text>
+              <Text size="xs" c="dimmed">
+                {tr('點選畫布上的組件，就能在這裡調整內容、條件、位置與樣式。')}
+              </Text>
+              <Text size="xs" c="dimmed">
+                {tr('拖曳移動、拉邊角縮放；按 Delete 可移除。')}
+              </Text>
+              <Text size="xs" c="dimmed">
+                {tr('要加入新組件或欄位，請從左側拖入畫布，或直接點選。')}
+              </Text>
+            </Stack>
           )}
         </aside>
       </div>
