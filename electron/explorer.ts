@@ -379,7 +379,11 @@ export class Explorer {
         const file = path.join(
           cache,
           createHash('sha256')
-            .update(`${entry.file}/${entry.stat.size}/${entry.stat.mtimeMs}`)
+            // Video previews are cached per size generation, so the old low-resolution ones are not reused.
+            .update(
+              `${entry.file}/${entry.stat.size}/${entry.stat.mtimeMs}` +
+                (entry.mime.startsWith('video/') ? '/480' : '')
+            )
             .digest('hex') + '.jpg'
         )
         await safePath(this.root, file)

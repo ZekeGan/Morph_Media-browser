@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.20.1 — 2026-11-01
+
+- Video previews are now generated at up to 480 px (was 160×90) and JPEG quality 85, so they stay sharp at tile size; previously cached low-resolution video previews are regenerated automatically.
+
 ## 0.20.0 — 2026-11-01
 
 - Game detection now recognises Japanese visual-novel engines (Artemis, AI6WIN, BGI/Ethornell, ONScripter/NScripter, RealLive/AVG32, SiglusEngine, YU-RIS, Nitroplus NPA), and lists `.npk`-packaged and Steam releases of unknown engines as candidates. A game folder is now protected instead of publishing its internal folders (backups, patches, `files`, `data`) as folders of their own.

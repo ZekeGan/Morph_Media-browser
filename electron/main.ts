@@ -288,12 +288,13 @@ else {
           }),
         thumbnail: async (file, mime, url) => {
           if (mime?.startsWith('video/')) {
+            // A box, not a fixed size: the shell keeps the aspect ratio. 160x90 looked blurry in tiles.
             const image = await nativeImage.createThumbnailFromPath(file, {
-              width: 160,
-              height: 90,
+              width: 480,
+              height: 480,
             })
             if (image.isEmpty()) throw new Error('無影片縮圖')
-            return image.toJPEG(78)
+            return image.toJPEG(85)
           }
           if (
             !win ||
