@@ -54,6 +54,7 @@ S14 已移除，不重新列入。
 
 ## 待查收與限制
 
+- **0.13.5 待查收**：`pnpm test:ui:all` 24 個 UI 測試全數通過（約 12 分鐘）；appearance-ui 單次曾耗時 219 秒，疑為機器負載，未定位。測試已改為目前 UI（根資料夾卡片優先、右側面板子資料夾、試播佇列、內嵌 CARD 控制）。新增專案預設為單層第 1 層（自 0.5.0 起），DECISIONS 2026-10-27「建立預設全部」已被取代，待你確認是否要改回。
 - **0.13.4 待查收**：影片專案右側面板寬度為 0 的版面錯誤已修（`.mixed-media-browser` 寬度、`.video-panel` 僅在內嵌播放器時套用）；舊 editing-ui／stages-ui／shell-ui 與影片 auto-next／lifecycle 組已移除（對應舊內嵌播放器設計），appearance-ui／video-player-ui／file-overview-ui 已改為目前 UI。影片專案現在不再有「專案層自動播放／自動接續」入口，此設定欄位是否保留待決。
 - **0.13.0 待查收**：遊戲專案的非遊戲 ROOT 資料夾改用統一資料夾頁（game-folder-page-ui）；RightPanel／overlay-frame／FileMenu／ViewToggle 為結構重構，回歸測試通過；S18 群組以 model／cells 測試與 cell-group-ui 驗證（拖曳縮放群組時的最小高度未做 UI 自動化，請實測）。Prettier 已於 0.13.2 加入（`pnpm format`／`format:check`）；其餘 20 多個舊 UI 測試仍各自複製啟動程式，只有新測試使用 tests/support/app.ts。
 - **0.12.0 S19 待查收**：settings-dock-ui 驗證預設抽屜、停靠／取消停靠、分頁切換、窄窗退回與重啟保存；未驗證有未保存草稿時切換分頁的確認（沿用 closeConfig 既有確認），請實測。

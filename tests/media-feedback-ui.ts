@@ -109,9 +109,9 @@ const open = async (name: string) => {
     .filter({ has: page.getByText(name, { exact: true }) })
     .click()
   await page.locator('.media-viewer-shell').waitFor()
-  assert.equal(await button('切換媒體佇列').getAttribute('aria-pressed'), 'false')
-  await button('切換媒體佇列').click()
-  await page.locator('.media-queue').waitFor({ state: 'visible' })
+  if ((await button('切換媒體佇列').getAttribute('aria-pressed')) !== 'true')
+    await button('切換媒體佇列').click()
+  await page.locator('.playback-queue-open').waitFor({ state: 'visible' })
 }
 try {
   await app.evaluate(({ BrowserWindow }) =>
@@ -129,7 +129,7 @@ try {
     const img = document.querySelector('.album-cover img') as HTMLImageElement
     return !!img && img.complete && img.naturalWidth > 0
   })
-  assert.equal(await page.locator('.media-queue-scroll button').count(), 1)
+  assert.equal(await page.locator('.playback-item').count(), 3)
   await button('選擇專輯封面').click()
   await page.getByRole('menuitem', { name: 'broken.png', exact: true }).click()
   await page.getByRole('alert').filter({ hasText: '無法載入專輯封面' }).waitFor()
@@ -152,21 +152,15 @@ try {
     await page.evaluate(() => document.querySelector('video') === (window as any).feedbackVideo),
     true
   )
-  assert.equal(await page.locator('.media-queue-thumbnails .media-queue-scroll button').count(), 2)
-  assert.equal(await page.locator('.media-queue-scroll button span').count(), 0)
-  const second = page.getByRole('button', { name: 'second.mp4', exact: true })
-  await page.mouse.move(30, 100)
-  await button('圖片模式').focus()
-  await page.keyboard.press('Tab')
-  await page.keyboard.press('Tab')
-  assert.equal(await second.evaluate((node) => node === document.activeElement), true)
-  await page.getByRole('tooltip', { name: 'second.mp4', exact: true }).waitFor()
+  assert.equal(await page.locator('.playback-items-images .playback-item').count(), 3)
+  // A trial play is not queued: the folder tab lists the siblings to switch to.
+  await page.getByRole('tab', { name: /目前資料夾/ }).click()
+  const second = page
+    .locator('.playback-item')
+    .filter({ hasText: 'second.mp4' })
+    .locator('button')
+    .first()
   await second.click()
-  await page.waitForFunction(
-    () =>
-      document.querySelector('.media-queue-scroll button.active')?.getAttribute('aria-label') ===
-      'second.mp4'
-  )
   await page.waitForFunction(
     () => document.querySelector('.media-viewer-shell>header strong')?.textContent === 'second.mp4'
   )
@@ -182,7 +176,8 @@ try {
   await page.screenshot({ path: path.join(root, 'video-thumbnails.png') })
   await button('關閉媒體檢視器').click()
   await open('first.mp4')
-  assert.equal(await button('圖片模式').getAttribute('aria-pressed'), 'false')
+  // The chosen queue view is remembered while the app runs.
+  assert.equal(await button('圖片模式').getAttribute('aria-pressed'), 'true')
   await button('關閉媒體檢視器').click()
   await page.locator('.media-subfolders button').filter({ hasText: 'Single' }).click()
   await filter('音樂')

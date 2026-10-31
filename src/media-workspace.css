@@ -166,6 +166,9 @@
     flex-wrap: wrap;
     gap: 6px;
     padding-top: 8px;
+    /* A long list must not push the files out of view. */
+    max-height: 132px;
+    overflow-y: auto;
 }
 
 .media-subfolder {

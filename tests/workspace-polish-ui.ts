@@ -386,6 +386,7 @@ try {
       await page.locator('.theme-option').nth(index).click()
       if (await button('保存外觀設定').isEnabled()) await button('保存外觀設定').click()
       else await button('取消').click()
+      await page.locator('[role=dialog]').waitFor({ state: 'hidden' })
       await edit()
       await page.locator('.scheme-toolbar').waitFor()
       const rects = await page.locator('.scheme-toolbar').evaluate((element) =>
@@ -435,6 +436,7 @@ try {
       if (await button('保存外觀設定').isEnabled()) await button('保存外觀設定').click()
       else await button('取消').click()
       await resize(800, 700)
+      if (await button('關閉資料夾內容').isVisible()) await button('關閉資料夾內容').click()
       await edit()
       await page.locator('.scheme-toolbar').waitFor()
       await button('新增方案').click()
@@ -462,7 +464,6 @@ try {
           })
         )
       )
-      await page.locator('.search-details summary').last().click()
       await page.locator('.search-footer button').first().focus()
       await page.screenshot({ path: path.join(screens, `search-${next}-narrow.png`) })
       await page.keyboard.press('Escape')

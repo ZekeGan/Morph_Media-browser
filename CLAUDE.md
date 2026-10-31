@@ -33,6 +33,7 @@ Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC �
 - **提交與版本號**：每批改動完成後 commit 並同步更新 package.json 版本與 CHANGELOG（新功能升次版號，純修正升修訂號）；推送須使用者核准，核准只涵蓋已提交的 commit。
 - **R-I18N**：發行前語系關卡等使用者確認要發布才執行，一般開發只局部同步新字串。
 - **UI／UX 規則**：新增與修改的介面都須有良好的 UX，沿用現有三主題、圖示、控制尺寸與焦點樣式，同類控制在各入口一致；完成前檢查窄窗、長文字、鍵盤焦點與三主題，不以「功能可用」代替。
+- **測試同步**：功能被移除、取代或改版時，同一批 commit 要更新或刪除對應的 `tests/*`；不留標註「歷史」的失效測試。新 UI 測試優先用 `tests/support/app.ts`。
 
 ## 不可省略的限制
 
@@ -44,7 +45,7 @@ Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC �
 
 ## 命令與驗證
 
-`pnpm dev`／`pnpm build`（含 tsc）／`pnpm typecheck`／`pnpm exec tsx --test tests/<name>.test.ts`／`pnpm test`（全部資料測試）／`pnpm test:workspace`（Electron UI，需相符建置）。格式用 `pnpm format`（提交前 `pnpm format:check`）；不臆造 lint 或其他 script；未改依賴不重裝。
+`pnpm dev`／`pnpm build`（含 tsc）／`pnpm typecheck`／`pnpm exec tsx --test tests/<name>.test.ts`／`pnpm test`（全部資料測試）／`pnpm test:workspace`（單一 Electron UI 流程，需相符建置）／`pnpm test:ui:all`（依序跑全部 `tests/*-ui.ts` 並計時，約 10 分鐘，可加名稱片段篩選）。格式用 `pnpm format`（提交前 `pnpm format:check`）；不臆造 lint 或其他 script；未改依賴不重裝。
 
 依風險選最小有效驗證（完整表：`docs/IMPLEMENTATION.md#驗證選擇`）：
 

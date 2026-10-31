@@ -135,7 +135,7 @@ try {
       await page.waitForFunction(() =>
         document.querySelector('.gallery')?.textContent?.includes('2／6')
       )
-      assert.ok((await gallery.locator('.media-thumbnail[title="Image 00200.jpg"]').count()) > 0)
+      assert.ok((await gallery.locator('.media-thumbnail[title$="Image 00200.jpg"]').count()) > 0)
       await gallery.locator('.media-thumbnail').first().focus()
       await page.keyboard.press('End')
       await page.waitForFunction(

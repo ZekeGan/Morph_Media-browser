@@ -33,7 +33,7 @@ import { saveCardPreset, visibleCells } from '../shared/layouts'
 import { BrowseWorkspace } from './BrowseWorkspace'
 import { contentCells, type ExplorerRequest, type ExplorerResponse } from '../shared/explorer'
 import type { WorkspacePrefs } from '../shared/workspace'
-import type { Notice } from '../shared/notifications'
+import { errorMessage, type Notice } from '../shared/notifications'
 
 const empty: Snapshot = {
   projects: [],
@@ -98,7 +98,7 @@ export function App() {
   }, [])
   const dismissNotice = useCallback(() => setNoticeState(undefined), [])
   const notifyError = useCallback(
-    (message: string) => setNotice({ level: 'error', message }),
+    (message: string) => setNotice({ level: 'error', message: errorMessage(message) }),
     [setNotice]
   )
   const [settingsOverlay, setSettingsOverlay] = useState(false)

@@ -2,6 +2,12 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.13.5 — 2026-11-01
+
+- Error toasts no longer show Electron's "Error invoking remote method" prefix; only the cause is shown.
+- The folder page's subfolder list is height-limited and scrolls, so a folder with many subfolders no longer pushes its files out of view.
+- Tests: workspace-ui, workspace-polish-ui, media-feedback-ui, gallery-performance-ui, appearance-ui and video-player-ui follow the current folder page, playback queue and inline CARD controls; drag-and-drop steps retry instead of flaking; add `pnpm test:ui:all` and remove the historical media-final-ui and ui-smoke harnesses.
+
 ## 0.13.4 — 2026-11-01
 
 - Fix the right panel collapsing to zero width for video folders (mixed media browser inside the video panel), so the file list is readable again.

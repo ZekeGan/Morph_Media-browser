@@ -12,3 +12,10 @@ export function completionNotice(completed: number, issues: number, message: str
     message,
   }
 }
+
+// Electron prefixes rejected IPC calls with "Error invoking remote method '<channel>': "; users should only see the cause.
+export function errorMessage(text: string): string {
+  return text
+    .replace(/^(?:Error: )*Error invoking remote method '[^']*': /, '')
+    .replace(/^(?:Error: )+/, '')
+}

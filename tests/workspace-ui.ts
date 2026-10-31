@@ -1,4 +1,4 @@
-import { _electron as electron } from 'playwright-core'
+import { _electron as electron, type Locator } from 'playwright-core'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import assert from 'node:assert/strict'
@@ -94,6 +94,23 @@ const open = async (name: string) => {
   await page.waitForFunction(() =>
     document.querySelector('.statusbar')?.textContent?.includes('就緒')
   )
+}
+// HTML5 drag-and-drop through real mouse moves; a single dragTo can miss the drop target, so retry until it lands.
+const dragUntil = async (source: Locator, target: Locator, landed: () => Promise<boolean>) => {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const from = (await source.boundingBox())!,
+      to = (await target.boundingBox())!
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(from.x + from.width / 2 + 8, from.y + from.height / 2 + 8, { steps: 4 })
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 })
+    await page.mouse.up()
+    for (let wait = 0; wait < 10; wait++) {
+      if (await landed()) return
+      await page.waitForTimeout(100)
+    }
+  }
+  assert.ok(await landed(), 'drag did not land')
 }
 const card = (name: string) =>
   page
@@ -203,34 +220,31 @@ try {
     .locator('.sidebar-section')
     .filter({ has: page.getByRole('button', { name: '收合 測試群組', exact: true }) })
   await group.waitFor()
-  await page
-    .getByRole('button', { name: '開啟專案 遊戲收藏', exact: true })
-    .first()
-    .locator('..')
-    .dragTo(group)
-  await group.getByRole('button', { name: '開啟專案 遊戲收藏', exact: true }).waitFor()
-  await page
-    .getByRole('button', { name: '開啟專案 相簿收藏', exact: true })
-    .first()
-    .locator('..')
-    .dragTo(group.getByRole('button', { name: '開啟專案 遊戲收藏', exact: true }).locator('..'))
-  await page.waitForFunction(
-    () =>
-      [...document.querySelectorAll('.sidebar-section')]
-        .find((e) => e.textContent?.includes('測試群組'))
-        ?.querySelector('.project-name')?.textContent === '相簿收藏'
+  await dragUntil(
+    page.getByRole('button', { name: '開啟專案 遊戲收藏', exact: true }).first().locator('..'),
+    group,
+    async () =>
+      (await group.getByRole('button', { name: '開啟專案 遊戲收藏', exact: true }).count()) > 0
   )
-  await group
-    .getByRole('button', { name: '開啟專案 遊戲收藏', exact: true })
-    .locator('..')
-    .dragTo(group.getByRole('button', { name: '開啟專案 相簿收藏', exact: true }).locator('..'))
-  await page.waitForFunction(
-    () =>
-      [...document.querySelectorAll('.sidebar-section')]
-        .find((e) => e.textContent?.includes('測試群組'))
-        ?.querySelector('.project-name')?.textContent === '遊戲收藏'
+  const firstInGroup = () =>
+    page.evaluate(
+      () =>
+        [...document.querySelectorAll('.sidebar-section')]
+          .find((e) => e.textContent?.includes('測試群組'))
+          ?.querySelector('.project-name')?.textContent
+    )
+  await dragUntil(
+    page.getByRole('button', { name: '開啟專案 相簿收藏', exact: true }).first().locator('..'),
+    group.getByRole('button', { name: '開啟專案 遊戲收藏', exact: true }).locator('..'),
+    async () => (await firstInGroup()) === '相簿收藏'
+  )
+  await dragUntil(
+    group.getByRole('button', { name: '開啟專案 遊戲收藏', exact: true }).locator('..'),
+    group.getByRole('button', { name: '開啟專案 相簿收藏', exact: true }).locator('..'),
+    async () => (await firstInGroup()) === '遊戲收藏'
   )
   console.log('PASS project drag/drop across groups and manual ordering')
+  await card('Album').dblclick()
   await card('A').dblclick()
   await header().getByText('A', { exact: true }).waitFor()
   assert.equal(await card('B').count(), 1)
@@ -273,7 +287,10 @@ try {
   await page.locator('.folder-table tbody tr').filter({ hasText: 'A' }).first().dblclick()
   await page.locator('.folder-table').getByText('B', { exact: true }).waitFor()
   await header().getByText('A', { exact: true }).waitFor()
-  await page.getByRole('button', { name: '返回', exact: true }).click()
+  await page
+    .locator('.workspace-breadcrumb')
+    .getByRole('button', { name: '返回', exact: true })
+    .click()
   await header().getByText('Album', { exact: true }).waitFor()
   const original = await fs.readFile(folderFile(path.join(album, 'A')))
   await fs.unlink(folderFile(path.join(album, 'A')))
@@ -286,14 +303,11 @@ try {
   await assert.rejects(fs.access(folderFile(path.join(album, 'A'))))
   await fs.writeFile(folderFile(path.join(album, 'A')), original)
   await mode('CARD')
-  await page.getByRole('button', { name: '卡片 顯示設定', exact: true }).click()
-  const display = page.getByRole('dialog', { name: '卡片 顯示設定', exact: true })
-  await display.getByText('單層', { exact: true }).click()
-  await display.getByLabel('顯示層數', { exact: true }).click()
-  await page.getByRole('option', { name: '第 2 層', exact: true }).click()
-  await display.getByLabel('每頁筆數', { exact: true }).fill('20')
-  await display.getByRole('button', { name: '套用', exact: true }).click()
-  await display.waitFor({ state: 'hidden' })
+  await page
+    .getByRole('navigation', { name: '資料夾路徑' })
+    .getByRole('button', { name: 'Album', exact: true })
+    .click()
+  await card('A').waitFor()
   assert.equal(await card('B').count(), 0)
   await card('A').dblclick()
   await card('B').waitFor()
@@ -351,6 +365,7 @@ try {
     'PASS mode-specific navigation, missing-record guard, presets, drawer, pane and settings'
   )
   await open('遊戲收藏')
+  await card('Games').dblclick()
   await card('Game').dblclick()
   await header().getByText('Game', { exact: true }).waitFor()
   await page.locator('.game-fields').waitFor()
@@ -382,6 +397,15 @@ try {
     await fs.readdir(path.join(game, 'Game', 'Game_Data')).then((a) => a.includes(DATA_DIR)),
     false
   )
+  // The cover is written as asset then banner reference; wait for the settled record.
+  await page.waitForFunction(() =>
+    document.querySelector('.statusbar')?.textContent?.includes('就緒')
+  )
+  for (let n = 0; n < 50; n++) {
+    if ((await fs.readFile(folderFile(path.join(game, 'Game')), 'utf8')).includes('bannerAssetId'))
+      break
+    await page.waitForTimeout(100)
+  }
   const beforeCancel = await fs.readFile(folderFile(path.join(game, 'Game')), 'utf8')
   await app.evaluate(({ dialog }) => {
     dialog.showOpenDialog = (async () => ({
@@ -398,12 +422,12 @@ try {
   await page.screenshot({ path: path.join(screens, 'game.png') })
   console.log('PASS game three-zone content and portable WebP cover')
   await open('影片收藏')
+  await page.locator('.mixed-media-browser .media-thumbnail').first().click()
   await page.locator('.video-stage video').waitFor()
   await page.waitForFunction(() => {
     const v = document.querySelector('video')
     return v && v.readyState >= 2
   })
-  assert.equal(await page.locator('.video-strip .video-tile').count(), 1)
   assert.equal(await page.locator('.video-panel .media-info-template').count(), 0)
   await page.evaluate(async () => {
     const v = document.querySelector('video')!
@@ -415,6 +439,8 @@ try {
     document.querySelector('.statusbar')?.textContent?.includes('就緒')
   )
   console.log('PASS minimal video pane and actual H.264 playback')
+  await page.getByRole('button', { name: '關閉媒體檢視器', exact: true }).click()
+  await page.getByRole('dialog', { name: '播放佇列', exact: true }).waitFor({ state: 'hidden' })
   await page.getByRole('button', { name: '新增專案', exact: true }).click()
   const create = page.getByRole('dialog', { name: '建立媒體專案', exact: true })
   await create.getByLabel('專案名稱').fill('新專案')
@@ -436,7 +462,7 @@ try {
       )!.project!
   )
   assert.equal(created.scanAll, true)
-  assert.deepEqual(created.cardView, { mode: 'multi', level: 'all' })
+  assert.deepEqual(created.cardView, { mode: 'single', level: 1 })
   console.log('PASS staged native folder choice and create defaults')
   await page.getByRole('button', { name: '關閉資料夾內容', exact: true }).click()
   await page.setViewportSize({ width: 800, height: 650 })

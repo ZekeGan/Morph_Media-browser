@@ -1,6 +1,6 @@
 {
   "name": "media-viewer",
-  "version": "0.13.4",
+  "version": "0.13.5",
   "private": true,
   "type": "module",
   "main": "out/main/main.js",
@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "test:ui": "tsx tests/workspace-ui.ts",
+    "test:ui:all": "node scripts/run-ui-tests.mjs",
     "postinstall": "install-electron",
     "test:workspace": "tsx tests/workspace-ui.ts",
     "format": "prettier --write \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",
