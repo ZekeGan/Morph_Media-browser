@@ -112,13 +112,29 @@ const buttons = async (back: boolean, forward: boolean) => {
       }),
     { back, forward }
   )
-  for (const area of [center(), right()]) {
-    assert.equal(await area.getByRole('button', { name: '返回', exact: true }).isDisabled(), !back)
-    assert.equal(
-      await area.getByRole('button', { name: '前進', exact: true }).isDisabled(),
-      !forward
-    )
-  }
+  assert.equal(
+    await center().getByRole('button', { name: '返回', exact: true }).isDisabled(),
+    !back
+  )
+  assert.equal(
+    await center().getByRole('button', { name: '前進', exact: true }).isDisabled(),
+    !forward
+  )
+  // The panel's own copies are hidden unless it covers the center, so read them from the DOM.
+  assert.equal(
+    await page.locator('.folder-panel-header button[aria-label="返回"]').isDisabled(),
+    !back
+  )
+  assert.equal(
+    await page.locator('.folder-panel-header button[aria-label="前進"]').isDisabled(),
+    !forward
+  )
+}
+// The panel repeats back/forward only while it is expanded over the center.
+const viaPanel = async (name: '返回' | '前進') => {
+  await button('放大內容區').click()
+  await right().getByRole('button', { name, exact: true }).click()
+  await button('還原內容區').click()
 }
 const go = async (name: string) => {
   await page
@@ -249,12 +265,12 @@ try {
   await side(1, '.folder-panel-body', true, 'dom-first')
   await current('B')
   await buttons(true, false)
-  await right().getByRole('button', { name: '返回', exact: true }).click()
+  await viaPanel('返回')
   await current('A')
   await center().getByRole('button', { name: '返回', exact: true }).click()
   await current('Media')
   await buttons(false, true)
-  await right().getByRole('button', { name: '前進', exact: true }).click()
+  await viaPanel('前進')
   await current('A')
   await center().getByRole('button', { name: '前進', exact: true }).click()
   await current('B')
@@ -317,7 +333,7 @@ try {
   }
   await side(-1)
   await current('B')
-  await right().getByRole('button', { name: '返回', exact: true }).click()
+  await viaPanel('返回')
   await current('A')
   await buttons(true, true)
   await page.locator('.breadcrumb-link').first().click()

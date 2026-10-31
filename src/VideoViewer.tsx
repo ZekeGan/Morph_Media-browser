@@ -60,6 +60,7 @@ export function VideoViewer({
 
   const [settings, setSettings] = useState(defaultSubtitle),
     [error, setError] = useState(''),
+    [failure, setFailure] = useState<{ fileId: string; probe?: string }>(),
     [files, setFiles] = useState<File[]>([]),
     [captions, setCaptions] = useState(true)
 
@@ -186,13 +187,31 @@ export function VideoViewer({
         node.isConnected &&
         (reason as Error).name !== 'AbortError'
       )
-        setError(
-          node.error || (reason as Error).name === 'NotSupportedError'
-            ? tr('此影片無法解碼或已失效；首輪驗證 MP4／WebM，MKV／HEVC 不保證支援。')
-            : tr('無法自動播放，請按播放器的播放按鈕。')
-        )
+        if (node.error || (reason as Error).name === 'NotSupportedError') reportDecodeFailure()
+        else setError(tr('無法自動播放，請按播放器的播放按鈕。'))
     }
   }
+
+  // The browser only says "cannot decode"; the file's first bytes usually say why.
+  const reportDecodeFailure = () => {
+    setError(tr('此影片無法解碼或已失效；首輪驗證 MP4／WebM，MKV／HEVC 不保證支援。'))
+    const target = currentFile.current
+    if (!target) return
+    setFailure({ fileId: target })
+    void run({ action: 'fileProbe', rowId: row.rowId, fileId: target }).then((result) => {
+      if (mounted.current && currentFile.current === target)
+        setFailure({ fileId: target, probe: result?.probe?.kind })
+    })
+  }
+  const failureCause = (kind?: string) =>
+    ({
+      zip: tr('這個檔案其實是 ZIP 壓縮檔，只是副檔名是影片；請先解壓縮。'),
+      rar: tr('這個檔案其實是 RAR 壓縮檔，只是副檔名是影片；請先解壓縮。'),
+      '7z': tr('這個檔案其實是 7z 壓縮檔，只是副檔名是影片；請先解壓縮。'),
+      gzip: tr('這個檔案其實是壓縮檔，只是副檔名是影片；請先解壓縮。'),
+      html: tr('這個檔案是網頁或文字，不是影片；可能是下載失敗，請重新下載。'),
+      empty: tr('這個檔案是空的（0 位元組）；可能是下載或複製中斷。'),
+    })[kind as 'zip'] ?? ''
 
   const togglePlay = () => {
     const node = video.current
@@ -794,7 +813,7 @@ export function VideoViewer({
               if (event.currentTarget === video.current) {
                 countdown()
                 setWaiting(false)
-                setError(tr('此影片無法解碼或已失效；首輪驗證 MP4／WebM，MKV／HEVC 不保證支援。'))
+                reportDecodeFailure()
               }
             }}
           />
@@ -826,7 +845,29 @@ export function VideoViewer({
 
         {(error || audio.error) && (
           <div className="video-error" role="alert">
-            {error || audio.error}
+            {failure && failure.fileId === file?.id && failureCause(failure.probe)
+              ? failureCause(failure.probe)
+              : error || audio.error}
+            {failure && failure.fileId === file?.id && file && (
+              <div className="video-error-actions">
+                <button
+                  type="button"
+                  onClick={() =>
+                    void run({ action: 'openFile', rowId: row.rowId, fileId: file.id })
+                  }
+                >
+                  {tr('用系統預設播放器開啟')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void run({ action: 'revealFile', rowId: row.rowId, fileId: file.id })
+                  }
+                >
+                  {tr('在檔案總管顯示')}
+                </button>
+              </div>
+            )}
           </div>
         )}
 

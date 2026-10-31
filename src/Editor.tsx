@@ -404,7 +404,7 @@ export function Editor({
     <section className="editor-page">
       <header className="editor-toolbar">
         <strong title={project.name}>
-          {tr('CELL 積木編輯器')} · {targetLabel}
+          {tr('積木編輯器')} · {targetLabel}
         </strong>
         {presets && (
           <Group className="scheme-toolbar" align="end" gap="xs">

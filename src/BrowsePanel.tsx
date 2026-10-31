@@ -104,6 +104,7 @@ export function BrowsePanel(props: Props) {
             <>
               <Tooltip label={tr('返回上一個瀏覽位置')}>
                 <ActionIcon
+                  className="panel-history"
                   aria-label={tr('返回')}
                   disabled={!ready || busy || !history.index}
                   variant="subtle"
@@ -114,6 +115,7 @@ export function BrowsePanel(props: Props) {
               </Tooltip>
               <Tooltip label={tr('前進至下一個瀏覽位置')}>
                 <ActionIcon
+                  className="panel-history"
                   aria-label={tr('前進')}
                   disabled={!ready || busy || history.index >= history.items.length - 1}
                   variant="subtle"

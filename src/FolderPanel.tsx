@@ -420,7 +420,7 @@ export function FolderPanel({
             {mainFields.map(renderField)}
             {!mainFields.length && (
               <Text c="dimmed" size="sm">
-                {tr('專案尚未配置欄位，可由 CELL 編輯器新增。')}
+                {tr('專案尚未配置欄位，可在積木編輯器新增。')}
               </Text>
             )}
             {!!otherFields.length && (

@@ -255,7 +255,7 @@ export function SearchDialog({
                 size="lg"
                 variant="default"
                 aria-label={tr('保存目前條件')}
-                title={tr('保存目前條件')}
+                title={canSave ? tr('保存目前條件') : tr('先輸入搜尋條件，才能保存為常用搜尋')}
                 disabled={!canSave}
                 onClick={() => {
                   setSavedOpen(false)
@@ -335,6 +335,7 @@ export function SearchDialog({
                 rightSection={<span aria-hidden="true">{savedMatches.length} ▾</span>}
               >
                 {query.trim() ? tr('符合的常用搜尋') : tr('常用搜尋')}
+                {savedMatches.length === 0 && !query.trim() ? ' · ' + tr('尚無') : ''}
               </Button>
             </Popover.Target>
             <Popover.Dropdown className="saved-search-dropdown">

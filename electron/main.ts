@@ -271,6 +271,7 @@ else {
           const error = await shell.openPath(file)
           if (error) throw new Error(error)
         },
+        reveal: (file) => shell.showItemInFolder(file),
         launch: (file, args) =>
           new Promise<void>((resolve, reject) => {
             const child = spawn(file, args, {

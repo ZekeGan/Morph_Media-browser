@@ -5770,5 +5770,113 @@
     "en": "Open folder {0} in File Explorer",
     "ja": "フォルダー {0} をエクスプローラーで開く",
     "es": "Abrir la carpeta {0} en el Explorador de archivos"
+  },
+  "用系統預設播放器開啟": {
+    "zh-CN": "用系统默认播放器打开",
+    "en": "Open with the default player",
+    "ja": "既定のプレーヤーで開く",
+    "es": "Abrir con el reproductor predeterminado"
+  },
+  "在檔案總管顯示": {
+    "zh-CN": "在文件资源管理器中显示",
+    "en": "Show in File Explorer",
+    "ja": "エクスプローラーで表示",
+    "es": "Mostrar en el Explorador de archivos"
+  },
+  "這個檔案其實是 ZIP 壓縮檔，只是副檔名是影片；請先解壓縮。": {
+    "zh-CN": "这个文件其实是 ZIP 压缩包，只是扩展名是视频；请先解压缩。",
+    "en": "This file is actually a ZIP archive with a video extension; extract it first.",
+    "ja": "このファイルは実際には ZIP アーカイブで、拡張子だけが動画です。先に展開してください。",
+    "es": "Este archivo es en realidad un ZIP con extensión de vídeo; descomprímelo primero."
+  },
+  "這個檔案其實是 RAR 壓縮檔，只是副檔名是影片；請先解壓縮。": {
+    "zh-CN": "这个文件其实是 RAR 压缩包，只是扩展名是视频；请先解压缩。",
+    "en": "This file is actually a RAR archive with a video extension; extract it first.",
+    "ja": "このファイルは実際には RAR アーカイブで、拡張子だけが動画です。先に展開してください。",
+    "es": "Este archivo es en realidad un RAR con extensión de vídeo; descomprímelo primero."
+  },
+  "這個檔案其實是 7z 壓縮檔，只是副檔名是影片；請先解壓縮。": {
+    "zh-CN": "这个文件其实是 7z 压缩包，只是扩展名是视频；请先解压缩。",
+    "en": "This file is actually a 7z archive with a video extension; extract it first.",
+    "ja": "このファイルは実際には 7z アーカイブで、拡張子だけが動画です。先に展開してください。",
+    "es": "Este archivo es en realidad un 7z con extensión de vídeo; descomprímelo primero."
+  },
+  "這個檔案其實是壓縮檔，只是副檔名是影片；請先解壓縮。": {
+    "zh-CN": "这个文件其实是压缩文件，只是扩展名是视频；请先解压缩。",
+    "en": "This file is actually a compressed archive with a video extension; extract it first.",
+    "ja": "このファイルは実際には圧縮ファイルで、拡張子だけが動画です。先に展開してください。",
+    "es": "Este archivo es en realidad un archivo comprimido con extensión de vídeo; descomprímelo primero."
+  },
+  "這個檔案是網頁或文字，不是影片；可能是下載失敗，請重新下載。": {
+    "zh-CN": "这个文件是网页或文本，不是视频；可能是下载失败，请重新下载。",
+    "en": "This file is a web page or text, not a video; the download may have failed, so download it again.",
+    "ja": "このファイルは動画ではなく Web ページまたはテキストです。ダウンロードに失敗した可能性があります。",
+    "es": "Este archivo es una página web o texto, no un vídeo; la descarga pudo fallar, vuelve a descargarlo."
+  },
+  "這個檔案是空的（0 位元組）；可能是下載或複製中斷。": {
+    "zh-CN": "这个文件是空的（0 字节）；可能是下载或复制中断。",
+    "en": "This file is empty (0 bytes); the download or copy may have been interrupted.",
+    "ja": "このファイルは空（0 バイト）です。ダウンロードやコピーが中断された可能性があります。",
+    "es": "Este archivo está vacío (0 bytes); la descarga o la copia pudo interrumpirse."
+  },
+  "確認為遊戲": {
+    "zh-CN": "确认为游戏",
+    "en": "Confirm as a game",
+    "ja": "ゲームとして確定",
+    "es": "Confirmar como juego"
+  },
+  "尚未指定啟動檔，「啟動遊戲」按鈕暫時無法使用。": {
+    "zh-CN": "尚未指定启动文件，“启动游戏”按钮暂时无法使用。",
+    "en": "No launch file is set, so the Launch button is unavailable for now.",
+    "ja": "起動ファイルが未指定のため、「ゲームを起動」は使えません。",
+    "es": "No hay archivo de inicio, por lo que el botón de iniciar no está disponible."
+  },
+  "前往設定指定啟動檔": {
+    "zh-CN": "前往设置指定启动文件",
+    "en": "Set the launch file",
+    "ja": "設定で起動ファイルを指定",
+    "es": "Indicar el archivo de inicio"
+  },
+  "＋ 新增欄位": {
+    "zh-CN": "＋ 新增字段",
+    "en": "+ New field",
+    "ja": "＋ 項目を追加",
+    "es": "+ Nuevo campo"
+  },
+  "還沒有欄位。按「＋ 新增欄位」建立，再拖到畫布。": {
+    "zh-CN": "还没有字段。点“＋ 新增字段”创建，再拖到画布。",
+    "en": "No fields yet. Use \"+ New field\" to create one, then drag it onto the canvas.",
+    "ja": "項目がまだありません。「＋ 項目を追加」で作成し、キャンバスへドラッグします。",
+    "es": "Aún no hay campos. Crea uno con \"+ Nuevo campo\" y arrástralo al lienzo."
+  },
+  "積木編輯器": {
+    "zh-CN": "积木编辑器",
+    "en": "Block editor",
+    "ja": "ブロックエディター",
+    "es": "Editor de bloques"
+  },
+  "專案尚未配置欄位，可在積木編輯器新增。": {
+    "zh-CN": "项目尚未配置字段，可在积木编辑器中添加。",
+    "en": "No fields are set up yet; add them in the block editor.",
+    "ja": "項目が未設定です。ブロックエディターで追加できます。",
+    "es": "Aún no hay campos; añádelos en el editor de bloques."
+  },
+  "尚無最愛": {
+    "zh-CN": "尚无收藏",
+    "en": "No favorites yet",
+    "ja": "お気に入りはまだありません",
+    "es": "Aún no hay favoritos"
+  },
+  "尚無": {
+    "zh-CN": "尚无",
+    "en": "none yet",
+    "ja": "なし",
+    "es": "ninguna aún"
+  },
+  "先輸入搜尋條件，才能保存為常用搜尋": {
+    "zh-CN": "先输入搜索条件，才能保存为常用搜索",
+    "en": "Enter a search first to save it as a saved search",
+    "ja": "先に検索条件を入力すると保存できます",
+    "es": "Escribe primero una búsqueda para guardarla"
   }
 }

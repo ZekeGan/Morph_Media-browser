@@ -460,11 +460,14 @@ export function DesktopShell(props: Props) {
           {items.length ? (
             items.map((p) => projectRow(p, id))
           ) : (
-            <p className="section-empty">
+            <p
+              className="section-empty"
+              title={id === 'favorites' ? tr('點專案愛心加入最愛') : undefined}
+            >
               {custom
                 ? tr('拖入專案，或用專案選單移動')
                 : id === 'favorites'
-                  ? tr('點專案愛心加入最愛')
+                  ? tr('尚無最愛')
                   : tr('沒有未分類的專案')}
             </p>
           )}

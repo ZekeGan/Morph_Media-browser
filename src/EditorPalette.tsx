@@ -6,6 +6,8 @@ import {
   ActionIcon,
   Badge,
   Button,
+  Group,
+  Modal,
   Select,
   Stack,
   Text,
@@ -72,6 +74,7 @@ export function EditorPalette(props: EditorPaletteProps) {
   const [newField, setNewField] = useState('')
   const [newType, setNewType] = useState('string')
   const [newOptions, setNewOptions] = useState('')
+  const [adding, setAdding] = useState(false)
   const paletteField = (binding: Binding) => {
     const source = sources.find((f) => f.attributeId === binding.attributeId),
       kind = typeKinds[binding.type]
@@ -188,7 +191,17 @@ export function EditorPalette(props: EditorPaletteProps) {
         </div>
       </section>
       <section className="project-field-palette">
-        <h4>{tr('專案欄位')}</h4>
+        <Group justify="space-between" align="center" mb={6}>
+          <h4 style={{ margin: 0 }}>{tr('專案欄位')}</h4>
+          <Button size="compact-xs" variant="light" onClick={() => setAdding(true)}>
+            {tr('＋ 新增欄位')}
+          </Button>
+        </Group>
+        {!draft.fieldBindings.length && (
+          <Text size="xs" c="dimmed" mb={6}>
+            {tr('還沒有欄位。按「＋ 新增欄位」建立，再拖到畫布。')}
+          </Text>
+        )}
         <Stack gap="xs">{draft.fieldBindings.map((binding) => paletteField(binding))}</Stack>
       </section>
       <Accordion variant="separated" className="existing-fields">
@@ -236,82 +249,84 @@ export function EditorPalette(props: EditorPaletteProps) {
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
-      <form
-        className="new-field-form"
-        aria-label={tr('新增欄位')}
-        onSubmit={(e) => {
-          e.preventDefault()
-          const alias = newField.trim()
-          if (
-            !alias ||
-            draft.fieldBindings.some(
-              (f) => f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()
-            )
-          ) {
-            setError(tr('請輸入未使用的欄位名稱'))
-            return
-          }
-          change({
-            ...draft,
-            fieldBindings: [
-              ...draft.fieldBindings,
-              {
-                alias,
-                attributeId: crypto.randomUUID(),
-                type: newType,
-                ...(newType === 'enum'
-                  ? {
-                      options: [
-                        ...new Set(
-                          newOptions
-                            .split(/[,，\n]/)
-                            .map((option) => option.trim())
-                            .filter(Boolean)
-                        ),
-                      ],
-                    }
-                  : {}),
-              },
-            ],
-          })
-          setNewField('')
-          setNewOptions('')
-          setError('')
-        }}
-      >
-        <h4>{tr('新增欄位')}</h4>
-        <TextInput
-          label={tr('欄位名稱')}
-          placeholder={tr('例如：作者、評分')}
-          value={newField}
-          maxLength={100}
-          required
-          onChange={(e) => setNewField(e.currentTarget.value)}
-        />
-        <Select
-          label={tr('欄位型別')}
-          allowDeselect={false}
-          value={newType}
-          onChange={(v) => v && setNewType(v)}
-          description={typeHints[newType]}
-          data={Object.entries(typeLabels).map(([value, label]) => ({ value, label }))}
-        />
-        {newType === 'enum' && (
-          <Textarea
-            label={tr('選項（逗號或換行分隔）')}
-            value={newOptions}
-            onChange={(event) => setNewOptions(event.currentTarget.value)}
-          />
-        )}
-        <Button
-          type="submit"
-          fullWidth
-          variant="default"
-          disabled={!newField.trim() || (newType === 'enum' && !newOptions.trim())}
+      <Modal opened={adding} onClose={() => setAdding(false)} title={tr('新增欄位')} size="sm">
+        <form
+          className="new-field-form"
+          aria-label={tr('新增欄位')}
+          onSubmit={(e) => {
+            e.preventDefault()
+            const alias = newField.trim()
+            if (
+              !alias ||
+              draft.fieldBindings.some(
+                (f) => f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()
+              )
+            ) {
+              setError(tr('請輸入未使用的欄位名稱'))
+              return
+            }
+            change({
+              ...draft,
+              fieldBindings: [
+                ...draft.fieldBindings,
+                {
+                  alias,
+                  attributeId: crypto.randomUUID(),
+                  type: newType,
+                  ...(newType === 'enum'
+                    ? {
+                        options: [
+                          ...new Set(
+                            newOptions
+                              .split(/[,，\n]/)
+                              .map((option) => option.trim())
+                              .filter(Boolean)
+                          ),
+                        ],
+                      }
+                    : {}),
+                },
+              ],
+            })
+            setNewField('')
+            setNewOptions('')
+            setAdding(false)
+            setError('')
+          }}
         >
-          {tr('新增欄位')}
-        </Button>
-      </form>
+          <TextInput
+            label={tr('欄位名稱')}
+            placeholder={tr('例如：作者、評分')}
+            value={newField}
+            maxLength={100}
+            required
+            onChange={(e) => setNewField(e.currentTarget.value)}
+          />
+          <Select
+            label={tr('欄位型別')}
+            allowDeselect={false}
+            value={newType}
+            onChange={(v) => v && setNewType(v)}
+            description={typeHints[newType]}
+            data={Object.entries(typeLabels).map(([value, label]) => ({ value, label }))}
+          />
+          {newType === 'enum' && (
+            <Textarea
+              label={tr('選項（逗號或換行分隔）')}
+              value={newOptions}
+              onChange={(event) => setNewOptions(event.currentTarget.value)}
+            />
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="default"
+            disabled={!newField.trim() || (newType === 'enum' && !newOptions.trim())}
+          >
+            {tr('新增欄位')}
+          </Button>
+        </form>
+      </Modal>
     </aside>
   )
 }

@@ -321,6 +321,41 @@ export function FolderContent({
             </Menu.Dropdown>
           </Menu>
         </div>
+        {(row.boundary?.state === 'candidate' ||
+          row.record?.details?.boundary?.state === 'candidate') &&
+          row.record && (
+            <Group className="game-candidate-actions" gap="xs">
+              <Button
+                size="xs"
+                disabled={disabled}
+                onClick={() =>
+                  void run({
+                    action: 'boundary',
+                    rowId: row.rowId,
+                    revision: row.record!.revision,
+                    state: 'root',
+                  })
+                }
+              >
+                {tr('確認為遊戲')}
+              </Button>
+              <Button
+                size="xs"
+                variant="subtle"
+                disabled={disabled}
+                onClick={() =>
+                  void run({
+                    action: 'boundary',
+                    rowId: row.rowId,
+                    revision: row.record!.revision,
+                    state: 'not-game',
+                  })
+                }
+              >
+                {tr('這不是遊戲目錄')}
+              </Button>
+            </Group>
+          )}
         <Group className="game-actions" gap="sm">
           {gameActionTemplates(project).map((t) => (
             <Button
@@ -353,6 +388,15 @@ export function FolderContent({
             </ActionIcon>
           </Tooltip>
         </Group>
+        {gameActionTemplates(project).some((t) => t.id === 'default-launch-game') &&
+          !row.record?.details?.targets?.['default-launch-game'] && (
+            <small className="muted game-launch-hint">
+              {tr('尚未指定啟動檔，「啟動遊戲」按鈕暫時無法使用。')}{' '}
+              <Button size="compact-xs" variant="subtle" onClick={() => configure('game')}>
+                {tr('前往設定指定啟動檔')}
+              </Button>
+            </small>
+          )}
         <table className="attribute-table game-fields">
           <thead>
             <tr>

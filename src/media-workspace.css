@@ -1131,3 +1131,33 @@
     margin-top: 6px;
     color: var(--muted);
 }
+
+/* The center already has back/forward on the shared history; the panel repeats them only when it covers the center. */
+.folder-panel-header .panel-history {
+    display: none;
+}
+
+.content-expanded .folder-panel-header .panel-history {
+    display: inline-flex;
+}
+
+@media (max-width: 1100px) {
+    .folder-panel-header .panel-history {
+        display: inline-flex;
+    }
+
+    /* A lighter veil: enough to show the center is inactive, not enough to hide it. */
+    .panel-scrim {
+        background: color-mix(in srgb, var(--overlay) 60%, transparent);
+    }
+}
+
+.folder-panel-dock-tabs [role='tab'] {
+    color: var(--text);
+}
+
+.folder-panel-dock-tabs [role='tab'][aria-selected='true'] {
+    background: var(--selected);
+    color: var(--selected-text, var(--text));
+    font-weight: 650;
+}

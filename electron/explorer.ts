@@ -74,8 +74,37 @@ export interface DesktopOperations {
     initialPath?: string
   ): Promise<string | undefined>
   open(file: string): Promise<void>
+  reveal?(file: string): void
   launch(file: string, args: string[]): Promise<void>
   thumbnail(file: string, mime?: string, url?: string): Promise<Buffer>
+}
+// A file's real type from its first bytes; players report only "cannot decode", which hides disguised files.
+export async function probeFile(
+  file: string
+): Promise<'zip' | 'rar' | '7z' | 'gzip' | 'html' | 'empty' | 'media' | 'unknown'> {
+  const handle = await fs.open(file, 'r')
+  try {
+    const buffer = Buffer.alloc(16),
+      { bytesRead } = await handle.read(buffer, 0, 16, 0)
+    if (bytesRead === 0) return 'empty'
+    const head = buffer.subarray(0, bytesRead)
+    if (head.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 0x03, 0x04]))) return 'zip'
+    if (head.subarray(0, 4).toString('latin1') === 'Rar!') return 'rar'
+    if (head.subarray(0, 6).equals(Buffer.from([0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c]))) return '7z'
+    if (head[0] === 0x1f && head[1] === 0x8b) return 'gzip'
+    if (/^\s*<(!doctype|html|\?xml)/i.test(head.toString('latin1'))) return 'html'
+    if (
+      head.subarray(4, 8).toString('latin1') === 'ftyp' ||
+      head.subarray(0, 4).equals(Buffer.from([0x1a, 0x45, 0xdf, 0xa3])) ||
+      ['RIFF', 'OggS', 'FLV\x01', 'fLaC', 'ID3\x03', 'ID3\x04'].includes(
+        head.subarray(0, 4).toString('latin1')
+      )
+    )
+      return 'media'
+    return 'unknown'
+  } finally {
+    await handle.close()
+  }
 }
 export class Explorer {
   readonly index: SearchIndex
@@ -671,6 +700,24 @@ export class Explorer {
       }
       case 'overview':
         return { overview: await this.overview(req) }
+      case 'fileProbe':
+      case 'openFile':
+      case 'revealFile': {
+        // Only files the row published (resolved through the scoped file table) are ever touched.
+        const entry = await this.file(req.rowId, req.fileId)
+        if (req.action === 'openFile') {
+          if (!/^(video|audio)\//.test(entry.mime))
+            throw new Error('只能用系統預設程式開啟影音檔案')
+          await this.desktop.open(entry.file)
+          return {}
+        }
+        if (req.action === 'revealFile') {
+          if (!this.desktop.reveal) throw new Error('目前環境無法顯示檔案位置')
+          this.desktop.reveal(entry.file)
+          return {}
+        }
+        return { probe: { kind: await probeFile(entry.file) } }
+      }
       case 'openExternal':
         if (!httpUrl(req.url) || !this.desktop.external) throw new Error('網址無法開啟')
         await this.desktop.external(req.url)

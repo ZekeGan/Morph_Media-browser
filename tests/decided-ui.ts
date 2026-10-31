@@ -138,6 +138,7 @@ try {
   await button('確認').click()
   await button('加入第一個組件').click()
   await page.getByLabel('版面文字內容', { exact: true }).fill('QA TEXT')
+  await page.getByRole('button', { name: '＋ 新增欄位', exact: true }).click()
   const form = page.getByRole('form', { name: '新增欄位' })
   await form.getByLabel('欄位名稱').fill('Verified flag')
   await choose('欄位型別', '是／否')

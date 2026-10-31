@@ -228,8 +228,8 @@ export function App() {
     !!settings &&
     JSON.stringify(settings) !==
       JSON.stringify(snapshot.projects.find((p) => p.projectId === settings.projectId)?.project)
-  const dirty =
-    detailDirty || editorDirty || settingsDirty || createOpen || shellDirty || appearanceDirty
+  const unsaved = detailDirty || editorDirty || settingsDirty || shellDirty || appearanceDirty
+  const dirty = unsaved || createOpen
   const clearEditors = () => {
     setEditor(false)
     setTemplateCategory(undefined)
@@ -360,7 +360,7 @@ export function App() {
         rows={snapshot.rows}
         selected={selected}
         busy={busy}
-        dirty={dirty}
+        dirty={unsaved}
         onSelect={openProject}
         onCreate={beginCreate}
         onSettings={() => {
@@ -387,7 +387,7 @@ export function App() {
               )
             : busy
               ? tr('處理中…')
-              : dirty
+              : unsaved
                 ? tr('尚未保存')
                 : tr('就緒')
         }

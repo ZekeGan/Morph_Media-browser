@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.21.0 — 2026-11-02
+
+- Video playback failures now say the likely cause (a ZIP/RAR/7z archive or web page named like a video, or an empty file) and offer "open with the default player" and "show in File Explorer".
+- Game page: a candidate game gets "confirm as a game" / "not a game" buttons, and a missing launch file explains why Launch is unavailable with a shortcut to set it.
+- Editor: "+ New field" is a button opening a dialog (the form was below the fold), the title and hints use one term ("積木編輯器").
+- The panel's back/forward icons repeat the center's only when the panel covers the center; paper theme tabs have readable contrast; the tree minimap appears only for larger trees; an empty favorites section is one line; the search dialog explains saved searches and the disabled save button; the create dialog no longer shows "unsaved" while merely open; the narrow-window veil is lighter.
+
 ## 0.20.2 — 2026-11-01
 
 - The folder icon in the right panel header now opens the folder in Windows Explorer (it used to only navigate inside the app, which looked like "nothing happened").

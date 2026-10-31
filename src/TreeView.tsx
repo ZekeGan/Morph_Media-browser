@@ -271,7 +271,7 @@ export default function Tree({
               <Icon name="focus" />
             </ControlButton>
           </Controls>
-          <MiniMap pannable zoomable />
+          {nodes.length > 12 && <MiniMap pannable zoomable />}
         </ReactFlow>
       )}
     </div>

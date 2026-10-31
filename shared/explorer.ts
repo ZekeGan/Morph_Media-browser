@@ -145,6 +145,8 @@ export type ExplorerRequest =
       cursor?: string
     }
   | { action: 'openExternal'; url: string }
+  // Playback failure help: classify a file by its first bytes, open it with the system default app, or show it in Explorer.
+  | { action: 'fileProbe' | 'openFile' | 'revealFile'; rowId: string; fileId: string }
   | {
       action: 'search'
       query: string
@@ -219,6 +221,7 @@ export interface ExplorerResponse {
   content?: ContentResult
   search?: SearchResult
   subtitle?: { token: string; name: string; text: string; portable: boolean }
+  probe?: { kind: 'zip' | 'rar' | '7z' | 'gzip' | 'html' | 'empty' | 'media' | 'unknown' }
   preview?: MetadataPreview
   imagePreview?: { token: string; image: string; name: string; size: number }
   cancelled?: boolean
