@@ -27,6 +27,8 @@ export interface Cell {
   cellId: string
   kind: CellKind
   attributeId?: string
+  // Field cells only: further fields of the same type, tried in order when the ones before are empty.
+  fallbackIds?: string[]
   grid: { x: number; y: number; w: number; h: number }
   style: {
     textColor: string
@@ -346,6 +348,13 @@ function validCell(c: unknown): boolean {
     (c.imageFit === undefined ||
       (['contain', 'cover', 'blur'].includes(c.imageFit) &&
         ['image', 'game-cover'].includes(c.kind))) &&
+    (c.fallbackIds === undefined ||
+      (c.kind.startsWith('field-') &&
+        Array.isArray(c.fallbackIds) &&
+        c.fallbackIds.length >= 1 &&
+        c.fallbackIds.length <= MAX_FALLBACKS &&
+        c.fallbackIds.every(id) &&
+        new Set([c.attributeId, ...c.fallbackIds]).size === c.fallbackIds.length + 1)) &&
     (c.actionId === undefined || (c.kind === 'game-launch' && id(c.actionId))) &&
     (c.wrap === undefined ||
       (typeof c.wrap === 'boolean' && ['field-text', 'name', 'path'].includes(c.kind))) &&
@@ -578,6 +587,18 @@ export function validateProject(v: unknown): asserts v is Project {
   )
     throw new Error('遊戲組件只能用於遊戲專案')
   for (const cell of v.cells)
+    if (cell.fallbackIds) {
+      const type = v.fieldBindings.find((f) => f.attributeId === cell.attributeId)?.type
+      if (
+        cell.fallbackIds.some(
+          (fallback: string) =>
+            v.fieldBindings.find((f: { attributeId: string }) => f.attributeId === fallback)
+              ?.type !== type
+        )
+      )
+        throw new Error('備用欄位必須存在且與主要欄位同型別')
+    }
+  for (const cell of v.cells)
     if (cell.condition) {
       const condition = cell.condition
       const field = v.fieldBindings.find((field) => field.attributeId === condition.attributeId)
@@ -699,6 +720,29 @@ export function defaultCells(makeId: () => string, attributeId?: string): Cell[]
     grid: { x: 0, y, w: 12, h: 1 },
     style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
   }))
+}
+export const MAX_FALLBACKS = 5
+// Removing a field from layouts: cells that show it alone and cells whose condition reads it go away,
+// a cell with fallbacks moves on to its next field, and a fallback entry is simply dropped.
+export function cellsWithoutField(cells: Cell[], attributeId: string): Cell[] {
+  return cells.flatMap((cell) => {
+    if (cell.condition?.attributeId === attributeId) return []
+    const rest = (cell.fallbackIds ?? []).filter((id) => id !== attributeId)
+    if (cell.attributeId === attributeId) {
+      if (!rest.length) return []
+      const { fallbackIds: _drop, ...plain } = cell
+      return [
+        {
+          ...plain,
+          attributeId: rest[0],
+          ...(rest.length > 1 ? { fallbackIds: rest.slice(1) } : {}),
+        },
+      ]
+    }
+    if (rest.length === (cell.fallbackIds ?? []).length) return [cell]
+    const { fallbackIds: _drop, ...plain } = cell
+    return [rest.length ? { ...plain, fallbackIds: rest } : plain]
+  })
 }
 export function fieldValue(row: FolderRow, attributeId: string): unknown {
   const override = row.record?.projectOverrides[row.projectId]?.find(

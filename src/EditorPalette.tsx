@@ -105,7 +105,11 @@ export function EditorPalette(props: EditorPaletteProps) {
             <span>
               {tr(
                 '使用 {0} 次',
-                draft.cells.filter((cell) => cell.attributeId === binding.attributeId).length
+                draft.cells.filter(
+                  (cell) =>
+                    cell.attributeId === binding.attributeId ||
+                    cell.fallbackIds?.includes(binding.attributeId)
+                ).length
               )}
             </span>
             <Badge size="xs" color={source?.shared === false && source.private ? 'orange' : 'gray'}>

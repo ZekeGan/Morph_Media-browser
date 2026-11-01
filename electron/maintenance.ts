@@ -3,6 +3,7 @@ import path from 'node:path'
 import { randomUUID, createHash } from 'node:crypto'
 import {
   DATA_DIR,
+  cellsWithoutField,
   validateFolder,
   validateProject,
   type FolderRecord,
@@ -225,10 +226,7 @@ export async function applyMaintenance(
 
 export function withoutField(project: Project, attributeId: string) {
   const next = structuredClone(project),
-    cells = (items: Project['cells']): Project['cells'] =>
-      items.filter(
-        (cell) => cell.attributeId !== attributeId && cell.condition?.attributeId !== attributeId
-      )
+    cells = (items: Project['cells']): Project['cells'] => cellsWithoutField(items, attributeId)
   next.fieldBindings = next.fieldBindings.filter((field) => field.attributeId !== attributeId)
   next.cells = cells(next.cells)
   next.layoutPresets = next.layoutPresets?.map((preset) => ({

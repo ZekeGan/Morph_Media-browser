@@ -61,12 +61,18 @@ if (args.includes('--fields')) {
   const project = created.projects[0].project!
   const style = { textColor: '#e4e6e8', backgroundColor: 'transparent' }
   const status = crypto.randomUUID(),
-    score = crypto.randomUUID()
+    score = crypto.randomUUID(),
+    steam = crypto.randomUUID(),
+    dlsite = crypto.randomUUID(),
+    getchu = crypto.randomUUID()
   await library.saveProject({
     ...project,
     fieldBindings: [
       { alias: '狀態', attributeId: status, type: 'enum', options: ['進行中', '已完成'] },
       { alias: '評分', attributeId: score, type: 'number' },
+      { alias: 'Steam 遊戲名', attributeId: steam, type: 'string' },
+      { alias: 'DLsite 作品名', attributeId: dlsite, type: 'string' },
+      { alias: 'Getchu タイトル', attributeId: getchu, type: 'string' },
     ],
     cells: [
       ...project.cells,
@@ -84,6 +90,14 @@ if (args.includes('--fields')) {
         grid: { x: 6, y: 6, w: 6, h: 1 },
         style,
         presentation: 'rating',
+      },
+      {
+        cellId: crypto.randomUUID(),
+        kind: 'field-text',
+        attributeId: steam,
+        fallbackIds: [dlsite],
+        grid: { x: 0, y: 7, w: 12, h: 1 },
+        style,
       },
     ],
   })

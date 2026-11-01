@@ -1,0 +1,89 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { cellField } from '../shared/cells'
+import {
+  cellsWithoutField,
+  validateProject,
+  type Cell,
+  type FolderRow,
+  type Project,
+} from '../shared/model'
+import { modelProject } from './support/model-fixtures'
+
+const row = (values: Record<string, unknown>): FolderRow =>
+  ({
+    projectId: 'project',
+    record: {
+      attributes: Object.entries(values).map(([attributeId, value]) => ({ attributeId, value })),
+      projectOverrides: {},
+    },
+  }) as unknown as FolderRow
+const cell = (patch: Partial<Cell> = {}): Cell => ({
+  cellId: 'c',
+  kind: 'field-text',
+  attributeId: 'steam',
+  fallbackIds: ['dlsite', 'getchu'],
+  grid: { x: 0, y: 0, w: 12, h: 1 },
+  style: { textColor: '#ffffff', backgroundColor: 'transparent' },
+  ...patch,
+})
+
+test('a field cell shows the first field in order that has a value', () => {
+  const pick = (values: Record<string, unknown>) => cellField(cell(), row(values))
+  assert.deepEqual(pick({ steam: 'S', dlsite: 'D' }), {
+    attributeId: 'steam',
+    value: 'S',
+    index: 0,
+  })
+  assert.deepEqual(pick({ dlsite: 'D', getchu: 'G' }), {
+    attributeId: 'dlsite',
+    value: 'D',
+    index: 1,
+  })
+  assert.equal(
+    pick({ steam: '   ', getchu: 'G' }).attributeId,
+    'getchu',
+    'blank text counts as empty'
+  )
+  assert.equal(pick({ steam: '', dlsite: '' }).attributeId, 'steam', 'nothing set: the main field')
+  assert.equal(pick({}).value, undefined)
+  // Without fallbacks nothing changes.
+  assert.equal(
+    cellField(cell({ fallbackIds: undefined }), row({ dlsite: 'D' })).attributeId,
+    'steam'
+  )
+  // Number zero and false are real values.
+  assert.equal(cellField(cell(), row({ steam: 0, dlsite: 5 })).value, 0)
+})
+
+test('fallback fields are validated and follow field deletion', () => {
+  const base = modelProject(),
+    project = (fallbackIds?: string[], extra: Project['fieldBindings'] = []) => ({
+      ...base,
+      layoutPresets: undefined,
+      activeLayoutId: undefined,
+      contentCells: undefined,
+      fieldBindings: [...base.fieldBindings, ...extra],
+      cells: [{ ...base.cells.find((c) => c.kind === 'field-text')!, fallbackIds }],
+    })
+  const other = { alias: 'OTHER', attributeId: 'other', type: 'string' },
+    count = { alias: 'COUNT', attributeId: 'count', type: 'number' }
+  assert.doesNotThrow(() => validateProject(project(['other'], [other])))
+  assert.throws(() => validateProject(project(['other'], [count, { ...other, type: 'number' }])))
+  assert.throws(() => validateProject(project(['missing'], [other])), /備用欄位/)
+  assert.throws(() => validateProject(project(['title'], [other])), 'the main field cannot repeat')
+  assert.throws(() => validateProject(project(['other', 'other'], [other])), 'no duplicates')
+  assert.throws(() => validateProject(project([], [other])), 'an empty list is not stored')
+
+  // Deleting a field: the cell moves to its next field instead of vanishing; fallback entries are dropped.
+  const full = cell()
+  assert.deepEqual(cellsWithoutField([full], 'steam')[0].attributeId, 'dlsite')
+  assert.deepEqual(cellsWithoutField([full], 'steam')[0].fallbackIds, ['getchu'])
+  assert.deepEqual(cellsWithoutField([full], 'dlsite')[0].fallbackIds, ['getchu'])
+  assert.equal(
+    cellsWithoutField([cell({ fallbackIds: ['dlsite'] })], 'dlsite')[0].fallbackIds,
+    undefined
+  )
+  assert.equal(cellsWithoutField([cell({ fallbackIds: undefined })], 'steam').length, 0)
+  assert.equal(cellsWithoutField([full], 'unrelated')[0], full)
+})

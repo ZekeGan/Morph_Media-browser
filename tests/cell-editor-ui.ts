@@ -144,7 +144,7 @@ try {
   const basicGrab = await palette.evaluate((element) => {
     const rect = element.getBoundingClientRect(),
       transfer = new DataTransfer()
-    let result = { isolated: false, x: 0, y: 0 }
+    let result = { isolated: false, x: 0, y: 0, cx: rect.width / 2, cy: rect.height / 2 }
     transfer.setDragImage = (target, x, y) => {
       result = {
         isolated:
@@ -153,6 +153,8 @@ try {
           !target.querySelector('.editor-toolbar'),
         x,
         y,
+        cx: rect.width / 2,
+        cy: rect.height / 2,
       }
     }
     element.dispatchEvent(
@@ -165,14 +167,19 @@ try {
     )
     return result
   })
-  assert.ok(basicGrab.isolated && Math.abs(basicGrab.x - 43) < 1 && Math.abs(basicGrab.y - 18) < 1)
+  // The cursor holds the middle of the dragged picture wherever it was pressed.
+  assert.ok(
+    basicGrab.isolated &&
+      Math.abs(basicGrab.x - basicGrab.cx) < 1 &&
+      Math.abs(basicGrab.y - basicGrab.cy) < 1
+  )
   const fieldGrab = await page
     .locator('.palette-field')
     .first()
     .evaluate((element) => {
       const rect = element.getBoundingClientRect(),
         transfer = new DataTransfer()
-      let result = { isolated: false, x: 0, y: 0 }
+      let result = { isolated: false, x: 0, y: 0, cx: rect.width / 2, cy: rect.height / 2 }
       transfer.setDragImage = (target, x, y) => {
         result = {
           isolated:
@@ -181,6 +188,8 @@ try {
             !target.querySelector('.editor-toolbar'),
           x,
           y,
+          cx: rect.width / 2,
+          cy: rect.height / 2,
         }
       }
       element.dispatchEvent(
@@ -193,7 +202,11 @@ try {
       )
       return result
     })
-  assert.ok(fieldGrab.isolated && Math.abs(fieldGrab.x - 88) < 1 && Math.abs(fieldGrab.y - 25) < 1)
+  assert.ok(
+    fieldGrab.isolated &&
+      Math.abs(fieldGrab.x - fieldGrab.cx) < 1 &&
+      Math.abs(fieldGrab.y - fieldGrab.cy) < 1
+  )
   await page.locator('.editor-cell').last().click()
   await page.getByRole('textbox', { name: '比較值', exact: true }).click()
   await page.getByRole('option', { name: '是', exact: true }).click()

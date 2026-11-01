@@ -419,7 +419,9 @@ export class Library {
           .flat()
           .filter(
             (cell) =>
-              cell.attributeId === attributeId || cell.condition?.attributeId === attributeId
+              cell.attributeId === attributeId ||
+              cell.fallbackIds?.includes(attributeId) ||
+              cell.condition?.attributeId === attributeId
           ).length
         preview.searches += (project.savedSearches?.length ?? 0) - (next.savedSearches?.length ?? 0)
         changes.push({ ...guard, value: { ...next, revision: project.revision + 1 } })

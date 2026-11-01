@@ -17,7 +17,7 @@ import {
 } from '@mantine/core'
 import GridLayout, { useContainerWidth, type Layout } from 'react-grid-layout'
 import { transformStrategy } from 'react-grid-layout/core'
-import { grabOffset, localDragPosition } from './editorDrag'
+import { localDragPosition } from './editorDrag'
 import {
   type Cell,
   type CellKind,
@@ -27,6 +27,7 @@ import {
   type Response,
   type FieldDeletionPreview,
   fieldValue,
+  cellsWithoutField,
 } from '../shared/model'
 import { CellContent } from './Card'
 import { EditorInspector } from './EditorInspector'
@@ -152,14 +153,11 @@ export function Editor({
   const { width, containerRef, mounted } = useContainerWidth()
   const dragGrab = useRef({ x: 0, y: 0 })
   const dragImage = (event: React.DragEvent<HTMLDivElement>) => {
-    const point = grabOffset(
-      event.clientX,
-      event.clientY,
-      event.currentTarget.getBoundingClientRect()
-    )
+    const rect = event.currentTarget.getBoundingClientRect(),
+      // The cursor holds the middle of the dragged item, so the picture never hangs below or beside it.
+      point = { x: rect.width / 2, y: rect.height / 2 }
     dragGrab.current = point
     const ghost = event.currentTarget.cloneNode(true) as HTMLElement
-    const rect = event.currentTarget.getBoundingClientRect()
     Object.assign(ghost.style, {
       position: 'fixed',
       left: '0px',
@@ -586,11 +584,7 @@ export function Editor({
                           ? presetDraft(saved)
                           : {
                               ...saved,
-                              cells: draft.cells.filter(
-                                (cell) =>
-                                  cell.attributeId !== fieldDeletion.attributeId &&
-                                  cell.condition?.attributeId !== fieldDeletion.attributeId
-                              ),
+                              cells: cellsWithoutField(draft.cells, fieldDeletion.attributeId),
                             }
                         setDraft(next)
                         setInitial(structuredClone(next))
@@ -831,6 +825,7 @@ export function Editor({
           selectedCell={selectedCell}
           draft={draft}
           conditionField={conditionField}
+          preview={preview}
           enumOptions={enumOptions}
           hasContent={hasContent}
           hints={hints}

@@ -17,9 +17,10 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core'
-import type { Cell, CellKind, Project } from '../shared/model'
+import type { Cell, CellKind, FolderRow, Project } from '../shared/model'
 import { cellType, isFieldKind, launchTemplates } from '../shared/explorer'
 import { typeKinds } from './editorKinds'
+import { FallbackFields } from './FallbackFields'
 
 type Binding = Project['fieldBindings'][number]
 
@@ -28,6 +29,7 @@ export type EditorInspectorProps = {
   selectedCell?: Cell
   draft: Project
   conditionField?: Binding
+  preview?: FolderRow
   enumOptions: string[]
   hasContent: boolean
   hints: Record<CellKind, string>
@@ -48,6 +50,7 @@ export function EditorInspector(props: EditorInspectorProps) {
     selectedCell,
     draft,
     conditionField,
+    preview,
     enumOptions,
     hasContent,
     hints,
@@ -120,6 +123,14 @@ export function EditorInspector(props: EditorInspectorProps) {
                           </ActionIcon>
                         </Tooltip>
                       </Group>
+                    )}
+                    {isFieldKind(selectedCell.kind) && (
+                      <FallbackFields
+                        cell={selectedCell}
+                        draft={draft}
+                        preview={preview}
+                        updateCell={updateCell}
+                      />
                     )}
                     {(selectedCell.kind === 'static-text' || selectedCell.kind === 'field-url') && (
                       <Textarea

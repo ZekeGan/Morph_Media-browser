@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cellVisible, copyableValue, numericDisplay } from '../shared/cells'
-import { grabOffset, localDragPosition } from '../src/editorDrag'
+import { localDragPosition } from '../src/editorDrag'
 import { validateProject, type Cell, type FolderRow } from '../shared/model'
 import { withoutField } from '../electron/maintenance'
 import { modelFolder, modelProject } from './support/model-fixtures'
@@ -103,8 +103,7 @@ test('field deletion removes condition references from all template scopes witho
   assert.equal(clean.contentCells!.manga.length, project.cells.length - 1)
   assert.equal(project.cells.at(-1)?.cellId, 'conditional')
 })
-test('drag images use actual grab point and canvas drag uses local coordinates after scroll and scaling', () => {
-  assert.deepEqual(grabOffset(385, 230, { left: 300, top: 190 }), { x: 85, y: 40 })
+test('canvas drag uses local coordinates after scroll and scaling', () => {
   assert.deepEqual(localDragPosition(385, 230, 85, 40, { left: 200, top: 100 }, 1, 0, 0), {
     left: 100,
     top: 90,

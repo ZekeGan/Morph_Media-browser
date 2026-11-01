@@ -1,6 +1,3 @@
-export function grabOffset(clientX: number, clientY: number, rect: Pick<DOMRect, 'left' | 'top'>) {
-  return { x: Math.max(0, clientX - rect.left), y: Math.max(0, clientY - rect.top) }
-}
 export function localDragPosition(
   clientX: number,
   clientY: number,

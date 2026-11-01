@@ -1,7 +1,7 @@
 import { t as tr, useLocale, currentLocale } from './i18n'
 import { Badge, Button, Group, Progress, Rating } from '@mantine/core'
-import { fieldValue, type Cell, type FolderRow, type Project } from '../shared/model'
-import { cellVisible, copyableValue, numericDisplay } from '../shared/cells'
+import { type Cell, type FolderRow, type Project } from '../shared/model'
+import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared/cells'
 import { describeError } from './errors'
 import { launchTemplate } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
@@ -43,8 +43,8 @@ export function CellContent(props: CellProps) {
     [copyError, setCopyError] = useState('')
   if (!cellVisible(cell, row))
     return preview ? <span className="cell-condition-hidden">{tr('條件未符合')}</span> : null
-  const value = row && cell.attributeId ? fieldValue(row, cell.attributeId) : undefined,
-    copy = copyableValue(value)
+  const shown = cellField(cell, row),
+    copy = copyableValue(shown.value)
   return (
     <>
       <CellValue {...props} />
@@ -55,7 +55,7 @@ export function CellContent(props: CellProps) {
             title={tr('複製欄位值')}
             aria-label={tr(
               '複製 {0}',
-              project?.fieldBindings.find((field) => field.attributeId === cell.attributeId)
+              project?.fieldBindings.find((field) => field.attributeId === shown.attributeId)
                 ?.alias ?? tr('欄位')
             )}
             disabled={preview || copy === undefined}
@@ -64,12 +64,12 @@ export function CellContent(props: CellProps) {
             onMouseDown={(event) => event.stopPropagation()}
             onClick={async (event) => {
               event.stopPropagation()
-              if (copy === undefined || !row || !cell.attributeId) return
+              if (copy === undefined || !row || !shown.attributeId) return
               try {
                 await window.media.request({
                   action: 'copyFieldValue',
                   rowId: row.rowId,
-                  attributeId: cell.attributeId,
+                  attributeId: shown.attributeId,
                 })
                 setCopied(copy)
                 setCopyError('')
@@ -226,13 +226,7 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     ) : null
   }
   const value =
-    cell.kind === 'name'
-      ? row?.name
-      : cell.kind === 'path'
-        ? row?.path
-        : row && cell.attributeId
-          ? fieldValue(row, cell.attributeId)
-          : undefined
+    cell.kind === 'name' ? row?.name : cell.kind === 'path' ? row?.path : cellField(cell, row).value
   const label =
     typeof value === 'string' ? value : value == null ? '' : tr('⚠ 型別不符：{0}', String(value))
   if (cell.kind === 'field-tags')

@@ -2,6 +2,11 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.27.0 — 2026-11-02
+
+- Field cells can list fallback fields: the first field in order that has a value is shown, so one cell can cover the same meaning from different source sites (Steam, DLsite…) without copying data.
+- Dragging a component from the palette now keeps the cursor in the middle of the dragged picture instead of leaving it hanging below.
+
 ## 0.26.0 — 2026-11-02
 
 - The folder-list filter (all folders / boundary folders) and the right panel's file scope (current folder / with subfolders), file type, layout and source grouping are now saved per project and restored after closing the panel or leaving the project.
