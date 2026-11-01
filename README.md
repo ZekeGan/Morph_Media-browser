@@ -1,102 +1,108 @@
 # Media Viewer
 
-> A local-first folder viewer with customizable layouts.
+> A local-first folder viewer where you decide how each folder is shown.
 
-Media Viewer is an experimental desktop application for viewing folders as a customizable list. A project selects a root folder and scan depth, then defines how matching folders are displayed. It is not intended to manage or move those folders.
+Media Viewer is a Windows-first desktop app for browsing large collections of folders — manga, albums, videos, music, and games — as cards, tables or trees. You point a **project** at a root folder, and the app turns every matching sub-folder into a record you can describe, search and lay out the way you like. It only **views** your data: originals are never moved, renamed or deleted for the sake of browsing.
 
-The main idea is to explore a different way of browsing file collections:
+**Data and presentation are kept apart.** What you know about a folder (title, tags, rating, where it came from) is stored with the folder; how it looks is a layout you design once and apply to the whole project.
 
-**Keep the data and presentation separate, and let the user decide how the data should be displayed.**
-
-The project is currently in an **early development stage**.
-
-Current version: **0.9.0** (see [changelog](CHANGELOG.md)). Start with the [documentation index](docs/README.md) and [current work](docs/WORK_ITEMS.md).
-
-Run `pnpm install`, then `pnpm dev`. Commands and verification: [IMPLEMENTATION](docs/IMPLEMENTATION.md). Early POC design and stage records are kept in [docs/archive](docs/archive/) and are not current specs.
+> The project is in an **early development stage** and the name is not final. Current version: **0.35.0** ([changelog](CHANGELOG.md)).
 
 ---
 
-## 💡 Concept
+## What it does
 
-Traditional file managers usually provide a fixed set of views such as:
+**Browse**
 
-* List
-* Grid
-* Details
+- Three modes over the same data: **CARD**, **TABLE** and **TREE**, with per-project memory of filters, scope and view settings.
+- A right-hand panel shows the selected folder without leaving the list: details, files, subfolders, and a reader or player for what is inside.
+- Search across every field with a rebuildable local index (substring, AND / OR / exclude, number and date comparisons, saved queries).
 
-Media Viewer explores a more flexible approach where the **same data can be presented through different layouts**.
+**Design the card**
 
-The current concept is:
+- A block editor places **components** on a grid: names, paths, text, tags, numbers, ratings, dates, choices, links, images, dividers, and game components (cover, launch button).
+- Style each component: size, weight, italic / underline / strikethrough, alignment, colours, padding, corners, border, opacity, line and letter spacing, plus ready-made looks. Tags can be coloured by category and choices can have their own colours.
+- Long values stay tidy: ellipsis, wrapping, a **+N** tag badge, or a scrollable cell.
+- **Fallback fields**: one component can list several fields (for example the title from Steam, DLsite and your own notes) and shows the first one that has a value. Search follows the same chain.
+- Real-data preview inside the editor, several named layouts per project, and a layout per content type.
 
-```text
-Local Folder
-     │
-     ▼
-    Data
-     │
-     ▼
-   Layout
-     │
-     ▼
-Components
-```
+**View and play**
 
-The layout determines which data is displayed and how it should be presented.
+- Album masonry and a full-screen image reader; manga reader with spreads and right-to-left reading; video player with subtitles (SRT / VTT), resume and a cross-project audio / video queue; PDF, ZIP and CBZ in the app.
+- When a video cannot be decoded the app explains why (for example a renamed archive) and offers to open it with the system player.
 
-The following are possible future component types, not all POC requirements:
+**Games**
 
-```text
-String      → Text / Badge / Link
-Number      → Stat / Progress / Rating
-Boolean     → Checkbox / Switch / Status
-Date        → Date / Relative Time
-Array       → Tags / List / Chart
-JSON        → Tree / Key-Value
-File Path   → Image / Audio / Video
-```
+- Detects game folders (including many Japanese visual-novel engines) and protects their insides: the app never creates records inside a game.
+- Launch actions per game: EXE with arguments, folders, files, URLs, and **shortcuts** (so a Locale Emulator shortcut keeps its own settings). A launch component can fall back from one action to another, and each game can hide buttons it does not use.
 
-SQLite is implemented as a rebuildable local search index. The portable folder records and project definitions remain the source of truth:
+**Fill in the data**
+
+- Paste a page address and the source is recognised automatically: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library and Wikimedia Commons. Review the preview, then choose which fields to import.
+
+**Look and language**
+
+- Three themes (dark, frosted glass, warm paper) and five interface languages (Traditional Chinese, Simplified Chinese, English, Japanese, Spanish).
+
+---
+
+## How your data is kept
 
 ```text
 Folders ──→ portable folder records ──┐
-                                      ├──→ project layout → UI components
+                                      ├──→ project layout → components on screen
 Project root ──→ portable settings ───┘
-                  │ both portable sources
-                  └──→ SQLite search index (rebuildable)
+                  │ both are the source of truth
+                  └──→ SQLite search index (rebuildable at any time)
 ```
 
-The confirmed goal is to recover each managed folder's content on another device without the local database. Hidden portable records in individual folders are required so a folder can move independently; the app must also support individual and one-action cleanup across linked folders. Cleanup coverage and relinking details are still being designed; see [儲存與清理](docs/STORAGE_OPTIONS.md), [產品需求](docs/PRODUCT.md) and [設計草案](docs/archive/DESIGN_DRAFT.md).
+- Each managed folder carries a hidden `.media-viewer` record, so a folder can move to another place or device and still know what it is. Your original files are left alone.
+- Writes are atomic and recoverable; clean-up removes only what the app created, with a preview first.
+- Values are shared between projects by default; a private override has to be created on purpose.
+- Electron runs with context isolation and a sandbox; the renderer cannot read arbitrary paths or run commands.
 
 ---
 
-## 🛠️ Tech Stack
+## Getting started
 
-The current implementation uses:
+Requires Node.js 24 and pnpm 10.
 
-* Electron — Desktop application
-* React 18 + Vite 7 — UI
-* TypeScript — Type safety
-* React hooks — POC client state
-* SQLite — Rebuildable local index using Node SQLite
-* Mantine 8 + plain CSS — UI and styling
+```bash
+pnpm install
+pnpm dev
+```
 
-The technology stack may change as the project evolves.
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | Run the app in development mode |
+| `pnpm build` | Type-check and build |
+| `pnpm typecheck` | Type-check only |
+| `pnpm test` | Data and logic tests |
+| `pnpm test:ui:changed` / `:smoke` / `:all` | Electron UI tests (changed files / core set / everything) |
+| `pnpm format` / `pnpm format:check` | Prettier |
+| `pnpm shot <game\|manga\|album\|other>` | Screenshot the app with built-in sample data |
 
-## Agent 開發交接
-
-後續開發請先讀 [CLAUDE.md](CLAUDE.md)（Claude Code）或 [AGENTS.md](AGENTS.md)（Codex），再依 [文件索引](docs/README.md) 與 [當前工作](docs/WORK_ITEMS.md) 定位。產品邊界見 [產品需求](docs/PRODUCT.md)，已核定方向見 [DECISIONS](docs/DECISIONS.md)。早期構想、POC、階段與開發紀錄已封存於 [docs/archive](docs/archive/)，不是現行規格。
-
----
-
-## 👤 Author
-
-**Zeke Gan**
-
-[GitHub](https://github.com/ZekeGan)
+Details of verification are in [IMPLEMENTATION](docs/IMPLEMENTATION.md). GitHub Actions runs the type-check, format check and data tests on every push.
 
 ---
 
-> **This project is an experiment. The implementation is expected to change.**
+## Tech stack
 
+Electron · React 18 · Vite 7 · TypeScript · Mantine 8 · Node SQLite (search index) · Playwright (UI tests)
 
+---
 
+## Documentation
+
+- [Documentation index](docs/README.md) — find the right document for a task.
+- [Product scope](docs/PRODUCT.md) and [architecture](docs/ARCHITECTURE.md).
+- [Current work and known limits](docs/WORK_ITEMS.md), [decisions](docs/DECISIONS.md).
+- Contributors and coding agents: read [CLAUDE.md](CLAUDE.md) (Claude Code) or [AGENTS.md](AGENTS.md) (Codex) first. Early POC material is kept in [docs/archive](docs/archive/) and is not a current specification.
+
+---
+
+## Author
+
+**Zeke Gan** — [GitHub](https://github.com/ZekeGan)
+
+> This project is an experiment. The implementation is expected to change.
