@@ -503,6 +503,14 @@ export function validateDetails(v: unknown): asserts v is FolderDetails {
       !v.boundary.evidence.every((x: unknown) => text(x, 500)))
   )
     throw new Error('遊戲邊界設定不合法')
+  if (
+    v.hiddenActions !== undefined &&
+    (!Array.isArray(v.hiddenActions) ||
+      v.hiddenActions.length > 100 ||
+      !v.hiddenActions.every(id) ||
+      new Set(v.hiddenActions).size !== v.hiddenActions.length)
+  )
+    throw new Error('遊戲操作顯示設定不合法')
   if (v.bannerAssetId !== undefined && !id(v.bannerAssetId)) throw new Error('封面身分不合法')
   if (
     v.cellImages !== undefined &&

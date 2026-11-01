@@ -364,24 +364,26 @@ export function FolderContent({
             </Group>
           )}
         <Group className="game-actions" gap="sm">
-          {gameActionTemplates(project).map((t) => (
-            <Button
-              key={t.id}
-              color={t.color}
-              disabled={busy || row.record?.details?.targets?.[t.id]?.kind !== t.kind}
-              title={row.record?.details?.targets?.[t.id]?.path ?? tr('尚未綁定')}
-              onClick={() => {
-                if (
-                  ['exe', 'file-app', 'shortcut'].includes(t.kind) &&
-                  !window.confirm(tr('啟動「{0}」？', t.label))
-                )
-                  return
-                void run({ action: 'runTarget', rowId: row.rowId, templateId: t.id })
-              }}
-            >
-              {t.id === 'default-launch-game' ? tr(t.label) : t.label}
-            </Button>
-          ))}
+          {gameActionTemplates(project)
+            .filter((t) => !row.record?.details?.hiddenActions?.includes(t.id))
+            .map((t) => (
+              <Button
+                key={t.id}
+                color={t.color}
+                disabled={busy || row.record?.details?.targets?.[t.id]?.kind !== t.kind}
+                title={row.record?.details?.targets?.[t.id]?.path ?? tr('尚未綁定')}
+                onClick={() => {
+                  if (
+                    ['exe', 'file-app', 'shortcut'].includes(t.kind) &&
+                    !window.confirm(tr('啟動「{0}」？', t.label))
+                  )
+                    return
+                  void run({ action: 'runTarget', rowId: row.rowId, templateId: t.id })
+                }}
+              >
+                {t.id === 'default-launch-game' ? tr(t.label) : t.label}
+              </Button>
+            ))}
           {!gameActionTemplates(project).length && (
             <small className="muted">{tr('尚未設定操作按鈕')}</small>
           )}

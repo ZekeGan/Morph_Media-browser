@@ -1,5 +1,6 @@
 import { t as tr, useLocale, currentLocale } from './i18n'
 import { Badge, Button, Group, Progress, Rating } from '@mantine/core'
+import { TagList } from './TagList'
 import { type Cell, type FolderRow, type Project } from '../shared/model'
 import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared/cells'
 import { describeError } from './errors'
@@ -260,13 +261,7 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     typeof value === 'string' ? value : value == null ? '' : tr('⚠ 型別不符：{0}', String(value))
   if (cell.kind === 'field-tags')
     return Array.isArray(value) ? (
-      <Group gap={4}>
-        {value.map((v, i) => (
-          <Badge key={i} color="gray" variant="light">
-            {String(v)}
-          </Badge>
-        ))}
-      </Group>
+      <TagList tags={value} fit={!cell.scroll} />
     ) : (
       <span>{value == null ? '' : tr('⚠ 型別不符')}</span>
     )

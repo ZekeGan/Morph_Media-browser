@@ -888,6 +888,27 @@ export class Explorer {
             d.bannerAssetId = req.assetId
           })
         )
+      case 'actionVisible': {
+        const row = await this.library.checkedRow(req.rowId),
+          project = this.library
+            .snapshot()
+            .projects.find((p) => p.projectId === row.projectId)?.project
+        if (
+          !project ||
+          typeof req.visible !== 'boolean' ||
+          !gameActionTemplates(project).some((t) => t.id === req.templateId)
+        )
+          throw new Error('任務版型不存在')
+        return this.after(
+          await this.details(req.rowId, req.revision, (d) => {
+            const hidden = new Set(d.hiddenActions)
+            if (req.visible) hidden.delete(req.templateId)
+            else hidden.add(req.templateId)
+            if (hidden.size) d.hiddenActions = [...hidden]
+            else delete d.hiddenActions
+          })
+        )
+      }
       case 'bindTarget': {
         const { row, record } = await this.record(req.rowId, req.revision),
           project = this.library

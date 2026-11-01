@@ -58,6 +58,8 @@ export interface SubtitlePrefs {
 }
 export interface FolderDetails {
   cellImages?: Record<string, string>
+  // Game actions whose button is not shown in this folder's action row.
+  hiddenActions?: string[]
   schemaVersion: 1
   boundary?: GameBoundary
   bannerAssetId?: string
@@ -233,6 +235,13 @@ export type ExplorerRequest =
       url?: string
       // File name (not a path) of a shortcut inside the game folder, for 'shortcut' actions.
       shortcut?: string
+    }
+  | {
+      action: 'actionVisible'
+      rowId: string
+      revision: number
+      templateId: string
+      visible: boolean
     }
   | { action: 'listShortcuts'; rowId: string }
   | { action: 'runTarget'; rowId: string; templateId: string }

@@ -25,6 +25,7 @@ import { copyableValue } from '../shared/cells'
 import { WorkspaceStore } from './workspace'
 import type { WorkspaceCommand, WindowAction } from '../shared/workspace'
 import { Explorer } from './explorer'
+import { warmHiddenHelper } from './hidden'
 import type { ExplorerRequest } from '../shared/explorer'
 import type { LocaleId } from '../shared/locales'
 import { nativeText } from '../shared/native-messages'
@@ -312,6 +313,7 @@ else {
           return Buffer.from(bytes)
         },
       })
+      warmHiddenHelper()
       app.on('will-quit', () => explorer.index.close())
       ipcMain.handle('explorer:request', async (event, request: ExplorerRequest) => {
         checkSender(event)

@@ -133,16 +133,49 @@ export function GameActionTargets({
       {templates.map((template) => {
         const target = row.record?.details?.targets?.[template.id],
           draft = drafts[template.id] ?? original(template.id),
-          changed = JSON.stringify(draft) !== JSON.stringify(original(template.id))
+          changed = JSON.stringify(draft) !== JSON.stringify(original(template.id)),
+          hiddenHere = !!row.record?.details?.hiddenActions?.includes(template.id)
         return (
           <section className="settings-section game-target" key={template.id}>
-            <Group justify="space-between">
+            <Group justify="space-between" wrap="nowrap">
               <Text fw={600}>
                 {template.id === 'default-launch-game' ? tr(template.label) : template.label}
               </Text>
-              <Text size="xs" c="dimmed">
-                {kindLabel(template.kind)}
-              </Text>
+              <Group gap={6} wrap="nowrap">
+                <Text size="xs" c="dimmed">
+                  {kindLabel(template.kind)}
+                </Text>
+                <Tooltip
+                  label={
+                    hiddenHere
+                      ? tr('此遊戲的按鈕列不顯示這個按鈕，點擊顯示')
+                      : tr('此遊戲的按鈕列顯示這個按鈕，點擊隱藏')
+                  }
+                >
+                  <ActionIcon
+                    variant="subtle"
+                    color={hiddenHere ? 'gray' : undefined}
+                    aria-label={
+                      hiddenHere
+                        ? tr('顯示按鈕 {0}', tr(template.label))
+                        : tr('隱藏按鈕 {0}', tr(template.label))
+                    }
+                    aria-pressed={!hiddenHere}
+                    disabled={disabled}
+                    onClick={() =>
+                      void run({
+                        action: 'actionVisible',
+                        rowId: row.rowId,
+                        revision: row.record!.revision,
+                        templateId: template.id,
+                        visible: hiddenHere,
+                      })
+                    }
+                  >
+                    <Icon name={hiddenHere ? 'eye-off' : 'eye'} size={16} />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
             </Group>
             {template.kind === 'url' ? (
               <TextInput

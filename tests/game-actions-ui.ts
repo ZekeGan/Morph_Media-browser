@@ -153,6 +153,23 @@ try {
     ].path,
     'https://example.test/game'
   )
+  // The eye hides a button from this folder's action row; the binding stays.
+  const row = page.locator('.game-actions'),
+    inRow = async (visible: boolean) => {
+      await page.getByRole('tab', { name: '內容', exact: true }).click()
+      await row
+        .getByRole('button', { name: 'Website', exact: true })
+        .waitFor({ state: visible ? 'visible' : 'detached' })
+      await page.getByRole('tab', { name: /^設定/ }).click()
+      await drawer.getByRole('tab', { name: '遊戲操作', exact: true }).click()
+    }
+  await inRow(true)
+  await drawer.getByRole('button', { name: '隱藏按鈕 Website', exact: true }).click()
+  await drawer.getByRole('button', { name: '顯示按鈕 Website', exact: true }).waitFor()
+  await inRow(false)
+  await drawer.getByRole('button', { name: '顯示按鈕 Website', exact: true }).click()
+  await drawer.getByRole('button', { name: '隱藏按鈕 Website', exact: true }).waitFor()
+  await inRow(true)
   await page.screenshot({ path: path.join(screens, 'targets.png') })
   await app.evaluate(({ BrowserWindow }) => {
     const win = BrowserWindow.getAllWindows()[0]

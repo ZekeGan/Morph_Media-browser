@@ -297,6 +297,63 @@ test('SQLite supports Unicode substrings, comma AND, quotes, exclusion, OR, date
     rebuilt.close()
   }
 })
+test('searching a field also looks in the fallback fields its cells list, and nothing else', async (t) => {
+  const { media, lib, explorer } = await fixture(t)
+  for (const name of ['A', 'B', 'C']) await fs.mkdir(path.join(media, name))
+  let s = await lib.create(media, {
+      name: 'Names',
+      mediaCategory: 'album',
+      depth: { mode: 'through', level: 2 },
+    }),
+    p = s.projects[0].project!
+  const style = { textColor: '#ffffff', backgroundColor: 'transparent' }
+  const cells = [
+    {
+      cellId: 'title',
+      kind: 'field-text' as const,
+      attributeId: 'title',
+      fallbackIds: ['steam', 'dlsite'],
+      grid: { x: 0, y: 0, w: 12, h: 1 },
+      style,
+    },
+  ]
+  s = await lib.saveProject({
+    ...p,
+    fieldBindings: [
+      ...p.fieldBindings,
+      { alias: 'title', attributeId: 'title', type: 'string' },
+      { alias: 'steam', attributeId: 'steam', type: 'string' },
+      { alias: 'dlsite', attributeId: 'dlsite', type: 'string' },
+      { alias: 'other', attributeId: 'other', type: 'string' },
+    ],
+    cells,
+    layoutPresets: undefined,
+    activeLayoutId: undefined,
+    contentCells: undefined,
+  })
+  const values: Record<string, [string, string]> = {
+    A: ['title', 'manual-name'],
+    B: ['steam', 'steam-name'],
+    C: ['other', 'outside-name'],
+  }
+  for (const [name, [attributeId, value]] of Object.entries(values)) {
+    const row = s.rows.find((r) => r.name === name)!
+    await explorer.request({
+      action: 'attributes',
+      rowId: row.rowId,
+      revision: row.record!.revision,
+      private: false,
+      values: [{ attributeId, key: attributeId, type: 'string', value, source: 'manual' }],
+    })
+  }
+  const total = async (query: string) =>
+    (await explorer.request({ action: 'search', query, projectId: p.projectId })).search!.total
+  assert.equal(await total('title:manual-name'), 1)
+  assert.equal(await total('title:steam-name'), 1, 'found through the fallback field')
+  assert.equal(await total('title:outside-name'), 0, 'a field outside the chain is not included')
+  assert.equal(await total('steam:manual-name'), 0, 'the chain only widens the first field')
+  assert.equal(await total('steam:steam-name'), 1)
+})
 test('search sync detects same-revision values, private overrides, aliases, paths and source changes', async (t) => {
   const { lib, media, explorer } = await fixture(t)
   const snapshot = await lib.create(media, {

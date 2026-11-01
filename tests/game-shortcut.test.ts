@@ -154,6 +154,24 @@ test('shortcut actions are chosen from the folder, opened through the system and
   assert.deepEqual(launched, [], 'a shortcut is opened by the system, not spawned with arguments')
   for (const [name, value] of Object.entries(original))
     assert.equal(await fs.readFile(path.join(media, name), 'utf8'), value, name)
+  // A button can be hidden from this folder's action row; it stays bound and the record stays valid.
+  const visible = (templateId: string, flag: boolean, revision = row().record!.revision) =>
+    explorer.request({
+      action: 'actionVisible',
+      rowId: row().rowId,
+      revision,
+      templateId,
+      visible: flag,
+    })
+  await visible('le', false)
+  assert.deepEqual((await readFolder(media)).details!.hiddenActions, ['le'])
+  assert.equal((await readFolder(media)).details!.targets!.le.path, 'Game - Locale Emulator.lnk')
+  await visible('le', false)
+  assert.deepEqual((await readFolder(media)).details!.hiddenActions, ['le'], 'no duplicates')
+  await assert.rejects(visible('missing', false), /版型不存在/)
+  await assert.rejects(visible('le', 'no' as unknown as boolean), /版型不存在/)
+  await visible('le', true)
+  assert.equal((await readFolder(media)).details!.hiddenActions, undefined)
   // A bound shortcut that was removed fails clearly and starts nothing.
   await fs.unlink(path.join(media, 'Game - Locale Emulator.lnk'))
   await assert.rejects(

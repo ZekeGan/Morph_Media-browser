@@ -74,6 +74,25 @@ try {
     'only the scrolling cell'
   )
   assert.equal(await body.locator('.mantine-Badge-root').count(), 40, 'every tag is there')
+  // The cell that does not scroll hides what does not fit behind a "+N" badge and lists everything in its tooltip.
+  const cut = page.locator('.folder-card .tag-list-fit')
+  await cut.waitFor()
+  const more = cut.locator('[data-more]')
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector('.folder-card .tag-list-fit [data-more]')
+        ?.getAttribute('style')
+        ?.includes('display: none') === false
+  )
+  const hidden = await cut
+    .locator('[data-tag]')
+    .evaluateAll(
+      (nodes) => nodes.filter((node) => (node as HTMLElement).style.display === 'none').length
+    )
+  assert.ok(hidden > 0 && (await more.innerText()) === '+' + hidden, String(hidden))
+  assert.ok(((await cut.getAttribute('title')) ?? '').includes('tag number 39'))
+  assert.equal(await body.locator('[data-more]').count(), 0, 'a scrolling cell hides nothing')
   const metrics = () =>
     body.evaluate((node) => ({
       client: node.clientHeight,

@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.32.0 — 2026-11-02
+
+- Opening a folder in the right panel is much faster on Windows: the hidden/system-attribute check no longer starts a new PowerShell for every listing (about 0.6 s each); one helper is kept running and started when the app opens.
+- Tag cells that do not scroll show the tags that fit followed by a "+N" badge, with the full list in the tooltip.
+- Game folder settings: an eye icon on each action hides or shows that button in this game's action row (the binding is kept).
+- Searching a field also finds values stored in the fallback fields that cells list after it, without indexing anything extra.
+
 ## 0.31.0 — 2026-11-02
 
 - Image cells can show the folder's n-th image file (sorted by name, direct files only) when no picture was picked by hand for that folder; useful for manga (first page) while media folders keep picking by hand. A folder without that image shows an empty placeholder.

@@ -88,6 +88,19 @@ const paths = {
   ),
   plus: <path d="M3 10h14M10 3v14" />,
   minus: <path d="M3 10h14" />,
+  eye: (
+    <>
+      <path d="M1.5 10S5 4.5 10 4.5 18.5 10 18.5 10 15 15.5 10 15.5 1.5 10 1.5 10Z" />
+      <circle cx="10" cy="10" r="2.5" />
+    </>
+  ),
+  'eye-off': (
+    <>
+      <path d="M1.5 10S5 4.5 10 4.5 18.5 10 18.5 10 15 15.5 10 15.5 1.5 10 1.5 10Z" />
+      <circle cx="10" cy="10" r="2.5" />
+      <path d="m3 3 14 14" />
+    </>
+  ),
   close: <path d="m5 5 10 10M15 5 5 15" />,
   maximize: <rect x="4" y="4" width="12" height="12" rx="1" />,
   restore: (

@@ -160,6 +160,23 @@ export class SearchIndex {
       throw new Error('搜尋專案未連結')
     const params: (string | number)[] = [],
       available = this.fields.filter((f) => !projectId || f.projectId === projectId)
+    // A field that a cell lists first with fallback fields also finds what is stored in those fallbacks (one value
+    // that may come from several source sites). Only the set of fields in the query grows; nothing more is indexed.
+    const chains = new Map<string, Set<string>>()
+    for (const linked of this.snapshot?.projects ?? [])
+      for (const cells of linked.project
+        ? [
+            linked.project.cells,
+            ...(linked.project.layoutPresets?.map((preset) => preset.cells) ?? []),
+            ...Object.values(linked.project.contentCells ?? {}),
+          ]
+        : [])
+        for (const cell of cells)
+          if (cell.attributeId && cell.fallbackIds?.length) {
+            const set = chains.get(cell.attributeId) ?? new Set<string>()
+            for (const id of cell.fallbackIds) set.add(id)
+            chains.set(cell.attributeId, set)
+          }
     const groups = saved ? restoreQuery(saved, available) : parseQuery(query)
     const conditions = groups
       .map(
@@ -212,8 +229,9 @@ export class SearchIndex {
                 gram = [...value].slice(0, 3).join('')
               let sql = 'v.doc=d.id'
               if (fields) {
-                sql += ' AND v.field=?'
-                params.push(fields[0])
+                const searched = [fields[0], ...(chains.get(fields[0]) ?? [])]
+                sql += ` AND v.field IN (${searched.map(() => '?').join(',')})`
+                params.push(...searched)
               }
               if ([...value].length >= 3) {
                 sql +=
