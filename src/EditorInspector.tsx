@@ -1,5 +1,6 @@
 import { Icon } from './icons'
 import { t as tr } from './i18n'
+import { HelpLabel } from './HelpTip'
 import {
   Accordion,
   ActionIcon,
@@ -103,8 +104,12 @@ export function EditorInspector(props: EditorInspectorProps) {
                       <Group gap="xs" align="flex-end" wrap="nowrap">
                         <Select
                           style={{ flex: 1 }}
-                          label={tr('綁定欄位')}
-                          description={tr('這個組件顯示哪一個欄位的值')}
+                          label={
+                            <HelpLabel
+                              label={tr('綁定欄位')}
+                              help={tr('這個組件顯示哪一個欄位的值')}
+                            />
+                          }
                           value={selectedCell.attributeId}
                           data={draft.fieldBindings
                             .filter((f) => f.type === cellType(selectedCell.kind))
@@ -168,10 +173,12 @@ export function EditorInspector(props: EditorInspectorProps) {
                     {selectedCell.kind === 'field-enum' && (
                       <div>
                         <TagsInput
-                          label={tr('選項')}
-                          description={tr(
-                            '選項會成為資料夾設定中的下拉選單；使用中的選項不能移除。'
-                          )}
+                          label={
+                            <HelpLabel
+                              label={tr('選項')}
+                              help={tr('選項會成為資料夾設定中的下拉選單；使用中的選項不能移除。')}
+                            />
+                          }
                           error={optionError || undefined}
                           value={enumOptions}
                           onChange={(options) => {
@@ -236,10 +243,12 @@ export function EditorInspector(props: EditorInspectorProps) {
                       (launchTemplates(draft).length ? (
                         <>
                           <Select
-                            label={tr('啟動動作')}
-                            description={tr(
-                              '卡片按鈕要啟動哪一個遊戲操作；未指定時用預設啟動遊戲。'
-                            )}
+                            label={
+                              <HelpLabel
+                                label={tr('啟動動作')}
+                                help={tr('卡片按鈕要啟動哪一個遊戲操作；未指定時用預設啟動遊戲。')}
+                              />
+                            }
                             placeholder={tr('自動（預設啟動遊戲）')}
                             clearable
                             value={selectedCell.actionId ?? null}
@@ -263,11 +272,12 @@ export function EditorInspector(props: EditorInspectorProps) {
                       ))}
                     {selectedCell.kind === 'image' && (
                       <Stack gap="xs">
-                        <Text size="sm" c="dimmed">
-                          {tr(
-                            '這是選用圖片組件。可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。'
+                        <HelpLabel
+                          label={<Text size="sm">{tr('選用圖片')}</Text>}
+                          help={tr(
+                            '可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。'
                           )}
-                        </Text>
+                        />
                         <Select
                           label={tr('沒有手動選圖時')}
                           allowDeselect={false}
@@ -282,10 +292,14 @@ export function EditorInspector(props: EditorInspectorProps) {
                         />
                         {selectedCell.imageIndex && (
                           <NumberInput
-                            label={tr('第幾張圖片')}
-                            description={tr(
-                              '依檔名排序，只看這個資料夾直接包含的圖片（不含子資料夾）。資料夾已手動選圖時以手動為準；沒有那一張時留空。'
-                            )}
+                            label={
+                              <HelpLabel
+                                label={tr('第幾張圖片')}
+                                help={tr(
+                                  '依檔名排序，只看這個資料夾直接包含的圖片（不含子資料夾）。資料夾已手動選圖時以手動為準；沒有那一張時留空。'
+                                )}
+                              />
+                            }
                             min={1}
                             max={999}
                             allowDecimal={false}
@@ -337,8 +351,9 @@ export function EditorInspector(props: EditorInspectorProps) {
                     )}
                     {selectedCell.kind === 'field-number' && (
                       <NumberInput
-                        label={tr('小數位數')}
-                        description={tr('留空則依數值原樣顯示')}
+                        label={
+                          <HelpLabel label={tr('小數位數')} help={tr('留空則依數值原樣顯示')} />
+                        }
                         min={0}
                         max={6}
                         allowDecimal={false}
@@ -353,8 +368,9 @@ export function EditorInspector(props: EditorInspectorProps) {
                     {selectedCell.kind === 'field-number' && !selectedCell.presentation && (
                       <div>
                         <TextInput
-                          label={tr('單位文字')}
-                          description={tr('例如：分、集、%、$')}
+                          label={
+                            <HelpLabel label={tr('單位文字')} help={tr('例如：分、集、%、$')} />
+                          }
                           maxLength={20}
                           value={selectedCell.unit ?? ''}
                           onChange={(event) =>
@@ -404,8 +420,12 @@ export function EditorInspector(props: EditorInspectorProps) {
               <Accordion.Panel>
                 <Stack gap="sm">
                   <Select
-                    label={tr('顯示條件欄位')}
-                    description={tr('只在所選欄位符合條件時顯示這個組件；不符合時保留空位。')}
+                    label={
+                      <HelpLabel
+                        label={tr('顯示條件欄位')}
+                        help={tr('只在所選欄位符合條件時顯示這個組件；不符合時保留空位。')}
+                      />
+                    }
                     placeholder={tr('一律顯示')}
                     clearable
                     value={selectedCell.condition?.attributeId ?? null}
@@ -620,8 +640,12 @@ export function EditorInspector(props: EditorInspectorProps) {
                   </div>
                   {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) && (
                     <Checkbox
-                      label={tr('內容多時可捲動')}
-                      description={tr('保持組件高度，超出的內容用捲動查看，不會被截掉')}
+                      label={
+                        <HelpLabel
+                          label={tr('內容多時可捲動')}
+                          help={tr('保持組件高度，超出的內容用捲動查看，不會被截掉')}
+                        />
+                      }
                       checked={selectedCell.scroll ?? false}
                       onChange={(event) =>
                         updateCell({ scroll: event.currentTarget.checked || undefined })
@@ -630,11 +654,15 @@ export function EditorInspector(props: EditorInspectorProps) {
                   )}
                   {['name', 'path', 'field-text'].includes(selectedCell.kind) && (
                     <Checkbox
-                      label={tr('長文字換行顯示')}
-                      description={
-                        selectedCell.scroll
-                          ? tr('可捲動時一律換行顯示')
-                          : tr('關閉時只顯示一行，過長的部分以「…」截斷')
+                      label={
+                        <HelpLabel
+                          label={tr('長文字換行顯示')}
+                          help={
+                            selectedCell.scroll
+                              ? tr('可捲動時一律換行顯示')
+                              : tr('關閉時只顯示一行，過長的部分以「…」截斷')
+                          }
+                        />
                       }
                       disabled={!!selectedCell.scroll}
                       checked={selectedCell.wrap ?? !!selectedCell.scroll}

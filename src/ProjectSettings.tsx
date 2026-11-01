@@ -1,4 +1,5 @@
 import { t as tr, useLocale } from './i18n'
+import { HelpLabel, HelpTip } from './HelpTip'
 import { useState } from 'react'
 import { convertMediaProject } from '../shared/media'
 import { Alert, Button, Group, Select, Stack, Tabs, Text, TextInput } from '@mantine/core'
@@ -53,8 +54,12 @@ export function ProjectSettings({
             />
             <Select
               mt="md"
-              label={tr('媒體分類')}
-              description={tr('決定右側內容的呈現方式，不更改原始資料夾。')}
+              label={
+                <HelpLabel
+                  label={tr('媒體分類')}
+                  help={tr('決定右側內容的呈現方式，不更改原始資料夾。')}
+                />
+              }
               data={categories.filter((category) =>
                 ['media', 'manga', 'game', project.mediaCategory].includes(category.value)
               )}
@@ -136,9 +141,12 @@ export function ProjectSettings({
               {root}
             </Text>
           </div>
-          <Text size="sm" c="dimmed">
-            {tr('CARD 的層級、密度與每頁筆數，請由資料夾檢視區的「CARD 顯示設定」調整。')}
-          </Text>
+          <Group gap={4} wrap="nowrap">
+            <Text size="sm">{tr('CARD 顯示')}</Text>
+            <HelpTip
+              text={tr('CARD 的層級、密度與每頁筆數，請由資料夾檢視區的「CARD 顯示設定」調整。')}
+            />
+          </Group>
           {!project.scanAll && (
             <Button
               variant="default"

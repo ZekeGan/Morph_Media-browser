@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.33.0 — 2026-11-02
+
+- Explanations moved into small "?" icons with tooltips instead of text lines in settings, the component inspector and the new fallback sections.
+- Game boundaries are marked with a flag icon (cards, table, tree); the words are in the tooltip.
+- The editor's field list shows the previewed folder's current value for each field on one line (full value on hover), so the real data is visible without placing a component.
+- New interface strings are translated into all languages; the Windows ACL test uses absolute system paths.
+
 ## 0.32.1 — 2026-11-02
 
 - A game's action row now shows only the buttons that are bound in that folder; the eye icon in the folder settings can still hide any of them for that game. An action that is not bound yet has its eye disabled with an explanation.

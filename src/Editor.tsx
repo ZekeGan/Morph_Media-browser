@@ -760,6 +760,7 @@ export function Editor({
           typeHints={typeHints}
           sources={sources}
           availableFields={availableFields}
+          preview={preview}
           dragImage={dragImage}
           act={act}
           add={add}

@@ -1,5 +1,6 @@
 import { ActionIcon, Button, Group, Select, Stack, Text, Tooltip } from '@mantine/core'
 import { Icon } from './icons'
+import { HelpTip } from './HelpTip'
 import { t as tr } from './i18n'
 import { cellField, isFilled } from '../shared/cells'
 import { MAX_FALLBACKS, fieldValue, type Cell, type FolderRow, type Project } from '../shared/model'
@@ -39,14 +40,12 @@ export function FallbackFields({
       !preview ? '' : isFilled(fieldValue(preview, id ?? '')) ? tr('有值') : tr('沒有值')
   return (
     <Stack gap={6} className="fallback-fields">
-      <div>
+      <Group gap={4} wrap="nowrap">
         <Text size="sm" fw={500}>
           {tr('備用欄位')}
         </Text>
-        <Text size="xs" c="dimmed">
-          {tr('主要欄位沒有值時，依序改用下列欄位；兩者都有值時以排在前面的為準。')}
-        </Text>
-      </div>
+        <HelpTip text={tr('主要欄位沒有值時，依序改用下列欄位；兩者都有值時以排在前面的為準。')} />
+      </Group>
       {fallbacks.map((id, index) => (
         <Group key={id} gap={4} wrap="nowrap" align="center" className="fallback-row">
           <Text size="xs" c="dimmed" w={16} ta="center" aria-hidden>
@@ -136,13 +135,18 @@ export function FallbackFields({
         )}
       </Group>
       {fallbacks.length > 0 && preview && (
-        <Text size="xs" c="dimmed" role="status">
-          {isFilled(shown.value)
-            ? tr('預覽中的「{0}」顯示：{1}', preview.name, alias(shown.attributeId))
-            : tr('預覽中的「{0}」所有欄位都沒有值', preview.name)}
-          {' · '}
-          {[cell.attributeId, ...fallbacks].map((id) => `${alias(id)}（${state(id)}）`).join('、')}
-        </Text>
+        <Group gap={4} wrap="nowrap">
+          <Text size="xs" c="dimmed" role="status">
+            {isFilled(shown.value)
+              ? tr('預覽中的「{0}」顯示：{1}', preview.name, alias(shown.attributeId))
+              : tr('預覽中的「{0}」所有欄位都沒有值', preview.name)}
+          </Text>
+          <HelpTip
+            text={[cell.attributeId, ...fallbacks]
+              .map((id) => `${alias(id)}（${state(id)}）`)
+              .join('、')}
+          />
+        </Group>
       )}
     </Stack>
   )

@@ -1,5 +1,6 @@
 import { t as tr, useLocale } from './i18n'
 import { Icon } from './icons'
+import { BoundaryFlag } from './BoundaryFlag'
 import { useAppTheme } from './themes/ThemeProvider'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -113,13 +114,15 @@ export default function Tree({
                   {r.name}
                 </strong>
                 <small>
-                  {r.structural
-                    ? tr('結構祖先')
-                    : r.boundary
-                      ? tr('遊戲邊界 · 內部未納管')
-                      : r.readonly
-                        ? tr('唯讀')
-                        : tr('第 ') + r.depth + tr(' 層')}
+                  {r.structural ? (
+                    tr('結構祖先')
+                  ) : r.boundary ? (
+                    <BoundaryFlag detail={tr('內部未納管')} />
+                  ) : r.readonly ? (
+                    tr('唯讀')
+                  ) : (
+                    tr('第 ') + r.depth + tr(' 層')
+                  )}
                   {count ? ' · ' + count + tr(' 個子資料夾') : ''}
                 </small>
               </div>

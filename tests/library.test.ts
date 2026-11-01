@@ -393,17 +393,20 @@ test(
     const { p1, lib } = await fixture(t),
       target = path.join(p1, 'A'),
       exec = promisify(execFile)
-    const { stdout } = await exec('whoami.exe', ['/user', '/fo', 'csv', '/nh'])
+    // Absolute paths: a Unix-style whoami earlier in PATH (Git for Windows) does not understand these options.
+    const system32 = path.join(process.env.SystemRoot ?? 'C:\\Windows', 'System32'),
+      icacls = path.join(system32, 'icacls.exe')
+    const { stdout } = await exec(path.join(system32, 'whoami.exe'), ['/user', '/fo', 'csv', '/nh'])
     const sid = stdout.match(/S-1-[\d-]+/)?.[0]
     assert.ok(sid)
-    await exec('icacls.exe', [target, '/deny', `*${sid}:(W)`])
+    await exec(icacls, [target, '/deny', `*${sid}:(W)`])
     try {
       const s = await lib.create(p1, input)
       assert.ok(s.rows.find((r) => r.name === 'A')!.error)
       assert.ok(s.rows.find((r) => r.name === 'B')!.record)
       assert.equal(await exists(folderFile(target)), false)
     } finally {
-      await exec('icacls.exe', [target, '/remove:d', `*${sid}`])
+      await exec(icacls, [target, '/remove:d', `*${sid}`])
     }
     assert.ok((await lib.scan()).rows.find((r) => r.name === 'A')!.record)
   }

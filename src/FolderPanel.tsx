@@ -2,6 +2,7 @@ import { metadataSources, sourceForUrl, type MetadataSourceId } from '../shared/
 import { GameActionEditor, GameActionTargets } from './GameActions'
 import { cardPresets, rowCells } from '../shared/layouts'
 import { t as tr, useLocale } from './i18n'
+import { HelpLabel, HelpTip } from './HelpTip'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import {
   Accordion,
@@ -262,7 +263,7 @@ export function FolderPanel({
       <TagsInput
         key={f.attributeId}
         label={f.key}
-        description={tr('以逗號分隔多個標籤')}
+        placeholder={tr('以逗號分隔多個標籤')}
         value={
           Array.isArray(effective(f.attributeId)) ? (effective(f.attributeId) as string[]) : []
         }
@@ -391,10 +392,10 @@ export function FolderPanel({
           <Stack>
             <Group justify="space-between">
               <div>
-                <Text fw={600}>{tr('資料夾資料')}</Text>
-                <Text size="xs" c="dimmed">
-                  {tr('填寫與此資料夾有關的資訊，保存後立即顯示。')}
-                </Text>
+                <Group gap={4} wrap="nowrap">
+                  <Text fw={600}>{tr('資料夾資料')}</Text>
+                  <HelpTip text={tr('填寫與此資料夾有關的資訊，保存後立即顯示。')} />
+                </Group>
               </div>
               <Badge color={privateValues ? 'orange' : 'gray'} variant="light">
                 {privateValues ? tr('僅目前專案') : tr('共用資料')}
@@ -457,10 +458,10 @@ export function FolderPanel({
         <Tabs.Panel value="images" pt="md">
           <Stack>
             <div>
-              <Text fw={600}>{tr('選用圖片')}</Text>
-              <Text size="sm" c="dimmed">
-                {tr('每個圖片組件可分別選圖。沒有圖片的資料夾可以留空。')}
-              </Text>
+              <Group gap={4} wrap="nowrap">
+                <Text fw={600}>{tr('選用圖片')}</Text>
+                <HelpTip text={tr('每個圖片組件可分別選圖。沒有圖片的資料夾可以留空。')} />
+              </Group>
             </div>
             {imageCells.map((cell, index) => {
               const assigned = row.record?.details?.cellImages?.[cell.attributeId ?? cell.cellId],
@@ -584,10 +585,10 @@ export function FolderPanel({
         <Tabs.Panel value="source" pt="md">
           <Stack>
             <div>
-              <Text fw={600}>{tr('從網站補充資訊')}</Text>
-              <Text size="sm" c="dimmed">
-                {tr('選來源、貼連結、預覽後再決定要匯入的欄位。')}
-              </Text>
+              <Group gap={4} wrap="nowrap">
+                <Text fw={600}>{tr('從網站補充資訊')}</Text>
+                <HelpTip text={tr('選來源、貼連結、預覽後再決定要匯入的欄位。')} />
+              </Group>
             </div>
             <section className="settings-section">
               <Stack gap="sm">
@@ -645,8 +646,12 @@ export function FolderPanel({
             {sourceResult && <Alert color="teal">{sourceResult}</Alert>}
             {preview && (
               <Checkbox
-                label={tr('覆寫已填來源欄位')}
-                description={tr('預設只填空值；人工欄位保持原樣。')}
+                label={
+                  <HelpLabel
+                    label={tr('覆寫已填來源欄位')}
+                    help={tr('預設只填空值；人工欄位保持原樣。')}
+                  />
+                }
                 checked={replaceSource}
                 onChange={(event) => setReplaceSource(event.currentTarget.checked)}
               />
@@ -759,7 +764,10 @@ export function FolderPanel({
         <Tabs.Panel value="game" pt="md" keepMounted>
           <Stack>
             <Group justify="space-between">
-              <Text fw={600}>{tr('遊戲操作')}</Text>
+              <Group gap={4} wrap="nowrap">
+                <Text fw={600}>{tr('遊戲操作')}</Text>
+                <HelpTip text={tr('版型套用全專案；目標與參數只屬於目前資料夾。')} />
+              </Group>
               <Button
                 size="xs"
                 variant="default"
@@ -769,9 +777,6 @@ export function FolderPanel({
                 {tr('自訂工具列')}
               </Button>
             </Group>
-            <Text size="sm" c="dimmed">
-              {tr('版型套用全專案；目標與參數只屬於目前資料夾。')}
-            </Text>
             <GameActionTargets
               key={row.rowId}
               row={row}
@@ -825,8 +830,12 @@ export function FolderPanel({
                 {tr('資料範圍')}
               </Text>
               <Checkbox
-                label={tr('此專案使用獨立資料')}
-                description={tr('開啟後，修改僅用於目前專案；其他專案仍使用共用資料。')}
+                label={
+                  <HelpLabel
+                    label={tr('此專案使用獨立資料')}
+                    help={tr('開啟後，修改僅用於目前專案；其他專案仍使用共用資料。')}
+                  />
+                }
                 aria-label={tr('顯式編輯本專案私有覆寫')}
                 checked={privateValues}
                 disabled={disabled}
@@ -843,10 +852,10 @@ export function FolderPanel({
               <pre>{JSON.stringify(row.record, null, 2) ?? tr('沒有可攜記錄')}</pre>
             </details>
             <section className="settings-section cleanup-section">
-              <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
-              <Text size="sm" c="dimmed" my="sm">
-                {tr('原始資料夾與媒體保留。先預覽範圍，確認後才清理。')}
-              </Text>
+              <Group gap={4} wrap="nowrap">
+                <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
+                <HelpTip text={tr('原始資料夾與媒體保留。先預覽範圍，確認後才清理。')} />
+              </Group>
               <Group>
                 <Button
                   size="xs"
@@ -890,8 +899,12 @@ export function FolderPanel({
                   ))}
                   {cleanup.scope === 'folder' && (
                     <Checkbox
-                      label={tr('清除後立即重新開始記錄')}
-                      description={tr('預設停止記錄，避免下次掃描立即建立資料。')}
+                      label={
+                        <HelpLabel
+                          label={tr('清除後立即重新開始記錄')}
+                          help={tr('預設停止記錄，避免下次掃描立即建立資料。')}
+                        />
+                      }
                       checked={restart}
                       onChange={(e) => setRestart(e.currentTarget.checked)}
                     />

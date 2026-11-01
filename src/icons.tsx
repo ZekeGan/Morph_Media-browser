@@ -86,6 +86,7 @@ const paths = {
       <path d="M17 7H8a5 5 0 0 0 0 10h4m5-10-4-4m4 4-4 4" />
     </>
   ),
+  flag: <path d="M5 17.5V3m0 0h10l-2.5 3.5L15 10H5" />,
   plus: <path d="M3 10h14M10 3v14" />,
   minus: <path d="M3 10h14" />,
   eye: (

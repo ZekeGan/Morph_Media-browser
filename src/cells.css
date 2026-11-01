@@ -18,3 +18,6 @@
 .card-cell .cell-scroll-body span, .editor-cell .cell-scroll-body span { overflow:visible; white-space:pre-wrap; overflow-wrap:anywhere; text-overflow:clip; }
 .tag-list { display:flex; flex-wrap:wrap; align-items:flex-start; gap:4px; width:100%; }
 .tag-list-fit { max-height:100%; overflow:hidden; }
+.help-tip { vertical-align:middle; opacity:.75; } .help-tip:hover,.help-tip:focus-visible { opacity:1; }
+.boundary-flag { display:inline-flex; align-items:center; margin-left:6px; color:var(--warning, #d98f2b); vertical-align:middle; } .boundary-flag:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+.palette-field-value { display:block; margin-top:4px; font-size:11px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .palette-field-value.is-empty { color:var(--muted); font-style:italic; }

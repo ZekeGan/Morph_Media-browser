@@ -1,5 +1,6 @@
 import type { SettingsImportPreview } from '../shared/workspace'
 import { t as tr, useLocale } from './i18n'
+import { HelpLabel, HelpTip } from './HelpTip'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Alert, Button, Group, Modal, Select, Stack, Switch, Tabs, Text } from '@mantine/core'
 import { localeOptions, type LocaleId } from '../shared/locales'
@@ -175,8 +176,12 @@ export function ApplicationSettings({
         </Tabs.List>
         <Tabs.Panel value="appearance" pt="lg">
           <Select
-            label={tr('介面語言')}
-            description={tr('立即預覽；專案名稱與資料內容保持原樣。')}
+            label={
+              <HelpLabel
+                label={tr('介面語言')}
+                help={tr('立即預覽；專案名稱與資料內容保持原樣。')}
+              />
+            }
             data={localeOptions}
             value={appearance.locale}
             allowDeselect={false}
@@ -184,12 +189,12 @@ export function ApplicationSettings({
             onChange={(value) => value && appearance.previewLocale(value as LocaleId)}
             mb="xl"
           />
-          <Text fw={600} size="sm">
-            {tr('選擇你的介面風格')}
-          </Text>
-          <Text size="sm" c="dimmed" mt={4} mb="lg">
-            {tr('套用到整個應用程式。點選預覽，保存後下次開啟仍會使用。')}
-          </Text>
+          <Group gap={4} mb="lg" wrap="nowrap">
+            <Text fw={600} size="sm">
+              {tr('選擇你的介面風格')}
+            </Text>
+            <HelpTip text={tr('套用到整個應用程式。點選預覽，保存後下次開啟仍會使用。')} />
+          </Group>
           <div className="theme-options" role="group" aria-label={tr('介面主題')}>
             {themes.map((theme) => (
               <button
@@ -333,8 +338,12 @@ export function ApplicationSettings({
           <Stack>
             <Switch
               aria-label={tr('自動開啟資料夾內容')}
-              label={tr('自動開啟資料夾內容')}
-              description={tr('進入其他資料夾時，自動展開右側內容面板')}
+              label={
+                <HelpLabel
+                  label={tr('自動開啟資料夾內容')}
+                  help={tr('進入其他資料夾時，自動展開右側內容面板')}
+                />
+              }
               checked={autoOpenContent}
               disabled={saving}
               onChange={(event) => {

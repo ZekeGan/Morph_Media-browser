@@ -5962,5 +5962,317 @@
     "en": "Automatic (default launch)",
     "ja": "自動（既定の起動）",
     "es": "Automático (inicio predeterminado)"
+  },
+  "可捲動內容": {
+    "zh-CN": "可滚动内容",
+    "en": "Scrollable content",
+    "ja": "スクロール可能な内容",
+    "es": "Contenido desplazable"
+  },
+  "資料夾內第 {0} 張圖片": {
+    "zh-CN": "文件夹内第 {0} 张图片",
+    "en": "Image {0} in the folder",
+    "ja": "フォルダー内の {0} 枚目の画像",
+    "es": "Imagen {0} de la carpeta"
+  },
+  "可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。": {
+    "zh-CN": "可添加多张；保存布局后，在文件夹设置的“图片”页分别选图，没有图片可留空。",
+    "en": "You can add several. After saving the layout, pick pictures per folder on the Images tab of the folder settings; leave empty when there is none.",
+    "ja": "複数追加できます。レイアウトを保存したら、フォルダー設定の「画像」タブでフォルダーごとに画像を選びます。ない場合は空のままで構いません。",
+    "es": "Puedes añadir varias. Tras guardar el diseño, elige la imagen de cada carpeta en la pestaña Imágenes de los ajustes de la carpeta; déjala vacía si no hay."
+  },
+  "沒有手動選圖時": {
+    "zh-CN": "没有手动选图时",
+    "en": "When no picture is chosen by hand",
+    "ja": "手動で画像を選んでいないとき",
+    "es": "Si no se elige imagen a mano"
+  },
+  "留空": {
+    "zh-CN": "留空",
+    "en": "Leave empty",
+    "ja": "空にする",
+    "es": "Dejar vacío"
+  },
+  "顯示資料夾內第 N 張圖片": {
+    "zh-CN": "显示文件夹内第 N 张图片",
+    "en": "Show the Nth image in the folder",
+    "ja": "フォルダー内の N 枚目の画像を表示",
+    "es": "Mostrar la imagen N de la carpeta"
+  },
+  "第幾張圖片": {
+    "zh-CN": "第几张图片",
+    "en": "Image number",
+    "ja": "何枚目の画像か",
+    "es": "Número de imagen"
+  },
+  "依檔名排序，只看這個資料夾直接包含的圖片（不含子資料夾）。資料夾已手動選圖時以手動為準；沒有那一張時留空。": {
+    "zh-CN": "按文件名排序，只看这个文件夹直接包含的图片（不含子文件夹）。文件夹已手动选图时以手动为准；没有那一张时留空。",
+    "en": "Sorted by file name, counting only images directly inside the folder (not subfolders). A picture chosen by hand wins; empty if there is no such image.",
+    "ja": "ファイル名順で、このフォルダー直下の画像だけを数えます（サブフォルダーは含みません）。手動で選んだ画像が優先され、該当の画像がなければ空になります。",
+    "es": "Ordenadas por nombre; solo cuentan las imágenes directas de la carpeta (no las subcarpetas). Una imagen elegida a mano tiene prioridad; si no existe, queda vacío."
+  },
+  "內容多時可捲動": {
+    "zh-CN": "内容多时可滚动",
+    "en": "Scroll when long",
+    "ja": "長いときはスクロール",
+    "es": "Desplazar si es largo"
+  },
+  "保持組件高度，超出的內容用捲動查看，不會被截掉": {
+    "zh-CN": "保持组件高度，超出的内容用滚动查看，不会被截掉",
+    "en": "Keeps the component height; extra content is reached by scrolling instead of being cut off.",
+    "ja": "コンポーネントの高さを保ち、はみ出した内容はスクロールで確認できます（切り捨てません）。",
+    "es": "Mantiene la altura del componente; el contenido sobrante se ve desplazándose en lugar de cortarse."
+  },
+  "可捲動時一律換行顯示": {
+    "zh-CN": "可滚动时一律换行显示",
+    "en": "Scrolling cells always wrap",
+    "ja": "スクロール可能なときは常に折り返します",
+    "es": "Si es desplazable, siempre se ajusta el texto"
+  },
+  "備用動作": {
+    "zh-CN": "备用动作",
+    "en": "Fallback actions",
+    "ja": "代替アクション",
+    "es": "Acciones alternativas"
+  },
+  "這個遊戲沒有綁定上面的動作時，依序改用下列動作；例如有些遊戲用 EXE、有些用捷徑。": {
+    "zh-CN": "这个游戏没有绑定上面的动作时，依序改用下列动作；例如有些游戏用 EXE、有些用快捷方式。",
+    "en": "When this game has no target for the action above, the following ones are tried in order; for example some games start from an EXE and others from a shortcut.",
+    "ja": "このゲームに上のアクションの対象がない場合、以下を順に使います。例：EXE で起動するゲームとショートカットで起動するゲーム。",
+    "es": "Si este juego no tiene destino para la acción de arriba, se prueban las siguientes en orden; por ejemplo, unos juegos arrancan con un EXE y otros con un acceso directo."
+  },
+  "第 {0} 順位動作": {
+    "zh-CN": "第 {0} 顺位动作",
+    "en": "Action number {0} in order",
+    "ja": "{0} 番目のアクション",
+    "es": "Acción n.º {0} en orden"
+  },
+  "移除備用動作": {
+    "zh-CN": "移除备用动作",
+    "en": "Remove fallback action",
+    "ja": "代替アクションを削除",
+    "es": "Quitar acción alternativa"
+  },
+  "移除備用動作 {0}": {
+    "zh-CN": "移除备用动作 {0}",
+    "en": "Remove fallback action {0}",
+    "ja": "代替アクション {0} を削除",
+    "es": "Quitar la acción alternativa {0}"
+  },
+  "新增備用動作": {
+    "zh-CN": "添加备用动作",
+    "en": "Add fallback action",
+    "ja": "代替アクションを追加",
+    "es": "Añadir acción alternativa"
+  },
+  "沒有其他可啟動的動作。先在遊戲操作新增。": {
+    "zh-CN": "没有其他可启动的动作。请先在游戏操作中添加。",
+    "en": "No other launch actions. Add one in the game actions first.",
+    "ja": "ほかに起動できるアクションがありません。先にゲーム操作で追加してください。",
+    "es": "No hay otras acciones de inicio. Añade una primero en las acciones del juego."
+  },
+  "預覽中的「{0}」使用：{1}": {
+    "zh-CN": "预览中的“{0}”使用：{1}",
+    "en": "In the preview, “{0}” uses: {1}",
+    "ja": "プレビュー中の「{0}」は次を使用: {1}",
+    "es": "En la vista previa, «{0}» usa: {1}"
+  },
+  "預覽中的「{0}」沒有綁定任何一個動作": {
+    "zh-CN": "预览中的“{0}”没有绑定任何一个动作",
+    "en": "In the preview, “{0}” has no action bound",
+    "ja": "プレビュー中の「{0}」にはどのアクションも割り当てられていません",
+    "es": "En la vista previa, «{0}» no tiene ninguna acción vinculada"
+  },
+  "已綁定": {
+    "zh-CN": "已绑定",
+    "en": "bound",
+    "ja": "割り当て済み",
+    "es": "vinculada"
+  },
+  "未綁定": {
+    "zh-CN": "未绑定",
+    "en": "not bound",
+    "ja": "未割り当て",
+    "es": "sin vincular"
+  },
+  "有值": {
+    "zh-CN": "有值",
+    "en": "has a value",
+    "ja": "値あり",
+    "es": "con valor"
+  },
+  "沒有值": {
+    "zh-CN": "没有值",
+    "en": "empty",
+    "ja": "値なし",
+    "es": "vacío"
+  },
+  "備用欄位": {
+    "zh-CN": "备用字段",
+    "en": "Fallback fields",
+    "ja": "代替フィールド",
+    "es": "Campos alternativos"
+  },
+  "主要欄位沒有值時，依序改用下列欄位；兩者都有值時以排在前面的為準。": {
+    "zh-CN": "主要字段没有值时，依序改用下列字段；都有值时以排在前面的为准。",
+    "en": "When the main field is empty, the following fields are tried in order; if several have a value, the earlier one wins.",
+    "ja": "メインのフィールドが空のとき、以下を順に使います。複数に値がある場合は前にあるものが優先されます。",
+    "es": "Si el campo principal está vacío, se prueban los siguientes en orden; si varios tienen valor, gana el primero."
+  },
+  "第 {0} 順位欄位": {
+    "zh-CN": "第 {0} 顺位字段",
+    "en": "Field number {0} in order",
+    "ja": "{0} 番目のフィールド",
+    "es": "Campo n.º {0} en orden"
+  },
+  "移除備用欄位": {
+    "zh-CN": "移除备用字段",
+    "en": "Remove fallback field",
+    "ja": "代替フィールドを削除",
+    "es": "Quitar campo alternativo"
+  },
+  "移除備用欄位 {0}": {
+    "zh-CN": "移除备用字段 {0}",
+    "en": "Remove fallback field {0}",
+    "ja": "代替フィールド {0} を削除",
+    "es": "Quitar el campo alternativo {0}"
+  },
+  "新增備用欄位": {
+    "zh-CN": "添加备用字段",
+    "en": "Add fallback field",
+    "ja": "代替フィールドを追加",
+    "es": "Añadir campo alternativo"
+  },
+  "沒有其他同型別欄位。先在左側欄位清單新增或匯入。": {
+    "zh-CN": "没有其他同类型字段。请先在左侧字段列表中添加或导入。",
+    "en": "No other fields of the same type. Add or import one in the field list on the left first.",
+    "ja": "同じ型のフィールドがほかにありません。先に左のフィールド一覧で追加またはインポートしてください。",
+    "es": "No hay otros campos del mismo tipo. Añade o importa uno primero en la lista de campos de la izquierda."
+  },
+  "預覽中的「{0}」顯示：{1}": {
+    "zh-CN": "预览中的“{0}”显示：{1}",
+    "en": "In the preview, “{0}” shows: {1}",
+    "ja": "プレビュー中の「{0}」は次を表示: {1}",
+    "es": "En la vista previa, «{0}» muestra: {1}"
+  },
+  "預覽中的「{0}」所有欄位都沒有值": {
+    "zh-CN": "预览中的“{0}”所有字段都没有值",
+    "en": "In the preview, every field of “{0}” is empty",
+    "ja": "プレビュー中の「{0}」はすべてのフィールドが空です",
+    "es": "En la vista previa, todos los campos de «{0}» están vacíos"
+  },
+  "這不是遊戲目錄": {
+    "zh-CN": "这不是游戏目录",
+    "en": "This is not a game folder",
+    "ja": "ゲームフォルダーではありません",
+    "es": "Esta no es una carpeta de juego"
+  },
+  "原作": {
+    "zh-CN": "原作",
+    "en": "Parody",
+    "ja": "原作",
+    "es": "Parodia"
+  },
+  "角色": {
+    "zh-CN": "角色",
+    "en": "Characters",
+    "ja": "キャラクター",
+    "es": "Personajes"
+  },
+  "社團": {
+    "zh-CN": "社团",
+    "en": "Group",
+    "ja": "サークル",
+    "es": "Grupo"
+  },
+  "Cosplayer": {
+    "zh-CN": "Cosplayer",
+    "en": "Cosplayer",
+    "ja": "コスプレイヤー",
+    "es": "Cosplayer"
+  },
+  "女性標籤": {
+    "zh-CN": "女性标签",
+    "en": "Female tags",
+    "ja": "女性タグ",
+    "es": "Etiquetas femeninas"
+  },
+  "男性標籤": {
+    "zh-CN": "男性标签",
+    "en": "Male tags",
+    "ja": "男性タグ",
+    "es": "Etiquetas masculinas"
+  },
+  "混合標籤": {
+    "zh-CN": "混合标签",
+    "en": "Mixed tags",
+    "ja": "ミックスタグ",
+    "es": "Etiquetas mixtas"
+  },
+  "其他標籤": {
+    "zh-CN": "其他标签",
+    "en": "Other tags",
+    "ja": "その他のタグ",
+    "es": "Otras etiquetas"
+  },
+  "重新分類": {
+    "zh-CN": "重新分类",
+    "en": "Reclass",
+    "ja": "再分類",
+    "es": "Reclasificación"
+  },
+  "尚未綁定目標，按鈕列不會顯示這個按鈕": {
+    "zh-CN": "尚未绑定目标，按钮栏不会显示这个按钮",
+    "en": "No target bound yet, so the action bar will not show this button",
+    "ja": "対象が未割り当てのため、ボタン列にはこのボタンは表示されません",
+    "es": "Aún no hay destino vinculado, por lo que la barra no mostrará este botón"
+  },
+  "此遊戲的按鈕列不顯示這個按鈕，點擊顯示": {
+    "zh-CN": "此游戏的按钮栏不显示这个按钮，点击显示",
+    "en": "This button is hidden in this game's action bar; click to show it",
+    "ja": "このゲームのボタン列ではこのボタンを非表示にしています。クリックで表示",
+    "es": "Este botón está oculto en la barra de este juego; haz clic para mostrarlo"
+  },
+  "此遊戲的按鈕列顯示這個按鈕，點擊隱藏": {
+    "zh-CN": "此游戏的按钮栏显示这个按钮，点击隐藏",
+    "en": "This button is shown in this game's action bar; click to hide it",
+    "ja": "このゲームのボタン列にこのボタンを表示しています。クリックで非表示",
+    "es": "Este botón se muestra en la barra de este juego; haz clic para ocultarlo"
+  },
+  "顯示按鈕 {0}": {
+    "zh-CN": "显示按钮 {0}",
+    "en": "Show button {0}",
+    "ja": "ボタン {0} を表示",
+    "es": "Mostrar botón {0}"
+  },
+  "隱藏按鈕 {0}": {
+    "zh-CN": "隐藏按钮 {0}",
+    "en": "Hide button {0}",
+    "ja": "ボタン {0} を非表示",
+    "es": "Ocultar botón {0}"
+  },
+  "說明：{0}": {
+    "zh-CN": "说明：{0}",
+    "en": "Help: {0}",
+    "ja": "説明: {0}",
+    "es": "Ayuda: {0}"
+  },
+  "CARD 顯示": {
+    "zh-CN": "CARD 显示",
+    "en": "CARD display",
+    "ja": "CARD 表示",
+    "es": "Vista CARD"
+  },
+  "還有更多標籤": {
+    "zh-CN": "还有更多标签",
+    "en": "More tags",
+    "ja": "ほかのタグ",
+    "es": "Más etiquetas"
+  },
+  "內部未納管": {
+    "zh-CN": "内部未纳管",
+    "en": "inside is not managed",
+    "ja": "内部は管理対象外",
+    "es": "el interior no se gestiona"
   }
 }

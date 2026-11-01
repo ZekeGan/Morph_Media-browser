@@ -111,6 +111,21 @@ try {
   await body.focus()
   await page.keyboard.press('PageDown')
   assert.ok((await metrics()).top > 0)
+  // The editor's field list shows the previewed folder's real value on one line, the whole value on hover.
+  await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+  const value = page.locator('.palette-field[data-attribute-id="tags"] .palette-field-value')
+  await value.waitFor()
+  assert.equal(await value.innerText(), '（此筆沒有值）', 'a folder without the field')
+  await page.getByRole('textbox', { name: '使用真實資料預覽', exact: true }).click()
+  await page.getByRole('option', { name: /^Many/ }).click()
+  assert.ok((await value.innerText()).startsWith('female:tag number 0, '))
+  assert.ok(((await value.getAttribute('title')) ?? '').includes('tag number 39'))
+  assert.equal(
+    await value.evaluate((node) => node.scrollWidth > node.clientWidth && node.clientHeight < 24),
+    true,
+    'one line, cut with an ellipsis'
+  )
+  await page.screenshot({ path: path.join(root, 'palette-values.png') })
   assert.deepEqual(errors, [])
   passed = true
   console.log(

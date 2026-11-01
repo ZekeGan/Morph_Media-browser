@@ -1,5 +1,6 @@
 import { ActionIcon, Button, Group, Select, Stack, Text, Tooltip } from '@mantine/core'
 import { Icon } from './icons'
+import { HelpTip } from './HelpTip'
 import { t as tr } from './i18n'
 import { MAX_FALLBACKS, type Cell, type FolderRow, type Project } from '../shared/model'
 import { launchChoice, launchTemplates } from '../shared/explorer'
@@ -38,14 +39,16 @@ export function FallbackActions({
       preview?.record?.details?.targets?.[id]?.kind === all.find((t) => t.id === id)?.kind
   return (
     <Stack gap={6} className="fallback-fields">
-      <div>
+      <Group gap={4} wrap="nowrap">
         <Text size="sm" fw={500}>
           {tr('備用動作')}
         </Text>
-        <Text size="xs" c="dimmed">
-          {tr('這個遊戲沒有綁定上面的動作時，依序改用下列動作；例如有些遊戲用 EXE、有些用捷徑。')}
-        </Text>
-      </div>
+        <HelpTip
+          text={tr(
+            '這個遊戲沒有綁定上面的動作時，依序改用下列動作；例如有些遊戲用 EXE、有些用捷徑。'
+          )}
+        />
+      </Group>
       {fallbacks.map((id, index) => (
         <Group key={id} gap={4} wrap="nowrap" align="center" className="fallback-row">
           <Text size="xs" c="dimmed" w={16} ta="center" aria-hidden>
@@ -115,16 +118,19 @@ export function FallbackActions({
         )}
       </Group>
       {fallbacks.length > 0 && shown && preview && (
-        <Text size="xs" c="dimmed" role="status">
-          {bound(shown.id)
-            ? tr('預覽中的「{0}」使用：{1}', preview.name, label(shown.id))
-            : tr('預覽中的「{0}」沒有綁定任何一個動作', preview.name)}
-          {' · '}
-          {[main, ...fallbacks]
-            .filter((id): id is string => !!id)
-            .map((id) => `${label(id)}（${bound(id) ? tr('已綁定') : tr('未綁定')}）`)
-            .join('、')}
-        </Text>
+        <Group gap={4} wrap="nowrap">
+          <Text size="xs" c="dimmed" role="status">
+            {bound(shown.id)
+              ? tr('預覽中的「{0}」使用：{1}', preview.name, label(shown.id))
+              : tr('預覽中的「{0}」沒有綁定任何一個動作', preview.name)}
+          </Text>
+          <HelpTip
+            text={[main, ...fallbacks]
+              .filter((id): id is string => !!id)
+              .map((id) => `${label(id)}（${bound(id) ? tr('已綁定') : tr('未綁定')}）`)
+              .join('、')}
+          />
+        </Group>
       )}
     </Stack>
   )

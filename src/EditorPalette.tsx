@@ -16,16 +16,40 @@ import {
   Tooltip,
 } from '@mantine/core'
 import type { Layout } from 'react-grid-layout'
+import { fieldValue } from '../shared/model'
 import type {
   Cell,
   CellKind,
   FieldDeletionPreview,
+  FolderRow,
   Project,
   Request,
   Response,
 } from '../shared/model'
 import { editorFields } from '../shared/layouts'
 import { typeKinds } from './editorKinds'
+
+// One line of the previewed folder's value for a field; long values are cut with "…" and shown whole on hover.
+function FieldValuePreview({ value }: { value: unknown }) {
+  const text = Array.isArray(value)
+    ? value.map(String).join(', ')
+    : typeof value === 'boolean'
+      ? value
+        ? tr('是')
+        : tr('否')
+      : value == null
+        ? ''
+        : String(value)
+  const clean = text.replace(/\s+/g, ' ').trim()
+  return (
+    <span
+      className={clean ? 'palette-field-value' : 'palette-field-value is-empty'}
+      title={clean ? clean.slice(0, 2000) : undefined}
+    >
+      {clean || tr('（此筆沒有值）')}
+    </span>
+  )
+}
 
 type Binding = Project['fieldBindings'][number]
 type Source = ReturnType<typeof editorFields>[number]
@@ -42,6 +66,8 @@ export type EditorPaletteProps = {
   typeHints: Record<string, string>
   sources: Source[]
   availableFields: Source[]
+  // The folder shown in the editor preview: each field lists its current value so the real data is visible.
+  preview?: FolderRow
   dragImage: (event: React.DragEvent<HTMLDivElement>) => void
   act: (request: Request) => Promise<Response | undefined>
   add: (kind: CellKind, grid?: Cell['grid'], layout?: Layout, source?: Binding) => void
@@ -63,6 +89,7 @@ export function EditorPalette(props: EditorPaletteProps) {
     typeHints,
     sources,
     availableFields,
+    preview,
     dragImage,
     act,
     add,
@@ -100,6 +127,7 @@ export function EditorPalette(props: EditorPaletteProps) {
           onClick={() => add(kind, undefined, undefined, binding)}
         >
           <span className="palette-field-name">{binding.alias || tr('未命名欄位')}</span>
+          {preview && <FieldValuePreview value={fieldValue(preview, binding.attributeId)} />}
           <span className="palette-field-meta">
             <span>{typeLabels[binding.type]}</span>
             <span>

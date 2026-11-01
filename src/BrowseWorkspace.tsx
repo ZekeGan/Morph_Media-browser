@@ -5,6 +5,7 @@ import type { OverviewEntry } from '../shared/explorer'
 import type { FolderNavigation } from '../shared/workspace'
 import { t as tr, useLocale, currentLocale } from './i18n'
 import { Icon } from './icons'
+import { BoundaryFlag } from './BoundaryFlag'
 import { BrowseToolbar } from './BrowseToolbar'
 import { BrowsePanel } from './BrowsePanel'
 import {
@@ -919,19 +920,26 @@ export function BrowseWorkspace({
                           style={{ maxWidth: browse.widths[c.id] ?? 180 }}
                           title={c.id === 'path' ? r.path : undefined}
                         >
-                          {c.id === 'name'
-                            ? r.name + (!r.record ? ' ⚠' : r.boundary ? ' ⚑' : '')
-                            : c.id === 'path'
-                              ? r.path
-                              : c.id === 'depth'
-                                ? r.depth
-                                : Array.isArray(fieldValue(r, c.id))
-                                  ? (fieldValue(r, c.id) as unknown[]).join(', ')
-                                  : typeof fieldValue(r, c.id) === 'boolean'
-                                    ? fieldValue(r, c.id)
-                                      ? tr('是')
-                                      : tr('否')
-                                    : String(fieldValue(r, c.id) ?? '')}
+                          {c.id === 'name' ? (
+                            <>
+                              {r.name}
+                              {!r.record ? ' ⚠' : r.boundary ? <BoundaryFlag /> : null}
+                            </>
+                          ) : c.id === 'path' ? (
+                            r.path
+                          ) : c.id === 'depth' ? (
+                            r.depth
+                          ) : Array.isArray(fieldValue(r, c.id)) ? (
+                            (fieldValue(r, c.id) as unknown[]).join(', ')
+                          ) : typeof fieldValue(r, c.id) === 'boolean' ? (
+                            fieldValue(r, c.id) ? (
+                              tr('是')
+                            ) : (
+                              tr('否')
+                            )
+                          ) : (
+                            String(fieldValue(r, c.id) ?? '')
+                          )}
                         </td>
                       ))}
                     </tr>
@@ -959,13 +967,15 @@ export function BrowseWorkspace({
                   />
                   {(row.error || !row.record || row.readonly || row.boundary) && (
                     <small className="folder-state">
-                      {row.error
-                        ? tr('需要處理')
-                        : row.readonly
-                          ? tr('受保護')
-                          : !row.record
-                            ? tr('尚未建立資料')
-                            : tr('遊戲邊界')}
+                      {row.error ? (
+                        tr('需要處理')
+                      ) : row.readonly ? (
+                        tr('受保護')
+                      ) : !row.record ? (
+                        tr('尚未建立資料')
+                      ) : (
+                        <BoundaryFlag />
+                      )}
                     </small>
                   )}
                 </article>
