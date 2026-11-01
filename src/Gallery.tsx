@@ -12,16 +12,7 @@ import {
 } from 'react'
 import { Icon } from './icons'
 import { FileMenu } from './FileMenu'
-import {
-  ActionIcon,
-  Button,
-  Center,
-  Group,
-  Modal,
-  SegmentedControl,
-  Stack,
-  Tooltip,
-} from '@mantine/core'
+import { ActionIcon, Center, Group, Modal, SegmentedControl, Stack, Tooltip } from '@mantine/core'
 import { canPreviewMedia, mediaIdentity } from '../shared/media'
 import type { MediaEntry, OverviewEntry, ReadingPrefs } from '../shared/explorer'
 import {

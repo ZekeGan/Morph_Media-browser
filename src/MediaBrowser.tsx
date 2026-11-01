@@ -9,13 +9,7 @@ import type {
   OverviewEntry,
 } from '../shared/explorer'
 import type { FolderRow, Project, Request, Response } from '../shared/model'
-import {
-  canPreviewMedia,
-  matchesMedia,
-  mediaIdentity,
-  visibleFile,
-  type MediaFilter,
-} from '../shared/media'
+import { canPreviewMedia, matchesMedia, visibleFile, type MediaFilter } from '../shared/media'
 import { Gallery } from './Gallery'
 import { MediaViewer } from './MediaViewer'
 import { usePlayback } from './Playback'

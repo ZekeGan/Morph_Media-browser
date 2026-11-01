@@ -19,7 +19,7 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { ActionIcon, Breadcrumbs, Menu, Pagination, Select, Tooltip } from '@mantine/core'
+import { ActionIcon, Breadcrumbs, Pagination, Tooltip } from '@mantine/core'
 import { Card } from './Card'
 import { cardPresets } from '../shared/layouts'
 import {
@@ -38,9 +38,6 @@ import {
 } from '../shared/model'
 import type { BrowseMode, BrowseState, ExplorerRequest, ExplorerResponse } from '../shared/explorer'
 const FolderPanel = lazy(() => import('./FolderPanel').then((m) => ({ default: m.FolderPanel })))
-const FolderContent = lazy(() =>
-  import('./FolderContent').then((m) => ({ default: m.FolderContent }))
-)
 const Tree = lazy(() => import('./TreeView'))
 const initial: BrowseState = {
   mode: 'CARD',

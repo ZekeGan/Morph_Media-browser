@@ -654,7 +654,7 @@ test('1000-row SQLite warm substring benchmark includes one-character Chinese qu
 })
 
 test('multiple optional image CELL slots remain independent and survive portable relink; failed writes roll back assets', async (t) => {
-  const { root, media, local, lib, explorer } = await fixture(t)
+  const { root, media, lib, explorer } = await fixture(t)
   let snapshot = await lib.create(media, {
     name: 'Images',
     mediaCategory: 'album',

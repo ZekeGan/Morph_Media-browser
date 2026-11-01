@@ -19,7 +19,7 @@ M:orph es una aplicación de escritorio pensada primero para Windows que permite
 
 > **Dirigido por una persona, construido por IA.** Una persona dirige el proyecto (dirección, requisitos, decisiones de diseño y revisión), mientras que agentes de programación de IA (OpenAI Codex y después Claude Code de Anthropic) escriben el código bajo esa dirección.
 >
-> El proyecto está en una **fase temprana de desarrollo**. Versión actual: **0.37.1** ([registro de cambios](CHANGELOG.md)).
+> El proyecto está en una **fase temprana de desarrollo**. Versión actual: **0.37.2** ([registro de cambios](CHANGELOG.md)).
 
 ---
 
@@ -51,7 +51,7 @@ M:orph es una aplicación de escritorio pensada primero para Windows que permite
 
 **Completar los datos**
 
-- Pega la dirección de una página y el origen se reconoce automáticamente: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library y Wikimedia Commons. Revisa la vista previa y elige qué campos importar. No se descarga nada si no lo pides.
+- Pega la dirección de una página y el origen se reconoce automáticamente: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library y Wikimedia Commons. Revisa la vista previa y elige qué campos importar. No se descarga nada si no lo pides. Algunos de estos sitios contienen contenido para adultos; usarlos es decisión tuya y se aplican las condiciones de cada sitio.
 
 **Aspecto e idioma**
 
@@ -112,6 +112,7 @@ Los documentos de diseño están escritos principalmente en chino tradicional.
 - [Índice de documentación](docs/README.md): encuentra el documento adecuado para cada tarea.
 - [Alcance del producto](docs/PRODUCT.md) y [arquitectura](docs/ARCHITECTURE.md).
 - [Trabajo actual y límites conocidos](docs/WORK_ITEMS.md), [decisiones](docs/DECISIONS.md).
+- [Guía de contribución](CONTRIBUTING.md) y [política de seguridad](SECURITY.md) (informa de las vulnerabilidades en privado).
 - Colaboradores y agentes de programación: lean primero [CLAUDE.md](CLAUDE.md) (Claude Code) o [AGENTS.md](AGENTS.md) (Codex). El material de las primeras pruebas de concepto está en [docs/archive](docs/archive/) y no es una especificación vigente.
 
 ---

@@ -2,6 +2,14 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.37.2 — 2026-11-02
+
+- Public-release tidy-up: the documentation no longer names the maintainer's real game folders or collection paths (examples use neutral sample names, tests included), and the AI-generated reference pictures in `docs/design/explorations` were removed.
+- README notes that some supported sites carry adult content and that using them is up to the user; added `SECURITY.md` (private vulnerability reporting), `CONTRIBUTING.md` and a weekly Dependabot configuration.
+- `AGENTS.md` now only points to `CLAUDE.md`, which is the single source of the working rules.
+- 76 interface strings that nothing references any more were removed from the translation file; unused imports were removed and `noUnusedLocals` is now on.
+- Theme contrast is checked by a test (WCAG AA for text pairs in all three themes); the secondary text colour of the glass and paper themes is slightly darker to pass.
+
 ## 0.37.1 — 2026-11-02
 
 - `Library` and `Explorer` were split by feature into sibling modules (scan, field removal, project removal, cleanup, legacy import; content, streaming and thumbnails, external sources, overview). The classes keep thin wrappers, so callers and behaviour are unchanged.

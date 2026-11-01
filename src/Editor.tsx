@@ -410,7 +410,6 @@ export function Editor({
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
   }, [draft, selected, past, busy])
-  type Binding = Project['fieldBindings'][number]
   const switchTo = (id: string) => {
     const current = draft.layoutPresets?.find((preset) => preset.id === draft.activeLayoutId)
     if (current && JSON.stringify(current.cells) !== JSON.stringify(draft.cells)) {

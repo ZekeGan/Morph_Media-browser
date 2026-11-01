@@ -27,7 +27,7 @@
 
 | 個案／指定 ROOT | 本次證據與現行結果 | 待修範圍 |
 | --- | --- | --- |
-| NeetAndAngel | EXE＋resources/app.asar 檔案，目前回傳封裝候選；指定 resources/app/data/sound 層本次無 .media-viewer。 | 不把先前存在的記錄或引擎未知等同本次仍新增；以受控掃描／寫入稽核驗證，保留使用者指定 ROOT。 |
+| TyranoDataSample | EXE＋resources/app.asar 檔案，目前回傳封裝候選；指定 resources/app/data/sound 層本次無 .media-viewer。 | 不把先前存在的記錄或引擎未知等同本次仍新增；以受控掃描／寫入稽核驗證，保留使用者指定 ROOT。 |
 | 発育測定…／game | game.exe、nw.pak、Chromium DLL／locales，沒有外露 js／www／data；EXE 無版本資訊，2026-10-27 診斷時未命中。 | 已補受控 NW.js／內嵌結構候選並停止，不強猜引擎或解包 EXE；ROOT 是內層 game，不是外包裝。實際 ROOT 未重掃。 |
 | 妹幻想…V1.4.5＋DLC | GamePro.exe 產品名稱／描述明載 WOLF RPG Editor；Data 下有多個 .wolf，BasicData 有 Game.dat／DataBase.dat 等。2026-10-27 診斷時只認根的 Data.wolf，未命中；AutoBackup2 有記錄。 | 已補受控未封包／混合封包組合；不要求固定 Game.exe／Data.wolf 名稱，不深入 AutoBackup 才判根。實際 ROOT 未重掃。 |
 | ふたりぐらしver1.312 | resources/app.asar 是真實目錄；小型入口檔引用 Tyrano／KAG 核心，具 Config.tjs／first.ks，判斷為 TyranoScript 遊戲結構。 | 本輪已依上方解包桌面版規則修正，在外層停止；歷史 data/image/ring 記錄保留。 |
@@ -68,7 +68,7 @@
 | LÖVE | `.love` 與執行環境，或合併 EXE 與配套 DLL；內嵌版本不可要求外部 `.love`。 | 依據已查：[官方發行說明](https://love2d.org/wiki/Game_Distribution)；單一 DLL 仍非充分條件。 |
 | Source／Source 2、CRYENGINE | 列入擴充清單；商店啟動器、模組與共用引擎安裝可能使內容根不等於遊戲根。 | 待官方結構研究與樣本；先提供人工 ROOT，不宣稱自動辨識。 |
 | Adventure Game Studio、MonoGame／FNA／XNA、自製引擎 | 列入擴充清單；同一框架可製作一般應用，無通用可靠目錄規則。 | 待研究與樣本；先提供人工 ROOT，後續按真實收藏補規則。 |
-| 日系視覺小說引擎（2026-11-01 依 `D:\Media\gal` 唯讀結構確認） | Artemis：EXE＋`*.pfs`（含 `.pfs.000`）。AI6WIN（Silky's／Elf）：`AI6WIN*.exe`（補丁版可能把 `.arc` 移進子資料夾，故只看執行檔名）。BGI／Ethornell：`BGI*.exe`＋`.arc`。ONScripter／NScripter：`onscripter*.exe`，或 `nscript.dat`／`ons.cfg` 加 `.nsa`／`.sar`。RealLive／AVG32：`GAMEEXE.INI`＋`SEEN.TXT`／`PDT/`／`AVG32*.exe`。SiglusEngine：`Scene.pck`＋`Gameexe.dat`。YU-RIS：`*.ypf`。Nitroplus NPA：至少兩個 `.npa`。多個 `.npk` 與 Steam（`steam_api*.dll`）發行版引擎不明，只列候選，由人工確認。 | 依據：使用者收藏的實際目錄結構與各引擎公開的檔案慣例；單獨 `.arc`、單一 `.npa`、沒有 EXE 的 `.pfs` 不成立。補丁／外掛可能帶同名檔案，因此皆為候選。 |
+| 日系視覺小說引擎（2026-11-01 依 使用者的日系視覺小說收藏 唯讀結構確認） | Artemis：EXE＋`*.pfs`（含 `.pfs.000`）。AI6WIN（Silky's／Elf）：`AI6WIN*.exe`（補丁版可能把 `.arc` 移進子資料夾，故只看執行檔名）。BGI／Ethornell：`BGI*.exe`＋`.arc`。ONScripter／NScripter：`onscripter*.exe`，或 `nscript.dat`／`ons.cfg` 加 `.nsa`／`.sar`。RealLive／AVG32：`GAMEEXE.INI`＋`SEEN.TXT`／`PDT/`／`AVG32*.exe`。SiglusEngine：`Scene.pck`＋`Gameexe.dat`。YU-RIS：`*.ypf`。Nitroplus NPA：至少兩個 `.npa`。多個 `.npk` 與 Steam（`steam_api*.dll`）發行版引擎不明，只列候選，由人工確認。 | 依據：使用者收藏的實際目錄結構與各引擎公開的檔案慣例；單獨 `.arc`、單一 `.npa`、沒有 EXE 的 `.pfs` 不成立。補丁／外掛可能帶同名檔案，因此皆為候選。 |
 
 ## 漏判、誤判與 ROOT 定位規則
 
@@ -76,14 +76,14 @@
 
 ### 已確認案例與成因
 
-先前對使用者指定的 `D:\MediaViewerData\Game\threeGals` 做必要目錄與檔案版本的唯讀確認：
+先前對使用者指定的 一個 Unreal 遊戲資料夾 做必要目錄與檔案版本的唯讀確認：
 
 ```text
-threeGals/                         ← 應保護的遊戲 ROOT
-├─ ThreeGals.exe
+unrealSampleA/                         ← 應保護的遊戲 ROOT
+├─ UnrealSampleA.exe
 ├─ Engine/
-└─ ThreeGals/
-   ├─ Binaries/Win64/ThreeGals-Win64-Shipping.exe
+└─ UnrealSampleA/
+   ├─ Binaries/Win64/UnrealSampleA-Win64-Shipping.exe
    ├─ Content/Paks/                ← .pak、.utoc、.ucas
    └─ Plugins/
 ```
@@ -94,14 +94,14 @@ Shipping EXE 的產品名稱為 `UnrealGame`，檔案版本標示 `++UE5+Release
 
 同日使用者另回報三款也被掃入，僅對指定路徑做必要檔名、版本、小型入口／核心標記及 boundary 的唯讀核對，未執行掃描器或遊戲，也未解開封包：
 
-| 指定目錄（位於 `D:\MediaViewerData\Game`） | 實際證據 | 判斷與待修範圍 |
+| 指定目錄（位於 使用者的遊戲收藏） | 實際證據 | 判斷與待修範圍 |
 | --- | --- | --- |
-| `LoserIsekaieSJT` | 外層 `LoserIsekaieSJT.exe`＋Engine，內層 `LoserIsekaieSJT/Binaries/Win64/LoserIsekaieSJT-Win64-Shipping.exe` 與 `Content/Paks` 的 PAK／UTOC／UCAS；Shipping EXE 的產品名稱／檔案版本為空，外層 boundary 未設定。 | 與 ThreeGals 相同的 Unreal 跨層漏判；另須驗證缺少 EXE 版本資訊時仍能憑結構提出候選，不得硬性要求 `UnrealGame` 或特定版本字串。 |
-| `otsutome` | 根目錄有 `otsutome.exe`、Chromium 配套檔與 `resources/app.asar`，沒有直接可見的 tyrano／data；另有 `otsutome_tyrano_data.sav`。根記錄已手動標記 ROOT（engines 為空、依據為使用者指定），resources 內已有記錄。 | ASAR 封裝形式已確認；Tyrano 僅為輔助檔名所支持的候選，未確認封包內引擎。現有 Tyrano 規則只認外露 tyrano／data，因此此規則不會命中。不得只靠 app.asar／Chromium／存檔名確認引擎或遊戲；補人工 ROOT 與既有子記錄／遍歷偏好的回歸案例，不能把既有記錄當成仍在持續寫入的證據。 |
-| `NTR配信─HAPPY BIRTHDAY─` | 外層只有說明檔與 `ゲームフォルダ`；內層有 `NTR配信.exe`、NW.js、入口 `package.json` 指向 `www/index.html`，`www/js/rpg_core.js` 標示 v1.6.2 且有其他 RPG 核心腳本。外層與遊戲目錄有記錄，但檢查的 www、www/js、www/data 都無記錄。 | RPG Maker MV 特徵在內層，按現有條件可於內層命中；外層包裝沒有 EXE，不命中。此案先列為「外包裝／遊戲 ROOT 定位」案例，不能宣稱 MV 完全未辨識或已掃進資源內部；須以受控同結構案例確認停止位置與顯示差異。 |
-| `HOME_` | 根目錄有 `HOME.exe`、`resources/app.asar` 及 Chromium 配套；Readme 明載使用 TyranoBuilder 製作，根 boundary 未設定，resources 已有記錄。 | TyranoBuilder 的 ASAR 發行形式；現有規則要求同層外露 tyrano／data，無法利用此結構辨識。說明檔提供個案證據，通用 ASAR／存檔名仍不能單獨升為自動確認規則。 |
-| `NeetAndAngel` | 根目錄有 `NeetAndAngel.exe`、`resources/app.asar`、`resources/app/data`；readme 記載 TyranoScript Ver6.00。根 boundary 未設定，resources/app/data 已有記錄。 | TyranoScript 的封裝／部分外露資料形式；同層 tyrano／data 規則不命中。不能因 resources/app 目錄存在就忽略仍在 ASAR 的程式，也不能只靠 data 認引擎；既有 `_meta` 與使用者存檔不在本次清理範圍。 |
-| `LOOK` | 外層有 Windows／MacOS／Android。Windows 有 `LOOK.exe`、`UnityPlayer.dll`、`LOOK_Data`；Mac 位於 `MacOS/MacOS/LOOK.app`，plist 指向 `Contents/MacOS/LOOK`，標示 Unity 2021.3.20f1、最低 macOS 10.13.0；另有 `Frameworks/UnityPlayer.dylib`、`Resources/Data`。Android 有 `LOOK.apk`。App、Contents、MacOS、Frameworks、Resources 中均已見記錄。 | Unity 多平台包。Windows 子層符合既有規則；外包裝無 EXE，Mac bundle 也無 EXE，現有全域 EXE 前置條件會漏掉 Mac 邊界。新增多平台歸屬、Mac App 保護與執行平台驗收；不可因目前是 Windows 就放行掃描／寫入 Mac bundle。 |
+| `UnrealSampleB` | 外層 `UnrealSampleB.exe`＋Engine，內層 `UnrealSampleB/Binaries/Win64/UnrealSampleB-Win64-Shipping.exe` 與 `Content/Paks` 的 PAK／UTOC／UCAS；Shipping EXE 的產品名稱／檔案版本為空，外層 boundary 未設定。 | 與 UnrealSampleA 相同的 Unreal 跨層漏判；另須驗證缺少 EXE 版本資訊時仍能憑結構提出候選，不得硬性要求 `UnrealGame` 或特定版本字串。 |
+| `TyranoManualSample` | 根目錄有 `TyranoManualSample.exe`、Chromium 配套檔與 `resources/app.asar`，沒有直接可見的 tyrano／data；另有 `TyranoManualSample_tyrano_data.sav`。根記錄已手動標記 ROOT（engines 為空、依據為使用者指定），resources 內已有記錄。 | ASAR 封裝形式已確認；Tyrano 僅為輔助檔名所支持的候選，未確認封包內引擎。現有 Tyrano 規則只認外露 tyrano／data，因此此規則不會命中。不得只靠 app.asar／Chromium／存檔名確認引擎或遊戲；補人工 ROOT 與既有子記錄／遍歷偏好的回歸案例，不能把既有記錄當成仍在持續寫入的證據。 |
+| `RpgMakerNwjsSample` | 外層只有說明檔與 `GameFolder`；內層有 `RpgMakerNwjsSample.exe`、NW.js、入口 `package.json` 指向 `www/index.html`，`www/js/rpg_core.js` 標示 v1.6.2 且有其他 RPG 核心腳本。外層與遊戲目錄有記錄，但檢查的 www、www/js、www/data 都無記錄。 | RPG Maker MV 特徵在內層，按現有條件可於內層命中；外層包裝沒有 EXE，不命中。此案先列為「外包裝／遊戲 ROOT 定位」案例，不能宣稱 MV 完全未辨識或已掃進資源內部；須以受控同結構案例確認停止位置與顯示差異。 |
+| `TyranoAsarSample` | 根目錄有 `TyranoAsarSample.exe`、`resources/app.asar` 及 Chromium 配套；Readme 明載使用 TyranoBuilder 製作，根 boundary 未設定，resources 已有記錄。 | TyranoBuilder 的 ASAR 發行形式；現有規則要求同層外露 tyrano／data，無法利用此結構辨識。說明檔提供個案證據，通用 ASAR／存檔名仍不能單獨升為自動確認規則。 |
+| `TyranoDataSample` | 根目錄有 `TyranoDataSample.exe`、`resources/app.asar`、`resources/app/data`；readme 記載 TyranoScript Ver6.00。根 boundary 未設定，resources/app/data 已有記錄。 | TyranoScript 的封裝／部分外露資料形式；同層 tyrano／data 規則不命中。不能因 resources/app 目錄存在就忽略仍在 ASAR 的程式，也不能只靠 data 認引擎；既有 `_meta` 與使用者存檔不在本次清理範圍。 |
+| `UnitySample` | 外層有 Windows／MacOS／Android。Windows 有 `UnitySample.exe`、`UnityPlayer.dll`、`UnitySample_Data`；Mac 位於 `MacOS/MacOS/UnitySample.app`，plist 指向 `Contents/MacOS/UnitySample`，標示 Unity 2021.3.20f1、最低 macOS 10.13.0；另有 `Frameworks/UnityPlayer.dylib`、`Resources/Data`。Android 有 `UnitySample.apk`。App、Contents、MacOS、Frameworks、Resources 中均已見記錄。 | Unity 多平台包。Windows 子層符合既有規則；外包裝無 EXE，Mac bundle 也無 EXE，現有全域 EXE 前置條件會漏掉 Mac 邊界。新增多平台歸屬、Mac App 保護與執行平台驗收；不可因目前是 Windows 就放行掃描／寫入 Mac bundle。 |
 
 `folder.json` 的 boundary 未設定不代表自動辨識沒有命中：自動候選可只存在掃描結果中，使用者確認時才保存證據與 ROOT。診斷須區分實際結構、已保存的人工設定、本次掃描候選、歷史殘留記錄與唯讀遍歷，不能混為同一種漏判。
 
@@ -118,10 +118,10 @@ Shipping EXE 的產品名稱為 `UnrealGame`，檔案版本標示 `++UE5+Release
 
 ### Mac 封裝與多平台規則
 
-2026-10-27 使用者以 LOOK 要求補 Mac 執行條件。**辨識／保護可以在 Windows 執行；原生啟動只能依實際平台與相容性判斷，不代表目前程式已支援啟動 Mac App。** 動作契約見 [遊戲啟動條件](GAME_VIEWER_DESIGN.md#mac-遊戲執行條件待實作)。
+2026-10-27 使用者以 UnitySample 要求補 Mac 執行條件。**辨識／保護可以在 Windows 執行；原生啟動只能依實際平台與相容性判斷，不代表目前程式已支援啟動 Mac App。** 動作契約見 [遊戲啟動條件](GAME_VIEWER_DESIGN.md#mac-遊戲執行條件待實作)。
 
 - Mac App 不以 `.exe` 為必要條件：受限探測 `.app/Contents/Info.plist`、`CFBundlePackageType`、`CFBundleExecutable` 與對應 `Contents/MacOS/<名稱>`，再結合引擎資源。副檔名、名為 MacOS 的資料夾、通用 bundle ID 或 App 分類不能單獨證明是遊戲。plist 可能是 XML 或 binary，解析須限制大小並禁止外部 DTD／實體載入；缺失／異常保留候選，不執行內容。
-- LOOK 的 Unity Mac 組合證據為 plist 中的 Unity 標記、對應執行檔、`Frameworks/UnityPlayer.dylib` 與 `Resources/Data`；其他引擎 Mac 輸出需各自補受控樣本，不能套用 Windows DLL／EXE 規則或宣稱全覆蓋。保留檔名大小寫與 Unicode，限定連結解析範圍，不沿外部連結／junction 探測或寫入。
+- UnitySample 的 Unity Mac 組合證據為 plist 中的 Unity 標記、對應執行檔、`Frameworks/UnityPlayer.dylib` 與 `Resources/Data`；其他引擎 Mac 輸出需各自補受控樣本，不能套用 Windows DLL／EXE 規則或宣稱全覆蓋。保留檔名大小寫與 Unicode，限定連結解析範圍，不沿外部連結／junction 探測或寫入。
 - `.app` 視為受保護的程式 bundle，不在其根或 Contents 內建立 `.media-viewer`；遊戲記錄放在合法的外層遊戲資料夾。直接選取 `.app` 時需唯讀辨識／提示選外層，不為建檔搬動、重包或改寫 bundle。既有內部記錄不自動清掉，也不自動重簽章或改動 `_CodeSignature`。
 - 同款 Windows／Mac／Android 並列時，分開記錄各平台目標與依據，提出共同外層候選供確認；不能只憑平台目錄名或通用 bundle ID 合併不同作品，也不能跨平台拼湊引擎標記。Windows 子目錄可命中不表示 Mac 分支已受保護，須逐支核對。
 - `__MACOSX`、`.DS_Store`、`._*` 僅為包裝／系統輔助線索，不作遊戲或啟動目標；不因辨識而刪除。只有 ZIP／DMG／APK 等封包時不自動解包、安裝或執行，保留封包／平台狀態與人工入口；本次不因此加入 Android 啟動能力。
@@ -134,15 +134,15 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 
 | 引擎家族 | 現有缺口／可能漏判 | 規則與誤判防護要求 |
 | --- | --- | --- |
-| Unreal | 僅認同層 EXE＋直接部署路徑，漏掉 ThreeGals 形式；UE3／4／5、容器與啟動器變體未完整驗證。 | 組合外層啟動 EXE／Engine 與所屬內層 Binaries／Content；涵蓋 PAK／IoStore 線索。工具、模組、單獨 `.pak`／`.utoc`、共用 Engine 及多遊戲集合不能直接確認為一款遊戲 ROOT。 |
-| Unity | 目前硬性要求同層 EXE、`UnityPlayer.dll`、任意 `*_Data`；其他輸出／分層形式與 LOOK Mac App 會漏判。 | 驗證 EXE 與資料目錄關聯；缺 DLL 的版本／部署形式另立有證據的規則，Mac bundle 依上節結合 plist／執行檔／引擎資源。引擎工具／編輯器與不相干標記拼湊須列反例，不能因 Unity 身分直接確認遊戲。 |
+| Unreal | 僅認同層 EXE＋直接部署路徑，漏掉 UnrealSampleA 形式；UE3／4／5、容器與啟動器變體未完整驗證。 | 組合外層啟動 EXE／Engine 與所屬內層 Binaries／Content；涵蓋 PAK／IoStore 線索。工具、模組、單獨 `.pak`／`.utoc`、共用 Engine 及多遊戲集合不能直接確認為一款遊戲 ROOT。 |
+| Unity | 目前硬性要求同層 EXE、`UnityPlayer.dll`、任意 `*_Data`；其他輸出／分層形式與 UnitySample Mac App 會漏判。 | 驗證 EXE 與資料目錄關聯；缺 DLL 的版本／部署形式另立有證據的規則，Mac bundle 依上節結合 plist／執行檔／引擎資源。引擎工具／編輯器與不相干標記拼湊須列反例，不能因 Unity 身分直接確認遊戲。 |
 | Godot | 外部 `.pck` 以外，只特判一個 EXE 名稱；內嵌 PCK 的改名單檔版無對應辨識。 | 外部／內嵌形式分開；任意 EXE＋不相干 `.pck`、編輯器名稱與一般 Godot 應用不得單獨當作遊戲證據。無法安全驗證的單檔版維持人工入口。 |
 | RPG Maker 2000／2003 | 目前只認同層 EXE＋固定名稱 LDB／LMT；分層或自訂包裝未涵蓋。 | 以對應資料與執行環境組合，專案原始資料、只有其中一個標記、無關啟動器不能直接確認；版本不明時保留家族候選。 |
 | RPG Maker XP／VX／VX Ace | 只認 `Game.rgssad`／`Game.rgss2a`／`Game.rgss3a`，未涵蓋沒有這些固定封包的資料形式。 | 封包與未封包形式分開研究；結合設定、資料及執行環境，不能只靠通用 `Game.exe`／Data 或 RGSS DLL；不把缺封包當成不是遊戲。 |
 | RPG Maker MV／MZ／UNITE | MV／MZ 只查 `js`／`www/js` 的固定核心檔；額外封裝、改路徑未涵蓋；UNITE 無獨立規則。 | 核心腳本與資料／入口關聯後再提出候選；NW.js／Electron、普通網頁程式及編輯器專案檔不是充分證據。UNITE 與 Unity 可重疊，不強猜版本。 |
 | Ren’Py | 只查 `game` 第一層 `.rpy`／`.rpyc`／`.rpa`，腳本全在子目錄或自訂包裝可能漏判。 | 受限子路徑與封包／未封包形式均納入；改 EXE 名稱不應影響標準結構。SDK／Launcher、只有腳本副本與缺少執行環境的目錄須列反例。 |
 | KiriKiri／KiriKiri Z | 只認 EXE＋外部 `.xp3`，內嵌或自訂包裝未涵蓋。 | 單一 XP3 只能作線索，需與執行環境關聯；工具、補丁及其他用途 XP3 須列反例。不解包／解密來強行辨識。 |
-| TyranoScript／TyranoBuilder | 只認 EXE＋`tyrano`＋`data` 名稱，ASAR 等額外桌面封裝無外露標記時不命中；HOME_／NeetAndAngel 有隨附引擎說明，otsutome 引擎仍待確認。 | 驗證入口與 Tyrano 特徵的關聯，區分 Builder／桌面包裝；普通網頁、同名目錄、app.asar、Chromium、說明檔與使用者存檔名不能單獨確認遊戲引擎，不靠解包補判定。 |
+| TyranoScript／TyranoBuilder | 只認 EXE＋`tyrano`＋`data` 名稱，ASAR 等額外桌面封裝無外露標記時不命中；TyranoAsarSample／TyranoDataSample 有隨附引擎說明，TyranoManualSample 引擎仍待確認。 | 驗證入口與 Tyrano 特徵的關聯，區分 Builder／桌面包裝；普通網頁、同名目錄、app.asar、Chromium、說明檔與使用者存檔名不能單獨確認遊戲引擎，不靠解包補判定。 |
 | WOLF RPG Editor | 已有 EXE＋`Data.wolf`，另補同一 `Data/BasicData` 的 `Game.dat`＋`DataBase.dat`；缺少外露基本資料的其他改名／封裝形式仍待樣本。 | 封裝與未封裝形式分開驗證；`Game.exe`、Data 或單獨 `.wolf` 均不能單獨確認，不跨作品拼接基本資料。 |
 | GameMaker | 只認 EXE＋`data.win`；不同 VM／YYC 輸出及自訂封裝需樣本，不能宣稱全部覆蓋。 | 按輸出形式補證據；無 `data.win` 不排除 GameMaker，任意同名檔＋EXE 也不是充分證據。 |
 | Cocos Creator／Cocos2d-x | 只認 EXE＋`cocos2d.dll`＋`resources`，未涵蓋不同版本／原生與網頁部署。 | 按部署形式組合引擎與入口／資源線索；不把單一 DLL、同名 resources 或開發專案直接當成發行遊戲。 |
@@ -158,12 +158,12 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 3. 在 ROOT 寫入前完成邊界判定；ROOT 只使用自己的可攜目錄，遊戲內部原始檔及目錄逐項比對不變，內部無新記錄。受控案例需涵蓋精確深度、唯讀繼續、取消、重掃、權限錯誤與 junction。
 4. 未知／單檔／封裝變體能手動停止；誤判能恢復正常掃描。舊內部記錄需既有清理預覽，不因偵測器升版自動移除。
 5. 後續按家族新增資料規則與樣本，沿用同一掃描流程；不為提高涵蓋率新增背景執行或遊戲資源拆解。大量候選探測成本另量測，不能宣稱零成本。
-6. 先以 ThreeGals 同結構的受控假目錄重現漏判，再驗證 ROOT 停在外層，Shipping EXE／Content／Plugins 等內部不新增記錄；測試不用真實遊戲，也不執行其中 EXE。
+6. 先以 UnrealSampleA 同結構的受控假目錄重現漏判，再驗證 ROOT 停在外層，Shipping EXE／Content／Plugins 等內部不新增記錄；測試不用真實遊戲，也不執行其中 EXE。
 7. 上表每個新增／變更的自動規則至少覆蓋：標準命中、已知漏判變體、弱線索誤判、缺標記、改名、多 EXE、跨層、多遊戲集合與錯誤 ROOT。無法辨識的變體須驗證候選／人工停止，不以任意放寬條件湊命中。
 8. 共通驗收包含：偽造同名檔／目錄、工具／編輯器、混合引擎線索、內嵌／未封包、探測超限、權限失敗、取消、junction、人工 ROOT／not-game 與重掃。每案核對候選、依據、ROOT 及寫入範圍；失敗／不確定不得新增內部記錄。既有人工覆寫與各專案遍歷偏好須保留。
 9. 已存在內部記錄的受控案例，確認升級／重掃不自動刪改原檔或清理他人記錄；若涉及清理，另驗備份、衝突、部分失敗與復原，不把此次辨識修正當成批次遷移授權。
-10. 補三款同結構的受控案例：LoserIsekaieSJT 型 Unreal 分層且 EXE 無版本資訊；otsutome 型通用 ASAR 包裝、Tyrano 弱線索、已手動 ROOT 與歷史子記錄；NTR 配信型「說明檔＋單一內層 MV 遊戲」。逐一驗證候選可信度、ROOT、實際停止位置與寫入範圍，不把通用 Electron／NW.js 應用當成已確認遊戲，也不把外包裝多一層誤報為內部資源漏掃。
-11. 補 HOME_ 的 TyranoBuilder ASAR、NeetAndAngel 的 ASAR＋外露 data、LOOK 的 Windows／Mac／Android 並列及雙層 MacOS 包裝。Mac 案例包含改名 App、Unicode／大小寫、XML／binary／惡意或破損 plist、缺主執行檔、普通非遊戲 App、內外連結、`__MACOSX`、多作品混放與歷史 bundle 內記錄；核對外層記錄及 App 內零新增／零修改，不自動清理舊記錄。
+10. 補三款同結構的受控案例：UnrealSampleB 型 Unreal 分層且 EXE 無版本資訊；TyranoManualSample 型通用 ASAR 包裝、Tyrano 弱線索、已手動 ROOT 與歷史子記錄；NTR 配信型「說明檔＋單一內層 MV 遊戲」。逐一驗證候選可信度、ROOT、實際停止位置與寫入範圍，不把通用 Electron／NW.js 應用當成已確認遊戲，也不把外包裝多一層誤報為內部資源漏掃。
+11. 補 TyranoAsarSample 的 TyranoBuilder ASAR、TyranoDataSample 的 ASAR＋外露 data、UnitySample 的 Windows／Mac／Android 並列及雙層 MacOS 包裝。Mac 案例包含改名 App、Unicode／大小寫、XML／binary／惡意或破損 plist、缺主執行檔、普通非遊戲 App、內外連結、`__MACOSX`、多作品混放與歷史 bundle 內記錄；核對外層記錄及 App 內零新增／零修改，不自動清理舊記錄。
 12. Mac 啟動驗收與辨識分開：Windows 對 `.app` 顯示平台不相容並拒絕啟動，辨識與邊界保護仍有效；macOS 需另驗原生 App 啟動、參數、搬移、缺檔、最低版本／架構、權限與系統拒絕。無 macOS 環境時必須明列未執行，不用 Windows 假目錄測試宣稱 Mac 可啟動。
 
-歷史診斷界線：原 2026-10-26 覆蓋研究只查官方資料；2026-10-27 的唯讀診斷確認上述七款指定目錄的結構／標記與所列限制。otsutome 封包內引擎及本次實際掃描行為未驗證。該次診斷只讀取指定內容。後續修正已在 tests/game-detection.test.ts 與資料回歸使用受控資料樹驗證，沒有重掃真實收藏或啟動遊戲；macOS 原生啟動未執行，其他變體仍待樣本驗證。啟動動作與參數設計見 [遊戲內容頁](GAME_VIEWER_DESIGN.md)。
+歷史診斷界線：原 2026-10-26 覆蓋研究只查官方資料；2026-10-27 的唯讀診斷確認上述七款指定目錄的結構／標記與所列限制。TyranoManualSample 封包內引擎及本次實際掃描行為未驗證。該次診斷只讀取指定內容。後續修正已在 tests/game-detection.test.ts 與資料回歸使用受控資料樹驗證，沒有重掃真實收藏或啟動遊戲；macOS 原生啟動未執行，其他變體仍待樣本驗證。啟動動作與參數設計見 [遊戲內容頁](GAME_VIEWER_DESIGN.md)。

@@ -80,15 +80,14 @@ async function runGroup(group: Group, fixture: string) {
 
   const lib = new Library(local, undefined, false)
   await lib.init()
-  let state = await lib.create(media, {
+  await lib.create(media, {
     name: 'Player QA',
     mediaCategory: 'video',
     scanAll: true,
     depth: { mode: 'through', level: 1 },
   })
 
-  const record = await fs.readFile(folderFile(media)),
-    projectId = state.projects[0].projectId
+  const record = await fs.readFile(folderFile(media))
 
   const env: Record<string, string> = Object.fromEntries(
     Object.entries({ ...process.env, MEDIA_VIEWER_TEST_DATA: local }).filter(
@@ -137,18 +136,6 @@ async function runGroup(group: Group, fixture: string) {
   const focus = async () => {
     await stage.focus()
     await stage.hover({ position: { x: 15, y: 15 } })
-  }
-
-  const finish = async () => {
-    await page.waitForFunction(() => {
-      const video = document.querySelector('video')
-      return video && video.readyState >= 1 && Number.isFinite(video.duration) && video.duration > 0
-    })
-    await page.locator('video').evaluate(async (element) => {
-      const video = element as HTMLVideoElement
-      video.currentTime = video.duration - 0.15
-      await video.play()
-    })
   }
 
   const checks: Record<Group, () => Promise<void>> = {

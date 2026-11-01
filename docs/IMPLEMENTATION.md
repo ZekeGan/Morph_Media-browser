@@ -23,7 +23,7 @@
 
 ## 文件檢查
 
-`node scripts/check-docs.mjs` 預設只查 AGENTS、任務索引及 WORK_ITEMS；指定檔案可限定本輪範圍，例如 `node scripts/check-docs.mjs docs/EDITOR_DESIGN.md docs/SEARCH_DESIGN.md`。修改章節／檔名時，加上直接引用它的文件，不預設掃完整歷史。
+`node scripts/check-docs.mjs` 預設只查 CLAUDE、任務索引及 WORK_ITEMS；指定檔案可限定本輪範圍，例如 `node scripts/check-docs.mjs docs/EDITOR_DESIGN.md docs/SEARCH_DESIGN.md`。修改章節／檔名時，加上直接引用它的文件，不預設掃完整歷史。
 
 [檢查器](../scripts/check-docs.mjs) 無額外依賴，檢查本機 Markdown 連結、章節／HTML anchor，以及索引連結的程式／測試路徑；略過 fenced code、行內程式範例及外站網址。支援一般 inline／reference 連結與 ATX 標題，是本儲存庫慣例的輕量檢查，不解析完整 Markdown、程式符號、語意矛盾或外站有效性。變更來源與主文件的關係沿用 [索引](README.md#按任務定位)，沒有另一套映射清單。
 

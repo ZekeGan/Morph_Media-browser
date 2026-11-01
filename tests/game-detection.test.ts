@@ -441,7 +441,7 @@ test('wrapped Tyrano marker junctions are not traversed or written', async (t) =
 })
 test('Unreal cross-layer launchers without version info stop at the outer game; collections stay separate', async (t) => {
   const { media, lib, files } = await fixture(t)
-  for (const name of ['ThreeGals', 'LoserIsekaieSJT'])
+  for (const name of ['UnrealSampleA', 'UnrealSampleB'])
     await files(path.join(media, name), [
       name + '.exe',
       'Engine/base.bin',
@@ -453,7 +453,7 @@ test('Unreal cross-layer launchers without version info stop at the outer game; 
   assert.equal(await detectGame(media), undefined)
   let state = await lib.create(media, input)
   assert.equal(state.rows.length, 3)
-  for (const name of ['ThreeGals', 'LoserIsekaieSJT']) {
+  for (const name of ['UnrealSampleA', 'UnrealSampleB']) {
     const row = state.rows.find((row) => row.name === name)!
     assert.deepEqual(row.boundary?.engines, ['Unreal'])
     assert.equal(await exists(folderFile(row.path)), true)
@@ -481,27 +481,27 @@ test('Unreal cross-layer launchers without version info stop at the outer game; 
 test('visiting ASAR and Unreal roots never publishes internal folders in CARD/TABLE/TREE, even with historical records', async (t) => {
   const { media, lib, files } = await fixture(t)
   const samples: Record<string, string[]> = {
-    NeetAndAngel: [
-      'NeetAndAngel.exe',
+    TyranoDataSample: [
+      'TyranoDataSample.exe',
       'resources/app.asar',
       'resources/app/data/sound/sound.bin',
       'locales/ja.pak',
       '_meta/old.txt',
     ],
-    LoserIsekaieSJT: [
-      'LoserIsekaieSJT.exe',
+    UnrealSampleB: [
+      'UnrealSampleB.exe',
       'Engine/Binaries/runtime.bin',
-      'LoserIsekaieSJT/Binaries/Win64/LoserIsekaieSJT-Win64-Shipping.exe',
-      'LoserIsekaieSJT/Content/Paks/game.utoc',
+      'UnrealSampleB/Binaries/Win64/UnrealSampleB-Win64-Shipping.exe',
+      'UnrealSampleB/Content/Paks/game.utoc',
     ],
   }
   const history = new Map<string, Buffer>()
   for (const [name, names] of Object.entries(samples)) {
     const dir = path.join(media, name)
     await files(dir, names)
-    for (const child of name === 'NeetAndAngel'
+    for (const child of name === 'TyranoDataSample'
       ? ['resources', 'resources/app', 'resources/app/data']
-      : ['Engine', 'LoserIsekaieSJT', 'LoserIsekaieSJT/Binaries/Win64']) {
+      : ['Engine', 'UnrealSampleB', 'UnrealSampleB/Binaries/Win64']) {
       const target = path.join(dir, child)
       await ensureFolder(target, false)
       history.set(folderFile(target), await fs.readFile(folderFile(target)))
@@ -538,7 +538,7 @@ test('visiting ASAR and Unreal roots never publishes internal folders in CARD/TA
 })
 test('a newly discovered boundary removes stale in-memory descendants without deleting existing records', async (t) => {
   const { media, lib, files } = await fixture(t),
-    game = path.join(media, 'NeetAndAngel'),
+    game = path.join(media, 'TyranoDataSample'),
     child = path.join(game, 'resources/app/data')
   await fs.mkdir(child, { recursive: true })
   let state = await lib.create(media, input),
@@ -546,7 +546,7 @@ test('a newly discovered boundary removes stale in-memory descendants without de
     oldChild = state.rows.find((row) => row.path === child)!
   const before = await fs.readFile(folderFile(child))
   assert.equal(root.boundary, undefined)
-  await files(game, ['NeetAndAngel.exe', 'resources/app.asar'])
+  await files(game, ['TyranoDataSample.exe', 'resources/app.asar'])
   state = await lib.visit(root.rowId)
   assert.ok(state.structure!.find((row) => row.rowId === root.rowId)!.boundary)
   assert.equal(
@@ -633,19 +633,19 @@ test('existing engine families keep their bounded positive rules and manual fall
 })
 test('ASAR remains an unknown candidate; manual ROOT/not-game and readonly traversal never rewrite history', async (t) => {
   const { media, lib, files } = await fixture(t)
-  for (const name of ['otsutome', 'HOME_', 'NeetAndAngel'])
+  for (const name of ['TyranoManualSample', 'TyranoAsarSample', 'TyranoDataSample'])
     await files(path.join(media, name), [
       name + '.exe',
       'resources/app.asar',
       'resources/app/data/save.sav',
     ])
   let state = await lib.create(media, input)
-  for (const name of ['otsutome', 'HOME_', 'NeetAndAngel']) {
+  for (const name of ['TyranoManualSample', 'TyranoAsarSample', 'TyranoDataSample']) {
     const row = state.rows.find((row) => row.name === name)!
     assert.deepEqual(row.boundary?.engines, [])
     assert.equal(await exists(path.join(row.path, 'resources', DATA_DIR)), false)
   }
-  const game = state.rows.find((row) => row.name === 'otsutome')!,
+  const game = state.rows.find((row) => row.name === 'TyranoManualSample')!,
     old = path.join(game.path, 'resources')
   await ensureFolder(old, false)
   const bytes = await fs.readFile(folderFile(old))
@@ -672,14 +672,14 @@ test('ASAR remains an unknown candidate; manual ROOT/not-game and readonly trave
 })
 test('single wrapped MV game stops at the inner root; exact depth cannot bypass protection', async (t) => {
   const { media, lib, files } = await fixture(t),
-    wrapper = path.join(media, 'NTR'),
-    game = path.join(wrapper, 'ゲームフォルダ')
+    wrapper = path.join(media, 'RpgMakerNwjsSample'),
+    game = path.join(wrapper, 'GameFolder')
   await files(wrapper, [
     'readme.txt',
-    'ゲームフォルダ/NTR.exe',
-    'ゲームフォルダ/www/index.html',
-    'ゲームフォルダ/www/js/rpg_core.js',
-    'ゲームフォルダ/www/data/actors.json',
+    'GameFolder/RpgMakerNwjsSample.exe',
+    'GameFolder/www/index.html',
+    'GameFolder/www/js/rpg_core.js',
+    'GameFolder/www/data/actors.json',
   ])
   assert.equal(await detectGame(wrapper), undefined)
   let state = await lib.create(media, input)
@@ -713,14 +713,14 @@ test('an existing nested project cannot bypass a newly detected parent game boun
 })
 test('multi-platform bundles and every App variant remain untouched, even with old records or not-game', async (t) => {
   const { media, lib, files } = await fixture(t),
-    look = path.join(media, 'LOOK'),
+    look = path.join(media, 'UnitySample'),
     app = path.join(look, 'MacOS/MacOS/改名.app')
   await files(look, [
-    'Windows/LOOK.exe',
+    'Windows/UnitySample.exe',
     'Windows/UnityPlayer.dll',
-    'Windows/LOOK_Data/global.dat',
-    'Android/LOOK.apk',
-    'MacOS/MacOS/改名.app/Contents/MacOS/LOOK',
+    'Windows/UnitySample_Data/global.dat',
+    'Android/UnitySample.apk',
+    'MacOS/MacOS/改名.app/Contents/MacOS/UnitySample',
     'MacOS/MacOS/改名.app/Contents/Frameworks/UnityPlayer.dylib',
     'MacOS/MacOS/改名.app/Contents/Resources/Data/global.dat',
     'MacOS/MacOS/改名.app/Contents/Info.plist',

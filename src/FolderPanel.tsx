@@ -23,7 +23,6 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core'
-import { visibleCells } from '../shared/layouts'
 import { ImageUrlImport } from './ImageUrlImport'
 import {
   contentCells,

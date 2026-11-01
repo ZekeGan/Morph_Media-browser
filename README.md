@@ -19,7 +19,7 @@ M:orph is a Windows-first desktop app for browsing large collections of folders 
 
 > **Human-led, AI-built.** A human leads the project — direction, requirements, design decisions and review — while AI coding agents (OpenAI Codex, then Anthropic's Claude Code) write the code under that direction.
 >
-> The project is in an **early development stage**. Current version: **0.37.1** ([changelog](CHANGELOG.md)).
+> The project is in an **early development stage**. Current version: **0.37.2** ([changelog](CHANGELOG.md)).
 
 ---
 
@@ -51,7 +51,7 @@ M:orph is a Windows-first desktop app for browsing large collections of folders 
 
 **Fill in the data**
 
-- Paste a page address and the source is recognised automatically: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library and Wikimedia Commons. Review the preview, then choose which fields to import. Nothing is fetched unless you ask.
+- Paste a page address and the source is recognised automatically: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library and Wikimedia Commons. Review the preview, then choose which fields to import. Nothing is fetched unless you ask. Some of these sites carry adult content; whether to use them is entirely up to you, and each site's own terms apply.
 
 **Look and language**
 
@@ -112,6 +112,7 @@ The design documents are written mainly in Traditional Chinese.
 - [Documentation index](docs/README.md) — find the right document for a task.
 - [Product scope](docs/PRODUCT.md) and [architecture](docs/ARCHITECTURE.md).
 - [Current work and known limits](docs/WORK_ITEMS.md), [decisions](docs/DECISIONS.md).
+- [Contributing](CONTRIBUTING.md) and [security policy](SECURITY.md) (report vulnerabilities privately).
 - Contributors and coding agents: read [CLAUDE.md](CLAUDE.md) (Claude Code) or [AGENTS.md](AGENTS.md) (Codex) first. Early POC material is kept in [docs/archive](docs/archive/) and is not a current specification.
 
 ---

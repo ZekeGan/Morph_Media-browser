@@ -3,7 +3,7 @@ import { DatabaseSync } from 'node:sqlite'
 import fs from 'node:fs'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
-import type { Snapshot, FolderRow } from '../shared/model'
+import type { Snapshot } from '../shared/model'
 import { fieldValue } from '../shared/model'
 import type { SearchResult } from '../shared/explorer'
 import {

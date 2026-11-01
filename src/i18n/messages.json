@@ -329,12 +329,6 @@
     "en": "Unclassified",
     "es": "Sin clasificar"
   },
-  "預設 CARD 多層／全部。完成後掃描允許範圍並建立隱藏可攜記錄；原始媒體保留，遊戲 ROOT 內部受保護。": {
-    "ja": "既定はCARDの全階層表示です。完了後、許可範囲をスキャンして非表示の可搬記録を作成します。元のメディアとゲーム内部は保護されます。",
-    "zh-CN": "默认 CARD 多层／全部。完成後扫描允许范围并建立隐藏可携记录；原始媒体保留，游戏 ROOT 内部受保护。翿",
-    "en": "Defaults to CARD with all levels. Scans allowed folders and creates hidden portable records. Original media and game internals remain protected.",
-    "es": "Por defecto, CARD muestra todos los niveles. Escanea las carpetas permitidas y crea registros portátiles ocultos. Los originales y el interior de los juegos permanecen protegidos."
-  },
   "專案已建立，但群組保存失敗：": {
     "ja": "プロジェクトは作成されましたがグループを保存できませんでした：",
     "zh-CN": "项目已建立，但群组保存失败：翿",
@@ -785,12 +779,6 @@
     "en": "Game boundary",
     "es": "Límite del juego"
   },
-  "此層沒有可顯示的子資料夾": {
-    "ja": "表示できる子フォルダーはありません",
-    "zh-CN": "此层没有可显示的子文件夹",
-    "en": "No subfolders to display at this level",
-    "es": "No hay subcarpetas que mostrar en este nivel"
-  },
   "每頁": {
     "ja": "1ページ",
     "zh-CN": "每页",
@@ -808,30 +796,6 @@
     "zh-CN": "文件夹内容",
     "en": "Folder content",
     "es": "Contenido de carpeta"
-  },
-  "影片設定": {
-    "ja": "動画設定",
-    "zh-CN": "影片设定え푔Ś",
-    "en": "Video settings",
-    "es": "Ajustes de vídeo"
-  },
-  "此專案開啟資料夾時": {
-    "ja": "このプロジェクトでフォルダーを開くとき",
-    "zh-CN": "此项目开启文件夹时",
-    "en": "When opening folders in this project",
-    "es": "Al abrir carpetas de este proyecto"
-  },
-  "開啟後自動播放": {
-    "ja": "開いたら自動再生",
-    "zh-CN": "开启後自动播放",
-    "en": "Autoplay on open",
-    "es": "Reproducir automáticamente al abrir"
-  },
-  "關閉自動播放": {
-    "ja": "自動再生しない",
-    "zh-CN": "关闭自动播放\u0001",
-    "en": "Disable autoplay",
-    "es": "Desactivar reproducción automática"
   },
   "字幕設定": {
     "ja": "字幕設定",
@@ -875,12 +839,6 @@
     "en": "Loading content…",
     "es": "Cargando contenido…"
   },
-  "漫畫回到頂部": {
-    "ja": "漫画の先頭へ",
-    "zh-CN": "漫画回到顶部\u0001",
-    "en": "Back to manga top",
-    "es": "Volver al inicio del manga"
-  },
   "資料夾設定 ·": {
     "ja": "フォルダー設定 ·",
     "zh-CN": "文件夹设定 ·",
@@ -911,65 +869,11 @@
     "en": "Level display",
     "es": "Vista por niveles"
   },
-  "將根資料夾與子資料夾放在同一畫面。雙擊只更新右側內容。": {
-    "ja": "ルートと子フォルダーを同じ画面に表示します。ダブルクリックは右側の内容のみ更新します。",
-    "zh-CN": "将根文件夹与子文件夹放在同一画面。双击只更新右侧内容。",
-    "en": "Show root and subfolders together. Double-click updates only the content panel.",
-    "es": "Muestra la raíz y las subcarpetas juntas. El doble clic solo actualiza el panel de contenido."
-  },
-  "顯示指定層級，雙擊可像一般資料夾逐層進入。": {
-    "ja": "指定階層を表示します。ダブルクリックでフォルダー内に移動できます。",
-    "zh-CN": "显示指定层级，双击可像一般文件夹逐层进入。",
-    "en": "Show the selected level. Double-click to enter folders normally.",
-    "es": "Muestra el nivel elegido. Haz doble clic para entrar en las carpetas."
-  },
   "顯示層數": {
     "ja": "表示階層",
     "zh-CN": "显示层数ᕐ푖Ś",
     "en": "Display levels",
     "es": "Niveles visibles"
-  },
-  "從專案根開始，顯示到哪一層": {
-    "ja": "プロジェクトルートから表示する最大階層",
-    "zh-CN": "从项目根开始，显示到哪一层稱翿",
-    "en": "Deepest level to show from the project root",
-    "es": "Nivel más profundo desde la raíz del proyecto"
-  },
-  "開啟 CARD 時，先顯示哪一層": {
-    "ja": "CARDを開いたときの初期階層",
-    "zh-CN": "开启 CARD 时，先显示哪一层",
-    "en": "Initial level when opening CARD",
-    "es": "Nivel inicial al abrir CARD"
-  },
-  "全部已掃描層級（最深第": {
-    "ja": "スキャン済み全階層（最大階層",
-    "zh-CN": "全部已扫描层级（最深第",
-    "en": "All scanned levels (deepest level",
-    "es": "Todos los niveles escaneados (nivel más profundo"
-  },
-  "第 1 層至第": {
-    "ja": "第1階層から第",
-    "zh-CN": "第 1 层至第",
-    "en": "Levels 1 through",
-    "es": "Niveles del 1 al"
-  },
-  "專案根資料夾為第 1 層，目前已掃描最深到第": {
-    "ja": "ルートは第1階層、現在の最大スキャン階層：",
-    "zh-CN": "项目根文件夹为第 1 层，目前已扫描最深到第",
-    "en": "Root is level 1. Deepest scanned level:",
-    "es": "La raíz es el nivel 1. Nivel más profundo escaneado:"
-  },
-  "層。": {
-    "ja": "。",
-    "zh-CN": "层。",
-    "en": ".",
-    "es": "."
-  },
-  "卡片密度": {
-    "ja": "カード密度",
-    "zh-CN": "卡片密度뛈푖Ś",
-    "en": "Card density",
-    "es": "Densidad de tarjetas"
   },
   "每列卡片數": {
     "ja": "1行のカード数",
@@ -977,53 +881,17 @@
     "en": "Cards per row",
     "es": "Tarjetas por fila"
   },
-  "視窗變窄時會自動減少": {
-    "ja": "ウィンドウ幅に応じて自動的に減ります",
-    "zh-CN": "视窗变窄时会自动减少Ś",
-    "en": "Automatically reduced in narrow windows",
-    "es": "Se reduce automáticamente en ventanas estrechas"
-  },
   "每頁筆數": {
     "ja": "1ページの件数",
     "zh-CN": "每页笔数﫸푖Ś",
     "en": "Items per page",
     "es": "Elementos por página"
   },
-  "控制單頁顯示的資料夾數": {
-    "ja": "1ページに表示するフォルダー数",
-    "zh-CN": "控制单页显示的文件夹数",
-    "en": "Number of folders per page",
-    "es": "Número de carpetas por página"
-  },
-  "套用後先顯示": {
-    "ja": "適用後に表示：",
-    "zh-CN": "套用後先显示\u0001",
-    "en": "After applying, show",
-    "es": "Al aplicar, mostrar"
-  },
-  "個資料夾，最多每列": {
-    "ja": "フォルダー、1行あたり最大",
-    "zh-CN": "个文件夹，最多每列",
-    "en": "folders, up to",
-    "es": "carpetas, hasta"
-  },
-  "張、每頁": {
-    "ja": "枚、1ページあたり",
-    "zh-CN": "张、每页嚀푗Ś",
-    "en": "cards per row and",
-    "es": "tarjetas por fila y"
-  },
   "筆。": {
     "ja": "件。",
     "zh-CN": "笔。",
     "en": "items per page.",
     "es": "elementos por página."
-  },
-  "只調整 CARD，不變更 TREE／TABLE，也不會擴大掃描範圍。": {
-    "ja": "CARDのみ変更します。TREE／TABLEやスキャン範囲は変更しません。",
-    "zh-CN": "只调整 CARD，不变更 TREE／TABLE，也不会扩大扫描范围。",
-    "en": "Changes CARD only, without affecting TREE/TABLE or expanding the scan scope.",
-    "es": "Solo cambia CARD, sin afectar TREE/TABLE ni ampliar el escaneo."
   },
   "套用": {
     "ja": "適用",
@@ -1361,12 +1229,6 @@
     "en": "Save group",
     "es": "Guardar grupo"
   },
-  "自訂文字": {
-    "ja": "カスタムテキスト",
-    "zh-CN": "自订文字餸표Ś",
-    "en": "Custom text",
-    "es": "Texto personalizado"
-  },
   "標籤": {
     "ja": "タグ",
     "zh-CN": "标签",
@@ -1469,29 +1331,11 @@
     "en": "Discard unsaved layout changes?",
     "es": "¿Descartar los cambios de diseño sin guardar?"
   },
-  "CELL 積木編輯器": {
-    "ja": "CELLレイアウトエディター",
-    "zh-CN": "CELL 积木编辑器Ś",
-    "en": "CELL layout editor",
-    "es": "Editor de diseño CELL"
-  },
-  "編輯「": {
-    "ja": "「",
-    "zh-CN": "编辑「",
-    "en": "Edit “",
-    "es": "Editar «"
-  },
   "」所有": {
     "ja": "」の全",
     "zh-CN": "」所有",
     "en": "” for all",
     "es": "» para todos los"
-  },
-  "共用的模板": {
-    "ja": "共通テンプレート",
-    "zh-CN": "共用的模板",
-    "en": "shared template",
-    "es": "plantilla compartida"
   },
   "復原": {
     "ja": "元に戻す",
@@ -1505,29 +1349,11 @@
     "en": "Redo",
     "es": "Rehacer"
   },
-  "請填方案名稱": {
-    "ja": "レイアウト名を入力してください",
-    "zh-CN": "请填方案名称\u0001",
-    "en": "Enter a preset name",
-    "es": "Introduce un nombre para el diseño"
-  },
-  "保存模板": {
-    "ja": "テンプレートを保存",
-    "zh-CN": "保存模板좀푞Ś",
-    "en": "Save template",
-    "es": "Guardar plantilla"
-  },
   "方案名稱": {
     "ja": "レイアウト名",
     "zh-CN": "方案名称�푞Ś",
     "en": "Preset name",
     "es": "Nombre del diseño"
-  },
-  "另存為新方案（保留原方案）": {
-    "ja": "新しいレイアウトとして保存（元を保持）",
-    "zh-CN": "另存为新方案（保留原方案）稱翿",
-    "en": "Save as a new preset (keep original)",
-    "es": "Guardar como diseño nuevo (conservar el original)"
   },
   "拖入組件": {
     "ja": "コンポーネントをドラッグ",
@@ -1535,41 +1361,11 @@
     "en": "Drag components",
     "es": "Arrastrar componentes"
   },
-  "點擊或拖入畫布，再到右側調整。": {
-    "ja": "クリックまたはドラッグして配置し、右側で調整します。",
-    "zh-CN": "点击或拖入画布，再到右侧调整。",
-    "en": "Click or drag onto the canvas, then adjust on the right.",
-    "es": "Haz clic o arrastra al lienzo y ajusta las opciones a la derecha."
-  },
   "基礎組件": {
     "ja": "基本コンポーネント",
     "zh-CN": "基础组件㣰푟Ś",
     "en": "Basic components",
     "es": "Componentes básicos"
-  },
-  "系統資訊、選用圖片與版面操作，不建立自訂欄位。": {
-    "ja": "システム情報、任意の画像、レイアウト操作。カスタム項目は作成しません。",
-    "zh-CN": "系统信息、选用图片与版面操作，不建立自订栏位。",
-    "en": "System info, optional images, and layout actions. No custom fields are created.",
-    "es": "Información del sistema, imágenes opcionales y acciones de diseño. No crean campos personalizados."
-  },
-  "已配置欄位": {
-    "ja": "設定済みの項目",
-    "zh-CN": "已配置栏位",
-    "en": "Configured fields",
-    "es": "Campos configurados"
-  },
-  "依此專案可見記錄分類；拖入只綁定欄位，不複製或建立資料。": {
-    "ja": "このプロジェクトで表示できる記録に基づきます。ドラッグすると項目のみを関連付け、データは複製しません。",
-    "zh-CN": "依此项目可见记录分类；拖入只绑定栏位，不复制或建立数据。秷릠翿",
-    "en": "Based on records visible to this project. Dragging binds fields without copying or creating data.",
-    "es": "Se basa en los registros visibles del proyecto. Arrastrar vincula campos sin copiar ni crear datos."
-  },
-  "已有資料": {
-    "ja": "データあり",
-    "zh-CN": "已有数据镐푟Ś",
-    "en": "With data",
-    "es": "Con datos"
   },
   "尚無資料": {
     "ja": "データなし",
@@ -1577,29 +1373,11 @@
     "en": "Without data",
     "es": "Sin datos"
   },
-  "尚無填入資料的欄位。": {
-    "ja": "値が入力された項目はありません。",
-    "zh-CN": "尚无填入数据的栏位。Ś",
-    "en": "No populated fields.",
-    "es": "No hay campos con datos."
-  },
-  "沒有空白欄位。": {
-    "ja": "空の項目はありません。",
-    "zh-CN": "没有空白栏位。",
-    "en": "No empty fields.",
-    "es": "No hay campos vacíos."
-  },
   "引用資料夾既有欄位": {
     "ja": "既存のフォルダー項目を参照",
     "zh-CN": "引用文件夹既有栏位",
     "en": "Reference existing folder fields",
     "es": "Referenciar campos de carpeta existentes"
-  },
-  "拖入即引用原欄位，不複製資料；其他專案的私有值不會列出。": {
-    "ja": "元の項目を参照し、データは複製しません。他のプロジェクトの非共有値は表示されません。",
-    "zh-CN": "拖入即引用原栏位，不复制数据；其他项目的私有值不会列出。秷릠翿",
-    "en": "References original fields without copying data. Other projects' private values are excluded.",
-    "es": "Referencia los campos originales sin copiar datos. Se excluyen los valores privados de otros proyectos."
   },
   "共用欄位": {
     "ja": "共有項目",
@@ -1630,12 +1408,6 @@
     "zh-CN": "请输入未使用的栏位名称",
     "en": "Enter an unused field name",
     "es": "Introduce un nombre de campo sin usar"
-  },
-  "設定名稱與型別後，欄位會出現在上方組件區。": {
-    "ja": "名前と型を設定すると、上のコンポーネント欄に表示されます。",
-    "zh-CN": "设定名称与型别後，栏位会出现在上方组件区。",
-    "en": "Set a name and type to add the field to the components above.",
-    "es": "Asigna un nombre y tipo para añadir el campo a los componentes de arriba."
   },
   "欄位名稱": {
     "ja": "項目名",
@@ -1678,18 +1450,6 @@
     "zh-CN": "组件设定㯀푁Ś",
     "en": "Component settings",
     "es": "Ajustes del componente"
-  },
-  "調整這個組件的呈現，不會改動資料夾原值。": {
-    "ja": "表示のみを変更します。フォルダーの元の値は変更しません。",
-    "zh-CN": "调整这个组件的呈现，不会改动文件夹原值。榘耷Ś",
-    "en": "Adjust presentation without changing original folder values.",
-    "es": "Ajusta la presentación sin cambiar los valores originales."
-  },
-  "這是選用圖片組件。可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。": {
-    "ja": "任意の画像コンポーネントです。複数追加でき、保存後にフォルダー設定の画像タブで選択できます。空欄も可能です。",
-    "zh-CN": "这是选用图片组件。可新增多张；保存版面後，在文件夹设定的「图片」页分别选图，没有图片可留空。8",
-    "en": "Optional image component. Add multiple slots and choose images in folder settings after saving. Slots may stay empty.",
-    "es": "Componente de imagen opcional. Añade varias ranuras y elige las imágenes en los ajustes de carpeta tras guardar. Pueden quedar vacías."
   },
   "綁定欄位": {
     "ja": "関連付ける項目",
@@ -1877,12 +1637,6 @@
     "en": "Publishers",
     "es": "Editores"
   },
-  "遊戲類型": {
-    "ja": "ゲームジャンル",
-    "zh-CN": "游戏类型㜈푄Ś",
-    "en": "Game genres",
-    "es": "Géneros de juego"
-  },
   "Steam 商店發售日期": {
     "ja": "Steamストア発売日",
     "zh-CN": "Steam 商店发售日期",
@@ -1967,12 +1721,6 @@
     "en": "Discard field drafts before applying the boundary?",
     "es": "¿Descartar el borrador de los campos antes de aplicar el límite?"
   },
-  "參數需為 JSON 字串陣列": {
-    "ja": "引数はJSON文字列配列で指定してください",
-    "zh-CN": "参数需为 JSON 字串阵列翿",
-    "en": "Arguments must be a JSON array of strings",
-    "es": "Los argumentos deben ser una matriz JSON de cadenas"
-  },
   "請貼上 E-Hentai 的完整圖庫網址": {
     "ja": "E-Hentaiの完全なギャラリーURLを貼り付けてください",
     "zh-CN": "请贴上 E-Hentai 的完整图库网址榘耷Ś",
@@ -2056,12 +1804,6 @@
     "zh-CN": "共用数据䤘푇Ś",
     "en": "Shared data",
     "es": "Datos compartidos"
-  },
-  "專案尚未配置欄位，可由 CELL 編輯器新增。": {
-    "ja": "項目が設定されていません。CELLエディターで追加できます。",
-    "zh-CN": "项目尚未配置栏位，可由 CELL 编辑器新增。",
-    "en": "No fields configured. Add them in the CELL editor.",
-    "es": "No hay campos configurados. Añádelos en el editor CELL."
   },
   "匯入及其他欄位（": {
     "ja": "インポート済み・その他の項目（",
@@ -2159,12 +1901,6 @@
     "en": "Choose a source, paste a link, preview, then select fields to import.",
     "es": "Elige un origen, pega un enlace, previsualiza y selecciona los campos a importar."
   },
-  "資料來源": {
-    "ja": "データソース",
-    "zh-CN": "数据来源쪰푁Ś",
-    "en": "Data source",
-    "es": "Origen de datos"
-  },
   "Steam 商店網址或 App ID": {
     "ja": "SteamストアURLまたはApp ID",
     "zh-CN": "Steam 商店网址或 App ID",
@@ -2176,12 +1912,6 @@
     "zh-CN": "E-Hentai 图库网址稱翿",
     "en": "E-Hentai gallery URL",
     "es": "URL de galería E-Hentai"
-  },
-  "https://store.steampowered.com/app/620/ 或 620": {
-    "ja": "https://store.steampowered.com/app/620/ または 620",
-    "zh-CN": "https://store.steampowered.com/app/620/ 或 620Ｄ8",
-    "en": "https://store.steampowered.com/app/620/ or 620",
-    "es": "https://store.steampowered.com/app/620/ o 620"
   },
   "取得預覽": {
     "ja": "プレビューを取得",
@@ -2200,18 +1930,6 @@
     "zh-CN": "发售日保留 Steam 商店显示的日期，不推定为作品首次发行日。榘耷Ś",
     "en": "Release dates follow the Steam store and are not assumed to be the work's original release date.",
     "es": "Las fechas respetan la tienda Steam y no se consideran necesariamente el lanzamiento original de la obra."
-  },
-  "圖庫公開時間不當作作品發售日。": {
-    "ja": "ギャラリー公開日時は作品の発売日ではありません。",
-    "zh-CN": "图库公开时间不当作作品发售日。",
-    "en": "Gallery publication time is not the work's release date.",
-    "es": "La fecha de publicación de la galería no es la fecha de lanzamiento de la obra."
-  },
-  "人工欄位保留，同來源欄位會更新。": {
-    "ja": "手入力の項目を保持し、同じ出典の項目を更新します。",
-    "zh-CN": "人工栏位保留，同来源栏位会更新。",
-    "en": "Manual fields are preserved; fields from the same source are updated.",
-    "es": "Se conservan los campos manuales y se actualizan los del mismo origen."
   },
   "同時保存封面圖片": {
     "ja": "カバー画像も保存",
@@ -2237,23 +1955,11 @@
     "en": "Import selected data",
     "es": "Importar datos seleccionados"
   },
-  "啟動與資料夾路徑": {
-    "ja": "起動とフォルダーパス",
-    "zh-CN": "启动与文件夹路径\u0001",
-    "en": "Launch and folder paths",
-    "es": "Inicio y rutas de carpetas"
-  },
   "自訂工具列": {
     "ja": "ツールバーをカスタマイズ",
     "zh-CN": "自订工具列",
     "en": "Customize toolbar",
     "es": "Personalizar barra de herramientas"
-  },
-  "按鈕版型套用專案，目標與參數在每個遊戲資料夾分別設定。": {
-    "ja": "ボタンの構成はプロジェクト共通です。対象と引数は各ゲームフォルダーで設定します。",
-    "zh-CN": "按钮版型套用项目，目标与参数在每个游戏文件夹分别设定。",
-    "en": "Button layouts apply to the project. Targets and arguments are set per game folder.",
-    "es": "El diseño de botones se aplica al proyecto. Los destinos y argumentos se asignan por carpeta de juego."
   },
   "啟動參數（JSON 字串陣列）": {
     "ja": "起動引数（JSON文字列配列）",
@@ -2531,12 +2237,6 @@
     "en": "Remove",
     "es": "Eliminar"
   },
-  "開啟遊戲": {
-    "ja": "ゲームを開く",
-    "zh-CN": "开启游戏眀푉Ś",
-    "en": "Open game",
-    "es": "Abrir juego"
-  },
   "加入按鈕": {
     "ja": "ボタンを追加",
     "zh-CN": "加入按钮赘푉Ś",
@@ -2548,12 +2248,6 @@
     "zh-CN": "保存工具列版型",
     "en": "Save toolbar layout",
     "es": "Guardar diseño de la barra"
-  },
-  "此版型套用全專案；實際路徑在各資料夾分別指定，同名按鈕不推定同一目標。": {
-    "ja": "構成はプロジェクト全体に適用されます。実際のパスは各フォルダーで指定し、同じラベルでも同一の対象とはみなしません。",
-    "zh-CN": "此版型套用全项目；实际路径在各文件夹分别指定，同名按钮不推定同一目标。",
-    "en": "Layout applies across the project. Set paths per folder; identical labels do not imply the same target.",
-    "es": "El diseño se aplica a todo el proyecto. Las rutas se asignan por carpeta; las etiquetas iguales no implican el mismo destino."
   },
   "圖片無法載入，點擊檢視": {
     "ja": "画像を読み込めません。クリックして確認",
@@ -2897,12 +2591,6 @@
     "en": "First page standalone",
     "es": "Primera página independiente"
   },
-  "取消由右至左": {
-    "ja": "右から左を解除",
-    "zh-CN": "取消由右至左\u0001",
-    "en": "Disable right-to-left",
-    "es": "Desactivar derecha a izquierda"
-  },
   "由右至左": {
     "ja": "右から左",
     "zh-CN": "由右至左푎Ś",
@@ -2932,12 +2620,6 @@
     "zh-CN": "高度适应倐푏Ś",
     "en": "Fit height",
     "es": "Ajustar a la altura"
-  },
-  "100%／原尺寸": {
-    "ja": "100%／原寸",
-    "zh-CN": "100%／原尺寸\u0001",
-    "en": "100% / Original size",
-    "es": "100% / Tamaño original"
   },
   "縮小": {
     "ja": "縮小",
@@ -3022,12 +2704,6 @@
     "zh-CN": "文件夹名称、路径或栏位值",
     "en": "Folder name, path or field value",
     "es": "Nombre de carpeta, ruta o valor de campo"
-  },
-  "輸入關鍵字搜尋…": {
-    "ja": "キーワードを入力…",
-    "zh-CN": "输入关键字搜寻…\u0001",
-    "en": "Enter search keywords…",
-    "es": "Introduce palabras clave…"
   },
   "清除搜尋": {
     "ja": "検索をクリア",
@@ -3173,29 +2849,11 @@
     "en": "Open a project to save searches.",
     "es": "Abre un proyecto para guardar búsquedas."
   },
-  "進階搜尋與索引": {
-    "ja": "詳細検索とインデックス",
-    "zh-CN": "进阶搜寻与索引",
-    "en": "Advanced search and index",
-    "es": "Búsqueda avanzada e índice"
-  },
   "名稱篩選例：folder_name:\"中文 名稱\"。其他條件可使用下方欄位。空格／同欄位逗號＝同時符合；~＝任一符合；-＝排除。引號包住空格，反斜線用來跳脫。": {
     "ja": "名前検索例：folder_name:\"日本語の名前\"。スペースや同項目のカンマはAND、~はOR、-は除外です。空白は引用符で囲み、バックスラッシュでエスケープします。",
     "zh-CN": "名称筛选例：folder_name:\"中文 名称\"。其他条件可使用下方栏位。空格／同栏位逗号＝同时符合；~＝任一符合；-＝排除。引号包住空格，反斜线用来跳脱。",
     "en": "Name example: folder_name:\"folder name\". Spaces and same-field commas mean AND; ~ means OR; - excludes. Quote spaces and escape with backslashes.",
     "es": "Ejemplo: folder_name:\"nombre carpeta\". Espacios y comas del mismo campo significan Y; ~ significa O; - excluye. Usa comillas para espacios y barras inversas para escapar."
-  },
-  "目前條件：": {
-    "ja": "現在の条件：",
-    "zh-CN": "目前条件：",
-    "en": "Current query:",
-    "es": "Consulta actual:"
-  },
-  "重建搜尋索引": {
-    "ja": "検索インデックスを再構築",
-    "zh-CN": "重建搜寻索引\u0001",
-    "en": "Rebuild search index",
-    "es": "Reconstruir índice de búsqueda"
   },
   "選取結果後開啟，也可雙擊直接進入。": {
     "ja": "結果を選んで開くか、ダブルクリックで直接移動します。",
@@ -3226,12 +2884,6 @@
     "zh-CN": "结构祖先솸푓Ś",
     "en": "Structural ancestor",
     "es": "Antecesor estructural"
-  },
-  "遊戲邊界 · 內部未納管": {
-    "ja": "ゲーム境界 · 内部は管理対象外",
-    "zh-CN": "游戏边界 · 内部未纳管",
-    "en": "Game boundary · Internals unmanaged",
-    "es": "Límite de juego · Interior no administrado"
   },
   "唯讀": {
     "ja": "読み取り専用",
@@ -3346,12 +2998,6 @@
     "zh-CN": "选择拖入的字幕",
     "en": "Choose dropped subtitles",
     "es": "Elegir subtítulos soltados"
-  },
-  "字幕設定：": {
-    "ja": "字幕設定：",
-    "zh-CN": "字幕设定：",
-    "en": "Subtitle settings:",
-    "es": "Ajustes de subtítulos:"
   },
   "資料夾內來源": {
     "ja": "フォルダー内のソース",
@@ -3538,18 +3184,6 @@
     "zh-CN": "音量",
     "en": "Volume",
     "es": "Volumen"
-  },
-  "快退 10 秒": {
-    "ja": "10秒戻る",
-    "zh-CN": "快退 10 秒",
-    "en": "Back 10 seconds",
-    "es": "Retroceder 10 segundos"
-  },
-  "快進 10 秒": {
-    "ja": "10秒進む",
-    "zh-CN": "快进 10 秒",
-    "en": "Forward 10 seconds",
-    "es": "Avanzar 10 segundos"
   },
   "顯示／隱藏字幕": {
     "ja": "字幕の表示／非表示",
@@ -3959,12 +3593,6 @@
     "zh-CN": "网址",
     "es": "URL"
   },
-  "固定文字": {
-    "ja": "固定テキスト",
-    "zh-CN": "固定文本",
-    "en": "Static text",
-    "es": "Texto fijo"
-  },
   "系統資訊": {
     "ja": "システム情報",
     "zh-CN": "系统信息",
@@ -4211,12 +3839,6 @@
     "en": "Open viewer",
     "es": "Abrir visor"
   },
-  "開啟閱讀器": {
-    "ja": "リーダーを開く",
-    "zh-CN": "打开阅读器",
-    "en": "Open reader",
-    "es": "Abrir lector"
-  },
   "開啟所在資料夾": {
     "ja": "保存先フォルダーを開く",
     "zh-CN": "打开所在文件夹",
@@ -4318,18 +3940,6 @@
     "zh-CN": "此文件夹的布局方案",
     "en": "Layout for this folder",
     "es": "Diseño de esta carpeta"
-  },
-  "跟隨專案": {
-    "ja": "プロジェクト設定に従う",
-    "zh-CN": "跟随项目",
-    "en": "Follow project",
-    "es": "Usar el del proyecto"
-  },
-  "適合此分類": {
-    "ja": "この分類におすすめ",
-    "zh-CN": "适合此分类",
-    "en": "Recommended for this category",
-    "es": "Recomendado para esta categoría"
   },
   "作品網址或 ID": {
     "ja": "作品URLまたはID",
@@ -4787,12 +4397,6 @@
     "zh-CN": "下移",
     "es": "Mover abajo"
   },
-  "預設 CARD 單層／第 1 層，每列 3 張。完成後掃描允許範圍並建立隱藏可攜記錄；原始媒體保留，遊戲 ROOT 內部受保護。": {
-    "en": "Cards start at a single level (level 1), three per row. Creation scans the allowed scope and adds hidden portable records; original media and game boundaries are preserved.",
-    "ja": "カードは単一階層の第1階層、1行3枚が初期値です。許可範囲をスキャンし、元ファイルとゲーム境界を保護します。",
-    "es": "Las tarjetas comienzan en un nivel (nivel 1), tres por fila. Se analiza el ámbito permitido y se conservan los medios originales y los límites de los juegos.",
-    "zh-CN": "默认卡片单层／第 1 层，每行 3 张。完成后扫描允许范围并建立隐藏便携记录；保留原始媒体并保护游戏根目录内部。"
-  },
   "音樂播放器": {
     "en": "Music player",
     "ja": "音楽プレーヤー",
@@ -4859,18 +4463,6 @@
     "es": "Límites de juegos",
     "zh-CN": "边界文件夹"
   },
-  "移出音樂佇列 {0}": {
-    "en": "Remove {0} from the music queue",
-    "ja": "音楽キューから {0} を削除",
-    "es": "Quitar {0} de la cola de música",
-    "zh-CN": "将 {0} 移出音乐队列"
-  },
-  "加入音樂佇列 {0}": {
-    "en": "Add {0} to the music queue",
-    "ja": "音楽キューに {0} を追加",
-    "es": "Añadir {0} a la cola de música",
-    "zh-CN": "将 {0} 加入音乐队列"
-  },
   "個檔案": {
     "en": "files",
     "ja": "ファイル",
@@ -4906,24 +4498,6 @@
     "ja": "ドットで始まるファイルを表示",
     "es": "Mostrar archivos con punto inicial",
     "zh-CN": "显示点开头文件"
-  },
-  "播放已加入的音樂": {
-    "en": "Play queued music",
-    "ja": "追加した音楽を再生",
-    "es": "Reproducir música en cola",
-    "zh-CN": "播放已加入的音乐"
-  },
-  "資料夾資訊": {
-    "en": "Folder information",
-    "ja": "フォルダー情報",
-    "es": "Información de la carpeta",
-    "zh-CN": "文件夹信息"
-  },
-  "編輯資料夾資料": {
-    "en": "Edit folder data",
-    "ja": "フォルダーデータを編集",
-    "es": "Editar datos de la carpeta",
-    "zh-CN": "编辑文件夹数据"
   },
   "尚未建立或受保護": {
     "en": "Not initialized or protected",
@@ -4984,24 +4558,6 @@
     "ja": "漫画モード",
     "es": "Modo manga",
     "zh-CN": "漫画模式"
-  },
-  "此檔案沒有內建預覽，不會自動執行。": {
-    "en": "No built-in preview. This file will not run automatically.",
-    "ja": "内蔵プレビューはありません。自動実行されません。",
-    "es": "Sin vista previa integrada. El archivo no se ejecutará automáticamente.",
-    "zh-CN": "此文件没有内置预览，不会自动执行。"
-  },
-  "上一個檔案": {
-    "en": "Previous file",
-    "ja": "前のファイル",
-    "es": "Archivo anterior",
-    "zh-CN": "上一个文件"
-  },
-  "下一個檔案": {
-    "en": "Next file",
-    "ja": "次のファイル",
-    "es": "Archivo siguiente",
-    "zh-CN": "下一个文件"
   },
   "沒有符合條件的檔案": {
     "en": "No matching files",
@@ -5242,18 +4798,6 @@
     "en": "Settings",
     "ja": "設定",
     "es": "Ajustes"
-  },
-  "改為抽屜顯示設定": {
-    "zh-CN": "改为抽屉显示设置",
-    "en": "Show settings in a drawer",
-    "ja": "設定をドロワーで表示",
-    "es": "Mostrar ajustes en un cajón"
-  },
-  "停靠到右側面板": {
-    "zh-CN": "停靠到右侧面板",
-    "en": "Dock to the right panel",
-    "ja": "右パネルに固定",
-    "es": "Anclar al panel derecho"
   },
   "顯示資料夾名稱": {
     "zh-CN": "显示文件夹名称",

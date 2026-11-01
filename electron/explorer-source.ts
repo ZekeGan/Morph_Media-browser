@@ -7,7 +7,6 @@ import { DATA_DIR, validateDetails, type Attribute } from '../shared/model'
 import { newDetails, type ExplorerRequest, type MetadataPreview } from '../shared/explorer'
 import { metadata } from './metadata'
 import { fetchImageUrl } from './image-url'
-import { key } from './media-files'
 import type { Explorer } from './explorer'
 
 export async function metadataPreview(

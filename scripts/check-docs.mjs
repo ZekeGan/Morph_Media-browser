@@ -157,7 +157,7 @@ if (args.length === 1 && args[0] === '--self-test') selfTest()
 else {
   const result = checkDocuments(
     root,
-    args.length ? args : ['AGENTS.md', 'docs/README.md', 'docs/WORK_ITEMS.md']
+    args.length ? args : ['CLAUDE.md', 'docs/README.md', 'docs/WORK_ITEMS.md']
   )
   for (const error of result.errors) console.error(error)
   console.log(

@@ -13,7 +13,7 @@
 [data-theme='glass'], [data-preview='glass'] {
   color-scheme: light;
   --app-bg: #eef2f8; --text: #253247; --surface: #ffffffb8; --line: #cbd5e380;
-  --muted: #617087; --selected: #dceaff; --selected-text: #174e9c;
+  --muted: #5d6c83; --selected: #dceaff; --selected-text: #174e9c;
   --titlebar: #f9fbffb3; --sidebar: #edf3fbc2; --panel: #ffffffc9; --inset: #e8eef67a;
   --hover: #e0eaf6b8; --soft: #6c91c10a; --accent: #347ff0; --accent-ink: #2563b0;
   --accent-contrast: #fff; --scroll: #a4b4c680; --scroll-hover: #7e95af;
@@ -25,7 +25,7 @@
 [data-theme='paper'], [data-preview='paper'] {
   color-scheme: light;
   --app-bg: #f3efe3; --text: #22211c; --surface: #f8f4e9; --line: #35332b80;
-  --muted: #6e6a5e; --selected: #ff681f; --selected-text: #21190e;
+  --muted: #6a665a; --selected: #ff681f; --selected-text: #21190e;
   --titlebar: #eee9dc; --sidebar: #eee9dc; --panel: #f7f2e6; --inset: #eae4d6;
   --hover: #e7dfce; --soft: #302a1806; --accent: #db4a0d; --accent-ink: #a3390e;
   --accent-contrast: #fff8ed; --scroll: #b3ab96; --scroll-hover: #837b66;

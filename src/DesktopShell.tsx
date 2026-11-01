@@ -10,7 +10,6 @@ import {
   Group,
   Menu,
   Modal,
-  Select,
   Stack,
   TextInput,
   Tooltip,

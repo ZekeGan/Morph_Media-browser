@@ -19,7 +19,7 @@ M:orph は Windows を第一に考えたデスクトップアプリで、マン�
 
 > **人間がプロジェクトを主導し、AI がコードを開発します。** 方向性、要件、設計上の判断、レビューは人間が行い、コードは AI 開発エージェント（OpenAI Codex、その後 Anthropic の Claude Code）がそれに従って書いています。
 >
-> このプロジェクトは**開発の初期段階**です。現在のバージョン：**0.37.1**（[変更履歴](CHANGELOG.md)）。
+> このプロジェクトは**開発の初期段階**です。現在のバージョン：**0.37.2**（[変更履歴](CHANGELOG.md)）。
 
 ---
 
@@ -51,7 +51,7 @@ M:orph は Windows を第一に考えたデスクトップアプリで、マン�
 
 **データを補う**
 
-- ページのアドレスを貼り付けるだけで取得元を自動判別します：E-Hentai／ExHentai、Steam、DLsite、VNDB、Bangumi、AniList、Hitomi、Pixiv、MusicBrainz、Open Library、Wikimedia Commons。プレビューを確認してから取り込むフィールドを選びます。依頼しない限り何も取得しません。
+- ページのアドレスを貼り付けるだけで取得元を自動判別します：E-Hentai／ExHentai、Steam、DLsite、VNDB、Bangumi、AniList、Hitomi、Pixiv、MusicBrainz、Open Library、Wikimedia Commons。プレビューを確認してから取り込むフィールドを選びます。依頼しない限り何も取得しません。これらの一部のサイトにはアダルトコンテンツが含まれます。利用するかどうかはご自身で判断し、各サイトの規約に従ってください。
 
 **外観と言語**
 
@@ -112,6 +112,7 @@ Electron · React 18 · Vite 7 · TypeScript · Mantine 8 · Node SQLite（検�
 - [ドキュメント索引](docs/README.md)：作業ごとに該当ドキュメントを探せます。
 - [製品の範囲](docs/PRODUCT.md)と[アーキテクチャ](docs/ARCHITECTURE.md)。
 - [現在の作業と既知の制限](docs/WORK_ITEMS.md)、[決定事項](docs/DECISIONS.md)。
+- [コントリビューションガイド](CONTRIBUTING.md)と[セキュリティポリシー](SECURITY.md)（脆弱性は非公開で報告してください）。
 - コントリビューターとコーディングエージェントは、まず [CLAUDE.md](CLAUDE.md)（Claude Code）または [AGENTS.md](AGENTS.md)（Codex）を読んでください。初期の POC 資料は [docs/archive](docs/archive/) に保管されており、現行の仕様ではありません。
 
 ---

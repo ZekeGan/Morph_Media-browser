@@ -1,4 +1,3 @@
-import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { type ExplorerRequest, type OverviewResult } from '../shared/explorer'
 import { mediaNames } from './media-files'

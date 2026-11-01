@@ -19,7 +19,7 @@ M:orph 是以 Windows 為優先的桌面應用程式，用卡片、表格或樹�
 
 > **人類負責主導專案，AI 負責程式開發。** 方向、需求、設計決策與審查由人類主導；程式由 AI 開發代理（OpenAI Codex，之後是 Anthropic 的 Claude Code）依此撰寫。
 >
-> 專案處於**早期開發階段**。目前版本：**0.37.1**（[變更紀錄](CHANGELOG.md)）。
+> 專案處於**早期開發階段**。目前版本：**0.37.2**（[變更紀錄](CHANGELOG.md)）。
 
 ---
 
@@ -51,7 +51,7 @@ M:orph 是以 Windows 為優先的桌面應用程式，用卡片、表格或樹�
 
 **補充資料**
 
-- 貼上頁面網址就會自動辨識來源：E-Hentai／ExHentai、Steam、DLsite、VNDB、Bangumi、AniList、Hitomi、Pixiv、MusicBrainz、Open Library 與 Wikimedia Commons。先看預覽，再選擇要匯入的欄位。你不要求，就不會取得任何資料。
+- 貼上頁面網址就會自動辨識來源：E-Hentai／ExHentai、Steam、DLsite、VNDB、Bangumi、AniList、Hitomi、Pixiv、MusicBrainz、Open Library 與 Wikimedia Commons。先看預覽，再選擇要匯入的欄位。你不要求，就不會取得任何資料。其中部分網站含有成人內容，要不要使用由你自行決定，並請遵守各網站自己的條款。
 
 **外觀與語言**
 
@@ -112,6 +112,7 @@ Electron · React 18 · Vite 7 · TypeScript · Mantine 8 · Node SQLite（搜�
 - [文件索引](docs/README.md)：依任務找到對應文件。
 - [產品範圍](docs/PRODUCT.md)與[架構](docs/ARCHITECTURE.md)。
 - [目前工作與已知限制](docs/WORK_ITEMS.md)、[決策](docs/DECISIONS.md)。
+- [貢獻指南](CONTRIBUTING.md)與[安全政策](SECURITY.md)（請私下回報漏洞）。
 - 貢獻者與程式代理：請先讀 [CLAUDE.md](CLAUDE.md)（Claude Code）或 [AGENTS.md](AGENTS.md)（Codex）。早期 POC 資料封存在 [docs/archive](docs/archive/)，不是現行規格。
 
 ---

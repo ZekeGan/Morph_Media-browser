@@ -1,5 +1,5 @@
 import { t as tr, useLocale, currentLocale } from './i18n'
-import { Badge, Button, Group, Progress, Rating } from '@mantine/core'
+import { Badge, Button, Progress, Rating } from '@mantine/core'
 import { TagList } from './TagList'
 import { type Cell, type FolderRow, type Project } from '../shared/model'
 import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared/cells'

@@ -21,8 +21,7 @@ await lib.create(media, {
   scanAll: true,
   depth: { mode: 'through', level: 1 },
 })
-const project = lib.snapshot().projects[0].project!,
-  style = { textColor: '#e4e6e8', backgroundColor: 'transparent' }
+const style = { textColor: '#e4e6e8', backgroundColor: 'transparent' }
 const layout = (w: number, h: number): Cell[] => [
   { cellId: 'cover', kind: 'game-cover', grid: { x: 0, y: 0, w, h }, style },
   { cellId: 'name', kind: 'name', grid: { x: 0, y: h, w: 12, h: 1 }, style },

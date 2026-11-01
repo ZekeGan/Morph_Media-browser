@@ -6,7 +6,6 @@ import {
   ActionIcon,
   Badge,
   Checkbox,
-  ColorInput,
   Group,
   NumberInput,
   SegmentedControl,

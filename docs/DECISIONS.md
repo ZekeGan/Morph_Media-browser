@@ -252,7 +252,7 @@
 
 ## C-96：遊戲辨識 P0 與 Mac 條件
 
-2026-10-27 使用者要求將已知／可能的遊戲引擎漏判、誤判與 ROOT 定位問題寫入規則，修正列最優先；後續以 LOOK 多平台包明確要求加入 Mac 執行條件。納入 Mac App 的辨識／邊界保護與啟動前平台／相容性條件，辨識不再以 Windows EXE 為通用前提；`.app` 內不得新增記錄，Windows 不原生啟動 Mac App，也不因此授權解包、安裝、改安全設定或清理既有記錄。規則、案例與驗收集中 [引擎辨識](GAME_ENGINE_DETECTION.md)、[遊戲動作](GAME_VIEWER_DESIGN.md)；狀態留 [WORK_ITEMS](WORK_ITEMS.md)。本輪只做指定目錄的必要唯讀診斷與文件更新，未實作修正、未執行遊戲／程式測試或 macOS 原生驗證。
+2026-10-27 使用者要求將已知／可能的遊戲引擎漏判、誤判與 ROOT 定位問題寫入規則，修正列最優先；後續以 UnitySample 多平台包明確要求加入 Mac 執行條件。納入 Mac App 的辨識／邊界保護與啟動前平台／相容性條件，辨識不再以 Windows EXE 為通用前提；`.app` 內不得新增記錄，Windows 不原生啟動 Mac App，也不因此授權解包、安裝、改安全設定或清理既有記錄。規則、案例與驗收集中 [引擎辨識](GAME_ENGINE_DETECTION.md)、[遊戲動作](GAME_VIEWER_DESIGN.md)；狀態留 [WORK_ITEMS](WORK_ITEMS.md)。本輪只做指定目錄的必要唯讀診斷與文件更新，未實作修正、未執行遊戲／程式測試或 macOS 原生驗證。
 
 ## C-97：遊戲邊界修正與媒體／設定操作
 

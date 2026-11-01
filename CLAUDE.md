@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC 後續開發。使用者最新指示優先；`PLAN.md`、舊原型、設計預覽不是現行規格。`AGENTS.md` 是 Codex 用的完整版，本檔已涵蓋日常所需，不必再讀。
+Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC 後續開發。使用者最新指示優先；`PLAN.md`、舊原型、設計預覽不是現行規格。本檔是工作規則的唯一來源；`AGENTS.md` 只是指向本檔的入口，不必再讀。
 
 ## 分支與授權
 

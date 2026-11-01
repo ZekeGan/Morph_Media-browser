@@ -3,7 +3,6 @@ import { t as tr, useLocale } from './i18n'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   Alert,
-  Badge,
   Button,
   Checkbox,
   Group,
@@ -15,7 +14,6 @@ import {
 } from '@mantine/core'
 import type {
   CleanupPreview,
-  FolderRow,
   LegacyPreview,
   Project,
   ProjectInput,
