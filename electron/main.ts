@@ -216,8 +216,10 @@ async function dispatch(request: Request): Promise<Response> {
   }
   return { snapshot: library.snapshot(), ...extra }
 }
+// The product is called M:orph now, but its data stays in the original folder so no settings or index are lost.
 if (process.env.MEDIA_VIEWER_TEST_DATA)
   app.setPath('userData', path.resolve(process.env.MEDIA_VIEWER_TEST_DATA))
+else app.setPath('userData', path.join(app.getPath('appData'), 'media-viewer'))
 if (!app.requestSingleInstanceLock()) app.quit()
 else {
   app.on('second-instance', () => {

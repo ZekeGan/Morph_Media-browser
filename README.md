@@ -9,11 +9,15 @@
 
 <p align="center"><strong>Media Browser</strong><br><em>Same data, any shape.</em></p>
 
+<p align="center">
+  English · <a href="README.zh-TW.md">繁體中文</a> · <a href="README.zh-CN.md">简体中文</a> · <a href="README.ja.md">日本語</a> · <a href="README.es.md">Español</a>
+</p>
+
 M:orph is a Windows-first desktop app for browsing large collections of folders — manga, albums, videos, music, and games — as cards, tables or trees. You point a **project** at a root folder, and the app turns every matching sub-folder into a record you can describe, search and lay out the way you like. It only **views** your data: originals are never moved, renamed or deleted for the sake of browsing.
 
 **Data and presentation are kept apart.** What you know about a folder (title, tags, rating, where it came from) is stored with the folder; how it looks is a layout you design once and apply to the whole project.
 
-> The project is in an **early development stage**. Current version: **0.36.0** ([changelog](CHANGELOG.md)). The repository and package are still named `media-viewer`.
+> The project is in an **early development stage**. Current version: **0.37.0** ([changelog](CHANGELOG.md)).
 
 ---
 
@@ -45,7 +49,7 @@ M:orph is a Windows-first desktop app for browsing large collections of folders 
 
 **Fill in the data**
 
-- Paste a page address and the source is recognised automatically: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library and Wikimedia Commons. Review the preview, then choose which fields to import.
+- Paste a page address and the source is recognised automatically: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library and Wikimedia Commons. Review the preview, then choose which fields to import. Nothing is fetched unless you ask.
 
 **Look and language**
 
@@ -63,7 +67,7 @@ Project root ──→ portable settings ───┘
                   └──→ SQLite search index (rebuildable at any time)
 ```
 
-- Each managed folder carries a hidden `.media-viewer` record, so a folder can move to another place or device and still know what it is. Your original files are left alone.
+- Each managed folder carries a hidden `.media-viewer` record, so a folder can move to another place or device and still know what it is. Your original files are left alone. (The folder name is part of the data format and kept from before the product was renamed.)
 - Writes are atomic and recoverable; clean-up removes only what the app created, with a preview first.
 - Values are shared between projects by default; a private override has to be created on purpose.
 - Electron runs with context isolation and a sandbox; the renderer cannot read arbitrary paths or run commands.
@@ -101,10 +105,22 @@ Electron · React 18 · Vite 7 · TypeScript · Mantine 8 · Node SQLite (search
 
 ## Documentation
 
+The design documents are written mainly in Traditional Chinese.
+
 - [Documentation index](docs/README.md) — find the right document for a task.
 - [Product scope](docs/PRODUCT.md) and [architecture](docs/ARCHITECTURE.md).
 - [Current work and known limits](docs/WORK_ITEMS.md), [decisions](docs/DECISIONS.md).
 - Contributors and coding agents: read [CLAUDE.md](CLAUDE.md) (Claude Code) or [AGENTS.md](AGENTS.md) (Codex) first. Early POC material is kept in [docs/archive](docs/archive/) and is not a current specification.
+
+---
+
+## License
+
+Copyright (C) 2024–2026 Zeke Gan. The source code is free software under the **GNU General Public License, version 3 or (at your option) any later version** — see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md). Modified versions must stay open under the same license and keep the notices.
+
+**The name and the logo are not part of that license.** A modified version may not use the name "M:orph" or the M:orph logo, and may not be published as the official one just by changing the logo or the name. See the [name and logo policy](TRADEMARK.md).
+
+M:orph is not affiliated with any of the websites it can read from; their names belong to their owners.
 
 ---
 

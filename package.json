@@ -1,6 +1,14 @@
 {
-  "name": "media-viewer",
-  "version": "0.36.0",
+  "name": "morph",
+  "productName": "Morph",
+  "version": "0.37.0",
+  "description": "M:orph (Media Browser): a local-first folder viewer where you decide how each folder is shown.",
+  "license": "GPL-3.0-or-later",
+  "author": "Zeke Gan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZekeGan/media-viewer.git"
+  },
   "private": true,
   "type": "module",
   "main": "out/main/main.js",

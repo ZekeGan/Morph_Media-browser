@@ -2,6 +2,12 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.37.0 — 2026-11-02
+
+- Open-source licensing: the code is GPL-3.0-or-later (`LICENSE`, `NOTICE.md`); the name "M:orph" and the logo are excluded and covered by `TRADEMARK.md`, so a modified version cannot just swap the logo and be published as the official one.
+- README in English, Traditional Chinese, Simplified Chinese, Japanese and Spanish, with a language switcher.
+- Package renamed to `morph` (product name "Morph"); the window title is "M:orph". The data folder in `%APPDATA%` stays `media-viewer` so no settings are lost, and the hidden `.media-viewer` record folder is unchanged.
+
 ## 0.36.0 — 2026-11-02
 
 - New product identity: **M:orph** (subtitle "Media Browser"). The mark — a blocky M with the colon in its notch — replaces the book icon in the title bar and is drawn in the current text colour, so it suits all three themes.
