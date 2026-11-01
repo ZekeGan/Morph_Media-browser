@@ -863,13 +863,24 @@ export class Explorer {
           !req.args.every(
             (arg) => typeof arg === 'string' && arg.length <= 10000 && !arg.includes('\0')
           ) ||
-          (['url', 'folder'].includes(template.kind) && req.args.length)
+          (['url', 'folder', 'shortcut'].includes(template.kind) && req.args.length)
         )
           throw new Error('參數不合法')
         let target: NonNullable<NonNullable<FolderRecord['details']>['targets']>[string]
         if (template.kind === 'url') {
           if (!httpUrl(req.url)) throw new Error('網址無法開啟')
           target = { kind: 'url', path: req.url!, relative: false, args: [] }
+        } else if (template.kind === 'shortcut') {
+          // Picked from the folder's own list, never through a file dialog that may resolve the shortcut to its target.
+          const name = req.shortcut
+          if (
+            typeof name !== 'string' ||
+            !/^[^\\/]+\.(lnk|url)$/i.test(name) ||
+            name.includes('\0')
+          )
+            throw new Error('請選擇資料夾內的捷徑（.lnk／.url）')
+          await this.targetPath(row.path, path.join(row.path, name), 'file')
+          target = { kind: 'shortcut', path: name, relative: true, args: [] }
         } else {
           const chosen = await this.desktop.choose(
             template.kind === 'file-app' ? 'exe' : template.kind,
@@ -910,6 +921,9 @@ export class Explorer {
         if (target.kind === 'url') {
           if (!httpUrl(target.path) || !this.desktop.external) throw new Error('網址無法開啟')
           await this.desktop.external(target.path)
+        } else if (target.kind === 'shortcut') {
+          if (!/\.(lnk|url)$/i.test(target.path)) throw new Error('捷徑類型不符')
+          await this.desktop.open(await this.resolvedTarget(row.path, target, 'file'))
         } else {
           const file = await this.resolvedTarget(
             row.path,
@@ -925,6 +939,16 @@ export class Explorer {
           }
         }
         return { notice: { level: 'success', message: '已開啟指定目標' } }
+      }
+      case 'listShortcuts': {
+        const row = await this.library.checkedRow(req.rowId)
+        const entries = await fs.readdir(row.path, { withFileTypes: true })
+        return {
+          shortcuts: entries
+            .filter((e) => e.isFile() && /\.(lnk|url)$/i.test(e.name))
+            .map((e) => e.name)
+            .sort((a, b) => a.localeCompare(b, 'zh-Hant', { numeric: true })),
+        }
       }
       case 'chooseSubtitle': {
         return this.chooseSubtitle(req.rowId)

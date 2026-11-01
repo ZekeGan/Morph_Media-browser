@@ -207,7 +207,9 @@ export function Editor({
   const hasContent =
     !!selectedCell &&
     (isFieldKind(selectedCell.kind) ||
-      ['static-text', 'system-info', 'image', 'game-cover'].includes(selectedCell.kind))
+      ['static-text', 'system-info', 'image', 'game-cover', 'game-launch'].includes(
+        selectedCell.kind
+      ))
   const enumOptions =
     draft.fieldBindings.find((field) => field.attributeId === selectedCell?.attributeId)?.options ??
     []

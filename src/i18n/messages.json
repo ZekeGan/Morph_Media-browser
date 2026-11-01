@@ -5896,5 +5896,71 @@
     "en": "Game components can only be used in game projects",
     "ja": "ゲーム用コンポーネントはゲームプロジェクトでのみ使えます",
     "es": "Los componentes de juego solo se pueden usar en proyectos de juego"
+  },
+  "執行資料夾內的捷徑": {
+    "zh-CN": "运行文件夹内的快捷方式",
+    "en": "Run a shortcut in the folder",
+    "ja": "フォルダー内のショートカットを実行",
+    "es": "Ejecutar un acceso directo de la carpeta"
+  },
+  "選擇資料夾內的捷徑": {
+    "zh-CN": "选择文件夹内的快捷方式",
+    "en": "Pick a shortcut in the folder",
+    "ja": "フォルダー内のショートカットを選択",
+    "es": "Elegir un acceso directo de la carpeta"
+  },
+  "選擇捷徑": {
+    "zh-CN": "选择快捷方式",
+    "en": "Pick a shortcut",
+    "ja": "ショートカットを選択",
+    "es": "Elegir acceso directo"
+  },
+  "此資料夾內沒有捷徑（.lnk／.url）": {
+    "zh-CN": "此文件夹内没有快捷方式（.lnk／.url）",
+    "en": "No shortcuts (.lnk/.url) in this folder",
+    "ja": "このフォルダーにショートカット（.lnk／.url）はありません",
+    "es": "No hay accesos directos (.lnk/.url) en esta carpeta"
+  },
+  "綁定此捷徑": {
+    "zh-CN": "绑定此快捷方式",
+    "en": "Bind this shortcut",
+    "ja": "このショートカットを割り当て",
+    "es": "Vincular este acceso directo"
+  },
+  "啟動參數格式不正確。請用 JSON 字串陣列，每一項各用雙引號，例如：": {
+    "zh-CN": "启动参数格式不正确。请用 JSON 字符串数组，每一项各用双引号，例如：",
+    "en": "The launch arguments are not valid. Use a JSON array of strings, each in double quotes, for example:",
+    "ja": "起動引数の形式が正しくありません。二重引用符で囲んだ文字列の JSON 配列で指定してください。例：",
+    "es": "Los argumentos de inicio no son válidos. Usa un array JSON de cadenas entre comillas dobles, por ejemplo:"
+  },
+  "尚無可用的啟動動作，請先在遊戲操作新增": {
+    "zh-CN": "暂无可用的启动操作，请先在游戏操作中添加",
+    "en": "No launch action is available; add one in the game actions first",
+    "ja": "利用できる起動アクションがありません。先にゲーム操作で追加してください",
+    "es": "No hay ninguna acción de inicio; añade una en las acciones del juego"
+  },
+  "尚無可用的啟動動作，請先在遊戲操作新增。": {
+    "zh-CN": "暂无可用的启动操作，请先在游戏操作中添加。",
+    "en": "No launch action is available; add one in the game actions first.",
+    "ja": "利用できる起動アクションがありません。先にゲーム操作で追加してください。",
+    "es": "No hay ninguna acción de inicio; añade una en las acciones del juego."
+  },
+  "啟動動作": {
+    "zh-CN": "启动操作",
+    "en": "Launch action",
+    "ja": "起動アクション",
+    "es": "Acción de inicio"
+  },
+  "卡片按鈕要啟動哪一個遊戲操作；未指定時用預設啟動遊戲。": {
+    "zh-CN": "卡片按钮要启动哪一个游戏操作；未指定时使用默认启动游戏。",
+    "en": "Which game action the card button starts; the default launch action is used when none is chosen.",
+    "ja": "カードのボタンで起動するゲーム操作。未指定の場合は既定の起動を使います。",
+    "es": "Qué acción de juego inicia el botón de la tarjeta; si no eliges, se usa la de inicio predeterminada."
+  },
+  "自動（預設啟動遊戲）": {
+    "zh-CN": "自动（默认启动游戏）",
+    "en": "Automatic (default launch)",
+    "ja": "自動（既定の起動）",
+    "es": "Automático (inicio predeterminado)"
   }
 }

@@ -336,3 +336,53 @@ test('greater/less display conditions need a number or date field and a value of
   reject(validateProject, build('date', 'not a date'), '組件顯示條件不合法')
   reject(validateProject, build('number', 'three'), '組件顯示條件不合法')
 })
+
+test('shortcut targets stay inside the game folder, take no arguments, and launch cells name a valid action', () => {
+  const details = modelDetails()
+  const shortcut = (extra: Record<string, unknown>) => ({
+    ...details,
+    targets: {
+      le: { kind: 'shortcut', path: 'Game - LE.lnk', relative: true, args: [], ...extra },
+    },
+  })
+  assert.doesNotThrow(() => validateDetails(shortcut({}) as never))
+  assert.doesNotThrow(() => validateDetails(shortcut({ path: 'Store.url' }) as never))
+  for (const bad of [
+    { path: 'Game.exe' },
+    { path: 'sub/Game.lnk' },
+    { path: '..\\Game.lnk' },
+    { relative: false, path: 'D:\\Game.lnk' },
+    { args: ['--x'] },
+  ])
+    assert.throws(() => validateDetails(shortcut(bad) as never), Error, JSON.stringify(bad))
+
+  const project = modelProject()
+  project.mediaCategory = 'game'
+  const launch = {
+    cellId: 'launch',
+    kind: 'game-launch' as const,
+    grid: { x: 0, y: 9, w: 6, h: 1 },
+    style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
+  }
+  project.cells.push({ ...launch, actionId: 'le' })
+  assert.doesNotThrow(() => validateProject(project))
+  reject(
+    validateProject,
+    { ...project, cells: [...project.cells.slice(0, -1), { ...launch, actionId: 'bad id!' }] },
+    '專案設定不合法或版本不支援'
+  )
+  reject(
+    validateProject,
+    {
+      ...project,
+      cells: [...project.cells.slice(0, -1), { ...launch, kind: 'name', actionId: 'le' }],
+    },
+    '專案設定不合法或版本不支援'
+  )
+  assert.doesNotThrow(() =>
+    validateProject({
+      ...project,
+      actionTemplates: [{ id: 'le', label: 'LE', kind: 'shortcut', color: '#123456' }],
+    })
+  )
+})

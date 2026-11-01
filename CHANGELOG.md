@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.25.0 — 2026-11-02
+
+- New action type "shortcut" for game folders: pick a `.lnk`/`.url` that sits inside the game folder (for example one made by Locale Emulator) and run it through the system, keeping its own arguments.
+- The launch-game cell can choose which action it starts, and falls back to another launcher when the default launch action was deleted.
+- Launch arguments: Windows paths pasted with single backslashes are accepted, and other JSON mistakes get a plain explanation with an example.
+- The "new field" dialog lost its extra blank space and divider.
+
 ## 0.24.0 — 2026-11-02
 
 - A single click on a folder (card, table row or tree node) now shows that folder's details in the right panel without entering it; a double click still enters it. Game info is visible while the center stays where it is.

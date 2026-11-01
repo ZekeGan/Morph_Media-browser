@@ -3,7 +3,7 @@ import { Badge, Button, Group, Progress, Rating } from '@mantine/core'
 import { fieldValue, type Cell, type FolderRow, type Project } from '../shared/model'
 import { cellVisible, copyableValue, numericDisplay } from '../shared/cells'
 import { describeError } from './errors'
-import { gameActionTemplates } from '../shared/explorer'
+import { launchTemplate } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
 import { useState } from 'react'
 import { httpUrl } from '../shared/fields'
@@ -143,8 +143,8 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     )
   if (cell.kind === 'game-launch') {
     // The same launch the game page offers: the project's default launch action and the folder's bound target.
-    const template = gameActionTemplates(project ?? {}).find((t) => t.id === 'default-launch-game'),
-      target = row?.record?.details?.targets?.['default-launch-game'],
+    const template = launchTemplate(project ?? {}, cell.actionId),
+      target = template ? row?.record?.details?.targets?.[template.id] : undefined,
       ready = !!template && !!target && target.kind === template.kind
     return (
       <span className="cell-launch">
@@ -152,13 +152,24 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
           size="compact-sm"
           color={template?.color}
           disabled={!row || preview || !ready}
-          title={ready ? target.path : tr('尚未綁定')}
+          title={
+            !template
+              ? tr('尚無可用的啟動動作，請先在遊戲操作新增')
+              : ready
+                ? target.path
+                : tr('尚未綁定')
+          }
           onClick={async (e) => {
             e.stopPropagation()
             if (!row || !template) return
             if (
-              ['exe', 'file-app'].includes(template.kind) &&
-              !window.confirm(tr('啟動「{0}」？', tr(template.label)))
+              ['exe', 'file-app', 'shortcut'].includes(template.kind) &&
+              !window.confirm(
+                tr(
+                  '啟動「{0}」？',
+                  template.id === 'default-launch-game' ? tr(template.label) : template.label
+                )
+              )
             )
               return
             try {
@@ -175,7 +186,7 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
           onDoubleClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
-          {tr('啟動遊戲')}
+          {template && template.id !== 'default-launch-game' ? template.label : tr('啟動遊戲')}
         </Button>
         {linkError && <small role="alert">{linkError}</small>}
       </span>

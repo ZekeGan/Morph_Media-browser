@@ -133,7 +133,7 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .palette-field .mantine-Button-root { height:auto; min-height:58px; padding:8px 10px; }
 .palette-field .mantine-Button-label { display:block; width:100%; white-space:normal; text-align:left; }
 .palette-field-name { display:block; overflow-wrap:anywhere; }.palette-field-meta { display:flex; flex-wrap:wrap; gap:5px; align-items:center; margin-top:5px; font-size:10px; color:var(--muted); }
-.new-field-form { display:grid; gap:10px; padding-top:18px; margin-top:18px; border-top:1px solid var(--line); }.new-field-form h4 { margin-bottom:0; }
+.new-field-form { display:grid; gap:10px; }.new-field-form h4 { margin-bottom:0; }
 .existing-fields .mantine-Accordion-control { padding:10px; }.existing-fields .mantine-Accordion-label { font-size:12px; }.existing-fields .mantine-Accordion-content { padding:10px; }
 @container editor (max-width:1100px) { .editor { grid-template-columns:280px minmax(0,1fr); }.editor-palette { grid-column:1; grid-row:1 / span 2; }.editor .canvas-wrap { grid-column:2; grid-row:1; }.editor > .editor-inspector { grid-column:2; grid-row:2; position:static; max-height:none; } }
 @container editor (max-width:740px) { .editor { grid-template-columns:minmax(0,1fr); }.editor .canvas-wrap { grid-column:1; grid-row:1; }.editor > .editor-palette { grid-column:1; grid-row:2; position:static; max-height:none; }.editor > .editor-inspector { grid-column:1; grid-row:3; }.display-density { grid-template-columns:1fr; } }

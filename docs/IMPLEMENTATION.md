@@ -89,6 +89,8 @@
 | `tests/file-probe.test.ts` | 以檔頭位元組辨識 ZIP／RAR／7z／網頁／空檔／一般媒體 |
 | `tests/game-launch-cell-ui.ts` | 「啟動遊戲」組件：未綁定啟動檔時停用、已綁定時可用，並出現在遊戲專案的編輯器組件列（不實際啟動） |
 | `tests/panel-preview-ui.ts` | 單擊資料夾在右側面板預覽（中央不進入），雙擊才進入 |
+| `tests/game-shortcut.test.ts` | 捷徑動作：清單只列資料夾頂層 `.lnk`／`.url`，綁定拒絕路徑與非捷徑、不收參數，執行走系統開啟且不改原檔；啟動組件的動作選擇與退回順序 |
+| `tests/launch-args.test.ts` | 啟動參數 JSON：單反斜線路徑自動補正、`\new` 不變成換行、錯誤格式被拒 |
 | `tests/field-edit-ui.ts` | CELL 編輯器欄位改名（清單與設定面板兩處）、重複名稱拒絕、單選比較值選項、字級／對齊／換行、數字單位、大於小於條件選項與設定區塊收合 |
 | `tests/game-cover-cell-ui.ts` | 遊戲封面組件在卡片與編輯器各種格位大小下填滿容器，含填滿方式 |
 | `tests/game-folder-page-ui.ts` | 遊戲專案內非遊戲根資料夾使用共用的詳情／子資料夾／檔案頁 |

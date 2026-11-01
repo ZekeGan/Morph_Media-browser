@@ -47,6 +47,8 @@ export interface Cell {
   // 'blur': the whole picture, with its own blurred copy filling the leftover space.
   imageFit?: 'contain' | 'cover' | 'blur'
   maximum?: number
+  // Launch cell only: which action template it starts; absent means the default launch action.
+  actionId?: string
   copyValue?: boolean
   condition?: {
     attributeId: string
@@ -344,6 +346,7 @@ function validCell(c: unknown): boolean {
     (c.imageFit === undefined ||
       (['contain', 'cover', 'blur'].includes(c.imageFit) &&
         ['image', 'game-cover'].includes(c.kind))) &&
+    (c.actionId === undefined || (c.kind === 'game-launch' && id(c.actionId))) &&
     (c.wrap === undefined ||
       (typeof c.wrap === 'boolean' && ['field-text', 'name', 'path'].includes(c.kind))) &&
     (c.unit === undefined || (c.kind === 'field-number' && text(c.unit, 20))) &&
@@ -389,7 +392,7 @@ function validTargetEntry([k, t]: [string, unknown]): boolean {
   return (
     id(k) &&
     obj(t) &&
-    ['exe', 'folder', 'file-app', 'url'].includes(t.kind) &&
+    ['exe', 'folder', 'file-app', 'url', 'shortcut'].includes(t.kind) &&
     text(t.path, 10000) &&
     typeof t.relative === 'boolean' &&
     (!t.relative || relative(t.path)) &&
@@ -397,6 +400,9 @@ function validTargetEntry([k, t]: [string, unknown]): boolean {
     t.args.length <= 100 &&
     t.args.every((a: unknown) => text(a, 10000) && !String(a).includes('\0')) &&
     (t.kind !== 'url' || t.args.length === 0) &&
+    // A shortcut carries its own arguments and lives inside the game folder, so the record only keeps its relative name.
+    (t.kind !== 'shortcut' ||
+      (t.args.length === 0 && t.relative === true && /^[^\\/]+\.(lnk|url)$/i.test(t.path))) &&
     (t.kind !== 'url' || (httpUrl(t.path) && t.relative === false)) &&
     (t.kind === 'file-app'
       ? obj(t.application) &&
@@ -656,7 +662,7 @@ export function validateProject(v: unknown): asserts v is Project {
           obj(t) &&
           id(t.id) &&
           text(t.label, 100) &&
-          ['exe', 'folder', 'file-app', 'url'].includes(t.kind) &&
+          ['exe', 'folder', 'file-app', 'url', 'shortcut'].includes(t.kind) &&
           /^#[0-9a-f]{6}$/i.test(t.color)
       ))
   )

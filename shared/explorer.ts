@@ -68,12 +68,26 @@ export interface FolderDetails {
   >
   subtitles?: { id: string; name: string; relativePath: string }[]
 }
-export type ActionKind = 'exe' | 'folder' | 'file-app' | 'url'
+// 'shortcut': a .lnk/.url file inside the game folder, opened through the system so its own arguments and compatibility settings apply.
+export type ActionKind = 'exe' | 'folder' | 'file-app' | 'url' | 'shortcut'
 export interface ActionTemplate {
   id: string
   label: string
   kind: ActionKind
   color: string
+}
+// Actions that start the game (as opposed to opening a folder or a web page); the launch cell offers these.
+export const launchTemplates = (project: { actionTemplates?: ActionTemplate[] }) =>
+  gameActionTemplates(project).filter((t) => ['exe', 'file-app', 'shortcut'].includes(t.kind))
+// The action a launch cell starts: its chosen one, else the default launch action, else the first one that can launch.
+export const launchTemplate = (
+  project: { actionTemplates?: ActionTemplate[] },
+  actionId?: string
+) => {
+  const all = launchTemplates(project)
+  return (
+    all.find((t) => t.id === actionId) ?? all.find((t) => t.id === 'default-launch-game') ?? all[0]
+  )
 }
 export const gameActionTemplates = (project: {
   actionTemplates?: ActionTemplate[]
@@ -191,7 +205,10 @@ export type ExplorerRequest =
       templateId: string
       args: string[]
       url?: string
+      // File name (not a path) of a shortcut inside the game folder, for 'shortcut' actions.
+      shortcut?: string
     }
+  | { action: 'listShortcuts'; rowId: string }
   | { action: 'runTarget'; rowId: string; templateId: string }
   | {
       action: 'subtitle'
@@ -221,6 +238,7 @@ export interface ExplorerResponse {
   content?: ContentResult
   search?: SearchResult
   subtitle?: { token: string; name: string; text: string; portable: boolean }
+  shortcuts?: string[]
   probe?: { kind: 'zip' | 'rar' | '7z' | 'gzip' | 'html' | 'empty' | 'media' | 'unknown' }
   preview?: MetadataPreview
   imagePreview?: { token: string; image: string; name: string; size: number }

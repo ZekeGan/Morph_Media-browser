@@ -365,7 +365,7 @@ export function FolderContent({
               title={row.record?.details?.targets?.[t.id]?.path ?? tr('尚未綁定')}
               onClick={() => {
                 if (
-                  ['exe', 'file-app'].includes(t.kind) &&
+                  ['exe', 'file-app', 'shortcut'].includes(t.kind) &&
                   !window.confirm(tr('啟動「{0}」？', t.label))
                 )
                   return

@@ -22,6 +22,8 @@ import {
 import type { FolderRow, Project } from '../shared/model'
 import { t as tr } from './i18n'
 import { Icon } from './icons'
+import { describeError } from './errors'
+import { parseLaunchArgs } from '../shared/launchArgs'
 import './game-actions.css'
 
 const kindLabel = (kind: ActionKind) =>
@@ -30,7 +32,18 @@ const kindLabel = (kind: ActionKind) =>
     folder: tr('開啟資料夾'),
     'file-app': tr('以指定應用程式開啟檔案'),
     url: tr('開啟網址'),
+    shortcut: tr('執行資料夾內的捷徑'),
   })[kind]
+
+const exampleArgs = '["-run","D:\\\\Games\\\\Title\\\\game.exe"]'
+function parseArgs(text: string): string[] {
+  const parsed = parseLaunchArgs(text)
+  if (!parsed)
+    throw new Error(
+      tr('啟動參數格式不正確。請用 JSON 字串陣列，每一項各用雙引號，例如：') + ' ' + exampleArgs
+    )
+  return parsed
+}
 
 export function GameActionTargets({
   row,
@@ -46,8 +59,28 @@ export function GameActionTargets({
   onDirty: (dirty: boolean) => void
 }) {
   const [drafts, setDrafts] = useState<Record<string, { args: string; url: string }>>({}),
-    [error, setError] = useState('')
+    [error, setError] = useState(''),
+    [shortcuts, setShortcuts] = useState<string[]>(),
+    [choice, setChoice] = useState<Record<string, string>>({})
   const templates = gameActionTemplates(project)
+  const wantsShortcuts = templates.some((t) => t.kind === 'shortcut')
+  // The folder's own shortcuts (.lnk/.url), e.g. one made by Locale Emulator, are listed for picking.
+  useEffect(() => {
+    if (!wantsShortcuts) return
+    let alive = true
+    // A plain read: it must not be skipped while another operation is busy (the busy-gated runner would drop it).
+    void window.explorer
+      .request({ action: 'listShortcuts', rowId: row.rowId })
+      .then((result) => {
+        if (alive) setShortcuts(result.shortcuts ?? [])
+      })
+      .catch(() => {
+        if (alive) setShortcuts([])
+      })
+    return () => {
+      alive = false
+    }
+  }, [wantsShortcuts, row.rowId])
   const original = (id: string) => ({
     args: JSON.stringify(row.record?.details?.targets?.[id]?.args ?? []),
     url:
@@ -74,9 +107,7 @@ export function GameActionTargets({
   const bind = async (template: ActionTemplate) => {
     try {
       const draft = drafts[template.id] ?? original(template.id),
-        args: unknown = ['exe', 'file-app'].includes(template.kind) ? JSON.parse(draft.args) : []
-      if (!Array.isArray(args) || !args.every((value) => typeof value === 'string'))
-        throw new Error(tr('參數需為 JSON 字串陣列'))
+        args = ['exe', 'file-app'].includes(template.kind) ? parseArgs(draft.args) : []
       const response = await run({
         action: 'bindTarget',
         rowId: row.rowId,
@@ -84,11 +115,12 @@ export function GameActionTargets({
         templateId: template.id,
         args,
         url: template.kind === 'url' ? draft.url.trim() : undefined,
+        shortcut: template.kind === 'shortcut' ? choice[template.id] : undefined,
       })
       if (response && !response.cancelled) reset(template.id)
       setError('')
     } catch (e) {
-      setError(String(e))
+      setError(describeError(e).message)
     }
   }
   return (
@@ -120,6 +152,26 @@ export function GameActionTargets({
                 disabled={disabled}
                 onChange={(e) => edit(template.id, 'url', e.currentTarget.value)}
               />
+            ) : template.kind === 'shortcut' ? (
+              <>
+                <Text size="sm" c="dimmed" className="path">
+                  {target?.kind === 'shortcut' ? target.path : tr('尚未綁定目標')}
+                </Text>
+                <Select
+                  comboboxProps={{ zIndex: 460 }}
+                  label={tr('選擇資料夾內的捷徑')}
+                  placeholder={
+                    shortcuts && !shortcuts.length
+                      ? tr('此資料夾內沒有捷徑（.lnk／.url）')
+                      : tr('選擇捷徑')
+                  }
+                  data={shortcuts ?? []}
+                  value={choice[template.id] ?? null}
+                  disabled={disabled || !shortcuts?.length}
+                  nothingFoundMessage={tr('此資料夾內沒有捷徑（.lnk／.url）')}
+                  onChange={(value) => setChoice({ ...choice, [template.id]: value ?? '' })}
+                />
+              </>
             ) : (
               <Text size="sm" c="dimmed" className="path">
                 {target?.kind === template.kind ? target.path : tr('尚未綁定目標')}
@@ -145,16 +197,18 @@ export function GameActionTargets({
               <Button
                 variant="default"
                 size="xs"
-                disabled={disabled}
+                disabled={disabled || (template.kind === 'shortcut' && !choice[template.id])}
                 onClick={() => void bind(template)}
               >
                 {template.kind === 'url'
                   ? tr('保存網址')
-                  : template.kind === 'file-app'
-                    ? tr('選擇應用程式與檔案')
-                    : template.kind === 'exe'
-                      ? tr('選擇 EXE 並保存參數')
-                      : tr('選擇資料夾')}
+                  : template.kind === 'shortcut'
+                    ? tr('綁定此捷徑')
+                    : template.kind === 'file-app'
+                      ? tr('選擇應用程式與檔案')
+                      : template.kind === 'exe'
+                        ? tr('選擇 EXE 並保存參數')
+                        : tr('選擇資料夾')}
               </Button>
               {changed && (
                 <Button
@@ -306,7 +360,7 @@ export function GameActionEditor({
             label={tr('任務類型')}
             value={current.kind}
             disabled={disabled}
-            data={(['exe', 'folder', 'file-app', 'url'] as const).map((kind) => ({
+            data={(['exe', 'folder', 'file-app', 'url', 'shortcut'] as const).map((kind) => ({
               value: kind,
               label: kindLabel(kind),
             }))}

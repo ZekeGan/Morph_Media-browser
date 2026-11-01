@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from '@mantine/core'
 import type { Cell, CellKind, Project } from '../shared/model'
-import { cellType, isFieldKind } from '../shared/explorer'
+import { cellType, isFieldKind, launchTemplates } from '../shared/explorer'
 import { typeKinds } from './editorKinds'
 
 type Binding = Project['fieldBindings'][number]
@@ -215,6 +215,25 @@ export function EditorInspector(props: EditorInspectorProps) {
                         onChange={(value) => updateCell({ imageFit: value as Cell['imageFit'] })}
                       />
                     )}
+                    {selectedCell.kind === 'game-launch' &&
+                      (launchTemplates(draft).length ? (
+                        <Select
+                          label={tr('啟動動作')}
+                          description={tr('卡片按鈕要啟動哪一個遊戲操作；未指定時用預設啟動遊戲。')}
+                          placeholder={tr('自動（預設啟動遊戲）')}
+                          clearable
+                          value={selectedCell.actionId ?? null}
+                          data={launchTemplates(draft).map((t) => ({
+                            value: t.id,
+                            label: t.id === 'default-launch-game' ? tr(t.label) : t.label,
+                          }))}
+                          onChange={(value) => updateCell({ actionId: value ?? undefined })}
+                        />
+                      ) : (
+                        <Text size="sm" c="orange">
+                          {tr('尚無可用的啟動動作，請先在遊戲操作新增。')}
+                        </Text>
+                      ))}
                     {selectedCell.kind === 'image' && (
                       <Text size="sm" c="dimmed">
                         {tr(
