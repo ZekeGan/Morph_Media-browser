@@ -127,5 +127,3 @@ M:orph no está afiliado a ninguno de los sitios web de los que puede leer infor
 ## Autor
 
 **Zeke Gan** — [GitHub](https://github.com/ZekeGan)
-
-> Este proyecto es un experimento. Se espera que la implementación cambie.

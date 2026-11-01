@@ -127,5 +127,3 @@ M:orph 与它可读取数据的各网站没有任何关系；各网站的名称�
 ## 作者
 
 **Zeke Gan** — [GitHub](https://github.com/ZekeGan)
-
-> 这是一个实验性项目，实现预期会持续变动。

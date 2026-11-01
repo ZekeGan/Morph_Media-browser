@@ -127,5 +127,3 @@ M:orph is not affiliated with any of the websites it can read from; their names 
 ## Author
 
 **Zeke Gan** — [GitHub](https://github.com/ZekeGan)
-
-> This project is an experiment. The implementation is expected to change.
