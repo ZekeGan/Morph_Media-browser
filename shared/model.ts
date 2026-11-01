@@ -55,6 +55,8 @@ export interface Cell {
   actionId?: string
   // Launch cell only: further actions tried in order when the folder has no target for the ones before.
   fallbackActionIds?: string[]
+  // Image cell only: without a picture chosen for the folder, show its n-th image file (by name, 1-based).
+  imageIndex?: number
   copyValue?: boolean
   condition?: {
     attributeId: string
@@ -360,6 +362,7 @@ function validCell(c: unknown): boolean {
         c.fallbackIds.every(id) &&
         new Set([c.attributeId, ...c.fallbackIds]).size === c.fallbackIds.length + 1)) &&
     (c.actionId === undefined || (c.kind === 'game-launch' && id(c.actionId))) &&
+    (c.imageIndex === undefined || (c.kind === 'image' && integer(c.imageIndex, 1, 999))) &&
     (c.fallbackActionIds === undefined ||
       (c.kind === 'game-launch' &&
         Array.isArray(c.fallbackActionIds) &&

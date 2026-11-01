@@ -826,6 +826,37 @@ test('paged contents show an ordered first batch, remain row-bound and recheck c
   assert.equal(await fs.readFile(path.join(outside, 'secret.txt'), 'utf8'), 'KEEP')
   assert.equal(all.at(-1)!.name, 'Image 450.jpg')
 })
+test('the n-th image of a folder is chosen by natural file order, direct files only', async (t) => {
+  const { media, lib, explorer } = await fixture(t)
+  for (const name of ['10.jpg', '2.jpg', '1.png', 'notes.txt'])
+    await fs.writeFile(path.join(media, name), 'IMAGE')
+  await fs.mkdir(path.join(media, 'sub'))
+  await fs.writeFile(path.join(media, 'sub', '0.jpg'), 'IMAGE')
+  const state = await lib.create(media, {
+      name: 'Nth',
+      mediaCategory: 'album',
+      depth: { mode: 'through', level: 1 },
+    }),
+    row = state.rows[0],
+    desktop = (explorer as any).desktop as DesktopOperations
+  // A valid JPEG frame around the file name, so the response shows which file was chosen.
+  desktop.thumbnail = async (file) =>
+    Buffer.concat([
+      Buffer.from([255, 216]),
+      Buffer.from(path.basename(file)),
+      Buffer.from([255, 217]),
+    ])
+  const request = new Request('media://nth/x/1')
+  const nth = async (index: number) => {
+    const response = await explorer.nthImage(row.rowId, index, request)
+    return response.status === 200 ? (await response.text()).slice(2, -2) : response.status
+  }
+  assert.equal(await nth(1), '1.png')
+  assert.equal(await nth(2), '2.jpg')
+  assert.equal(await nth(3), '10.jpg')
+  assert.equal(await nth(4), 404, 'text files and sub-folder images do not count')
+  for (const bad of [0, -1, 1.5, 1000, NaN]) assert.equal(await nth(bad), 404, String(bad))
+})
 test('warm thumbnails bypass cold work; cancelled queued work is skipped and shared requests decode once', async (t) => {
   const { media, lib, explorer } = await fixture(t),
     jpeg = Buffer.from([255, 216, 255, 0, 255, 217])

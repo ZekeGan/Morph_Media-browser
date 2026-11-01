@@ -262,11 +262,41 @@ export function EditorInspector(props: EditorInspectorProps) {
                         </Text>
                       ))}
                     {selectedCell.kind === 'image' && (
-                      <Text size="sm" c="dimmed">
-                        {tr(
-                          '這是選用圖片組件。可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。'
+                      <Stack gap="xs">
+                        <Text size="sm" c="dimmed">
+                          {tr(
+                            '這是選用圖片組件。可新增多張；保存版面後，在資料夾設定的「圖片」頁分別選圖，沒有圖片可留空。'
+                          )}
+                        </Text>
+                        <Select
+                          label={tr('沒有手動選圖時')}
+                          allowDeselect={false}
+                          value={selectedCell.imageIndex ? 'nth' : 'none'}
+                          data={[
+                            { value: 'none', label: tr('留空') },
+                            { value: 'nth', label: tr('顯示資料夾內第 N 張圖片') },
+                          ]}
+                          onChange={(value) =>
+                            updateCell({ imageIndex: value === 'nth' ? 1 : undefined })
+                          }
+                        />
+                        {selectedCell.imageIndex && (
+                          <NumberInput
+                            label={tr('第幾張圖片')}
+                            description={tr(
+                              '依檔名排序，只看這個資料夾直接包含的圖片（不含子資料夾）。資料夾已手動選圖時以手動為準；沒有那一張時留空。'
+                            )}
+                            min={1}
+                            max={999}
+                            allowDecimal={false}
+                            clampBehavior="strict"
+                            value={selectedCell.imageIndex}
+                            onChange={(value) =>
+                              typeof value === 'number' && updateCell({ imageIndex: value })
+                            }
+                          />
                         )}
-                      </Text>
+                      </Stack>
                     )}
                     {['field-number', 'field-enum', 'field-boolean'].includes(
                       selectedCell.kind

@@ -359,6 +359,44 @@ export class Explorer {
     if (!stat.isFile()) throw new Error('不是檔案')
     return { ...entry, stat, row }
   }
+  // The n-th image file (by name) directly inside the folder, as a thumbnail; used by image cells that pick by position.
+  async nthImage(
+    rowId: string,
+    index: number,
+    request: globalThis.Request
+  ): Promise<globalThis.Response> {
+    if (!Number.isInteger(index) || index < 1 || index > 999)
+      return new globalThis.Response(null, { status: 404 })
+    const row = await this.library.readableRow(rowId)
+    let hidden = new Set<string>()
+    try {
+      hidden = await hiddenFileNames(row.path)
+    } catch {
+      // Without the attribute check, hidden images are simply not excluded.
+    }
+    const names = (await fs.readdir(row.path, { withFileTypes: true }))
+      .filter(
+        (entry) =>
+          entry.isFile() &&
+          !entry.isSymbolicLink() &&
+          !hidden.has(entry.name) &&
+          imageTypes[path.extname(entry.name).slice(1).toLowerCase()]
+      )
+      .map((entry) => entry.name)
+      .sort((a, b) => mediaNames.compare(a, b) || (a < b ? -1 : a > b ? 1 : 0))
+    const name = names[index - 1]
+    if (!name) return new globalThis.Response(null, { status: 404 })
+    const file = path.join(row.path, name),
+      id = createHash('sha256').update(name).digest('hex')
+    await safePath(row.path, file)
+    this.files.set(`${rowId}/${id}`, {
+      rowId,
+      name,
+      file,
+      mime: imageTypes[path.extname(name).slice(1).toLowerCase()],
+    })
+    return this.stream(rowId, id, request, true)
+  }
   async audioCover(rowId: string, id: string, signal?: AbortSignal): Promise<globalThis.Response> {
     const task = this.audioCoverTail.then(() =>
       signal?.aborted ? new Response(null, { status: 499 }) : this.readAudioCover(rowId, id)

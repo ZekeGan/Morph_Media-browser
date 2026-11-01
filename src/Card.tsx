@@ -5,7 +5,7 @@ import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared
 import { describeError } from './errors'
 import { launchChoice } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { httpUrl } from '../shared/fields'
 import { useFolderStats } from './folderStats'
 import { cellColors } from './themes/cellStyle'
@@ -27,12 +27,23 @@ function CellPicture({
   alt: string
   fit: 'contain' | 'cover' | 'blur'
 }) {
+  const [failed, setFailed] = useState(false)
+  useEffect(() => setFailed(false), [src])
+  if (failed) return <span className="cell-image-placeholder">{tr('沒有圖片')}</span>
   if (fit !== 'blur')
-    return <img className="cell-image" style={{ objectFit: fit }} src={src} alt={alt} />
+    return (
+      <img
+        className="cell-image"
+        style={{ objectFit: fit }}
+        src={src}
+        alt={alt}
+        onError={() => setFailed(true)}
+      />
+    )
   return (
     <span className="cell-image cell-blur">
       <img className="cell-blur-bg" src={src} alt="" aria-hidden="true" />
-      <img className="cell-blur-fg" src={src} alt={alt} />
+      <img className="cell-blur-fg" src={src} alt={alt} onError={() => setFailed(true)} />
     </span>
   )
 }
@@ -230,6 +241,13 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       <CellPicture
         src={`media://asset/${row!.rowId}/${asset.assetId}`}
         alt={asset.originalName}
+        fit={cell.imageFit ?? 'contain'}
+      />
+    ) : row && cell.imageIndex ? (
+      // No picture chosen for this folder: its n-th image file, when it has one.
+      <CellPicture
+        src={`media://nth/${row.rowId}/${cell.imageIndex}`}
+        alt={tr('資料夾內第 {0} 張圖片', cell.imageIndex)}
         fit={cell.imageFit ?? 'contain'}
       />
     ) : preview ? (

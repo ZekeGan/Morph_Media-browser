@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.31.0 — 2026-11-02
+
+- Image cells can show the folder's n-th image file (sorted by name, direct files only) when no picture was picked by hand for that folder; useful for manga (first page) while media folders keep picking by hand. A folder without that image shows an empty placeholder.
+
 ## 0.30.0 — 2026-11-02
 
 - Text, tag and layout-text cells have an option "scroll when the content is long": the cell keeps its height and its content scrolls (mouse wheel or keyboard) instead of being cut off.

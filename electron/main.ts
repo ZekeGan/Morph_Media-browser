@@ -437,6 +437,14 @@ else {
             response.headers.set('Access-Control-Expose-Headers', 'Content-Range, Accept-Ranges')
             return response
           }
+          if (url.hostname === 'nth' && parts.length === 2) {
+            const response = await explorer.nthImage(parts[0], Number(parts[1]), request)
+            response.headers.set(
+              'Access-Control-Allow-Origin',
+              devUrl ? new URL(devUrl).origin : 'app://ui'
+            )
+            return response
+          }
           if (url.hostname === 'archive' && parts.length === 4)
             return explorer.archiveStream(parts[0], parts[1], parts[2], parts[3])
           if (url.hostname !== 'asset' || parts.length !== 2)

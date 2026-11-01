@@ -112,6 +112,14 @@ if (args.includes('--fields')) {
         grid: { x: 0, y: 7, w: 12, h: 1 },
         style,
       },
+      {
+        cellId: crypto.randomUUID(),
+        kind: 'image' as const,
+        attributeId: crypto.randomUUID(),
+        imageIndex: 2,
+        grid: { x: 0, y: 9, w: 6, h: 3 },
+        style,
+      },
       ...(project.mediaCategory === 'game'
         ? [
             {
