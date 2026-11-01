@@ -19,7 +19,7 @@ M:orph 是以 Windows 為優先的桌面應用程式，用卡片、表格或樹�
 
 > **人類負責主導專案，AI 負責程式開發。** 方向、需求、設計決策與審查由人類主導；程式由 AI 開發代理（OpenAI Codex，之後是 Anthropic 的 Claude Code）依此撰寫。
 >
-> 專案處於**早期開發階段**。目前版本：**0.37.2**（[變更紀錄](CHANGELOG.md)）。
+> 專案處於**早期開發階段**。目前版本：**0.38.0**（[變更紀錄](CHANGELOG.md)）。
 
 ---
 
@@ -93,6 +93,7 @@ pnpm dev
 | `pnpm test` | 資料與邏輯測試 |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Electron UI 測試（依改動／核心項目／全部） |
 | `pnpm format` / `pnpm format:check` | Prettier |
+| `pnpm dist` | 建置 Windows 安裝程式與免安裝版到 `release/` |
 | `pnpm shot <game\|manga\|album\|other>` | 用內建範例資料截圖 |
 
 驗證方式見 [IMPLEMENTATION](docs/IMPLEMENTATION.md)。每次推送，GitHub Actions 會執行型別檢查、格式檢查與資料測試。

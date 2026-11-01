@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.38.0 — 2026-11-02
+
+- First packaged build: `pnpm dist` creates `release/Morph-Setup-<version>.exe` (installer) and `release/Morph-Portable-<version>.exe` (no installation) with electron-builder; `pnpm dist:dir` only makes the unpacked folder. The licence, notice and name policy files are placed next to the program. The builds are not code-signed, so Windows SmartScreen will warn on first run.
+
 ## 0.37.2 — 2026-11-02
 
 - Public-release tidy-up: the documentation no longer names the maintainer's real game folders or collection paths (examples use neutral sample names, tests included), and the AI-generated reference pictures in `docs/design/explorations` were removed.

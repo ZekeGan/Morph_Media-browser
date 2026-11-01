@@ -19,7 +19,7 @@ M:orph es una aplicación de escritorio pensada primero para Windows que permite
 
 > **Dirigido por una persona, construido por IA.** Una persona dirige el proyecto (dirección, requisitos, decisiones de diseño y revisión), mientras que agentes de programación de IA (OpenAI Codex y después Claude Code de Anthropic) escriben el código bajo esa dirección.
 >
-> El proyecto está en una **fase temprana de desarrollo**. Versión actual: **0.37.2** ([registro de cambios](CHANGELOG.md)).
+> El proyecto está en una **fase temprana de desarrollo**. Versión actual: **0.38.0** ([registro de cambios](CHANGELOG.md)).
 
 ---
 
@@ -93,6 +93,7 @@ pnpm dev
 | `pnpm test` | Pruebas de datos y lógica |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Pruebas de interfaz con Electron (cambios / conjunto básico / todo) |
 | `pnpm format` / `pnpm format:check` | Prettier |
+| `pnpm dist` | Crea el instalador de Windows y una versión portátil en `release/` |
 | `pnpm shot <game\|manga\|album\|other>` | Captura la aplicación con datos de ejemplo integrados |
 
 Los detalles de verificación están en [IMPLEMENTATION](docs/IMPLEMENTATION.md). GitHub Actions ejecuta la comprobación de tipos, el formato y las pruebas de datos en cada envío.

@@ -19,7 +19,7 @@ M:orph is a Windows-first desktop app for browsing large collections of folders 
 
 > **Human-led, AI-built.** A human leads the project — direction, requirements, design decisions and review — while AI coding agents (OpenAI Codex, then Anthropic's Claude Code) write the code under that direction.
 >
-> The project is in an **early development stage**. Current version: **0.37.2** ([changelog](CHANGELOG.md)).
+> The project is in an **early development stage**. Current version: **0.38.0** ([changelog](CHANGELOG.md)).
 
 ---
 
@@ -93,6 +93,7 @@ pnpm dev
 | `pnpm test` | Data and logic tests |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Electron UI tests (changed files / core set / everything) |
 | `pnpm format` / `pnpm format:check` | Prettier |
+| `pnpm dist` | Build the Windows installer and a portable exe into `release/` |
 | `pnpm shot <game\|manga\|album\|other>` | Screenshot the app with built-in sample data |
 
 Details of verification are in [IMPLEMENTATION](docs/IMPLEMENTATION.md). GitHub Actions runs the type-check, format check and data tests on every push.

@@ -1,7 +1,7 @@
 {
   "name": "morph",
   "productName": "Morph",
-  "version": "0.37.2",
+  "version": "0.38.0",
   "description": "M:orph (Media Browser): a local-first folder viewer where you decide how each folder is shown.",
   "license": "GPL-3.0-or-later",
   "author": "Zeke Gan",
@@ -27,7 +27,9 @@
     "postinstall": "install-electron",
     "test:workspace": "tsx tests/workspace-ui.ts",
     "format": "prettier --write \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",
-    "format:check": "prettier --check \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\""
+    "format:check": "prettier --check \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",
+    "dist": "pnpm build && electron-builder --win",
+    "dist:dir": "pnpm build && electron-builder --win dir"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.3",
@@ -46,6 +48,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^5.0.0",
     "electron": "^44.0.0",
+    "electron-builder": "^26.18.0",
     "electron-vite": "^5.0.0",
     "playwright-core": "^1.64.1",
     "prettier": "^3.9.10",
@@ -57,6 +60,63 @@
     "onlyBuiltDependencies": [
       "electron",
       "esbuild"
+    ]
+  },
+  "build": {
+    "appId": "io.github.zekegan.morph",
+    "productName": "Morph",
+    "copyright": "Copyright (C) 2024-2026 Zeke Gan",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "M:orph",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "artifactName": "Morph-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Morph-Portable-${version}.${ext}"
+    },
+    "extraFiles": [
+      {
+        "from": "LICENSE",
+        "to": "LICENSE.txt"
+      },
+      {
+        "from": "NOTICE.md",
+        "to": "NOTICE.md"
+      },
+      {
+        "from": "TRADEMARK.md",
+        "to": "TRADEMARK.md"
+      }
     ]
   }
 }

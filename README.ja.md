@@ -19,7 +19,7 @@ M:orph は Windows を第一に考えたデスクトップアプリで、マン�
 
 > **人間がプロジェクトを主導し、AI がコードを開発します。** 方向性、要件、設計上の判断、レビューは人間が行い、コードは AI 開発エージェント（OpenAI Codex、その後 Anthropic の Claude Code）がそれに従って書いています。
 >
-> このプロジェクトは**開発の初期段階**です。現在のバージョン：**0.37.2**（[変更履歴](CHANGELOG.md)）。
+> このプロジェクトは**開発の初期段階**です。現在のバージョン：**0.38.0**（[変更履歴](CHANGELOG.md)）。
 
 ---
 
@@ -93,6 +93,7 @@ pnpm dev
 | `pnpm test` | データとロジックのテスト |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Electron の UI テスト（変更分／中核／すべて） |
 | `pnpm format` / `pnpm format:check` | Prettier |
+| `pnpm dist` | Windows のインストーラーとポータブル版を `release/` に作成 |
 | `pnpm shot <game\|manga\|album\|other>` | 内蔵のサンプルデータでスクリーンショット |
 
 検証の詳細は [IMPLEMENTATION](docs/IMPLEMENTATION.md) を参照してください。GitHub Actions は、プッシュのたびに型チェック、書式チェック、データテストを実行します。

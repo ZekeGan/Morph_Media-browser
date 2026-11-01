@@ -45,3 +45,6 @@ next-env.d.ts
 
 # graphify (rebuildable code graph)
 graphify-out/
+
+# packaged builds
+/release
