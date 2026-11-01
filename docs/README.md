@@ -43,6 +43,10 @@
 - 新需求直接修改原規則並留待辦差距；完成後清除過時狀態及失效入口。章節採穩定名稱，改名時更新直接引用或保留舊 anchor。
 - 收尾沿本表來源欄反查主文件及直接引用即可，不另建來源映射清單。機械問題用 [文件檢查](IMPLEMENTATION.md#文件檢查)，語意候選仍需核對需求及程式；不以日期／關鍵字自動判定矛盾。
 
+## 工作流程
+
+與技術無關的開發流程 PROMPT 見 [WORKFLOW_PROMPT](WORKFLOW_PROMPT.md)，可整段帶到其他專案使用。
+
 ## 歷史與探索
 
 [DECISIONS](DECISIONS.md) 依決策 ID 追溯；舊 POC、階段、ROADMAP、DEV_LOG、RELEASE_0_5_0 等已封存於 [archive](archive/)（日常搜尋請排除 docs/archive），與主文件末尾的歷史區都不是日常前置 Context，歷史測試不算本輪驗證。版本／依賴查 [package.json](../package.json)；版本任務才更新 CHANGELOG。
