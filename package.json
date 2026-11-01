@@ -29,7 +29,8 @@
     "format": "prettier --write \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",
     "format:check": "prettier --check \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",
     "dist": "pnpm build && electron-builder --win",
-    "dist:dir": "pnpm build && electron-builder --win dir"
+    "dist:dir": "pnpm build && electron-builder --win dir",
+    "prepare": "node scripts/setup-hooks.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.3",

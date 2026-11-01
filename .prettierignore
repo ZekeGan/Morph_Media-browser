@@ -8,3 +8,6 @@ src/i18n/messages.json
 *.css
 *.md
 *.json
+src/index.html
+release
+build

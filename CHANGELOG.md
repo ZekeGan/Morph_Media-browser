@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## Unreleased
+
+- Workflow: changes are collected here and the version number is only raised when a release is made. A shared git hook (`.githooks/pre-commit`, enabled by `pnpm install`) runs the type check, the format check and the link check of the Markdown being committed; slow tests stay manual.
+- The UI test runner first stops Electron processes left over from an interrupted run (only those started from this project's `node_modules`). CI also runs the UI smoke tests in a separate, non-blocking job and uploads the screenshots on failure.
+- `src/index.html`, `release/` and `build/` are ignored by Prettier, so formatting no longer touches them.
+- `CLAUDE.md` and the workflow prompt record the new rules: push after passing checks and ask only for minor/major version bumps, acceptance checklist with screenshots for every batch, independent review only for high-risk changes, translations in the same batch, and suggesting a new conversation after a big topic.
+
 ## 0.38.0 — 2026-11-02
 
 - First packaged build: `pnpm dist` creates `release/Morph-Setup-<version>.exe` (installer) and `release/Morph-Portable-<version>.exe` (no installation) with electron-builder; `pnpm dist:dir` only makes the unpacked folder. The licence, notice and name policy files are placed next to the program. The builds are not code-signed, so Windows SmartScreen will warn on first run.

@@ -4,7 +4,7 @@
 //   node scripts/run-ui-tests.mjs --changed       tests mapped from files changed vs origin/main (+ working tree)
 //   node scripts/run-ui-tests.mjs video media     tests whose file name contains any of the words
 import { existsSync, readdirSync, rmSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 // Fast set that exercises navigation, the right panel, settings, the editor and the media browser.
@@ -58,6 +58,21 @@ const all = readdirSync('tests')
   .filter((name) => name.endsWith('-ui.ts'))
   .map((name) => name.replace(/\.ts$/, ''))
   .sort()
+
+// An Electron left over from an interrupted run can make the next run hang. Only processes started from this
+// project's node_modules are stopped, never other Electron-based programs.
+function stopStrayElectron() {
+  if (process.platform !== 'win32') return
+  const script =
+    '$root = $env:PROJECT_MODULES; Get-CimInstance Win32_Process -Filter "Name=\'electron.exe\'" | ' +
+    'Where-Object { $_.ExecutablePath -and $_.ExecutablePath.StartsWith($root) } | ' +
+    'ForEach-Object { Stop-Process -Id $_.ProcessId -Force }'
+  spawnSync('powershell', ['-NoProfile', '-Command', script], {
+    env: { ...process.env, PROJECT_MODULES: resolve('node_modules') },
+    stdio: 'ignore',
+  })
+}
+stopStrayElectron()
 
 const args = process.argv.slice(2)
 let chosen

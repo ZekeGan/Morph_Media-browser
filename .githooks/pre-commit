@@ -1,0 +1,10 @@
+#!/bin/sh
+# Fast checks before every commit: types, formatting and the links of the Markdown files being committed.
+# Slow tests are left to the person or agent who knows what changed (pnpm test, pnpm test:ui:changed).
+set -e
+pnpm typecheck
+pnpm format:check
+docs=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.md$' || true)
+if [ -n "$docs" ]; then
+  node scripts/check-docs.mjs $docs
+fi

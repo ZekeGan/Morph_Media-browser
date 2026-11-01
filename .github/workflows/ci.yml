@@ -22,3 +22,28 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm format:check
       - run: pnpm test
+
+  # The Electron UI smoke tests need a real window, so they run on their own and do not block the quick checks;
+  # a failure uploads the screenshots and test data.
+  ui-smoke:
+    needs: check
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: node scripts/run-ui-tests.mjs --smoke
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ui-smoke-output
+          path: .test-output
+          retention-days: 7

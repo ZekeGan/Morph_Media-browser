@@ -12,7 +12,7 @@ The project is **human-led and AI-built**: the maintainer decides direction, req
 
 ## Before you send code
 
-- Run `pnpm typecheck`, `pnpm format:check` and `pnpm test`. UI changes should also run the related Electron UI tests (`pnpm test:ui:changed`).
+- `pnpm install` enables a git hook that runs the type check, the format check and the link check of the Markdown you commit. Run `pnpm test` yourself as well (and `pnpm typecheck`, `pnpm format:check` whenever you like). UI changes should also run the related Electron UI tests (`pnpm test:ui:changed`).
 - Keep the change small and focused, in the style of the surrounding code; do not mix refactoring with a fix.
 - Test with a **made-up sample folder**, never with someone's real collection. The app only views originals, and tests must not write outside their temporary folders.
 - Interface text lives in `src/i18n/messages.json` with Simplified Chinese, English, Japanese and Spanish. Translations are welcome, and so are corrections by native speakers.
