@@ -16,10 +16,43 @@ test('ExHentai keeps its gallery identity while using the no-key metadata endpoi
     )
   }) as typeof fetch
   const result = await metadata(source, fetcher, 'exh')
-  assert.equal(result.preview.provider, 'exh')
+  assert.equal(result.preview.provider, 'eh', 'E-Hentai and ExHentai share one provider')
   assert.equal(result.preview.source, source)
   assert.equal(result.preview.values.find((value) => value.key === 'GALLERY_URL')?.value, source)
   await assert.rejects(metadata(source, fetcher, 'eh'), /不符/)
+})
+test('E-Hentai tags are also split into one field per namespace', async () => {
+  const source = 'https://e-hentai.org/g/12/abcdef0123/',
+    tags = [
+      'language:chinese',
+      'language:translated',
+      'artist:poriuretan',
+      'female:ahegao',
+      'female:x-ray',
+      'male:condom',
+      'other:mosaic censorship',
+      'plain',
+      'unknown:ignored',
+      'female:',
+    ]
+  const fetcher = (async () =>
+    new Response(
+      JSON.stringify({ gmetadata: [{ gid: 12, token: 'abcdef0123', title: 'T', tags }] })
+    )) as typeof fetch
+  const { preview } = await metadata(source, fetcher, 'eh')
+  const get = (key: string) => preview.values.find((value) => value.key === key)?.value
+  assert.deepEqual(
+    get('TAGS'),
+    tags.filter((tag) => tag.length > 0),
+    'the full list stays as it was'
+  )
+  assert.deepEqual(get('LANGUAGE'), ['chinese', 'translated'])
+  assert.deepEqual(get('ARTIST'), ['poriuretan'])
+  assert.deepEqual(get('FEMALE'), ['ahegao', 'x-ray'])
+  assert.deepEqual(get('MALE'), ['condom'])
+  assert.deepEqual(get('OTHER'), ['mosaic censorship'])
+  assert.equal(get('PARODY'), undefined, 'a namespace with no tags gets no field')
+  assert.equal(get('UNKNOWN'), undefined)
 })
 const payload = (overrides: Record<string, unknown> = {}) => ({
   '620': {

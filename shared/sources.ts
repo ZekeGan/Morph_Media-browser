@@ -79,6 +79,8 @@ export const metadataSources = [
   },
 ] as const
 export type MetadataSourceId = (typeof metadataSources)[number]['id']
+// E-Hentai and ExHentai are one site with the same galleries: they share stored field ids (eh-…).
+export const sourceFamily = (id?: string) => (id === 'exh' ? 'eh' : id)
 export function sourceForUrl(source: string): MetadataSourceId | undefined {
   if (/^\d+$/.test(source.trim())) return 'steam'
   let url: URL

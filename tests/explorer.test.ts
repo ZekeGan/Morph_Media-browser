@@ -512,6 +512,29 @@ test('E-Hentai public API validates host/identity, namespaces and portable previ
       record.attributes.some((a) => a.key === 'GALLERY_CATEGORY'),
       false
     )
+    // The sister site shares the same fields: ExHentai adds the namespace field and may replace E-Hentai's tags.
+    const exh = await explorer.request({
+        action: 'metadataPreview',
+        source: 'https://exhentai.org/g/123/abcdef0123/',
+      }),
+      next = lib.snapshot().rows[0]
+    await explorer.request({
+      action: 'metadataApply',
+      rowId: next.rowId,
+      revision: next.record!.revision,
+      token: exh.preview!.token,
+      keys: ['TAGS', 'LANGUAGE'],
+      mode: 'replace',
+    })
+    const shared = await readFolder(media)
+    assert.deepEqual(shared.attributes.find((a) => a.attributeId === 'eh-language')!.value, [
+      'chinese',
+    ])
+    assert.equal(shared.attributes.filter((a) => a.attributeId === 'eh-tags').length, 1)
+    assert.equal(
+      shared.attributes.some((a) => a.attributeId.startsWith('exh-')),
+      false
+    )
   } finally {
     globalThis.fetch = original
   }

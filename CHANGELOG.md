@@ -2,6 +2,11 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.29.0 — 2026-11-02
+
+- E-Hentai and ExHentai are treated as one site: both import into the same `eh-` fields (fields saved earlier under `exh-` are taken over on the next import).
+- Gallery tags are also split by namespace into their own fields: language, parody, character, artist, group, cosplayer, female, male, mixed, other and reclass. The full tag list is kept as before.
+
 ## 0.28.0 — 2026-11-02
 
 - The launch-game cell can list fallback actions: it starts the first action that the folder has a target bound for, so one cell covers games started from an EXE and games started from a shortcut. The button shows the label of the action actually used.

@@ -1,6 +1,6 @@
 import { archiveIndex, archiveImage, type ArchiveIndex } from './archive'
 import { httpUrl, validFieldValue } from '../shared/fields'
-import { sourceForUrl, type MetadataSourceId } from '../shared/sources'
+import { sourceFamily, sourceForUrl, type MetadataSourceId } from '../shared/sources'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
@@ -1198,8 +1198,13 @@ export class Explorer {
     for (const v of item.preview.values.filter((v) => req.keys.includes(v.key))) {
       const provider = item.preview.provider ?? 'eh',
         attributeId = provider + '-' + v.key.toLowerCase(),
-        old = record.attributes.find((attribute) => attribute.attributeId === attributeId)
-      if (old && sourceForUrl(old.source) !== provider) throw new Error('既有欄位來源衝突')
+        // ExHentai data saved before the two sites shared fields lives under exh-…; it is taken over by eh-….
+        legacyId = provider === 'eh' ? 'exh-' + v.key.toLowerCase() : undefined,
+        old =
+          record.attributes.find((attribute) => attribute.attributeId === attributeId) ??
+          record.attributes.find((attribute) => attribute.attributeId === legacyId)
+      if (old && sourceFamily(sourceForUrl(old.source)) !== sourceFamily(provider))
+        throw new Error('既有欄位來源衝突')
       const filled =
         old &&
         old.value !== null &&
@@ -1215,7 +1220,7 @@ export class Explorer {
       }
       this.checkValue(attribute, record)
       record.attributes = record.attributes.filter(
-        (attribute) => attribute.attributeId !== attributeId
+        (attribute) => attribute.attributeId !== attributeId && attribute.attributeId !== legacyId
       )
       record.attributes.push(attribute)
     }

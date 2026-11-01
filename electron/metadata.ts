@@ -3,6 +3,46 @@ import { limitedBytes, decode } from './metadata-common'
 export { limitedBytes } from './metadata-common'
 import { sourceForUrl, type MetadataSourceId } from '../shared/sources'
 import { publicMetadata } from './metadata-public'
+// E-Hentai tags are "namespace:name". Besides the full list, each namespace becomes its own field so that
+// artist, parody, language, characters… can be shown and filtered on their own.
+const tagNamespaces = [
+  'language',
+  'parody',
+  'character',
+  'artist',
+  'group',
+  'cosplayer',
+  'female',
+  'male',
+  'mixed',
+  'other',
+  'reclass',
+] as const
+function galleryTagGroups(tags: unknown): MetadataPreview['values'] {
+  if (!Array.isArray(tags)) return []
+  const groups = new Map<string, string[]>()
+  for (const tag of tags) {
+    if (typeof tag !== 'string') continue
+    const split = tag.indexOf(':')
+    const space = tag.slice(0, split),
+      name = tag.slice(split + 1).trim()
+    if (
+      split <= 0 ||
+      !name ||
+      name.length > 100 ||
+      !(tagNamespaces as readonly string[]).includes(space)
+    )
+      continue
+    groups.set(space, [...(groups.get(space) ?? []), name])
+  }
+  return tagNamespaces
+    .filter((space) => groups.has(space))
+    .map((space) => ({
+      key: space.toUpperCase(),
+      type: 'tags' as const,
+      value: [...new Set(groups.get(space))].slice(0, 200),
+    }))
+}
 export async function ehMetadata(
   source: string,
   fetcher: typeof fetch = fetch
@@ -62,6 +102,7 @@ export async function ehMetadata(
             .slice(0, 200)
         : [],
     },
+    ...galleryTagGroups(data.tags),
     { key: 'GALLERY_CATEGORY', type: 'string', value: decode(data.category).slice(0, 100) },
     { key: 'UPLOADER', type: 'string', value: decode(data.uploader).slice(0, 100) },
     {
@@ -81,7 +122,7 @@ export async function ehMetadata(
   let cover: { bytes: Buffer; mime: string; ext: string } | undefined
   const preview: Omit<MetadataPreview, 'token'> = {
     title: title.slice(0, 200),
-    provider: url.hostname === 'exhentai.org' ? 'exh' : 'eh',
+    provider: 'eh',
     source: `https://${url.hostname}/g/${match[1]}/${match[2]}/`,
     values,
   }
