@@ -19,7 +19,7 @@ M:orph is a Windows-first desktop app for browsing large collections of folders 
 
 > **Human-led, AI-built.** A human leads the project — direction, requirements, design decisions and review — while AI coding agents (OpenAI Codex, then Anthropic's Claude Code) write the code under that direction.
 >
-> The project is in an **early development stage**. Current version: **0.38.0** ([changelog](CHANGELOG.md)).
+> The project is **close to its first release**. Current version: **0.38.0** ([changelog](CHANGELOG.md)).
 
 ---
 

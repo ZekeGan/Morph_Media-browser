@@ -19,7 +19,7 @@ M:orph es una aplicación de escritorio pensada primero para Windows que permite
 
 > **Dirigido por una persona, construido por IA.** Una persona dirige el proyecto (dirección, requisitos, decisiones de diseño y revisión), mientras que agentes de programación de IA (OpenAI Codex y después Claude Code de Anthropic) escriben el código bajo esa dirección.
 >
-> El proyecto está en una **fase temprana de desarrollo**. Versión actual: **0.38.0** ([registro de cambios](CHANGELOG.md)).
+> El proyecto está **cerca de su primera versión publicada**. Versión actual: **0.38.0** ([registro de cambios](CHANGELOG.md)).
 
 ---
 
