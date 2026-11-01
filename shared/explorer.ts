@@ -4,6 +4,13 @@ import type { StableQuery } from './query'
 import type { Notice } from './notifications'
 import type { Attribute, Cell, Snapshot } from './model'
 export type BrowseMode = 'CARD' | 'TREE' | 'TABLE'
+// The file list's own choices in the right panel, kept per project so they survive closing the panel or the project.
+export interface MediaPrefs {
+  scope?: 'current' | 'descendants'
+  filter?: 'all' | 'video' | 'image' | 'audio' | 'other'
+  view?: 'masonry' | 'tiles' | 'list'
+  grouped?: boolean
+}
 export interface BrowseState {
   mode: BrowseMode
   location: string
@@ -20,6 +27,9 @@ export interface BrowseState {
   contentMode?: 'folders' | 'files'
   filePresentation?: 'tiles' | 'groups' | 'list'
   fileScope?: 'current' | 'descendants'
+  // Game projects: show every folder or only the ones that are game boundaries.
+  gameFilter?: 'all' | 'boundaries'
+  media?: MediaPrefs
   fileRootId?: string
   scroll?: number
   scrolls?: Partial<Record<BrowseMode, number>>

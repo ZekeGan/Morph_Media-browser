@@ -28,6 +28,7 @@ type Props = {
   folderMode: boolean
   moveWidth: (event: React.PointerEvent) => void
   navHistory: (delta: number) => void
+  persist: (next: BrowseState) => void
   // Passed in on purpose: a bare `open` would silently resolve to window.open.
   open: (id: string, fromHistory?: number) => Promise<void>
   openConfig: (id: string, tab?: string) => void
@@ -63,6 +64,7 @@ export function BrowsePanel(props: Props) {
     folderMode,
     moveWidth,
     navHistory,
+    persist,
     open,
     openConfig,
     panelBody,
@@ -259,6 +261,8 @@ export function BrowsePanel(props: Props) {
                   busy={busy}
                   configure={(tab) => openConfig(detail.rowId, tab)}
                   onChild={child}
+                  mediaPrefs={browse.media}
+                  onMediaPrefs={(media) => persist({ ...browse, media })}
                   sourceRows={all}
                   onSource={(id) => void open(id)}
                   childNames={all

@@ -119,6 +119,16 @@ try {
     true
   )
   await page.screenshot({ path: path.join(root, 'grouped.png') })
+  // Scope, layout and grouping are remembered per project after leaving and reopening it.
+  await page.getByRole('button', { name: '返回首頁', exact: true }).click()
+  await page.getByRole('button', { name: '開啟專案 Media scope', exact: true }).first().click()
+  await page.locator('.media-thumbnail').first().waitFor()
+  assert.equal(
+    await page.getByRole('textbox', { name: '檔案範圍', exact: true }).inputValue(),
+    '包含子資料夾'
+  )
+  assert.equal(await page.locator('.gallery-source-header').count(), 3)
+  assert.equal(await page.locator('.media-thumbnail').count(), 5)
   await page
     .locator('.gallery-source-header')
     .filter({ has: page.getByText('B', { exact: true }) })

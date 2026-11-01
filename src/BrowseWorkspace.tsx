@@ -118,8 +118,7 @@ export function BrowseWorkspace({
       project.list
     )
   const [cardPending, setCardPending] = useState(false),
-    [cardSaveError, setCardSaveError] = useState(''),
-    [boundariesOnly, setBoundariesOnly] = useState(false)
+    [cardSaveError, setCardSaveError] = useState('')
   const cardEdit = useRef(0),
     cardSaving = useRef(false),
     projectLive = useRef(project)
@@ -203,6 +202,10 @@ export function BrowseWorkspace({
         .updateWorkspace({ action: 'browse', projectId: project.projectId, value: next })
         .catch((e) => notify(String(e)))
   }
+  // The game folder filter is a saved choice, not session state.
+  const boundariesOnly = browse.gameFilter === 'boundaries'
+  const setBoundariesOnly = (only: boolean) =>
+    persist({ ...state.current, gameFilter: only ? 'boundaries' : 'all' })
   const reportDirty = useCallback(
     (value: boolean) => {
       setConfigDirty(value)
@@ -988,6 +991,7 @@ export function BrowseWorkspace({
       </section>
       {panelOpen && <div className="panel-scrim" aria-hidden="true" onClick={togglePanel} />}
       <BrowsePanel
+        persist={persist}
         act={act}
         all={all}
         browse={browse}

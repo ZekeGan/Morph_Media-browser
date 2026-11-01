@@ -144,7 +144,15 @@ export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
         (b.filePresentation !== undefined &&
           !['tiles', 'groups', 'list'].includes(b.filePresentation)) ||
         (b.fileScope !== undefined && !['current', 'descendants'].includes(b.fileScope)) ||
-        (b.fileRootId !== undefined && !key(b.fileRootId))
+        (b.fileRootId !== undefined && !key(b.fileRootId)) ||
+        (b.gameFilter !== undefined && !['all', 'boundaries'].includes(b.gameFilter)) ||
+        (b.media !== undefined &&
+          (!object(b.media) ||
+            (b.media.scope !== undefined && !['current', 'descendants'].includes(b.media.scope)) ||
+            (b.media.filter !== undefined &&
+              !['all', 'video', 'image', 'audio', 'other'].includes(b.media.filter)) ||
+            (b.media.view !== undefined && !['masonry', 'tiles', 'list'].includes(b.media.view)) ||
+            (b.media.grouped !== undefined && typeof b.media.grouped !== 'boolean')))
     )
   )
     throw new Error('檔案總覽偏好不合法')

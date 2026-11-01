@@ -18,6 +18,7 @@ import {
   type ContentResult,
   type ExplorerRequest,
   type ExplorerResponse,
+  type MediaPrefs,
 } from '../shared/explorer'
 import {
   fieldValue,
@@ -41,6 +42,8 @@ export function FolderContent({
   childNames,
   sourceRows,
   onSource,
+  mediaPrefs,
+  onMediaPrefs,
 }: {
   row: FolderRow
   project: Project
@@ -52,6 +55,8 @@ export function FolderContent({
   sourceRows: FolderRow[]
   onSource: (id: string) => void
   childNames?: string[]
+  mediaPrefs?: MediaPrefs
+  onMediaPrefs?: (prefs: MediaPrefs) => void
   selectedFileId?: string
   selectedEntry?: ContentResult['entries'][number]
 }) {
@@ -134,6 +139,8 @@ export function FolderContent({
   if (unified && (!selectedFile || ['audio', 'video'].includes(selectedFile.kind)))
     return (
       <MediaBrowser
+        prefs={mediaPrefs}
+        onPrefs={onMediaPrefs}
         row={row}
         project={project}
         entries={visibleEntries}

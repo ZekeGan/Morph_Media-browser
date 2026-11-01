@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.26.0 — 2026-11-02
+
+- The folder-list filter (all folders / boundary folders) and the right panel's file scope (current folder / with subfolders), file type, layout and source grouping are now saved per project and restored after closing the panel or leaving the project.
+
 ## 0.25.0 — 2026-11-02
 
 - New action type "shortcut" for game folders: pick a `.lnk`/`.url` that sits inside the game folder (for example one made by Locale Emulator) and run it through the system, keeping its own arguments.

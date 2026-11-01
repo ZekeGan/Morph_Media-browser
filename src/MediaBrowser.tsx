@@ -4,6 +4,7 @@ import type {
   ContentResult,
   ExplorerRequest,
   ExplorerResponse,
+  MediaPrefs,
   MediaEntry,
   OverviewEntry,
 } from '../shared/explorer'
@@ -39,6 +40,8 @@ export function MediaBrowser({
   childNames,
   sourceRows,
   onSource,
+  prefs,
+  onPrefs,
 }: {
   row: FolderRow
   project: Project
@@ -51,17 +54,22 @@ export function MediaBrowser({
   childNames?: string[]
   sourceRows: FolderRow[]
   onSource: (id: string) => void
+  prefs?: MediaPrefs
+  onPrefs?: (prefs: MediaPrefs) => void
   run: (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
   act: (request: Request) => Promise<Response | undefined>
   busy: boolean
 }) {
   useLocale()
   const [filter, setFilter] = useState<MediaFilter>(
-      project.mediaCategory === 'music' || project.mediaSourceCategory === 'music' ? 'audio' : 'all'
+      prefs?.filter ??
+        (project.mediaCategory === 'music' || project.mediaSourceCategory === 'music'
+          ? 'audio'
+          : 'all')
     ),
-    [view, setView] = useState('masonry')
-  const [scope, setScope] = useState<'current' | 'descendants'>('current'),
-    [grouped, setGrouped] = useState(false),
+    [view, setView] = useState<string>(prefs?.view ?? 'masonry')
+  const [scope, setScope] = useState<'current' | 'descendants'>(prefs?.scope ?? 'current'),
+    [grouped, setGrouped] = useState(prefs?.grouped ?? false),
     [version, setVersion] = useState(0)
   const [overview, setOverview] = useState<{
     entries: OverviewEntry[]
@@ -84,6 +92,16 @@ export function MediaBrowser({
     }
   }, [])
   const { visibility, save, error: visibilityError } = useFileVisibility()
+  // Remember the list's choices per project (scope, type, layout, grouping) once the user changes them.
+  const mounted = useRef(false)
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true
+      return
+    }
+    const next: MediaPrefs = { scope, filter, view: view as MediaPrefs['view'], grouped }
+    if (JSON.stringify(next) !== JSON.stringify({ ...prefs })) onPrefs?.(next)
+  }, [scope, filter, view, grouped])
   useEffect(() => {
     if (scope !== 'descendants') return
     let active = true
