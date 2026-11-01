@@ -176,10 +176,20 @@ try {
   })
   await choose('此資料夾的版面方案', '預設版面')
   await drawer.getByRole('tab', { name: '來源匯入', exact: true }).click()
-  await drawer.getByRole('textbox', { name: '資料來源', exact: true }).click()
-  assert.equal(await page.getByRole('option').count(), 12)
+  // The source is recognised from the address; the preview button is enabled only for a known site.
+  const address = drawer.getByRole('textbox', { name: '作品網址或 ID', exact: true }),
+    preview = drawer.getByRole('button', { name: '取得預覽', exact: true })
+  assert.equal(await preview.isDisabled(), true)
+  await address.fill('https://unknown.example.test/work/1')
+  assert.equal(await preview.isDisabled(), true)
+  await drawer.getByText('無法辨識這個網址的來源').waitFor()
+  await address.fill('https://www.dlsite.com/maniax/work/=/product_id/RJ123456.html')
+  await drawer.locator('.mantine-Badge-root').filter({ hasText: 'DLsite' }).waitFor()
+  assert.equal(await preview.isDisabled(), false)
+  await address.fill('620')
+  await drawer.locator('.mantine-Badge-root').filter({ hasText: 'Steam' }).waitFor()
   await page.screenshot({ path: path.join(screens, 'sources.png') })
-  await page.keyboard.press('Escape')
+  await address.fill('')
   await page.getByRole('button', { name: '關閉資料夾設定', exact: true }).click()
 
   await page.locator('[aria-label="展示內容"]').getByText('檔案', { exact: true }).click()

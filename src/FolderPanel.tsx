@@ -1,8 +1,9 @@
-import { metadataSources, sourceForUrl, type MetadataSourceId } from '../shared/sources'
+import { metadataSources, sourceForUrl } from '../shared/sources'
 import { GameActionEditor, GameActionTargets } from './GameActions'
 import { cardPresets, rowCells } from '../shared/layouts'
 import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
+import { Icon } from './icons'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import {
   Accordion,
@@ -117,10 +118,7 @@ export function FolderPanel({
     setTab(initialTab === 'game' && project.mediaCategory !== 'game' ? 'fields' : initialTab)
     setTasks(undefined)
   }, [row.rowId, initialTab, project.mediaCategory])
-  const [provider, setProvider] = useState<MetadataSourceId>(
-      project.mediaCategory === 'game' ? 'steam' : 'eh'
-    ),
-    [source, setSource] = useState(''),
+  const [source, setSource] = useState(''),
     [preview, setPreview] = useState<MetadataPreview>(),
     [keys, setKeys] = useState<string[]>([]),
     [cover, setCover] = useState(true),
@@ -320,14 +318,21 @@ export function FolderPanel({
       traverse,
     })
   }
+  // The source is recognised from the pasted address alone; the preview button only works for a known site.
+  const detected = sourceForUrl(source.trim()),
+    detectedName = metadataSources.find((item) => item.id === detected)?.name
   const loadPreview = async () => {
     setError('')
     setSourceResult('')
-    if (sourceForUrl(source.trim()) !== provider) {
-      setError(tr('來源網址與選定來源不符'))
+    if (!detected) {
+      setError(tr('無法辨識這個網址的來源'))
       return
     }
-    const result = await run({ action: 'metadataPreview', source: source.trim(), provider })
+    const result = await run({
+      action: 'metadataPreview',
+      source: source.trim(),
+      provider: detected,
+    })
     if (result?.preview) {
       setReplaceSource(false)
       setPreview(result.preview)
@@ -592,39 +597,31 @@ export function FolderPanel({
             </div>
             <section className="settings-section">
               <Stack gap="sm">
-                <Select
-                  disabled={busy}
-                  label={tr('資料來源')}
-                  allowDeselect={false}
-                  value={provider}
-                  data={[...new Set(metadataSources.map((source) => source.group))].map(
-                    (group) => ({
-                      group: tr(group),
-                      items: metadataSources
-                        .filter((source) => source.group === group)
-                        .map((source) => ({
-                          value: source.id,
-                          label:
-                            source.name +
-                            (source.categories.some(
-                              (category) => category === project.mediaCategory
-                            )
-                              ? ' · ' + tr('適合此分類')
-                              : ''),
-                        })),
-                    })
-                  )}
-                  onChange={(value) => {
-                    setProvider((value ?? 'eh') as MetadataSourceId)
-                    setSource('')
-                    setPreview(undefined)
-                    setSourceResult('')
-                  }}
-                />
                 <TextInput
                   disabled={busy}
-                  label={tr('作品網址或 ID')}
-                  placeholder={metadataSources.find((source) => source.id === provider)?.hint}
+                  label={
+                    <HelpLabel
+                      label={tr('作品網址或 ID')}
+                      help={
+                        tr('直接貼上網址，自動辨識來源。支援：') +
+                        metadataSources.map((item) => item.name).join('、')
+                      }
+                    />
+                  }
+                  placeholder={tr('貼上作品網址（Steam 可直接輸入 App ID）')}
+                  error={source.trim() && !detected ? tr('無法辨識這個網址的來源') : undefined}
+                  rightSectionWidth={detectedName ? 96 : undefined}
+                  rightSection={
+                    detectedName ? (
+                      <Badge
+                        color="teal"
+                        variant="light"
+                        leftSection={<Icon name="check" size={10} />}
+                      >
+                        {detectedName}
+                      </Badge>
+                    ) : undefined
+                  }
                   value={source}
                   onChange={(event) => {
                     setSource(event.currentTarget.value)
@@ -633,7 +630,7 @@ export function FolderPanel({
                 />
                 <Group justify="flex-end">
                   <Button
-                    disabled={disabled || fieldDirty || !source.trim()}
+                    disabled={disabled || fieldDirty || !detected}
                     loading={busy}
                     onClick={() => void loadPreview()}
                   >
@@ -670,7 +667,7 @@ export function FolderPanel({
                   </div>
                 </Group>
                 <Text size="sm" c="dimmed" my="sm">
-                  {provider === 'steam'
+                  {preview.provider === 'steam'
                     ? tr('發售日保留 Steam 商店顯示的日期，不推定為作品首次發行日。')
                     : tr('日期依來源保留，不推定為作品首次發行日。')}
                   {tr('預設只填空值；人工欄位保持原樣。')}

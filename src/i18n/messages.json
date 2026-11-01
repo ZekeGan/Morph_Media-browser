@@ -6274,5 +6274,23 @@
     "en": "inside is not managed",
     "ja": "内部は管理対象外",
     "es": "el interior no se gestiona"
+  },
+  "無法辨識這個網址的來源": {
+    "zh-CN": "无法识别这个网址的来源",
+    "en": "This address is not from a supported source",
+    "ja": "このアドレスの取得元を判別できません",
+    "es": "No se reconoce el origen de esta dirección"
+  },
+  "直接貼上網址，自動辨識來源。支援：": {
+    "zh-CN": "直接粘贴网址，自动识别来源。支持：",
+    "en": "Paste the address and the source is recognised automatically. Supported: ",
+    "ja": "アドレスを貼り付けるだけで取得元を自動判別します。対応: ",
+    "es": "Pega la dirección y el origen se reconoce automáticamente. Compatibles: "
+  },
+  "貼上作品網址（Steam 可直接輸入 App ID）": {
+    "zh-CN": "粘贴作品网址（Steam 可直接输入 App ID）",
+    "en": "Paste the work's address (for Steam, the App ID works too)",
+    "ja": "作品のアドレスを貼り付け（Steam は App ID でも可）",
+    "es": "Pega la dirección de la obra (en Steam sirve el App ID)"
   }
 }

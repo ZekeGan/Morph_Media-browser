@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.34.0 — 2026-11-02
+
+- Importing information from a website now needs only the address: the source is recognised from it (shown as a badge), and "Get preview" is enabled only for a known site. The separate source picker is gone.
+
 ## 0.33.2 — 2026-11-02
 
 - Moved the file type table and the file probe out of the explorer module into `electron/media-files.ts` (no behaviour change).
