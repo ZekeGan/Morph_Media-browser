@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="M:orph app icon, small sizes">
+  <title>M:orph app icon (16 to 32 px): bigger M and bigger colon squares, no outline</title>
+  <rect width="64" height="64" rx="11" fill="#0b0b0b"/>
+  <g transform="translate(10 14.4) scale(0.0566)" fill="#ffffff">
+    <path d="M0 0H242V124H334V233H442V124H534V0H777V624H582V280H517V387H258V280H194V624H0Z"/>
+    <rect x="218" y="420" width="150" height="150" rx="14"/>
+    <rect x="408" y="420" width="150" height="150" rx="14"/>
+  </g>
+</svg>

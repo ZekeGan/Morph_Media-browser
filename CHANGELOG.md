@@ -2,6 +2,12 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.36.0 — 2026-11-02
+
+- New product identity: **M:orph** (subtitle "Media Browser"). The mark — a blocky M with the colon in its notch — replaces the book icon in the title bar and is drawn in the current text colour, so it suits all three themes.
+- Windows app icon: `build/icon.ico` (16 to 256 px, with a heavier drawing for the small sizes) and `build/icon.png`, used for the taskbar and Alt+Tab; `scripts/render-icons.cjs` regenerates them from `docs/brand`.
+- README rewritten around the new name and mark (light and dark versions on GitHub).
+
 ## 0.35.0 — 2026-11-02
 
 - More component styles in the editor's Style section: five text sizes, text weight (light/normal/bold), italic, underline and strikethrough, vertical alignment, and a "More styles" group with padding, corner radius, border (thickness and colour), opacity, line spacing and letter spacing.

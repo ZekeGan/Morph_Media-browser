@@ -14,6 +14,7 @@ import {
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import fs from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { imageTypes } from '../shared/images'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -32,6 +33,8 @@ import { nativeText } from '../shared/native-messages'
 import { completionNotice } from '../shared/notifications'
 
 const directory = path.dirname(fileURLToPath(import.meta.url))
+// Taskbar and Alt+Tab icon; a build without the build/ folder simply keeps the default icon.
+const appIcon = path.join(directory, '../../build/icon.ico')
 const rendererRoot = path.resolve(directory, '../renderer')
 protocol.registerSchemesAsPrivileged(
   ['app', 'media'].map((scheme) => ({
@@ -489,6 +492,7 @@ else {
         minHeight: 580,
         frame: false,
         backgroundColor: '#202124',
+        ...(existsSync(appIcon) ? { icon: appIcon } : {}),
         show: false,
         webPreferences: {
           preload: path.join(directory, '../preload/preload.cjs'),

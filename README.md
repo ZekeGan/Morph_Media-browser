@@ -1,12 +1,19 @@
-# Media Viewer
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/morph-mark-dark.svg">
+    <img src="docs/brand/morph-mark-light.svg" alt="M:orph" width="96">
+  </picture>
+  <br>
+  M:orph
+</h1>
 
-> A local-first folder viewer where you decide how each folder is shown.
+<p align="center"><strong>Media Browser</strong><br><em>Same data, any shape.</em></p>
 
-Media Viewer is a Windows-first desktop app for browsing large collections of folders — manga, albums, videos, music, and games — as cards, tables or trees. You point a **project** at a root folder, and the app turns every matching sub-folder into a record you can describe, search and lay out the way you like. It only **views** your data: originals are never moved, renamed or deleted for the sake of browsing.
+M:orph is a Windows-first desktop app for browsing large collections of folders — manga, albums, videos, music, and games — as cards, tables or trees. You point a **project** at a root folder, and the app turns every matching sub-folder into a record you can describe, search and lay out the way you like. It only **views** your data: originals are never moved, renamed or deleted for the sake of browsing.
 
 **Data and presentation are kept apart.** What you know about a folder (title, tags, rating, where it came from) is stored with the folder; how it looks is a layout you design once and apply to the whole project.
 
-> The project is in an **early development stage** and the name is not final. Current version: **0.35.0** ([changelog](CHANGELOG.md)).
+> The project is in an **early development stage**. Current version: **0.36.0** ([changelog](CHANGELOG.md)). The repository and package are still named `media-viewer`.
 
 ---
 

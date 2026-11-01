@@ -1,5 +1,6 @@
 import { t as tr, useLocale } from './i18n'
 import { Icon, projectIconName } from './icons'
+import { BrandMark } from './BrandMark'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import {
   ActionIcon,
@@ -488,7 +489,7 @@ export function DesktopShell(props: Props) {
           disabled={props.busy}
           onClick={() => props.onSelect('')}
         >
-          <Icon name="book" />
+          <BrandMark height={17} />
         </button>
         <Tooltip label={prefs.sidebarHidden ? tr('顯示專案欄') : tr('隱藏專案欄')}>
           <ActionIcon

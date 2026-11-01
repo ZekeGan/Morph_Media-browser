@@ -49,7 +49,7 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .titlebar { height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding-left: 12px; border-bottom: 1px solid var(--line); background: var(--titlebar); -webkit-app-region: drag; user-select: none; }
 .titlebar button, .titlebar input, .titlebar [role='combobox'], .titlebar .mantine-Select-root { -webkit-app-region: no-drag; }
 .app-brand { display: flex; align-items: center; gap: 9px; border: 0; background: none; color: inherit; font-size: 13px; white-space: nowrap; padding: 7px 0; }
-.app-brand > span { color: var(--accent-ink); font-size: 23px; }
+.app-brand > span { color: var(--accent-ink); font-size: 23px; }.app-brand .brand-mark { color: var(--text); display: block; }.app-brand:hover .brand-mark { color: var(--accent-ink); }
 .global-search { display: flex; align-items: center; flex: 1; max-width: 620px; min-width: 0; margin: 0 auto; gap: 4px; -webkit-app-region: no-drag; }
 .global-search .mantine-Select-root { width: 105px; flex-shrink: 0; }
 .search-launcher { height: 30px; flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 7px; padding: 0 10px; display: flex; align-items: center; gap: 8px; background: var(--hover); color: var(--muted); font-size: 12px; white-space: nowrap; }

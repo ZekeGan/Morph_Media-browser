@@ -15,7 +15,7 @@
 /dist-electron/
 
 # production
-/build
+# /build holds the app icons (build/icon.ico, build/icon.png); they are source assets and stay tracked
 
 # misc
 .DS_Store
