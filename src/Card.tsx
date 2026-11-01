@@ -261,7 +261,12 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     typeof value === 'string' ? value : value == null ? '' : tr('⚠ 型別不符：{0}', String(value))
   if (cell.kind === 'field-tags')
     return Array.isArray(value) ? (
-      <TagList tags={value} fit={!cell.scroll} />
+      <TagList
+        tags={value}
+        fit={!cell.scroll}
+        colors={cell.tagColors}
+        prefix={cell.tagPrefix !== false}
+      />
     ) : (
       <span>{value == null ? '' : tr('⚠ 型別不符')}</span>
     )
@@ -337,7 +342,15 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
   if (cell.kind === 'field-date-only' || cell.kind === 'field-enum') {
     const label = typeof value === 'string' ? value : value == null ? tr('未填') : tr('⚠ 型別不符')
     return cell.presentation === 'badge' && typeof value === 'string' && value.length ? (
-      <Badge color="gray" variant="light" title={label}>
+      <Badge
+        color={
+          project?.fieldBindings.find(
+            (field) => field.attributeId === cellField(cell, row).attributeId
+          )?.optionColors?.[value] ?? 'gray'
+        }
+        variant="light"
+        title={label}
+      >
         {label}
       </Badge>
     ) : (

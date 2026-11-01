@@ -15,7 +15,7 @@ p { line-height: 1.7; margin: 8px 0; } button { cursor: pointer; }
 .card-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: 42px; gap: 4px; }
 .card-cell, .editor-cell { min-width: 0; display: flex; align-items: center; padding: 7px; overflow: hidden; }
 .card-cell span, .editor-cell span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: calc(13px * var(--cell-scale, 1)); }.card-cell span.cell-wrap, .editor-cell span.cell-wrap { white-space: pre-wrap; overflow-wrap: anywhere; text-overflow: clip; }
-.card-cell .cell-name, .editor-cell .cell-name { font-size: calc(17px * var(--cell-scale, 1)); font-weight: 650; }
+.card-cell .cell-name, .editor-cell .cell-name { font-size: calc(17px * var(--cell-scale, 1)); font-weight: var(--cell-weight, 650); }
 .card-footer { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; }
 .empty { text-align: center; padding: 80px 15px; } .empty p { margin-bottom: 24px; color: var(--muted); }
 .scan-status { padding: 10px 14px; margin-bottom: 18px; background: var(--surface); border-radius: 8px; }

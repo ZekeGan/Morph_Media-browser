@@ -142,3 +142,69 @@ test('only long text and tag cells can scroll', () => {
     )
   )
 })
+
+test('optional text, box and colour styles are validated', () => {
+  const base = modelProject(),
+    withStyle = (style: Record<string, unknown>, patch: Record<string, unknown> = {}) => ({
+      ...base,
+      layoutPresets: undefined,
+      activeLayoutId: undefined,
+      contentCells: undefined,
+      cells: [
+        {
+          ...base.cells.find((c) => c.kind === 'name')!,
+          style: { textColor: '#ffffff', backgroundColor: 'transparent', ...style },
+          ...patch,
+        },
+      ],
+    })
+  assert.doesNotThrow(() =>
+    validateProject(
+      withStyle({
+        fontSize: 'xlarge',
+        weight: 'bold',
+        italic: true,
+        underline: true,
+        strike: false,
+        valign: 'bottom',
+        lineHeight: 'loose',
+        letterSpacing: 'wide',
+        padding: 'roomy',
+        radius: 'large',
+        borderColor: '#3fb68b',
+        borderWidth: 'thick',
+        opacity: 'faint',
+      })
+    )
+  )
+  for (const bad of [
+    { fontSize: 'huge' },
+    { weight: 'heavy' },
+    { italic: 'yes' },
+    { valign: 'middle' },
+    { padding: 'none' },
+    { radius: 'round' },
+    { borderColor: 'green' },
+    { borderWidth: 'wide' },
+    { opacity: 0.5 },
+  ])
+    assert.throws(() => validateProject(withStyle(bad)), JSON.stringify(bad))
+  // Tag styles only belong to tag cells.
+  assert.throws(() => validateProject(withStyle({}, { tagColors: 'namespace' })))
+  assert.throws(() => validateProject(withStyle({}, { tagPrefix: false })))
+  // Choice colours: only enum fields, only listed options, only hex colours.
+  const choice = (optionColors: unknown, type = 'enum') => ({
+    ...base,
+    layoutPresets: undefined,
+    activeLayoutId: undefined,
+    contentCells: undefined,
+    fieldBindings: [
+      ...base.fieldBindings,
+      { alias: 'S', attributeId: 's', type, options: ['A', 'B'], optionColors },
+    ],
+  })
+  assert.doesNotThrow(() => validateProject(choice({ A: '#2f9e44' })))
+  assert.throws(() => validateProject(choice({ C: '#2f9e44' })), 'unknown option')
+  assert.throws(() => validateProject(choice({ A: 'green' })), 'not hex')
+  assert.throws(() => validateProject(choice({ A: '#2f9e44' }, 'string')), 'not an enum')
+})

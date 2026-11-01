@@ -2,6 +2,13 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.35.0 — 2026-11-02
+
+- More component styles in the editor's Style section: five text sizes, text weight (light/normal/bold), italic, underline and strikethrough, vertical alignment, and a "More styles" group with padding, corner radius, border (thickness and colour), opacity, line spacing and letter spacing.
+- Ready-made looks (heading, secondary note, highlight) and "clear styles (keep colours)" from one menu.
+- Tag cells can colour tags by category (female, male, language…) and hide the category prefix.
+- Single-choice fields can give each option its own badge colour.
+
 ## 0.34.0 — 2026-11-02
 
 - Importing information from a website now needs only the address: the source is recognised from it (shown as a badge), and "Get preview" is enabled only for a known site. The separate source picker is gone.

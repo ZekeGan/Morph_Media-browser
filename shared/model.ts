@@ -34,9 +34,25 @@ export interface Cell {
     textColor: string
     backgroundColor: string
     // Optional text scale and alignment; absent means the default size and the kind's usual alignment.
-    fontSize?: 'small' | 'medium' | 'large'
+    fontSize?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge'
     align?: 'left' | 'center' | 'right'
+    valign?: 'top' | 'center' | 'bottom'
+    weight?: 'light' | 'normal' | 'bold'
+    italic?: boolean
+    underline?: boolean
+    strike?: boolean
+    lineHeight?: 'tight' | 'loose'
+    letterSpacing?: 'wide'
+    padding?: 'compact' | 'roomy'
+    radius?: 'small' | 'large'
+    // Border: a colour and a thickness; both are needed for a border to show.
+    borderColor?: string
+    borderWidth?: 'thin' | 'thick'
+    opacity?: 'soft' | 'faint'
   }
+  // Tag cells only: colour tags by their namespace (female:, male:…) and whether the prefix is shown.
+  tagColors?: 'namespace'
+  tagPrefix?: boolean
   text?: string
   // Long text: wrap onto several lines instead of one truncated line (name, path and text-field cells).
   wrap?: boolean
@@ -103,7 +119,14 @@ export interface Project {
   name: string
   mediaCategory: string
   depth: { mode: 'through' | 'exact'; level: number }
-  fieldBindings: { alias: string; attributeId: string; type: string; options?: string[] }[]
+  fieldBindings: {
+    alias: string
+    attributeId: string
+    type: string
+    options?: string[]
+    // Enum fields: a badge colour per option (hex).
+    optionColors?: Record<string, string>
+  }[]
   cells: Cell[]
   list: { itemsPerRow: number; pageSize: number }
   excludedRelativePaths: string[]
@@ -318,7 +341,16 @@ function validFieldBinding(f: unknown): boolean {
         f.options.length > 0 &&
         f.options.length <= 100 &&
         new Set(f.options).size === f.options.length &&
-        f.options.every((option: unknown) => text(option, 100) && option.trim().length > 0)))
+        f.options.every((option: unknown) => text(option, 100) && option.trim().length > 0))) &&
+    (f.optionColors === undefined ||
+      (f.type === 'enum' &&
+        obj(f.optionColors) &&
+        Object.entries(f.optionColors).every(
+          ([option, color]) =>
+            (f.options as string[]).includes(option) &&
+            typeof color === 'string' &&
+            /^#[0-9a-f]{6}$/i.test(color)
+        )))
   )
 }
 
@@ -409,8 +441,23 @@ function validCell(c: unknown): boolean {
     /^#[0-9a-f]{6}$/i.test(c.style.textColor) &&
     (c.style.backgroundColor === 'transparent' ||
       /^#[0-9a-f]{6}$/i.test(c.style.backgroundColor)) &&
-    (c.style.fontSize === undefined || ['small', 'medium', 'large'].includes(c.style.fontSize)) &&
-    (c.style.align === undefined || ['left', 'center', 'right'].includes(c.style.align))
+    (c.style.fontSize === undefined ||
+      ['xsmall', 'small', 'medium', 'large', 'xlarge'].includes(c.style.fontSize)) &&
+    (c.style.align === undefined || ['left', 'center', 'right'].includes(c.style.align)) &&
+    (c.style.valign === undefined || ['top', 'center', 'bottom'].includes(c.style.valign)) &&
+    (c.style.weight === undefined || ['light', 'normal', 'bold'].includes(c.style.weight)) &&
+    ['italic', 'underline', 'strike'].every(
+      (flag) => c.style[flag] === undefined || typeof c.style[flag] === 'boolean'
+    ) &&
+    (c.style.lineHeight === undefined || ['tight', 'loose'].includes(c.style.lineHeight)) &&
+    (c.style.letterSpacing === undefined || c.style.letterSpacing === 'wide') &&
+    (c.style.padding === undefined || ['compact', 'roomy'].includes(c.style.padding)) &&
+    (c.style.radius === undefined || ['small', 'large'].includes(c.style.radius)) &&
+    (c.style.borderColor === undefined || /^#[0-9a-f]{6}$/i.test(c.style.borderColor)) &&
+    (c.style.borderWidth === undefined || ['thin', 'thick'].includes(c.style.borderWidth)) &&
+    (c.style.opacity === undefined || ['soft', 'faint'].includes(c.style.opacity)) &&
+    (c.tagColors === undefined || (c.tagColors === 'namespace' && c.kind === 'field-tags')) &&
+    (c.tagPrefix === undefined || (typeof c.tagPrefix === 'boolean' && c.kind === 'field-tags'))
   )
 }
 

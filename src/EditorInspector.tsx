@@ -22,6 +22,8 @@ import type { Cell, CellKind, FolderRow, Project } from '../shared/model'
 import { cellType, isFieldKind, launchTemplates } from '../shared/explorer'
 import { typeKinds } from './editorKinds'
 import { FallbackFields } from './FallbackFields'
+import { CellStyleEditor } from './CellStyleEditor'
+import { EnumColors } from './EnumColors'
 import { FallbackActions } from './FallbackActions'
 
 type Binding = Project['fieldBindings'][number]
@@ -204,7 +206,20 @@ export function EditorInspector(props: EditorInspectorProps) {
                               ...draft,
                               fieldBindings: draft.fieldBindings.map((field) =>
                                 field.attributeId === selectedCell.attributeId
-                                  ? { ...field, options }
+                                  ? {
+                                      ...field,
+                                      options,
+                                      // Colours of removed options go with them.
+                                      ...(field.optionColors
+                                        ? {
+                                            optionColors: Object.fromEntries(
+                                              Object.entries(field.optionColors).filter(
+                                                ([option]) => options.includes(option)
+                                              )
+                                            ),
+                                          }
+                                        : {}),
+                                    }
                                   : field
                               ),
                             })
@@ -221,6 +236,22 @@ export function EditorInspector(props: EditorInspectorProps) {
                             )}
                           </Text>
                         )}
+                        <EnumColors
+                          binding={draft.fieldBindings.find(
+                            (field) => field.attributeId === selectedCell.attributeId
+                          )}
+                          options={enumOptions}
+                          onChange={(optionColors) =>
+                            change({
+                              ...draft,
+                              fieldBindings: draft.fieldBindings.map((field) => {
+                                if (field.attributeId !== selectedCell.attributeId) return field
+                                const { optionColors: _old, ...rest } = field
+                                return optionColors ? { ...rest, optionColors } : rest
+                              }),
+                            })
+                          }
+                        />
                       </div>
                     )}
                     {['image', 'game-cover'].includes(selectedCell.kind) && (
@@ -589,124 +620,48 @@ export function EditorInspector(props: EditorInspectorProps) {
             <Accordion.Item value="style">
               <Accordion.Control>{tr('樣式')}</Accordion.Control>
               <Accordion.Panel>
-                <Stack gap="sm">
-                  <div>
-                    <Text size="sm" fw={500} mb={4}>
-                      {tr('字級')}
-                    </Text>
-                    <SegmentedControl
-                      size="xs"
-                      fullWidth
-                      aria-label={tr('字級')}
-                      value={selectedCell.style.fontSize ?? 'medium'}
-                      data={[
-                        { value: 'small', label: tr('小') },
-                        { value: 'medium', label: tr('中') },
-                        { value: 'large', label: tr('大') },
-                      ]}
-                      onChange={(value) =>
-                        updateCell({
-                          style: {
-                            ...selectedCell.style,
-                            fontSize: value === 'medium' ? undefined : (value as 'small' | 'large'),
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Text size="sm" fw={500} mb={4}>
-                      {tr('對齊')}
-                    </Text>
-                    <SegmentedControl
-                      size="xs"
-                      fullWidth
-                      aria-label={tr('對齊')}
-                      value={selectedCell.style.align ?? 'left'}
-                      data={[
-                        { value: 'left', label: tr('靠左') },
-                        { value: 'center', label: tr('置中') },
-                        { value: 'right', label: tr('靠右') },
-                      ]}
-                      onChange={(value) =>
-                        updateCell({
-                          style: {
-                            ...selectedCell.style,
-                            align: value === 'left' ? undefined : (value as 'center' | 'right'),
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                  {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) && (
-                    <Checkbox
-                      label={
-                        <HelpLabel
-                          label={tr('內容多時可捲動')}
-                          help={tr('保持組件高度，超出的內容用捲動查看，不會被截掉')}
-                        />
-                      }
-                      checked={selectedCell.scroll ?? false}
-                      onChange={(event) =>
-                        updateCell({ scroll: event.currentTarget.checked || undefined })
-                      }
-                    />
-                  )}
-                  {['name', 'path', 'field-text'].includes(selectedCell.kind) && (
-                    <Checkbox
-                      label={
-                        <HelpLabel
-                          label={tr('長文字換行顯示')}
-                          help={
-                            selectedCell.scroll
-                              ? tr('可捲動時一律換行顯示')
-                              : tr('關閉時只顯示一行，過長的部分以「…」截斷')
+                <CellStyleEditor
+                  key={selectedCell.cellId}
+                  cell={selectedCell}
+                  updateCell={updateCell}
+                  extra={
+                    <>
+                      {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) && (
+                        <Checkbox
+                          label={
+                            <HelpLabel
+                              label={tr('內容多時可捲動')}
+                              help={tr('保持組件高度，超出的內容用捲動查看，不會被截掉')}
+                            />
+                          }
+                          checked={selectedCell.scroll ?? false}
+                          onChange={(event) =>
+                            updateCell({ scroll: event.currentTarget.checked || undefined })
                           }
                         />
-                      }
-                      disabled={!!selectedCell.scroll}
-                      checked={selectedCell.wrap ?? !!selectedCell.scroll}
-                      onChange={(event) =>
-                        updateCell({ wrap: event.currentTarget.checked || undefined })
-                      }
-                    />
-                  )}
-                  <ColorInput
-                    label={tr('文字顏色')}
-                    format="hex"
-                    value={selectedCell.style.textColor}
-                    onChange={(v) =>
-                      /^#[0-9a-f]{6}$/i.test(v) &&
-                      updateCell({ style: { ...selectedCell.style, textColor: v } })
-                    }
-                  />
-                  <Checkbox
-                    label={tr('背景透明')}
-                    checked={selectedCell.style.backgroundColor === 'transparent'}
-                    onChange={(e) =>
-                      updateCell({
-                        style: {
-                          ...selectedCell.style,
-                          backgroundColor: e.currentTarget.checked ? 'transparent' : '#282a2e',
-                        },
-                      })
-                    }
-                  />
-                  <ColorInput
-                    label={tr('背景顏色')}
-                    format="hex"
-                    disabled={selectedCell.style.backgroundColor === 'transparent'}
-                    value={
-                      selectedCell.style.backgroundColor === 'transparent'
-                        ? '#282a2e'
-                        : selectedCell.style.backgroundColor
-                    }
-                    onChange={(v) =>
-                      /^#[0-9a-f]{6}$/i.test(v) &&
-                      updateCell({ style: { ...selectedCell.style, backgroundColor: v } })
-                    }
-                  />
-                </Stack>
+                      )}
+                      {['name', 'path', 'field-text'].includes(selectedCell.kind) && (
+                        <Checkbox
+                          label={
+                            <HelpLabel
+                              label={tr('長文字換行顯示')}
+                              help={
+                                selectedCell.scroll
+                                  ? tr('可捲動時一律換行顯示')
+                                  : tr('關閉時只顯示一行，過長的部分以「…」截斷')
+                              }
+                            />
+                          }
+                          disabled={!!selectedCell.scroll}
+                          checked={selectedCell.wrap ?? !!selectedCell.scroll}
+                          onChange={(event) =>
+                            updateCell({ wrap: event.currentTarget.checked || undefined })
+                          }
+                        />
+                      )}
+                    </>
+                  }
+                />
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>

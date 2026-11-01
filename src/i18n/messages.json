@@ -6292,5 +6292,251 @@
     "en": "Paste the work's address (for Steam, the App ID works too)",
     "ja": "作品のアドレスを貼り付け（Steam は App ID でも可）",
     "es": "Pega la dirección de la obra (en Steam sirve el App ID)"
+  },
+  "斜體": {
+    "zh-CN": "斜体",
+    "en": "Italic",
+    "ja": "斜体",
+    "es": "Cursiva"
+  },
+  "底線": {
+    "zh-CN": "下划线",
+    "en": "Underline",
+    "ja": "下線",
+    "es": "Subrayado"
+  },
+  "刪除線": {
+    "zh-CN": "删除线",
+    "en": "Strikethrough",
+    "ja": "取り消し線",
+    "es": "Tachado"
+  },
+  "套用預設樣式": {
+    "zh-CN": "应用预设样式",
+    "en": "Apply a preset style",
+    "ja": "プリセットスタイルを適用",
+    "es": "Aplicar un estilo predefinido"
+  },
+  "套用預設樣式…": {
+    "zh-CN": "应用预设样式…",
+    "en": "Apply a preset style…",
+    "ja": "プリセットスタイルを適用…",
+    "es": "Aplicar un estilo predefinido…"
+  },
+  "標題": {
+    "zh-CN": "标题",
+    "en": "Heading",
+    "ja": "見出し",
+    "es": "Título"
+  },
+  "次要說明": {
+    "zh-CN": "次要说明",
+    "en": "Secondary note",
+    "ja": "補足説明",
+    "es": "Nota secundaria"
+  },
+  "強調": {
+    "zh-CN": "强调",
+    "en": "Highlight",
+    "ja": "強調",
+    "es": "Destacado"
+  },
+  "清除樣式（保留顏色）": {
+    "zh-CN": "清除样式（保留颜色）",
+    "en": "Clear styles (keep colours)",
+    "ja": "スタイルをクリア（色は保持）",
+    "es": "Borrar estilos (mantener colores)"
+  },
+  "特小": {
+    "zh-CN": "特小",
+    "en": "XS",
+    "ja": "極小",
+    "es": "XS"
+  },
+  "特大": {
+    "zh-CN": "特大",
+    "en": "XL",
+    "ja": "特大",
+    "es": "XL"
+  },
+  "粗細": {
+    "zh-CN": "粗细",
+    "en": "Weight",
+    "ja": "太さ",
+    "es": "Grosor"
+  },
+  "細": {
+    "zh-CN": "细",
+    "en": "Light",
+    "ja": "細",
+    "es": "Fina"
+  },
+  "粗": {
+    "zh-CN": "粗",
+    "en": "Bold",
+    "ja": "太",
+    "es": "Negrita"
+  },
+  "垂直對齊": {
+    "zh-CN": "垂直对齐",
+    "en": "Vertical alignment",
+    "ja": "縦の配置",
+    "es": "Alineación vertical"
+  },
+  "靠上": {
+    "zh-CN": "靠上",
+    "en": "Top",
+    "ja": "上",
+    "es": "Arriba"
+  },
+  "靠下": {
+    "zh-CN": "靠下",
+    "en": "Bottom",
+    "ja": "下",
+    "es": "Abajo"
+  },
+  "標籤顏色": {
+    "zh-CN": "标签颜色",
+    "en": "Tag colours",
+    "ja": "タグの色",
+    "es": "Colores de etiquetas"
+  },
+  "一律灰色": {
+    "zh-CN": "统一灰色",
+    "en": "All grey",
+    "ja": "すべてグレー",
+    "es": "Todas grises"
+  },
+  "依分類上色": {
+    "zh-CN": "按分类上色",
+    "en": "By category",
+    "ja": "分類ごとに色分け",
+    "es": "Por categoría"
+  },
+  "顯示分類前綴": {
+    "zh-CN": "显示分类前缀",
+    "en": "Show the category prefix",
+    "ja": "分類の接頭辞を表示",
+    "es": "Mostrar el prefijo de categoría"
+  },
+  "更多樣式": {
+    "zh-CN": "更多样式",
+    "en": "More styles",
+    "ja": "その他のスタイル",
+    "es": "Más estilos"
+  },
+  "內距": {
+    "zh-CN": "内边距",
+    "en": "Padding",
+    "ja": "内側の余白",
+    "es": "Relleno"
+  },
+  "緊湊": {
+    "zh-CN": "紧凑",
+    "en": "Compact",
+    "ja": "狭い",
+    "es": "Compacto"
+  },
+  "標準": {
+    "zh-CN": "标准",
+    "en": "Normal",
+    "ja": "標準",
+    "es": "Normal"
+  },
+  "寬鬆": {
+    "zh-CN": "宽松",
+    "en": "Roomy",
+    "ja": "広い",
+    "es": "Amplio"
+  },
+  "圓角": {
+    "zh-CN": "圆角",
+    "en": "Corners",
+    "ja": "角丸",
+    "es": "Esquinas"
+  },
+  "邊框": {
+    "zh-CN": "边框",
+    "en": "Border",
+    "ja": "枠線",
+    "es": "Borde"
+  },
+  "邊框顏色": {
+    "zh-CN": "边框颜色",
+    "en": "Border colour",
+    "ja": "枠線の色",
+    "es": "Color del borde"
+  },
+  "透明度": {
+    "zh-CN": "透明度",
+    "en": "Opacity",
+    "ja": "不透明度",
+    "es": "Opacidad"
+  },
+  "不透明": {
+    "zh-CN": "不透明",
+    "en": "Solid",
+    "ja": "不透明",
+    "es": "Opaco"
+  },
+  "柔和": {
+    "zh-CN": "柔和",
+    "en": "Soft",
+    "ja": "やや薄く",
+    "es": "Suave"
+  },
+  "淡": {
+    "zh-CN": "淡",
+    "en": "Faint",
+    "ja": "薄く",
+    "es": "Tenue"
+  },
+  "行距": {
+    "zh-CN": "行距",
+    "en": "Line spacing",
+    "ja": "行間",
+    "es": "Interlineado"
+  },
+  "緊": {
+    "zh-CN": "紧",
+    "en": "Tight",
+    "ja": "狭",
+    "es": "Junto"
+  },
+  "鬆": {
+    "zh-CN": "松",
+    "en": "Loose",
+    "ja": "広",
+    "es": "Suelto"
+  },
+  "字距": {
+    "zh-CN": "字距",
+    "en": "Letter spacing",
+    "ja": "文字間隔",
+    "es": "Espaciado de letras"
+  },
+  "加寬": {
+    "zh-CN": "加宽",
+    "en": "Wide",
+    "ja": "広げる",
+    "es": "Ancho"
+  },
+  "選項顏色": {
+    "zh-CN": "选项颜色",
+    "en": "Option colours",
+    "ja": "選択肢の色",
+    "es": "Colores de opciones"
+  },
+  "在組件顯示方式為「狀態徽章」時，各選項用自己的顏色；沒設定的維持灰色。": {
+    "zh-CN": "在组件显示方式为“状态徽章”时，各选项使用自己的颜色；未设置的保持灰色。",
+    "en": "When the component is shown as a status badge, each option uses its own colour; options without one stay grey.",
+    "ja": "コンポーネントが「ステータスバッジ」表示のとき、各選択肢が自分の色を使います。未設定のものはグレーのままです。",
+    "es": "Cuando el componente se muestra como insignia de estado, cada opción usa su propio color; las que no tienen color siguen en gris."
+  },
+  "選項顏色 {0}": {
+    "zh-CN": "选项颜色 {0}",
+    "en": "Colour of option {0}",
+    "ja": "選択肢 {0} の色",
+    "es": "Color de la opción {0}"
   }
 }
