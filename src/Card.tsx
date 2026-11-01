@@ -47,7 +47,13 @@ export function CellContent(props: CellProps) {
     copy = copyableValue(shown.value)
   return (
     <>
-      <CellValue {...props} />
+      {cell.scroll ? (
+        <div className="cell-scroll-body" tabIndex={0} role="group" aria-label={tr('可捲動內容')}>
+          <CellValue {...props} />
+        </div>
+      ) : (
+        <CellValue {...props} />
+      )}
       {cell.copyValue && (
         <span className="cell-copy">
           <button

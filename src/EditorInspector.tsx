@@ -588,11 +588,26 @@ export function EditorInspector(props: EditorInspectorProps) {
                       }
                     />
                   </div>
+                  {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) && (
+                    <Checkbox
+                      label={tr('內容多時可捲動')}
+                      description={tr('保持組件高度，超出的內容用捲動查看，不會被截掉')}
+                      checked={selectedCell.scroll ?? false}
+                      onChange={(event) =>
+                        updateCell({ scroll: event.currentTarget.checked || undefined })
+                      }
+                    />
+                  )}
                   {['name', 'path', 'field-text'].includes(selectedCell.kind) && (
                     <Checkbox
                       label={tr('長文字換行顯示')}
-                      description={tr('關閉時只顯示一行，過長的部分以「…」截斷')}
-                      checked={selectedCell.wrap ?? false}
+                      description={
+                        selectedCell.scroll
+                          ? tr('可捲動時一律換行顯示')
+                          : tr('關閉時只顯示一行，過長的部分以「…」截斷')
+                      }
+                      disabled={!!selectedCell.scroll}
+                      checked={selectedCell.wrap ?? !!selectedCell.scroll}
                       onChange={(event) =>
                         updateCell({ wrap: event.currentTarget.checked || undefined })
                       }

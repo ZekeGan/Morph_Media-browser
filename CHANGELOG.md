@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.30.0 — 2026-11-02
+
+- Text, tag and layout-text cells have an option "scroll when the content is long": the cell keeps its height and its content scrolls (mouse wheel or keyboard) instead of being cut off.
+
 ## 0.29.0 — 2026-11-02
 
 - E-Hentai and ExHentai are treated as one site: both import into the same `eh-` fields (fields saved earlier under `exh-` are taken over on the next import).

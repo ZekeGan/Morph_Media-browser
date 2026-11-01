@@ -40,6 +40,8 @@ export interface Cell {
   text?: string
   // Long text: wrap onto several lines instead of one truncated line (name, path and text-field cells).
   wrap?: boolean
+  // Long text and tag lists: keep the cell's height and let its content scroll instead of being cut off.
+  scroll?: boolean
   // Number cells only: unit text shown before or after the value (plain presentation) and fixed decimals.
   unit?: string
   unitPosition?: 'prefix' | 'suffix'
@@ -365,6 +367,9 @@ function validCell(c: unknown): boolean {
         c.fallbackActionIds.length <= MAX_FALLBACKS &&
         c.fallbackActionIds.every(id) &&
         new Set([c.actionId, ...c.fallbackActionIds]).size === c.fallbackActionIds.length + 1)) &&
+    (c.scroll === undefined ||
+      (typeof c.scroll === 'boolean' &&
+        ['field-text', 'field-tags', 'static-text'].includes(c.kind))) &&
     (c.wrap === undefined ||
       (typeof c.wrap === 'boolean' && ['field-text', 'name', 'path'].includes(c.kind))) &&
     (c.unit === undefined || (c.kind === 'field-number' && text(c.unit, 20))) &&

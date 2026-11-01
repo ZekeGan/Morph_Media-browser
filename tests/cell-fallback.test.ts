@@ -112,3 +112,33 @@ test('launch cells validate their fallback actions', () => {
     validateProject({ ...launch({}), cells: [cell({ fallbackActionIds: ['le'] })] })
   )
 })
+
+test('only long text and tag cells can scroll', () => {
+  const base = modelProject(),
+    withCell = (c: Cell) => ({
+      ...base,
+      layoutPresets: undefined,
+      activeLayoutId: undefined,
+      contentCells: undefined,
+      fieldBindings: [...base.fieldBindings, { alias: 'TAGS', attributeId: 'steam', type: 'tags' }],
+      cells: [c],
+    })
+  assert.doesNotThrow(() =>
+    validateProject(withCell(cell({ kind: 'field-tags', fallbackIds: undefined, scroll: true })))
+  )
+  assert.throws(() =>
+    validateProject(
+      withCell(
+        cell({ kind: 'open-folder', attributeId: undefined, fallbackIds: undefined, scroll: true })
+      )
+    )
+  )
+  assert.throws(() =>
+    validateProject(
+      withCell({
+        ...cell({ kind: 'field-tags', fallbackIds: undefined }),
+        scroll: 1 as unknown as boolean,
+      })
+    )
+  )
+})

@@ -524,6 +524,7 @@ test('E-Hentai public API validates host/identity, namespaces and portable previ
       revision: next.record!.revision,
       token: exh.preview!.token,
       keys: ['TAGS', 'LANGUAGE'],
+      image: false,
       mode: 'replace',
     })
     const shared = await readFolder(media)

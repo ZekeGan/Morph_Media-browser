@@ -19,7 +19,13 @@ const smoke = [
 const coverage = [
   [
     /src\/(Editor|Card|cells\.css)|shared\/(cells|layouts)/,
-    ['cell-editor-ui', 'field-edit-ui', 'game-cover-cell-ui', 'game-launch-cell-ui'],
+    [
+      'cell-editor-ui',
+      'field-edit-ui',
+      'game-cover-cell-ui',
+      'game-launch-cell-ui',
+      'cell-scroll-ui',
+    ],
   ],
   [
     /src\/(BrowseWorkspace|RightPanel|FolderPanel|FolderParts|FolderContent)/,
