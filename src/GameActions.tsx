@@ -134,6 +134,7 @@ export function GameActionTargets({
         const target = row.record?.details?.targets?.[template.id],
           draft = drafts[template.id] ?? original(template.id),
           changed = JSON.stringify(draft) !== JSON.stringify(original(template.id)),
+          bound = target?.kind === template.kind,
           hiddenHere = !!row.record?.details?.hiddenActions?.includes(template.id)
         return (
           <section className="settings-section game-target" key={template.id}>
@@ -147,9 +148,11 @@ export function GameActionTargets({
                 </Text>
                 <Tooltip
                   label={
-                    hiddenHere
-                      ? tr('此遊戲的按鈕列不顯示這個按鈕，點擊顯示')
-                      : tr('此遊戲的按鈕列顯示這個按鈕，點擊隱藏')
+                    !bound
+                      ? tr('尚未綁定目標，按鈕列不會顯示這個按鈕')
+                      : hiddenHere
+                        ? tr('此遊戲的按鈕列不顯示這個按鈕，點擊顯示')
+                        : tr('此遊戲的按鈕列顯示這個按鈕，點擊隱藏')
                   }
                 >
                   <ActionIcon
@@ -161,7 +164,7 @@ export function GameActionTargets({
                         : tr('隱藏按鈕 {0}', tr(template.label))
                     }
                     aria-pressed={!hiddenHere}
-                    disabled={disabled}
+                    disabled={disabled || !bound}
                     onClick={() =>
                       void run({
                         action: 'actionVisible',

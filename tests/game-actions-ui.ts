@@ -78,7 +78,15 @@ try {
     .dblclick()
   await page.locator('.game-actions').waitFor()
   assert.equal(await page.locator('.game-candidate').count(), 1)
-  assert.equal(await button('啟動遊戲').isDisabled(), true)
+  // Nothing is bound yet, so no action button is offered, only the hint to bind one.
+  assert.equal(
+    await page
+      .locator('.game-actions')
+      .getByRole('button', { name: '啟動遊戲', exact: true })
+      .count(),
+    0
+  )
+  await page.locator('.game-launch-hint').waitFor()
   await button('自訂遊戲操作').click()
   const drawer = page.locator('.folder-panel-dock-settings')
   await drawer.getByRole('tab', { name: '遊戲操作', exact: true }).waitFor()

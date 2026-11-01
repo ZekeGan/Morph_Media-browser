@@ -365,13 +365,18 @@ export function FolderContent({
           )}
         <Group className="game-actions" gap="sm">
           {gameActionTemplates(project)
-            .filter((t) => !row.record?.details?.hiddenActions?.includes(t.id))
+            // Only actions that are bound in this folder get a button; the eye in the folder settings can hide more.
+            .filter(
+              (t) =>
+                row.record?.details?.targets?.[t.id]?.kind === t.kind &&
+                !row.record?.details?.hiddenActions?.includes(t.id)
+            )
             .map((t) => (
               <Button
                 key={t.id}
                 color={t.color}
-                disabled={busy || row.record?.details?.targets?.[t.id]?.kind !== t.kind}
-                title={row.record?.details?.targets?.[t.id]?.path ?? tr('尚未綁定')}
+                disabled={busy}
+                title={row.record?.details?.targets?.[t.id]?.path}
                 onClick={() => {
                   if (
                     ['exe', 'file-app', 'shortcut'].includes(t.kind) &&

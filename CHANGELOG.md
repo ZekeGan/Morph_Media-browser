@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.32.1 — 2026-11-02
+
+- A game's action row now shows only the buttons that are bound in that folder; the eye icon in the folder settings can still hide any of them for that game. An action that is not bound yet has its eye disabled with an explanation.
+
 ## 0.32.0 — 2026-11-02
 
 - Opening a folder in the right panel is much faster on Windows: the hidden/system-attribute check no longer starts a new PowerShell for every listing (about 0.6 s each); one helper is kept running and started when the app opens.
