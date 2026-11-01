@@ -15,9 +15,9 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | 範圍 | 主要檔案／符號 | 責任 |
 | --- | --- | --- |
 | 啟動／IPC／協定／系統操作 | [main](../electron/main.ts)、[preload](../electron/preload.ts) | BrowserWindow、來源驗證、原生對話框、受控媒體串流 |
-| 專案與可攜記錄 | [library](../electron/library.ts) `Library` | create/link/scan/visit/saveValues、身分、副本、復原、清理與舊資料匯入 |
+| 專案與可攜記錄 | [library](../electron/library.ts) `Library` | create/link/saveValues、身分、副本與復原；類別只保留協調與狀態，其餘函式在同層模組並由 `Library` 轉呼叫：[掃描與造訪](../electron/library-scan.ts)、[欄位刪除](../electron/library-field-removal.ts)、[專案移除](../electron/library-removal.ts)、[清理與復原](../electron/library-cleanup.ts)、[舊資料匯入](../electron/library-legacy.ts) |
 | 原子檔案／路徑 | [files](../electron/files.ts)、[hidden](../electron/hidden.ts) | safePath/within、atomicJson、記錄備份／指紋、Windows 隱藏目錄 |
-| 媒體／縮圖／字幕／遊戲動作 | [explorer](../electron/explorer.ts) `Explorer` | content/overview/stream/thumbnail、attributes、目標綁定與執行、外部資料套用 |
+| 媒體／縮圖／字幕／遊戲動作 | [explorer](../electron/explorer.ts) `Explorer` | attributes、request 分派；其餘函式在同層模組並由 `Explorer` 轉呼叫：[內容列表](../electron/explorer-content.ts)、[串流與縮圖](../electron/explorer-stream.ts)、[外部資料與圖片網址](../electron/explorer-source.ts)、[檔案總覽](../electron/explorer-overview.ts)；另有 content/overview/stream/thumbnail、目標綁定與執行、外部資料套用 |
 | 遊戲辨識 | [game-detection](../electron/game-detection.ts) | 有限探測、證據與 ROOT 邊界 |
 | 搜尋索引 | [search-index](../electron/search-index.ts) `SearchIndex` | Node SQLite、Unicode 子字串 grams、分頁；可重建，非資料來源 |
 | 本機 UI 設定 | [workspace](../electron/workspace.ts) `WorkspaceStore` | 群組／排序／窗格／偏好，驗證、保存、尺寸正規化；settings-package／settings-file 處理允許清單、移轉預覽與備份復原 |

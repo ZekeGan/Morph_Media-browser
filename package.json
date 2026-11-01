@@ -1,7 +1,7 @@
 {
   "name": "morph",
   "productName": "Morph",
-  "version": "0.37.0",
+  "version": "0.37.1",
   "description": "M:orph (Media Browser): a local-first folder viewer where you decide how each folder is shown.",
   "license": "GPL-3.0-or-later",
   "author": "Zeke Gan",
@@ -23,6 +23,7 @@
     "test:ui:smoke": "node scripts/run-ui-tests.mjs --smoke",
     "test:ui:changed": "node scripts/run-ui-tests.mjs --changed",
     "shot": "tsx tests/support/shot.ts",
+    "clean:test": "node scripts/clean-test-output.mjs",
     "postinstall": "install-electron",
     "test:workspace": "tsx tests/workspace-ui.ts",
     "format": "prettier --write \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",

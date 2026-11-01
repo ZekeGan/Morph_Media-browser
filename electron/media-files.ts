@@ -1,6 +1,9 @@
 import fs from 'node:fs/promises'
 import type { MediaEntry } from '../shared/explorer'
 
+// Record and attribute ids are short ASCII words; names sort the way people read numbered files.
+export const key = (v: unknown): v is string => typeof v === 'string' && /^[\w-]{1,100}$/.test(v)
+export const mediaNames = new Intl.Collator('zh-Hant', { numeric: true })
 // File types the folder listing knows by extension: kind shown in the UI and the MIME type served.
 export const mediaTypes: Record<string, [MediaEntry['kind'], string]> = {
   '.mp3': ['audio', 'audio/mpeg'],

@@ -2,6 +2,12 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.37.1 — 2026-11-02
+
+- `Library` and `Explorer` were split by feature into sibling modules (scan, field removal, project removal, cleanup, legacy import; content, streaming and thumbnails, external sources, overview). The classes keep thin wrappers, so callers and behaviour are unchanged.
+- The UI test runner deletes the files a passing run created in `.test-output` (failures keep theirs); `pnpm clean:test` clears the leftovers of earlier runs and keeps the fixtures cache.
+- README: states that the project is human-led and the code is written by AI coding agents.
+
 ## 0.37.0 — 2026-11-02
 
 - Open-source licensing: the code is GPL-3.0-or-later (`LICENSE`, `NOTICE.md`); the name "M:orph" and the logo are excluded and covered by `TRADEMARK.md`, so a modified version cannot just swap the logo and be published as the official one.

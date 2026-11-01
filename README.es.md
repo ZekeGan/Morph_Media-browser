@@ -17,7 +17,9 @@ M:orph es una aplicación de escritorio pensada primero para Windows que permite
 
 **Los datos y su presentación van por separado.** Lo que sabes de una carpeta (título, etiquetas, valoración, origen) se guarda con la carpeta; el aspecto es un diseño que creas una vez y aplicas a todo el proyecto.
 
-> El proyecto está en una **fase temprana de desarrollo**. Versión actual: **0.37.0** ([registro de cambios](CHANGELOG.md)).
+> **Dirigido por una persona, construido por IA.** Una persona dirige el proyecto (dirección, requisitos, decisiones de diseño y revisión), mientras que agentes de programación de IA (OpenAI Codex y después Claude Code de Anthropic) escriben el código bajo esa dirección.
+>
+> El proyecto está en una **fase temprana de desarrollo**. Versión actual: **0.37.1** ([registro de cambios](CHANGELOG.md)).
 
 ---
 

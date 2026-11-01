@@ -44,7 +44,7 @@ S1～S22、B1～B4 與先前版本均已交付並查收；核定結果：S18 CEL
 
 ## 技術債
 
-- **大型類別未拆**：`electron/library.ts`（約 1980 行）、`electron/explorer.ts`（約 1260 行）是單一類別，拆分要把方法分給子模組並保持呼叫端不變；已先把純函式（副檔名表、`probeFile`）移到 `electron/media-files.ts`。`BrowseWorkspace.tsx`、`FolderPanel.tsx` 仍各約 1000 行。待功能穩定後再拆，每次只搬一組並跑對應測試。
+- **大型類別已按功能拆開（0.37.1）**：`Library`、`Explorer` 的方法搬進同層模組（見 [架構](ARCHITECTURE.md)），類別保留轉呼叫的薄包裝，呼叫端不變；成員不再是 `private`，模組以第一個參數取得實例。`BrowseWorkspace.tsx`、`FolderPanel.tsx` 仍各約 1000 行，之後再拆。
 - **前端首包約 1.7 MB**：編輯器外的檢視器已按需載入；剩下主要是 React、Mantine 與語系字典，實測收益有限，暫不處理。
 - **大型資料夾**：實測（受控資料）10000 個檔案的資料夾首頁 96 筆約 0.2 秒、3000 個約 0.1 秒；一次列出全部 10000 筆約 2 秒（介面不這樣呼叫）。
 

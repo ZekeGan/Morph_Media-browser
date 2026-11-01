@@ -3,7 +3,8 @@
 //   node scripts/run-ui-tests.mjs --smoke         the fast core set (~1-2 min)
 //   node scripts/run-ui-tests.mjs --changed       tests mapped from files changed vs origin/main (+ working tree)
 //   node scripts/run-ui-tests.mjs video media     tests whose file name contains any of the words
-import { readdirSync } from 'node:fs'
+import { existsSync, readdirSync, rmSync } from 'node:fs'
+import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 // Fast set that exercises navigation, the right panel, settings, the editor and the media browser.
@@ -80,6 +81,10 @@ else if (args.includes('--changed')) {
 } else if (args.length) chosen = all.filter((name) => args.some((word) => name.includes(word)))
 else chosen = all
 
+// Test runs leave their working folders in .test-output. When everything passes the new ones are removed again;
+// after a failure they stay, because they hold the screenshots and data needed to see what went wrong.
+const outputDir = '.test-output'
+const existing = new Set(existsSync(outputDir) ? readdirSync(outputDir) : [])
 const files = all.filter((name) => chosen.includes(name))
 const results = []
 // Native drag and drop and window focus make a few tests sensitive to the machine being used at the same time, so a
@@ -117,4 +122,8 @@ if (results.some((r) => r.flaky))
 console.log(
   `${results.length - failed.length}/${results.length} passed in ${results.reduce((a, r) => a + r.seconds, 0)}s`
 )
+if (!failed.length && existsSync(outputDir))
+  for (const entry of readdirSync(outputDir))
+    if (!existing.has(entry) && entry !== 'fixtures')
+      rmSync(join(outputDir, entry), { recursive: true, force: true })
 process.exit(failed.length ? 1 : 0)
