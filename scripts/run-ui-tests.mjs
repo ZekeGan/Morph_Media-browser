@@ -18,13 +18,15 @@ const smoke = [
 // Changed source file pattern -> the UI tests that cover it. Unmapped UI/main changes fall back to smoke.
 const coverage = [
   [
-    /src\/(Editor|Card|cells\.css)|shared\/(cells|layouts)/,
+    /src\/(Editor|Card|Cell|TagList|EnumColors|cells\.css)|src\/themes\/cellStyle|shared\/(cells|layouts)/,
     [
       'cell-editor-ui',
       'field-edit-ui',
       'game-cover-cell-ui',
       'game-launch-cell-ui',
       'cell-scroll-ui',
+      'image-nth-ui',
+      'cell-style-ui',
     ],
   ],
   [
