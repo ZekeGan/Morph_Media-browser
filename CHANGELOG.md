@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.33.2 — 2026-11-02
+
+- Moved the file type table and the file probe out of the explorer module into `electron/media-files.ts` (no behaviour change).
+
 ## 0.33.1 — 2026-11-02
 
 - Added a GitHub Actions workflow (Windows) that runs typecheck, format check and the data tests on every push.
