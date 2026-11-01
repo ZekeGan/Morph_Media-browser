@@ -4,6 +4,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- README (all languages) now says the project is close to its first release instead of being in an early development stage; `SECURITY.md` no longer mentions an early-development state.
 - Workflow: changes are collected here and the version number is only raised when a release is made. A shared git hook (`.githooks/pre-commit`, enabled by `pnpm install`) runs the type check, the format check and the link check of the Markdown being committed; slow tests stay manual.
 - The UI test runner first stops Electron processes left over from an interrupted run (only those started from this project's `node_modules`). CI also runs the UI smoke tests in a separate, non-blocking job and uploads the screenshots on failure.
 - `src/index.html`, `release/` and `build/` are ignored by Prettier, so formatting no longer touches them.

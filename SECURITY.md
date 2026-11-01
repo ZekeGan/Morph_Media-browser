@@ -32,4 +32,4 @@ M:orph runs on your own computer and reads folders you choose, so the most impor
 
 ## Supported versions
 
-Only the latest version on the main branch receives fixes while the project is in early development.
+Only the latest version receives fixes.
