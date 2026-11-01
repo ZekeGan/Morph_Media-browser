@@ -30,6 +30,8 @@ export type EditorInspectorProps = {
   draft: Project
   conditionField?: Binding
   preview?: FolderRow
+  fieldSources: { attributeId: string; key: string; type: string }[]
+  setFallbackIds: (ids: string[], newSource?: string) => void
   enumOptions: string[]
   hasContent: boolean
   hints: Record<CellKind, string>
@@ -51,6 +53,8 @@ export function EditorInspector(props: EditorInspectorProps) {
     draft,
     conditionField,
     preview,
+    fieldSources,
+    setFallbackIds,
     enumOptions,
     hasContent,
     hints,
@@ -129,7 +133,8 @@ export function EditorInspector(props: EditorInspectorProps) {
                         cell={selectedCell}
                         draft={draft}
                         preview={preview}
-                        updateCell={updateCell}
+                        sources={fieldSources}
+                        setFallbackIds={setFallbackIds}
                       />
                     )}
                     {(selectedCell.kind === 'static-text' || selectedCell.kind === 'field-url') && (

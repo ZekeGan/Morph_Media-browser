@@ -152,27 +152,37 @@ export function Editor({
   }, [dirty, onDirty])
   const { width, containerRef, mounted } = useContainerWidth()
   const dragGrab = useRef({ x: 0, y: 0 })
+  // The browser's own drag picture is positioned by the OS and can land away from the cursor, so it is replaced by
+  // a transparent one and a copy of the item that follows the cursor with its middle under the pointer.
   const dragImage = (event: React.DragEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect(),
-      // The cursor holds the middle of the dragged item, so the picture never hangs below or beside it.
-      point = { x: rect.width / 2, y: rect.height / 2 }
-    dragGrab.current = point
-    const ghost = event.currentTarget.cloneNode(true) as HTMLElement
-    Object.assign(ghost.style, {
-      position: 'fixed',
-      left: '0px',
-      top: '0px',
-      width: rect.width + 'px',
-      height: rect.height + 'px',
-      margin: '0',
-      transform: 'none',
-      pointerEvents: 'none',
-      zIndex: '-1',
-    })
+    const rect = event.currentTarget.getBoundingClientRect()
+    dragGrab.current = { x: rect.width / 2, y: rect.height / 2 }
+    const ghost = event.currentTarget.cloneNode(true) as HTMLElement,
+      blank = document.createElement('canvas')
+    blank.width = blank.height = 1
+    event.dataTransfer.setDragImage(blank, 0, 0)
+    ghost.classList.add('palette-drag-ghost')
     ghost.setAttribute('aria-hidden', 'true')
+    Object.assign(ghost.style, { width: rect.width + 'px', height: rect.height + 'px' })
+    const place = (x: number, y: number) => {
+      ghost.style.left = x - rect.width / 2 + 'px'
+      ghost.style.top = y - rect.height / 2 + 'px'
+    }
+    place(event.clientX, event.clientY)
     document.body.append(ghost)
-    event.dataTransfer.setDragImage(ghost, point.x, point.y)
-    setTimeout(() => ghost.remove(), 0)
+    const move = (e: DragEvent) => {
+      // Some drag events report 0,0 while leaving the window; keep the last known place.
+      if (e.clientX || e.clientY) place(e.clientX, e.clientY)
+    }
+    const end = () => {
+      ghost.remove()
+      for (const name of ['dragover', 'drag'])
+        document.removeEventListener(name, move as EventListener, true)
+      for (const name of ['dragend', 'drop']) document.removeEventListener(name, end, true)
+    }
+    for (const name of ['dragover', 'drag'])
+      document.addEventListener(name, move as EventListener, true)
+    for (const name of ['dragend', 'drop']) document.addEventListener(name, end, true)
   }
   const gridPosition = useMemo(
     () => ({
@@ -252,6 +262,23 @@ export function Editor({
     setFuture([])
     setDraft(next)
   }
+  const setFallbackIds = (ids: string[], newSource?: string) => {
+    const source = newSource ? availableFields.find((f) => f.attributeId === newSource) : undefined
+    change({
+      ...withLevel(
+        level.map((c) =>
+          c.cellId === selected ? { ...c, fallbackIds: ids.length ? ids : undefined } : c
+        )
+      ),
+      fieldBindings: source
+        ? withSourceBinding(draft.fieldBindings, {
+            attributeId: source.attributeId,
+            alias: source.key,
+            type: source.type,
+          })
+        : draft.fieldBindings,
+    })
+  }
   const updateCell = (update: Partial<Cell>) =>
     change(withLevel(level.map((c) => (c.cellId === selected ? { ...c, ...update } : c))))
   const layoutChange = (layout: Layout) => {
@@ -263,6 +290,46 @@ export function Editor({
         })
       )
     )
+  }
+  // A folder-record field used for the first time becomes a project field: unique alias, enum options from the data.
+  const withSourceBinding = (
+    bindings: Project['fieldBindings'],
+    source: Project['fieldBindings'][number]
+  ) => {
+    if (bindings.some((f) => f.attributeId === source.attributeId)) return bindings
+    let alias = source.alias || tr('欄位'),
+      i = 2
+    while (bindings.some((f) => f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()))
+      alias = (source.alias || tr('欄位')) + '_' + i++
+    return [
+      ...bindings,
+      {
+        ...source,
+        alias,
+        ...(source.type === 'enum' && !source.options
+          ? {
+              options: [
+                ...new Set(
+                  rows
+                    .map(
+                      (row) =>
+                        row.record?.projectOverrides[project.projectId]?.find(
+                          (attribute) => attribute.attributeId === source.attributeId
+                        )?.value ??
+                        row.record?.attributes.find(
+                          (attribute) => attribute.attributeId === source.attributeId
+                        )?.value
+                    )
+                    .filter(
+                      (value): value is string =>
+                        typeof value === 'string' && value.length > 0 && value.length <= 100
+                    )
+                ),
+              ],
+            }
+          : {}),
+      },
+    ]
   }
   const add = (
     kind: CellKind,
@@ -285,41 +352,7 @@ export function Editor({
     const y = Math.max(0, ...cells.map((c) => c.grid.y + c.grid.h))
     let bindings = draft.fieldBindings,
       attributeId = source?.attributeId
-    if (source && !bindings.some((f) => f.attributeId === source.attributeId)) {
-      let alias = source.alias || tr('欄位'),
-        i = 2
-      while (bindings.some((f) => f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()))
-        alias = (source.alias || tr('欄位')) + '_' + i++
-      bindings = [
-        ...bindings,
-        {
-          ...source,
-          alias,
-          ...(source.type === 'enum' && !source.options
-            ? {
-                options: [
-                  ...new Set(
-                    rows
-                      .map(
-                        (row) =>
-                          row.record?.projectOverrides[project.projectId]?.find(
-                            (attribute) => attribute.attributeId === source.attributeId
-                          )?.value ??
-                          row.record?.attributes.find(
-                            (attribute) => attribute.attributeId === source.attributeId
-                          )?.value
-                      )
-                      .filter(
-                        (value): value is string =>
-                          typeof value === 'string' && value.length > 0 && value.length <= 100
-                      )
-                  ),
-                ],
-              }
-            : {}),
-        },
-      ]
-    }
+    if (source) bindings = withSourceBinding(bindings, source)
     attributeId ??= bindings.find((f) => f.type === cellType(kind))?.attributeId
     if (isFieldKind(kind) && !attributeId) {
       attributeId = crypto.randomUUID()
@@ -826,6 +859,8 @@ export function Editor({
           draft={draft}
           conditionField={conditionField}
           preview={preview}
+          fieldSources={availableFields.filter((f) => !f.conflict)}
+          setFallbackIds={setFallbackIds}
           enumOptions={enumOptions}
           hasContent={hasContent}
           hints={hints}

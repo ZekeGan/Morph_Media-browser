@@ -10,20 +10,26 @@ export function FallbackFields({
   cell,
   draft,
   preview,
-  updateCell,
+  sources,
+  setFallbackIds,
 }: {
   cell: Cell
   draft: Project
   preview?: FolderRow
-  updateCell: (update: Partial<Cell>) => void
+  // Fields found in the folders' records that the project has not used yet; choosing one adds it to the project.
+  sources: { attributeId: string; key: string; type: string }[]
+  setFallbackIds: (ids: string[], newSource?: string) => void
 }) {
   const fallbacks = cell.fallbackIds ?? [],
     used = new Set([cell.attributeId, ...fallbacks]),
     sameType = draft.fieldBindings.filter((field) => field.type === cellType(cell.kind)),
-    free = sameType.filter((field) => !used.has(field.attributeId)),
+    freeBound = sameType.filter((field) => !used.has(field.attributeId)),
+    freeSources = sources.filter((source) => source.type === cellType(cell.kind)),
+    free = [...freeBound.map((f) => f.attributeId), ...freeSources.map((f) => f.attributeId)],
     alias = (id?: string) => draft.fieldBindings.find((f) => f.attributeId === id)?.alias ?? '',
     shown = cellField(cell, preview),
-    set = (next: string[]) => updateCell({ fallbackIds: next.length ? next : undefined }),
+    set = (next: string[], newSource?: string) => setFallbackIds(next, newSource),
+    isSource = (id: string) => freeSources.some((source) => source.attributeId === id),
     move = (from: number, to: number) => {
       const next = [...fallbacks]
       next.splice(to, 0, next.splice(from, 1)[0])
@@ -52,11 +58,31 @@ export function FallbackFields({
             aria-label={tr('第 {0} 順位欄位', index + 2)}
             allowDeselect={false}
             value={id}
-            data={sameType
-              .filter((field) => field.attributeId === id || !used.has(field.attributeId))
-              .map((field) => ({ value: field.attributeId, label: field.alias }))}
+            data={[
+              {
+                group: tr('專案欄位'),
+                items: sameType
+                  .filter((field) => field.attributeId === id || !used.has(field.attributeId))
+                  .map((field) => ({ value: field.attributeId, label: field.alias })),
+              },
+              ...(freeSources.length
+                ? [
+                    {
+                      group: tr('引用資料夾既有欄位'),
+                      items: freeSources.map((source) => ({
+                        value: source.attributeId,
+                        label: source.key,
+                      })),
+                    },
+                  ]
+                : []),
+            ]}
             onChange={(value) =>
-              value && set(fallbacks.map((old, i) => (i === index ? value : old)))
+              value &&
+              set(
+                fallbacks.map((old, i) => (i === index ? value : old)),
+                isSource(value) ? value : undefined
+              )
             }
           />
           <Tooltip label={tr('上移')}>
@@ -99,7 +125,7 @@ export function FallbackFields({
           size="xs"
           leftSection={<Icon name="plus" size={14} />}
           disabled={!free.length || fallbacks.length >= MAX_FALLBACKS}
-          onClick={() => set([...fallbacks, free[0].attributeId])}
+          onClick={() => set([...fallbacks, free[0]], isSource(free[0]) ? free[0] : undefined)}
         >
           {tr('新增備用欄位')}
         </Button>

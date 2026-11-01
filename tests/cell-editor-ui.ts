@@ -141,72 +141,45 @@ try {
   await button('更改樣式').click()
   await page.locator('.editor-toolbar').waitFor()
   const palette = page.locator('.basic-palette .palette-item').first()
-  const basicGrab = await palette.evaluate((element) => {
-    const rect = element.getBoundingClientRect(),
-      transfer = new DataTransfer()
-    let result = { isolated: false, x: 0, y: 0, cx: rect.width / 2, cy: rect.height / 2 }
-    transfer.setDragImage = (target, x, y) => {
-      result = {
-        isolated:
-          target !== element &&
-          target.classList.contains('palette-item') &&
-          !target.querySelector('.editor-toolbar'),
-        x,
-        y,
-        cx: rect.width / 2,
-        cy: rect.height / 2,
-      }
-    }
-    element.dispatchEvent(
-      new DragEvent('dragstart', {
-        bubbles: true,
-        dataTransfer: transfer,
-        clientX: rect.left + 43,
-        clientY: rect.top + 18,
-      })
-    )
-    return result
-  })
-  // The cursor holds the middle of the dragged picture wherever it was pressed.
-  assert.ok(
-    basicGrab.isolated &&
-      Math.abs(basicGrab.x - basicGrab.cx) < 1 &&
-      Math.abs(basicGrab.y - basicGrab.cy) < 1
-  )
-  const fieldGrab = await page
-    .locator('.palette-field')
-    .first()
-    .evaluate((element) => {
-      const rect = element.getBoundingClientRect(),
-        transfer = new DataTransfer()
-      let result = { isolated: false, x: 0, y: 0, cx: rect.width / 2, cy: rect.height / 2 }
-      transfer.setDragImage = (target, x, y) => {
-        result = {
-          isolated:
-            target !== element &&
-            target.classList.contains('palette-field') &&
-            !target.querySelector('.editor-toolbar'),
-          x,
-          y,
-          cx: rect.width / 2,
-          cy: rect.height / 2,
+  // The drag picture is our own copy that keeps the item's middle under the cursor; the native one is blank.
+  const dragPicture = (selector: string) =>
+    page
+      .locator(selector)
+      .first()
+      .evaluate((element) => {
+        const transfer = new DataTransfer()
+        let blank = false
+        transfer.setDragImage = (target) => {
+          blank = target instanceof HTMLCanvasElement && target.width === 1 && target.height === 1
         }
-      }
-      element.dispatchEvent(
-        new DragEvent('dragstart', {
-          bubbles: true,
-          dataTransfer: transfer,
-          clientX: rect.left + 88,
-          clientY: rect.top + 25,
-        })
-      )
-      return result
-    })
-  assert.ok(
-    fieldGrab.isolated &&
-      Math.abs(fieldGrab.x - fieldGrab.cx) < 1 &&
-      Math.abs(fieldGrab.y - fieldGrab.cy) < 1
-  )
+        const rect = element.getBoundingClientRect()
+        element.dispatchEvent(
+          new DragEvent('dragstart', {
+            bubbles: true,
+            dataTransfer: transfer,
+            clientX: rect.left + 5,
+            clientY: rect.top + 5,
+          })
+        )
+        document.dispatchEvent(
+          new DragEvent('dragover', { bubbles: true, clientX: 640, clientY: 480 })
+        )
+        const ghost = document.querySelector('.palette-drag-ghost')?.getBoundingClientRect()
+        const result = {
+          blank,
+          dx: ghost ? ghost.left + ghost.width / 2 - 640 : NaN,
+          dy: ghost ? ghost.top + ghost.height / 2 - 480 : NaN,
+        }
+        element.dispatchEvent(new DragEvent('dragend', { bubbles: true }))
+        return { ...result, removed: !document.querySelector('.palette-drag-ghost') }
+      })
+  for (const selector of ['.basic-palette .palette-item', '.palette-field']) {
+    const grab = await dragPicture(selector)
+    assert.ok(
+      grab.blank && Math.abs(grab.dx) < 1 && Math.abs(grab.dy) < 1 && grab.removed,
+      selector + ' ' + JSON.stringify(grab)
+    )
+  }
   await page.locator('.editor-cell').last().click()
   await page.getByRole('textbox', { name: '比較值', exact: true }).click()
   await page.getByRole('option', { name: '是', exact: true }).click()

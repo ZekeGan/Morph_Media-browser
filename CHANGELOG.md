@@ -2,6 +2,11 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.27.1 — 2026-11-02
+
+- Fallback fields can also be picked from the fields that exist in the folders' records but are not in the project yet (they are added to the project when chosen).
+- Palette drag picture is now drawn by the app and follows the cursor with its middle under the pointer, instead of the system picture that landed below it.
+
 ## 0.27.0 — 2026-11-02
 
 - Field cells can list fallback fields: the first field in order that has a value is shown, so one cell can cover the same meaning from different source sites (Steam, DLsite…) without copying data.

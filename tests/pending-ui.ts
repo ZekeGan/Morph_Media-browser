@@ -167,22 +167,6 @@ try {
   const saveBox = (await button('儲存變更').boundingBox())!,
     undoBox = (await button('復原').boundingBox())!
   assert.ok(Math.abs(saveBox.y - undoBox.y) < 12)
-  const item = page.locator('.basic-palette .palette-item').first()
-  assert.equal(
-    await item.evaluate((element) => {
-      let isolated = false
-      const transfer = new DataTransfer()
-      transfer.setDragImage = (target) => {
-        isolated =
-          target !== element &&
-          target.classList.contains('palette-item') &&
-          !target.querySelector('.editor-toolbar')
-      }
-      element.dispatchEvent(new DragEvent('dragstart', { bubbles: true, dataTransfer: transfer }))
-      return isolated
-    }),
-    true
-  )
   await page.screenshot({ path: path.join(root, 'editor.png') })
   await button('取消').click()
   await button('更改樣式').click()
