@@ -2,6 +2,12 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.33.1 — 2026-11-02
+
+- Added a GitHub Actions workflow (Windows) that runs typecheck, format check and the data tests on every push.
+- The UI test runner repeats a failing test once and marks a second-run pass as FLAKY.
+- The legacy import code no longer uses untyped data.
+
 ## 0.33.0 — 2026-11-02
 
 - Explanations moved into small "?" icons with tooltips instead of text lines in settings, the component inspector and the new fallback sections.

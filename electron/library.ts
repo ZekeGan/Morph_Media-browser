@@ -1911,7 +1911,11 @@ export class Library {
             warnings.push('略過無法辨識的舊欄位 key')
             continue
           }
-          const col = (await readJson(path.join(base, 'column', `${key}.json`))) as any
+          const col = (await readJson(path.join(base, 'column', `${key}.json`))) as {
+            dataSource?: unknown
+            dataType?: unknown
+            id?: unknown
+          } | null
           if (col?.dataSource !== 'USER' || col.dataType !== 'STRING' || typeof col.id !== 'string')
             continue
           const attributeId = createHash('sha256').update(`legacy:${col.id}`).digest('hex')
@@ -1937,18 +1941,21 @@ export class Library {
           try {
             if (typeof folderId !== 'string' || !/^[\w-]+$/.test(folderId))
               throw new Error('舊資料夾 ID 不符')
-            const old = (await readJson(path.join(base, 'folder', `${folderId}.json`))) as any
+            const old = (await readJson(path.join(base, 'folder', `${folderId}.json`))) as {
+              lastReadPath?: unknown
+              cells?: { key?: unknown; value?: unknown }[]
+            } | null
             if (typeof old?.lastReadPath !== 'string' || !within(root, old.lastReadPath))
               throw new Error('舊路徑不在已確認根內')
-            await safePath(root, old.lastReadPath)
+            const legacyPath = old.lastReadPath
+            await safePath(root, legacyPath)
             const row = this.state.rows.find(
-              (r) =>
-                r.projectId === project.projectId && keyPath(r.path) === keyPath(old.lastReadPath)
+              (r) => r.projectId === project.projectId && keyPath(r.path) === keyPath(legacyPath)
             )
             if (!row?.record || row.error) throw new Error('資料夾不在本次成功掃描結果內')
             const values: Record<string, string> = {}
             for (const cell of Array.isArray(old.cells) ? old.cells : []) {
-              const binding = map.get(cell.key)
+              const binding = typeof cell.key === 'string' ? map.get(cell.key) : undefined
               if (
                 binding &&
                 typeof cell.value === 'string' &&

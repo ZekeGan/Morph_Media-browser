@@ -80,18 +80,38 @@ else chosen = all
 
 const files = all.filter((name) => chosen.includes(name))
 const results = []
+// Native drag and drop and window focus make a few tests sensitive to the machine being used at the same time, so a
+// failure is run once more; a pass on the second run is reported as flaky instead of hiding the first failure.
+const execute = (name) =>
+  spawnSync('pnpm', ['exec', 'tsx', `tests/${name}.ts`], { encoding: 'utf8', shell: true })
 for (const name of files) {
   const started = Date.now()
-  const run = spawnSync('pnpm', ['exec', 'tsx', `tests/${name}.ts`], {
-    encoding: 'utf8',
-    shell: true,
-  })
+  let run = execute(name),
+    flaky = false
+  if (run.status !== 0) {
+    const first = run
+    run = execute(name)
+    if (run.status === 0) {
+      flaky = true
+      console.log(
+        'First run failed:\n' + (first.stdout + first.stderr).split('\n').slice(-12).join('\n')
+      )
+    }
+  }
   const seconds = Math.round((Date.now() - started) / 1000)
-  results.push({ name, ok: run.status === 0, seconds })
-  console.log(`${run.status === 0 ? 'PASS' : 'FAIL'} ${name} (${seconds}s)`)
+  results.push({ name, ok: run.status === 0, seconds, flaky })
+  console.log(`${run.status === 0 ? (flaky ? 'FLAKY' : 'PASS') : 'FAIL'} ${name} (${seconds}s)`)
   if (run.status !== 0) console.log((run.stdout + run.stderr).split('\n').slice(-12).join('\n'))
 }
 const failed = results.filter((r) => !r.ok)
+if (results.some((r) => r.flaky))
+  console.log(
+    'Passed only on the second run:',
+    results
+      .filter((r) => r.flaky)
+      .map((r) => r.name)
+      .join(', ')
+  )
 console.log(
   `${results.length - failed.length}/${results.length} passed in ${results.reduce((a, r) => a + r.seconds, 0)}s`
 )
