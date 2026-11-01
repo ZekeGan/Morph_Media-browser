@@ -87,3 +87,28 @@ test('fallback fields are validated and follow field deletion', () => {
   assert.equal(cellsWithoutField([cell({ fallbackIds: undefined })], 'steam').length, 0)
   assert.equal(cellsWithoutField([full], 'unrelated')[0], full)
 })
+
+test('launch cells validate their fallback actions', () => {
+  const base = modelProject(),
+    launch = (patch: Partial<Cell>) => ({
+      ...base,
+      mediaCategory: 'game' as const,
+      layoutPresets: undefined,
+      activeLayoutId: undefined,
+      contentCells: undefined,
+      cells: [
+        {
+          ...cell({ kind: 'game-launch', attributeId: undefined, fallbackIds: undefined }),
+          ...patch,
+        },
+      ],
+    })
+  assert.doesNotThrow(() => validateProject(launch({ fallbackActionIds: ['le'] })))
+  assert.doesNotThrow(() => validateProject(launch({ actionId: 'a', fallbackActionIds: ['le'] })))
+  assert.throws(() => validateProject(launch({ fallbackActionIds: [] })))
+  assert.throws(() => validateProject(launch({ actionId: 'le', fallbackActionIds: ['le'] })))
+  assert.throws(() => validateProject(launch({ fallbackActionIds: ['le', 'le'] })))
+  assert.throws(() =>
+    validateProject({ ...launch({}), cells: [cell({ fallbackActionIds: ['le'] })] })
+  )
+})

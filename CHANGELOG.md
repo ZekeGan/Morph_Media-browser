@@ -2,6 +2,10 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## 0.28.0 — 2026-11-02
+
+- The launch-game cell can list fallback actions: it starts the first action that the folder has a target bound for, so one cell covers games started from an EXE and games started from a shortcut. The button shows the label of the action actually used.
+
 ## 0.27.1 — 2026-11-02
 
 - Fallback fields can also be picked from the fields that exist in the folders' records but are not in the project yet (they are added to the project when chosen).

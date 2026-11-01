@@ -21,6 +21,7 @@ import type { Cell, CellKind, FolderRow, Project } from '../shared/model'
 import { cellType, isFieldKind, launchTemplates } from '../shared/explorer'
 import { typeKinds } from './editorKinds'
 import { FallbackFields } from './FallbackFields'
+import { FallbackActions } from './FallbackActions'
 
 type Binding = Project['fieldBindings'][number]
 
@@ -233,18 +234,28 @@ export function EditorInspector(props: EditorInspectorProps) {
                     )}
                     {selectedCell.kind === 'game-launch' &&
                       (launchTemplates(draft).length ? (
-                        <Select
-                          label={tr('啟動動作')}
-                          description={tr('卡片按鈕要啟動哪一個遊戲操作；未指定時用預設啟動遊戲。')}
-                          placeholder={tr('自動（預設啟動遊戲）')}
-                          clearable
-                          value={selectedCell.actionId ?? null}
-                          data={launchTemplates(draft).map((t) => ({
-                            value: t.id,
-                            label: t.id === 'default-launch-game' ? tr(t.label) : t.label,
-                          }))}
-                          onChange={(value) => updateCell({ actionId: value ?? undefined })}
-                        />
+                        <>
+                          <Select
+                            label={tr('啟動動作')}
+                            description={tr(
+                              '卡片按鈕要啟動哪一個遊戲操作；未指定時用預設啟動遊戲。'
+                            )}
+                            placeholder={tr('自動（預設啟動遊戲）')}
+                            clearable
+                            value={selectedCell.actionId ?? null}
+                            data={launchTemplates(draft).map((t) => ({
+                              value: t.id,
+                              label: t.id === 'default-launch-game' ? tr(t.label) : t.label,
+                            }))}
+                            onChange={(value) => updateCell({ actionId: value ?? undefined })}
+                          />
+                          <FallbackActions
+                            cell={selectedCell}
+                            draft={draft}
+                            preview={preview}
+                            updateCell={updateCell}
+                          />
+                        </>
                       ) : (
                         <Text size="sm" c="orange">
                           {tr('尚無可用的啟動動作，請先在遊戲操作新增。')}

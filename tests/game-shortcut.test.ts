@@ -5,7 +5,7 @@ import path from 'node:path'
 import { Library } from '../electron/library'
 import { Explorer, type DesktopOperations } from '../electron/explorer'
 import { folderFile, readFolder } from '../electron/files'
-import { launchTemplate, launchTemplates } from '../shared/explorer'
+import { launchChoice, launchTemplate, launchTemplates } from '../shared/explorer'
 
 test('launch actions: the cell picks its own action, falls back to the default, then to any launcher', () => {
   const le = { id: 'le', label: '用 LE 啟動', kind: 'shortcut' as const, color: '#123456' },
@@ -21,6 +21,38 @@ test('launch actions: the cell picks its own action, falls back to the default, 
   assert.equal(launchTemplate({ actionTemplates: [web, le] }, undefined)?.id, 'le')
   assert.deepEqual(launchTemplates({ actionTemplates: [web] }), [])
   assert.equal(launchTemplate({ actionTemplates: [web] }, undefined), undefined)
+})
+
+test('a launch cell falls back to the next action this folder has a target for', () => {
+  const exe = {
+      id: 'default-launch-game',
+      label: '啟動遊戲',
+      kind: 'exe' as const,
+      color: '#168c77',
+    },
+    le = { id: 'le', label: '用 LE 啟動', kind: 'shortcut' as const, color: '#123456' },
+    project = { actionTemplates: [exe, le] },
+    pick = (targets: Record<string, { kind: string }>, fallbacks: string[] | undefined = ['le']) =>
+      launchChoice(project, undefined, fallbacks, targets).id
+  assert.equal(pick({ 'default-launch-game': { kind: 'exe' } }), 'default-launch-game')
+  assert.equal(pick({ le: { kind: 'shortcut' } }), 'le', 'only the shortcut is bound here')
+  assert.equal(
+    pick({ 'default-launch-game': { kind: 'exe' }, le: { kind: 'shortcut' } }),
+    'default-launch-game'
+  )
+  assert.equal(pick({}), 'default-launch-game', 'nothing bound: the main action, shown as unbound')
+  assert.equal(pick({ le: { kind: 'shortcut' } }, []), 'default-launch-game', 'no fallbacks')
+  assert.equal(
+    pick({ le: { kind: 'exe' } }),
+    'default-launch-game',
+    'a target of the wrong kind does not count'
+  )
+  assert.equal(
+    launchChoice(project, 'le', ['default-launch-game'], { 'default-launch-game': { kind: 'exe' } })
+      .id,
+    'default-launch-game'
+  )
+  assert.equal(launchChoice(project, undefined, ['missing'], undefined).id, 'default-launch-game')
 })
 
 test('shortcut actions are chosen from the folder, opened through the system and never rewrite files', async (t) => {

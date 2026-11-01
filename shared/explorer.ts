@@ -99,6 +99,22 @@ export const launchTemplate = (
     all.find((t) => t.id === actionId) ?? all.find((t) => t.id === 'default-launch-game') ?? all[0]
   )
 }
+// What a launch cell starts for one folder: its action, or the first fallback action that this folder has a target for
+// (some games start from an EXE, others from a shortcut). With none bound, the main action is reported so the cell
+// shows it as not bound yet.
+export const launchChoice = (
+  project: { actionTemplates?: ActionTemplate[] },
+  actionId: string | undefined,
+  fallbackIds: string[] | undefined,
+  targets: Record<string, { kind: string }> | undefined
+) => {
+  const main = launchTemplate(project, actionId),
+    all = launchTemplates(project),
+    chain = [main, ...(fallbackIds ?? []).map((id) => all.find((t) => t.id === id))].filter(
+      (t): t is ActionTemplate => !!t
+    )
+  return chain.find((t) => targets?.[t.id]?.kind === t.kind) ?? main
+}
 export const gameActionTemplates = (project: {
   actionTemplates?: ActionTemplate[]
 }): ActionTemplate[] =>

@@ -3,7 +3,7 @@ import { Badge, Button, Group, Progress, Rating } from '@mantine/core'
 import { type Cell, type FolderRow, type Project } from '../shared/model'
 import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared/cells'
 import { describeError } from './errors'
-import { launchTemplate } from '../shared/explorer'
+import { launchChoice } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
 import { useState } from 'react'
 import { httpUrl } from '../shared/fields'
@@ -143,7 +143,12 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     )
   if (cell.kind === 'game-launch') {
     // The same launch the game page offers: the project's default launch action and the folder's bound target.
-    const template = launchTemplate(project ?? {}, cell.actionId),
+    const template = launchChoice(
+        project ?? {},
+        cell.actionId,
+        cell.fallbackActionIds,
+        row?.record?.details?.targets
+      ),
       target = template ? row?.record?.details?.targets?.[template.id] : undefined,
       ready = !!template && !!target && target.kind === template.kind
     return (

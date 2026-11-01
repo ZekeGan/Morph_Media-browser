@@ -51,6 +51,8 @@ export interface Cell {
   maximum?: number
   // Launch cell only: which action template it starts; absent means the default launch action.
   actionId?: string
+  // Launch cell only: further actions tried in order when the folder has no target for the ones before.
+  fallbackActionIds?: string[]
   copyValue?: boolean
   condition?: {
     attributeId: string
@@ -356,6 +358,13 @@ function validCell(c: unknown): boolean {
         c.fallbackIds.every(id) &&
         new Set([c.attributeId, ...c.fallbackIds]).size === c.fallbackIds.length + 1)) &&
     (c.actionId === undefined || (c.kind === 'game-launch' && id(c.actionId))) &&
+    (c.fallbackActionIds === undefined ||
+      (c.kind === 'game-launch' &&
+        Array.isArray(c.fallbackActionIds) &&
+        c.fallbackActionIds.length >= 1 &&
+        c.fallbackActionIds.length <= MAX_FALLBACKS &&
+        c.fallbackActionIds.every(id) &&
+        new Set([c.actionId, ...c.fallbackActionIds]).size === c.fallbackActionIds.length + 1)) &&
     (c.wrap === undefined ||
       (typeof c.wrap === 'boolean' && ['field-text', 'name', 'path'].includes(c.kind))) &&
     (c.unit === undefined || (c.kind === 'field-number' && text(c.unit, 20))) &&

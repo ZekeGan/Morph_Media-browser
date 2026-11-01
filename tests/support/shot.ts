@@ -67,6 +67,19 @@ if (args.includes('--fields')) {
     getchu = crypto.randomUUID()
   await library.saveProject({
     ...project,
+    ...(project.mediaCategory === 'game'
+      ? {
+          actionTemplates: [
+            {
+              id: 'default-launch-game',
+              label: '啟動遊戲',
+              kind: 'exe' as const,
+              color: '#168c77',
+            },
+            { id: 'le', label: '用 LE 啟動', kind: 'shortcut' as const, color: '#123456' },
+          ],
+        }
+      : {}),
     fieldBindings: [
       { alias: '狀態', attributeId: status, type: 'enum', options: ['進行中', '已完成'] },
       { alias: '評分', attributeId: score, type: 'number' },
@@ -99,6 +112,17 @@ if (args.includes('--fields')) {
         grid: { x: 0, y: 7, w: 12, h: 1 },
         style,
       },
+      ...(project.mediaCategory === 'game'
+        ? [
+            {
+              cellId: crypto.randomUUID(),
+              kind: 'game-launch' as const,
+              fallbackActionIds: ['le'],
+              grid: { x: 0, y: 8, w: 12, h: 1 },
+              style,
+            },
+          ]
+        : []),
     ],
   })
 }
