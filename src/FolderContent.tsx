@@ -64,6 +64,50 @@ export function FolderContent({
   const { visibility } = useFileVisibility()
   const contentRow = useRef(row.rowId)
   const [galleryFile, setGalleryFile] = useState<ContentResult['entries'][number]>()
+  // Width of the 欄位 and 來源 columns of the game table (content takes the rest); a per-viewer convenience.
+  const [gameWidths, setGameWidths] = useState<[number, number]>(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('morph.gameFieldWidths') ?? '[]')
+      if (Array.isArray(saved) && saved.length === 2 && saved.every((n) => n >= 60 && n <= 800))
+        return saved as [number, number]
+    } catch {
+      /* fall through to the defaults */
+    }
+    return [120, 110]
+  })
+  const gameDrag = useRef<{ column: 0 | 1; start: number; width: number } | undefined>(undefined)
+  const dragGameColumn = (event: React.PointerEvent) => {
+    const drag = gameDrag.current
+    if (!drag) return
+    const delta = event.clientX - drag.start,
+      width = Math.min(800, Math.max(60, drag.width + (drag.column === 0 ? delta : -delta)))
+    setGameWidths((current) => (drag.column === 0 ? [width, current[1]] : [current[0], width]))
+  }
+  const stopGameColumn = () => {
+    gameDrag.current = undefined
+    try {
+      localStorage.setItem('morph.gameFieldWidths', JSON.stringify(gameWidths))
+    } catch {
+      /* the widths still apply until the page closes */
+    }
+  }
+  const gameResizer = (column: 0 | 1, label: string) => (
+    <span
+      className="column-resizer"
+      role="separator"
+      aria-label={tr('調整 ') + label + tr(' 欄寬')}
+      onPointerDown={(event) => {
+        event.preventDefault()
+        gameDrag.current = { column, start: event.clientX, width: gameWidths[column] }
+        event.currentTarget.setPointerCapture(event.pointerId)
+      }}
+      onPointerMove={dragGameColumn}
+      onPointerUp={stopGameColumn}
+      onPointerCancel={() => {
+        gameDrag.current = undefined
+      }}
+    />
+  )
 
   const [content, setContent] = useState<ContentResult>(),
     [error, setError] = useState(''),
@@ -412,10 +456,21 @@ export function FolderContent({
             </small>
           )}
         <table className="attribute-table game-fields">
+          <colgroup>
+            <col style={{ width: gameWidths[0] }} />
+            <col />
+            <col style={{ width: gameWidths[1] }} />
+          </colgroup>
           <thead>
             <tr>
-              <th>{tr('欄位')}</th>
-              <th>{tr('內容')}</th>
+              <th>
+                {tr('欄位')}
+                {gameResizer(0, tr('欄位'))}
+              </th>
+              <th>
+                {tr('內容')}
+                {gameResizer(1, tr('來源'))}
+              </th>
               <th>{tr('來源')}</th>
             </tr>
           </thead>

@@ -274,3 +274,5 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 
 .workspace-toolbar.file-mode-toolbar { display:flex; flex-wrap:wrap; }.file-mode-toolbar .workspace-file-tools { flex:1 1 520px; padding:0; border:0; }.file-mode-toolbar .toolbar-right { margin-left:auto; }.file-mode-toolbar .toolbar-left { min-width:0; }
 .palette-drag-ghost { position:fixed; margin:0; pointer-events:none; z-index:10000; opacity:.9; box-shadow:0 6px 18px rgba(0,0,0,.35); overflow:hidden; }
+.game-fields { table-layout: fixed; }
+.game-fields th { position: relative; }

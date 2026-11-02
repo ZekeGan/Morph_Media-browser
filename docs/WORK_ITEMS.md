@@ -11,7 +11,6 @@
 使用者提出的待辦（2026-11-03，尚未開始，開工前確認範圍）：
 
 - **已保存圖片可刪除**：資料夾設定「圖片」頁只能把圖片從組件取消指定，「已保存的圖片」清單沒有刪除。需要刪除資產（`assets` 項目與 `.media-viewer/assets/` 檔案，並清掉 `cellImages`／`bannerAssetId` 的引用）；屬資料寫入，須經確認、先預覽影響、失敗可復原，並走高風險審查。入口：[FolderPanel](../src/FolderPanel.tsx) 圖片分頁、[explorer](../electron/explorer.ts) 的 `image`／`cellImage`／`banner` 請求。
-- **遊戲右側表格可調欄寬**：[FolderContent](../src/FolderContent.tsx) 的 `attribute-table game-fields`（欄位／內容／來源）目前是固定自動欄寬。需要拖曳調整，並決定是否按專案記住（沿用 TABLE 模式欄寬的做法）。
 
 研究結論 — 來源匯入新增 FANZA／DMM（2026-11-03）：尚未核定，見 [METADATA_ENRICHMENT](METADATA_ENRICHMENT.md#分類來源)。官方 Affiliate API 需要 API ID／affiliate ID，與「免憑證、不內建 key」的限制衝突，2026-11-02 已因此移除；網頁版需通過年齡確認，改用 Cookie 繞過等同違反「不繞過存取限制」；robots.txt 未禁止 /dc/doujin 作品頁，但 FANZA 不歡迎爬取且我找不到公開的免憑證 JSON 端點。可行做法有三：①由使用者在設定中自行填入自己的 API ID／affiliate ID（金鑰存本機、不隨設定包匯出），僅用官方 API；②維持不支援，改以 DLsite 或手動欄位；③只在使用者已登入且確認年齡的內建瀏覽器內讀取（成本高、風險高，不建議）。建議①，但這需要使用者核定「允許使用者自備憑證」這個新例外。
 

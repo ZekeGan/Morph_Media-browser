@@ -356,7 +356,7 @@ try {
     await projectSettings.getByLabel('專案名稱', { exact: true }).inputValue(),
     '相簿收藏'
   )
-  assert.equal(await projectSettings.getByLabel('每頁筆數').count(), 0)
+  assert.equal(await projectSettings.getByLabel('每頁筆數', { exact: true }).count(), 0)
   await page.keyboard.press('Escape')
   await projectSettings.waitFor({ state: 'hidden' })
   await page.screenshot({ path: path.join(screens, 'card.png') })
@@ -370,6 +370,19 @@ try {
   await card('Game').dblclick()
   await header().getByText('Game', { exact: true }).waitFor()
   await page.locator('.game-fields').waitFor()
+  // The game table's columns can be resized by dragging the header separators.
+  const gameColumn = () =>
+    page
+      .locator('.game-fields col')
+      .first()
+      .evaluate((col) => col.getBoundingClientRect().width)
+  const columnBefore = await gameColumn(),
+    separator = (await page.getByRole('separator', { name: '調整 欄位 欄寬' }).boundingBox())!
+  await page.mouse.move(separator.x + 3, separator.y + separator.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(separator.x + 63, separator.y + separator.height / 2, { steps: 4 })
+  await page.mouse.up()
+  assert.ok((await gameColumn()) > columnBefore + 40, 'dragging the separator widens the column')
   assert.equal(await page.locator('.game-content .game-banner').count(), 1)
   assert.equal(await page.locator('.game-content .game-actions').count(), 1)
   assert.equal(await page.locator('.game-content .content-subfolders').count(), 0)
