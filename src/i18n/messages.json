@@ -127,7 +127,7 @@
   },
   "我的媒體": {
     "ja": "マイメディア",
-    "zh-CN": "我的媒体젨푇Ś",
+    "zh-CN": "我的媒体",
     "en": "My media",
     "es": "Mis archivos multimedia"
   },
@@ -145,7 +145,7 @@
   },
   "預設版面": {
     "ja": "既定のレイアウト",
-    "zh-CN": "默认版面ᄀ푈Ś",
+    "zh-CN": "默认版面",
     "en": "Default layout",
     "es": "Diseño predeterminado"
   },
@@ -163,13 +163,13 @@
   },
   "筆": {
     "ja": "件",
-    "zh-CN": "笔쾀Ś",
+    "zh-CN": "笔",
     "en": "items",
     "es": "elementos"
   },
   "取消掃描": {
     "ja": "スキャンを中止",
-    "zh-CN": "取消扫描洰푈Ś",
+    "zh-CN": "取消扫描",
     "en": "Cancel scan",
     "es": "Cancelar escaneo"
   },
@@ -181,13 +181,13 @@
   },
   "處理中…": {
     "ja": "処理中…",
-    "zh-CN": "处理中…鮰푈Ś",
+    "zh-CN": "处理中…",
     "en": "Working…",
     "es": "Procesando…"
   },
   "尚未保存": {
     "ja": "未保存",
-    "zh-CN": "尚未保存둸푈Ś",
+    "zh-CN": "尚未保存",
     "en": "Unsaved",
     "es": "Sin guardar"
   },
@@ -241,7 +241,7 @@
   },
   "資料夾可能已搬移、離線，或記錄需要復原。": {
     "ja": "フォルダーが移動済み、オフライン、または記録の復元が必要です。",
-    "zh-CN": "文件夹可能已搬移、离线，或记录需要复原。榘耷Ś",
+    "zh-CN": "文件夹可能已搬移、离线，或记录需要复原。",
     "en": "The folder may have moved, be offline, or need record recovery.",
     "es": "La carpeta puede haberse movido, estar desconectada o necesitar recuperación."
   },
@@ -289,13 +289,13 @@
   },
   "專案名稱": {
     "ja": "プロジェクト名",
-    "zh-CN": "项目名称䰘푌Ś",
+    "zh-CN": "项目名称",
     "en": "Project name",
     "es": "Nombre del proyecto"
   },
   "媒體分類": {
     "ja": "メディアの種類",
-    "zh-CN": "媒体分类拘푌Ś",
+    "zh-CN": "媒体分类",
     "en": "Media category",
     "es": "Categoría multimedia"
   },
@@ -319,7 +319,7 @@
   },
   "所屬群組": {
     "ja": "グループ",
-    "zh-CN": "所属群组뷸푌Ś",
+    "zh-CN": "所属群组",
     "en": "Group",
     "es": "Grupo"
   },
@@ -337,7 +337,7 @@
   },
   "完成建立": {
     "ja": "作成を完了",
-    "zh-CN": "完成建立ᱸ푍Ś",
+    "zh-CN": "完成建立",
     "en": "Create project",
     "es": "Crear proyecto"
   },
@@ -409,7 +409,7 @@
   },
   "此資料夾全部程式資料": {
     "ja": "このフォルダーのアプリデータすべて",
-    "zh-CN": "此文件夹全部程式数据Ś",
+    "zh-CN": "此文件夹全部程式数据",
     "en": "All app data in this folder",
     "es": "Todos los datos de la aplicación en esta carpeta"
   },
@@ -421,19 +421,19 @@
   },
   "筆記錄。": {
     "ja": "件の記録。",
-    "zh-CN": "笔记录。怈푎Ś",
+    "zh-CN": "笔记录。",
     "en": "records.",
     "es": "registros."
   },
   "未連結／離線副本不在本次範圍。未知檔案與無法驗證的記錄保留。": {
     "ja": "未連携・オフラインのコピーは対象外です。不明なファイルと検証できない記録は保持されます。",
-    "zh-CN": "未连结／离线副本不在本次范围。未知文件与无法验证的记录保留。Ś",
+    "zh-CN": "未连结／离线副本不在本次范围。未知文件与无法验证的记录保留。",
     "en": "Unlinked and offline copies are excluded. Unknown files and unverifiable records are preserved.",
     "es": "Se excluyen las copias desconectadas o sin vincular. Se conservan los archivos desconocidos y registros no verificables."
   },
   "清除後立即重新開始記錄（預設為停止記錄）": {
     "ja": "消去後に記録を再開（既定は記録停止）",
-    "zh-CN": "清除後立即重新开始记录（默认为停止记录）榘耷Ś",
+    "zh-CN": "清除後立即重新开始记录（默认为停止记录）",
     "en": "Restart recording after cleanup (default: stop)",
     "es": "Reanudar registros tras limpiar (por defecto: detener)"
   },
@@ -451,7 +451,7 @@
   },
   "{0} · {1} · {2} 筆": {
     "ja": "{0} · {1} · {2}件",
-    "zh-CN": "{0} · {1} · {2} 笔Ȁ",
+    "zh-CN": "{0} · {1} · {2} 笔",
     "en": "{0} · {1} · {2} items",
     "es": "{0} · {1} · {2} elementos"
   },
@@ -493,7 +493,7 @@
   },
   "介面語言": {
     "ja": "表示言語",
-    "zh-CN": "介面语言豘푏Ś",
+    "zh-CN": "介面语言",
     "en": "Interface language",
     "es": "Idioma de la interfaz"
   },
@@ -517,7 +517,7 @@
   },
   "介面主題": {
     "ja": "インターフェースのテーマ",
-    "zh-CN": "介面主题푏Ś",
+    "zh-CN": "介面主题",
     "en": "Interface themes",
     "es": "Temas de la interfaz"
   },
@@ -535,7 +535,7 @@
   },
   "預覽中 · 尚未保存": {
     "ja": "プレビュー中 · 未保存",
-    "zh-CN": "预览中 · 尚未保存Ś",
+    "zh-CN": "预览中 · 尚未保存",
     "en": "Previewing · Unsaved",
     "es": "Vista previa · Sin guardar"
   },
@@ -583,7 +583,7 @@
   },
   "目前路徑": {
     "ja": "現在のパス",
-    "zh-CN": "目前路径푐Ś",
+    "zh-CN": "目前路径",
     "en": "Current path",
     "es": "Ruta actual"
   },
@@ -625,7 +625,7 @@
   },
   "更改樣式": {
     "ja": "レイアウトを編集",
-    "zh-CN": "更改样式蓐푑Ś",
+    "zh-CN": "更改样式",
     "en": "Edit layout",
     "es": "Editar diseño"
   },
@@ -637,7 +637,7 @@
   },
   "瀏覽模式": {
     "ja": "閲覧モード",
-    "zh-CN": "浏览模式뉠푑Ś",
+    "zh-CN": "浏览模式",
     "en": "Browse mode",
     "es": "Modo de navegación"
   },
@@ -649,7 +649,7 @@
   },
   "重新掃描": {
     "ja": "再スキャン",
-    "zh-CN": "重新扫描�푑Ś",
+    "zh-CN": "重新扫描",
     "en": "Rescan",
     "es": "Volver a escanear"
   },
@@ -673,7 +673,7 @@
   },
   "前進至下一個瀏覽位置": {
     "ja": "次の閲覧位置に進む",
-    "zh-CN": "前进至下一个浏览位置Ś",
+    "zh-CN": "前进至下一个浏览位置",
     "en": "Forward to next location",
     "es": "Ir a la siguiente ubicación"
   },
@@ -715,19 +715,19 @@
   },
   "第 1–": {
     "ja": "第1–",
-    "zh-CN": "第 1–�푒Ś",
+    "zh-CN": "第 1–",
     "en": "Levels 1–",
     "es": "Niveles 1–"
   },
   "層": {
     "ja": "階層",
-    "zh-CN": "层쾀Ś",
+    "zh-CN": "层",
     "en": "levels",
     "es": "niveles"
   },
   "第": {
     "ja": "第",
-    "zh-CN": "第쾀Ś",
+    "zh-CN": "第",
     "en": "Level",
     "es": "Nivel"
   },
@@ -757,7 +757,7 @@
   },
   "需要處理": {
     "ja": "要確認",
-    "zh-CN": "需要处理稨푓Ś",
+    "zh-CN": "需要处理",
     "en": "Needs attention",
     "es": "Requiere atención"
   },
@@ -775,7 +775,7 @@
   },
   "遊戲邊界": {
     "ja": "ゲーム境界",
-    "zh-CN": "游戏边界븰푓Ś",
+    "zh-CN": "游戏边界",
     "en": "Game boundary",
     "es": "Límite del juego"
   },
@@ -799,13 +799,13 @@
   },
   "字幕設定": {
     "ja": "字幕設定",
-    "zh-CN": "字幕设定讈푔Ś",
+    "zh-CN": "字幕设定",
     "en": "Subtitle settings",
     "es": "Ajustes de subtítulos"
   },
   "編輯此專案所有漫畫的資訊版面；CARD 版面獨立": {
     "ja": "プロジェクト内の漫画情報レイアウトを編集（CARDとは独立）",
-    "zh-CN": "编辑此项目所有漫画的信息版面；CARD 版面独立ꬰ푔Ś",
+    "zh-CN": "编辑此项目所有漫画的信息版面；CARD 版面独立",
     "en": "Edit the info layout for all manga in this project; CARD layout is separate",
     "es": "Editar el diseño de información del manga del proyecto; CARD tiene un diseño independiente"
   },
@@ -859,19 +859,19 @@
   },
   "顯示範圍": {
     "ja": "表示範囲",
-    "zh-CN": "显示范围轰푕Ś",
+    "zh-CN": "显示范围",
     "en": "Display scope",
     "es": "Ámbito de vista"
   },
   "層級顯示": {
     "ja": "階層表示",
-    "zh-CN": "层级显示꘠푕Ś",
+    "zh-CN": "层级显示",
     "en": "Level display",
     "es": "Vista por niveles"
   },
   "顯示層數": {
     "ja": "表示階層",
-    "zh-CN": "显示层数ᕐ푖Ś",
+    "zh-CN": "显示层数",
     "en": "Display levels",
     "es": "Niveles visibles"
   },
@@ -883,7 +883,7 @@
   },
   "每頁筆數": {
     "ja": "1ページの件数",
-    "zh-CN": "每页笔数﫸푖Ś",
+    "zh-CN": "每页笔数",
     "en": "Items per page",
     "es": "Elementos por página"
   },
@@ -907,13 +907,13 @@
   },
   "選用圖片 · 可留空": {
     "ja": "任意の画像 · 空欄可",
-    "zh-CN": "选用图片 · 可留空Ś",
+    "zh-CN": "选用图片 · 可留空",
     "en": "Optional image · May be empty",
     "es": "Imagen opcional · Puede quedar vacía"
   },
   "⚠ 型別不符：{0}": {
     "ja": "⚠ 型が一致しません：{0}",
-    "zh-CN": "⚠ 型别不符：{0}Ś",
+    "zh-CN": "⚠ 型别不符：{0}",
     "en": "⚠ Type mismatch: {0}",
     "es": "⚠ Tipo incompatible: {0}"
   },
@@ -949,13 +949,13 @@
   },
   "取消最愛": {
     "ja": "お気に入りから削除",
-    "zh-CN": "取消最爱椈푘Ś",
+    "zh-CN": "取消最爱",
     "en": "Remove favorite",
     "es": "Quitar de favoritos"
   },
   "加入最愛": {
     "ja": "お気に入りに追加",
-    "zh-CN": "加入最爱菸푘Ś",
+    "zh-CN": "加入最爱",
     "en": "Add favorite",
     "es": "Añadir a favoritos"
   },
@@ -967,13 +967,13 @@
   },
   "專案設定": {
     "ja": "プロジェクト設定",
-    "zh-CN": "项目设定루푘Ś",
+    "zh-CN": "项目设定",
     "en": "Project settings",
     "es": "Ajustes del proyecto"
   },
   "移至群組": {
     "ja": "グループに移動",
-    "zh-CN": "移至群组콨푘Ś",
+    "zh-CN": "移至群组",
     "en": "Move to group",
     "es": "Mover al grupo"
   },
@@ -1003,7 +1003,7 @@
   },
   "新增群組": {
     "ja": "グループを追加",
-    "zh-CN": "新增群组㾈푙Ś",
+    "zh-CN": "新增群组",
     "en": "Add group",
     "es": "Añadir grupo"
   },
@@ -1021,7 +1021,7 @@
   },
   "刪除群組": {
     "ja": "グループを削除",
-    "zh-CN": "删除群组蓰푙Ś",
+    "zh-CN": "删除群组",
     "en": "Delete group",
     "es": "Eliminar grupo"
   },
@@ -1045,7 +1045,7 @@
   },
   "返回首頁": {
     "ja": "ホームに戻る",
-    "zh-CN": "返回首页�푙Ś",
+    "zh-CN": "返回首页",
     "en": "Return home",
     "es": "Volver al inicio"
   },
@@ -1075,7 +1075,7 @@
   },
   "開啟搜尋": {
     "ja": "検索を開く",
-    "zh-CN": "开启搜寻佀푚Ś",
+    "zh-CN": "开启搜寻",
     "en": "Open search",
     "es": "Abrir búsqueda"
   },
@@ -1093,7 +1093,7 @@
   },
   "還原視窗": {
     "ja": "ウィンドウを元に戻す",
-    "zh-CN": "还原视窗鉐푚Ś",
+    "zh-CN": "还原视窗",
     "en": "Restore window",
     "es": "Restaurar ventana"
   },
@@ -1105,13 +1105,13 @@
   },
   "關閉視窗": {
     "ja": "ウィンドウを閉じる",
-    "zh-CN": "关闭视窗뻨푚Ś",
+    "zh-CN": "关闭视窗",
     "en": "Close window",
     "es": "Cerrar ventana"
   },
   "我的群組": {
     "ja": "マイグループ",
-    "zh-CN": "我的群组핀푚Ś",
+    "zh-CN": "我的群组",
     "en": "My groups",
     "es": "Mis grupos"
   },
@@ -1123,7 +1123,7 @@
   },
   "新增專案": {
     "ja": "プロジェクトを追加",
-    "zh-CN": "新增项目ư푛Ś",
+    "zh-CN": "新增项目",
     "en": "New project",
     "es": "Nuevo proyecto"
   },
@@ -1165,7 +1165,7 @@
   },
   "我的最愛": {
     "ja": "マイお気に入り",
-    "zh-CN": "我的最爱ꃠ푛Ś",
+    "zh-CN": "我的最爱",
     "en": "My favorites",
     "es": "Mis favoritos"
   },
@@ -1207,13 +1207,13 @@
   },
   "查看問題": {
     "ja": "問題を確認",
-    "zh-CN": "查看问题㾘표Ś",
+    "zh-CN": "查看问题",
     "en": "View issues",
     "es": "Ver problemas"
   },
   "群組名稱": {
     "ja": "グループ名",
-    "zh-CN": "群组名称嗰표Ś",
+    "zh-CN": "群组名称",
     "en": "Group name",
     "es": "Nombre del grupo"
   },
@@ -1225,7 +1225,7 @@
   },
   "保存群組": {
     "ja": "グループを保存",
-    "zh-CN": "保存群组苠표Ś",
+    "zh-CN": "保存群组",
     "en": "Save group",
     "es": "Guardar grupo"
   },
@@ -1267,7 +1267,7 @@
   },
   "日期時間": {
     "ja": "日時",
-    "zh-CN": "日期时间㒈푝Ś",
+    "zh-CN": "日期时间",
     "en": "Date and time",
     "es": "Fecha y hora"
   },
@@ -1279,7 +1279,7 @@
   },
   "POC 每張卡片最多 50 個組件": {
     "ja": "POCではカード1枚に最大50コンポーネント",
-    "zh-CN": "POC 每张卡片最多 50 个组件Ȁ",
+    "zh-CN": "POC 每张卡片最多 50 个组件",
     "en": "POC limit: 50 components per card",
     "es": "Límite del prototipo: 50 componentes por tarjeta"
   },
@@ -1309,7 +1309,7 @@
   },
   "專案私有": {
     "ja": "プロジェクト専用",
-    "zh-CN": "项目私有틘푝Ś",
+    "zh-CN": "项目私有",
     "en": "Project private",
     "es": "Privado del proyecto"
   },
@@ -1351,25 +1351,25 @@
   },
   "方案名稱": {
     "ja": "レイアウト名",
-    "zh-CN": "方案名称�푞Ś",
+    "zh-CN": "方案名称",
     "en": "Preset name",
     "es": "Nombre del diseño"
   },
   "拖入組件": {
     "ja": "コンポーネントをドラッグ",
-    "zh-CN": "拖入组件௘푟Ś",
+    "zh-CN": "拖入组件",
     "en": "Drag components",
     "es": "Arrastrar componentes"
   },
   "基礎組件": {
     "ja": "基本コンポーネント",
-    "zh-CN": "基础组件㣰푟Ś",
+    "zh-CN": "基础组件",
     "en": "Basic components",
     "es": "Componentes básicos"
   },
   "尚無資料": {
     "ja": "データなし",
-    "zh-CN": "尚无数据ꯐ푟Ś",
+    "zh-CN": "尚无数据",
     "en": "Without data",
     "es": "Sin datos"
   },
@@ -1381,7 +1381,7 @@
   },
   "共用欄位": {
     "ja": "共有項目",
-    "zh-CN": "共用栏位ᴐ푀Ś",
+    "zh-CN": "共用栏位",
     "en": "Shared fields",
     "es": "Campos compartidos"
   },
@@ -1399,7 +1399,7 @@
   },
   "新增欄位": {
     "ja": "項目を追加",
-    "zh-CN": "新增栏位烀푀Ś",
+    "zh-CN": "新增栏位",
     "en": "Add field",
     "es": "Añadir campo"
   },
@@ -1411,7 +1411,7 @@
   },
   "欄位名稱": {
     "ja": "項目名",
-    "zh-CN": "栏位名称듀푀Ś",
+    "zh-CN": "栏位名称",
     "en": "Field name",
     "es": "Nombre del campo"
   },
@@ -1423,7 +1423,7 @@
   },
   "欄位型別": {
     "ja": "項目の型",
-    "zh-CN": "栏位型别푀Ś",
+    "zh-CN": "栏位型别",
     "en": "Field type",
     "es": "Tipo de campo"
   },
@@ -1447,13 +1447,13 @@
   },
   "組件設定": {
     "ja": "コンポーネント設定",
-    "zh-CN": "组件设定㯀푁Ś",
+    "zh-CN": "组件设定",
     "en": "Component settings",
     "es": "Ajustes del componente"
   },
   "綁定欄位": {
     "ja": "関連付ける項目",
-    "zh-CN": "绑定栏位艸푁Ś",
+    "zh-CN": "绑定栏位",
     "en": "Bound field",
     "es": "Campo vinculado"
   },
@@ -1483,25 +1483,25 @@
   },
   "文字顏色": {
     "ja": "文字色",
-    "zh-CN": "文字颜色푁Ś",
+    "zh-CN": "文字颜色",
     "en": "Text color",
     "es": "Color del texto"
   },
   "背景透明": {
     "ja": "透明な背景",
-    "zh-CN": "背景透明࠘푂Ś",
+    "zh-CN": "背景透明",
     "en": "Transparent background",
     "es": "Fondo transparente"
   },
   "背景顏色": {
     "ja": "背景色",
-    "zh-CN": "背景颜色Ṙ푂Ś",
+    "zh-CN": "背景颜色",
     "en": "Background color",
     "es": "Color de fondo"
   },
   "移除組件": {
     "ja": "コンポーネントを削除",
-    "zh-CN": "移除组件㒰푂Ś",
+    "zh-CN": "移除组件",
     "en": "Remove component",
     "es": "Eliminar componente"
   },
@@ -1543,7 +1543,7 @@
   },
   "尚未綁定": {
     "ja": "未関連付け",
-    "zh-CN": "尚未绑定톰푂Ś",
+    "zh-CN": "尚未绑定",
     "en": "Not bound",
     "es": "Sin vincular"
   },
@@ -1585,7 +1585,7 @@
   },
   "檔案系統": {
     "ja": "ファイルシステム",
-    "zh-CN": "文件系统渀푃Ś",
+    "zh-CN": "文件系统",
     "en": "File system",
     "es": "Sistema de archivos"
   },
@@ -1603,7 +1603,7 @@
   },
   "重新載入": {
     "ja": "再読み込み",
-    "zh-CN": "重新载入놸푃Ś",
+    "zh-CN": "重新载入",
     "en": "Reload",
     "es": "Recargar"
   },
@@ -1615,7 +1615,7 @@
   },
   "原文名稱": {
     "ja": "原題",
-    "zh-CN": "原文名称�푃Ś",
+    "zh-CN": "原文名称",
     "en": "Original title",
     "es": "Título original"
   },
@@ -1645,31 +1645,31 @@
   },
   "商店網址": {
     "ja": "ストアURL",
-    "zh-CN": "商店网址搐푄Ś",
+    "zh-CN": "商店网址",
     "en": "Store URL",
     "es": "URL de la tienda"
   },
   "商品類型": {
     "ja": "製品の種類",
-    "zh-CN": "商品类型穐푄Ś",
+    "zh-CN": "商品类型",
     "en": "Product type",
     "es": "Tipo de producto"
   },
   "發售狀態": {
     "ja": "発売状況",
-    "zh-CN": "发售状态邨푄Ś",
+    "zh-CN": "发售状态",
     "en": "Release status",
     "es": "Estado del lanzamiento"
   },
   "圖庫分類": {
     "ja": "ギャラリー分類",
-    "zh-CN": "图库分类꜀푄Ś",
+    "zh-CN": "图库分类",
     "en": "Gallery category",
     "es": "Categoría de galería"
   },
   "圖庫網址": {
     "ja": "ギャラリーURL",
-    "zh-CN": "图库网址뵀푄Ś",
+    "zh-CN": "图库网址",
     "en": "Gallery URL",
     "es": "URL de la galería"
   },
@@ -1699,7 +1699,7 @@
   },
   "尚未填寫": {
     "ja": "未入力",
-    "zh-CN": "尚未填写茨푅Ś",
+    "zh-CN": "尚未填写",
     "en": "Not filled in",
     "es": "Sin rellenar"
   },
@@ -1723,7 +1723,7 @@
   },
   "請貼上 E-Hentai 的完整圖庫網址": {
     "ja": "E-Hentaiの完全なギャラリーURLを貼り付けてください",
-    "zh-CN": "请贴上 E-Hentai 的完整图库网址榘耷Ś",
+    "zh-CN": "请贴上 E-Hentai 的完整图库网址",
     "en": "Paste the full E-Hentai gallery URL",
     "es": "Pega la URL completa de la galería E-Hentai"
   },
@@ -1765,13 +1765,13 @@
   },
   "遊戲操作": {
     "ja": "ゲーム操作",
-    "zh-CN": "游戏操作솘푆Ś",
+    "zh-CN": "游戏操作",
     "en": "Game actions",
     "es": "Acciones del juego"
   },
   "來源匯入": {
     "ja": "出典からインポート",
-    "zh-CN": "来源导入ퟘ푆Ś",
+    "zh-CN": "来源导入",
     "en": "Import from source",
     "es": "Importar desde origen"
   },
@@ -1801,7 +1801,7 @@
   },
   "共用資料": {
     "ja": "共有データ",
-    "zh-CN": "共用数据䤘푇Ś",
+    "zh-CN": "共用数据",
     "en": "Shared data",
     "es": "Datos compartidos"
   },
@@ -1825,19 +1825,19 @@
   },
   "欄位資料": {
     "ja": "項目データ",
-    "zh-CN": "栏位数据祀푀Ś",
+    "zh-CN": "栏位数据",
     "en": "Field data",
     "es": "Datos de campos"
   },
   "選用圖片": {
     "ja": "任意の画像",
-    "zh-CN": "选用图片鉨푀Ś",
+    "zh-CN": "选用图片",
     "en": "Optional images",
     "es": "Imágenes opcionales"
   },
   "每個圖片組件可分別選圖。沒有圖片的資料夾可以留空。": {
     "ja": "画像コンポーネントごとに画像を選択できます。画像がない場合は空欄にできます。",
-    "zh-CN": "每个图片组件可分别选图。没有图片的文件夹可以留空。푀Ś",
+    "zh-CN": "每个图片组件可分别选图。没有图片的文件夹可以留空。",
     "en": "Choose an image for each component. Folders without images may leave slots empty.",
     "es": "Elige una imagen para cada componente. Las carpetas sin imágenes pueden dejar las ranuras vacías."
   },
@@ -1861,25 +1861,25 @@
   },
   "目前版面沒有圖片組件，無須為每個資料夾指定圖片。": {
     "ja": "このレイアウトに画像コンポーネントはありません。各フォルダーの画像指定は不要です。",
-    "zh-CN": "目前版面没有图片组件，无须为每个文件夹指定图片。ᒸ푁Ś",
+    "zh-CN": "目前版面没有图片组件，无须为每个文件夹指定图片。",
     "en": "This layout has no image components; folder images are optional.",
     "es": "Este diseño no tiene componentes de imagen; no es necesario asignar imágenes a las carpetas."
   },
   "遊戲封面": {
     "ja": "ゲームのカバー",
-    "zh-CN": "游戏封面⺈푁Ś",
+    "zh-CN": "游戏封面",
     "en": "Game cover",
     "es": "Portada del juego"
   },
   "封面圖片": {
     "ja": "カバー画像",
-    "zh-CN": "封面图片䞸푁Ś",
+    "zh-CN": "封面图片",
     "en": "Cover image",
     "es": "Imagen de portada"
   },
   "匯入封面": {
     "ja": "カバーをインポート",
-    "zh-CN": "导入封面搐푁Ś",
+    "zh-CN": "导入封面",
     "en": "Import cover",
     "es": "Importar portada"
   },
@@ -1915,19 +1915,19 @@
   },
   "取得預覽": {
     "ja": "プレビューを取得",
-    "zh-CN": "取得预览㑐푂Ś",
+    "zh-CN": "取得预览",
     "en": "Get preview",
     "es": "Obtener vista previa"
   },
   "候選封面": {
     "ja": "カバー候補",
-    "zh-CN": "候选封面丘푂Ś",
+    "zh-CN": "候选封面",
     "en": "Cover preview",
     "es": "Vista previa de portada"
   },
   "發售日保留 Steam 商店顯示的日期，不推定為作品首次發行日。": {
     "ja": "発売日はSteamストアの表記を保持し、作品の初回発売日とはみなしません。",
-    "zh-CN": "发售日保留 Steam 商店显示的日期，不推定为作品首次发行日。榘耷Ś",
+    "zh-CN": "发售日保留 Steam 商店显示的日期，不推定为作品首次发行日。",
     "en": "Release dates follow the Steam store and are not assumed to be the work's original release date.",
     "es": "Las fechas respetan la tienda Steam y no se consideran necesariamente el lanzamiento original de la obra."
   },
@@ -1939,13 +1939,13 @@
   },
   "取消預覽": {
     "ja": "プレビューをキャンセル",
-    "zh-CN": "取消预览툰푂Ś",
+    "zh-CN": "取消预览",
     "en": "Cancel preview",
     "es": "Cancelar vista previa"
   },
   "已匯入選定資料，可至「資料」查看。": {
     "ja": "選択したデータをインポートしました。「データ」で確認できます。",
-    "zh-CN": "已导入选定数据，可至「数据」查看。Ȁ",
+    "zh-CN": "已导入选定数据，可至「数据」查看。",
     "en": "Selected data imported. View it under Data.",
     "es": "Datos importados. Puedes verlos en Datos."
   },
@@ -1969,7 +1969,7 @@
   },
   "[\"--fullscreen\", \"含空白的值\"]": {
     "ja": "[\"--fullscreen\", \"空白を含む値\"]",
-    "zh-CN": "[\"--fullscreen\", \"含空白的值\"]푃Ś",
+    "zh-CN": "[\"--fullscreen\", \"含空白的值\"]",
     "en": "[\"--fullscreen\", \"value with spaces\"]",
     "es": "[\"--fullscreen\", \"valor con espacios\"]"
   },
@@ -1999,7 +1999,7 @@
   },
   "掃描邊界": {
     "ja": "スキャン境界",
-    "zh-CN": "扫描边界સ푄Ś",
+    "zh-CN": "扫描边界",
     "en": "Scan boundary",
     "es": "Límite del escaneo"
   },
@@ -2023,13 +2023,13 @@
   },
   "標記為遊戲 ROOT": {
     "ja": "ゲームルートとして指定",
-    "zh-CN": "标记为游戏 ROOTŚ",
+    "zh-CN": "标记为游戏 ROOT",
     "en": "Mark as game root",
     "es": "Marcar como raíz de juego"
   },
   "資料範圍": {
     "ja": "データ範囲",
-    "zh-CN": "数据范围讐푄Ś",
+    "zh-CN": "数据范围",
     "en": "Data scope",
     "es": "Ámbito de datos"
   },
@@ -2077,13 +2077,13 @@
   },
   "原始資料夾與媒體保留。先預覽範圍，確認後才清理。": {
     "ja": "元のフォルダーとメディアは保持されます。範囲を確認してから消去します。",
-    "zh-CN": "原始文件夹与媒体保留。先预览范围，确认後才清理。대푅Ś",
+    "zh-CN": "原始文件夹与媒体保留。先预览范围，确认後才清理。",
     "en": "Original folders and media are preserved. Preview the scope before confirming.",
     "es": "Se conservan las carpetas y archivos originales. Revisa el ámbito antes de confirmar."
   },
   "預覽清除此資料夾資料": {
     "ja": "このフォルダーの消去をプレビュー",
-    "zh-CN": "预览清除此文件夹数据Ś",
+    "zh-CN": "预览清除此文件夹数据",
     "en": "Preview folder data cleanup",
     "es": "Previsualizar limpieza de datos de carpeta"
   },
@@ -2095,7 +2095,7 @@
   },
   "清理預覽": {
     "ja": "消去プレビュー",
-    "zh-CN": "清理预览(푆Ś",
+    "zh-CN": "清理预览",
     "en": "Cleanup preview",
     "es": "Vista previa de limpieza"
   },
@@ -2119,7 +2119,7 @@
   },
   "筆。未知檔案、離線與未連結副本不在範圍。": {
     "ja": "件。不明ファイル、オフライン・未連携のコピーは対象外です。",
-    "zh-CN": "笔。未知文件、离线与未连结副本不在范围。榘耷Ś",
+    "zh-CN": "笔。未知文件、离线与未连结副本不在范围。",
     "en": "items. Unknown files, offline and unlinked copies are excluded.",
     "es": "elementos. Se excluyen los archivos desconocidos y las copias desconectadas o sin vincular."
   },
@@ -2131,19 +2131,19 @@
   },
   "預設停止記錄，避免下次掃描立即建立資料。": {
     "ja": "既定では記録を停止し、次回スキャンでの即時再作成を防ぎます。",
-    "zh-CN": "默认停止记录，避免下次扫描立即建立数据。榘耷Ś",
+    "zh-CN": "默认停止记录，避免下次扫描立即建立数据。",
     "en": "Recording stops by default to prevent immediate recreation on the next scan.",
     "es": "Por defecto se detienen los registros para evitar recrearlos en el siguiente escaneo."
   },
   "取消清理": {
     "ja": "消去をキャンセル",
-    "zh-CN": "取消清理裂푇Ś",
+    "zh-CN": "取消清理",
     "en": "Cancel cleanup",
     "es": "Cancelar limpieza"
   },
   "清理未完成，請重新預覽範圍後重試。": {
     "ja": "消去が完了していません。範囲を再確認して再試行してください。",
-    "zh-CN": "清理未完成，请重新预览范围後重试。Ȁ",
+    "zh-CN": "清理未完成，请重新预览范围後重试。",
     "en": "Cleanup incomplete. Preview the scope again and retry.",
     "es": "Limpieza incompleta. Revisa de nuevo el ámbito y reinténtalo."
   },
@@ -2161,7 +2161,7 @@
   },
   "記錄復原": {
     "ja": "記録の復元",
-    "zh-CN": "记录复原印푈Ś",
+    "zh-CN": "记录复原",
     "en": "Record recovery",
     "es": "Recuperación de registros"
   },
@@ -2185,7 +2185,7 @@
   },
   "從上一個有效備份恢復？原檔會保留。": {
     "ja": "直前の有効なバックアップから復元しますか？元のファイルは保持されます。",
-    "zh-CN": "从上一个有效备份恢复？原档会保留。Ȁ",
+    "zh-CN": "从上一个有效备份恢复？原档会保留。",
     "en": "Restore the last valid backup? Original files will be preserved.",
     "es": "¿Restaurar la última copia válida? Se conservarán los originales."
   },
@@ -2203,13 +2203,13 @@
   },
   "按鈕文字": {
     "ja": "ボタンの文字",
-    "zh-CN": "按钮文字푈Ś",
+    "zh-CN": "按钮文字",
     "en": "Button label",
     "es": "Texto del botón"
   },
   "任務類型": {
     "ja": "操作の種類",
-    "zh-CN": "任务类型ߨ푉Ś",
+    "zh-CN": "任务类型",
     "en": "Action type",
     "es": "Tipo de acción"
   },
@@ -2239,7 +2239,7 @@
   },
   "加入按鈕": {
     "ja": "ボタンを追加",
-    "zh-CN": "加入按钮赘푉Ś",
+    "zh-CN": "加入按钮",
     "en": "Add button",
     "es": "Añadir botón"
   },
@@ -2341,7 +2341,7 @@
   },
   "CARD 的層級、密度與每頁筆數，請由資料夾檢視區的「CARD 顯示設定」調整。": {
     "ja": "CARDの階層、密度、ページ件数は「CARD表示設定」で変更できます。",
-    "zh-CN": "CARD 的层级、密度与每页笔数，请由文件夹检视区的「CARD 显示设定」调整。榘耷Ś",
+    "zh-CN": "CARD 的层级、密度与每页笔数，请由文件夹检视区的「CARD 显示设定」调整。",
     "en": "Adjust CARD levels, density and page size in CARD display settings.",
     "es": "Ajusta niveles, densidad y tamaño de página en los ajustes de vista CARD."
   },
@@ -2353,7 +2353,7 @@
   },
   "舊專案：擴大掃描範圍": {
     "ja": "旧プロジェクト：スキャン範囲を拡大",
-    "zh-CN": "旧项目：扩大扫描范围Ś",
+    "zh-CN": "旧项目：扩大扫描范围",
     "en": "Legacy project: expand scan scope",
     "es": "Proyecto anterior: ampliar ámbito del escaneo"
   },
@@ -2383,7 +2383,7 @@
   },
   "移除專案（刪除資料）": {
     "ja": "プロジェクトを削除（データ削除）",
-    "zh-CN": "移除项目（删除数据）Ś",
+    "zh-CN": "移除项目（删除数据）",
     "en": "Remove project (delete app data)",
     "es": "Eliminar proyecto (borrar datos de la aplicación)"
   },
@@ -2407,19 +2407,19 @@
   },
   "從": {
     "ja": "対象：",
-    "zh-CN": "从쾀Ś",
+    "zh-CN": "从",
     "en": "From",
     "es": "De"
   },
   "筆現用資料夾記錄移除此專案私有值，並封存此專案設定及備份。": {
     "ja": "件の現用記録から非共有値を削除し、設定とバックアップを保管します。",
-    "zh-CN": "笔现用文件夹记录移除此项目私有值，并封存此项目设定及备份。푌Ś",
+    "zh-CN": "笔现用文件夹记录移除此项目私有值，并封存此项目设定及备份。",
     "en": "active records: remove private values and archive project settings and backups.",
     "es": "registros activos: eliminar valores privados y archivar ajustes y copias de seguridad."
   },
   "根目錄 .media-viewer 將移至本機復原區，重新新增時可建立新的根記錄。": {
     "ja": "ルートの.media-viewerはローカル復元領域に移します。新規作成時は新しいルート記録になります。",
-    "zh-CN": "根目录 .media-viewer 将移至本机复原区，重新新增时可建立新的根记录。耷Ś",
+    "zh-CN": "根目录 .media-viewer 将移至本机复原区，重新新增时可建立新的根记录。",
     "en": "Root .media-viewer data moves to local recovery storage. Creating again generates a new root identity.",
     "es": "Los datos .media-viewer de la raíz pasan al área local de recuperación. Crear de nuevo genera otra identidad de raíz."
   },
@@ -2437,7 +2437,7 @@
   },
   "個檔案）": {
     "ja": "ファイル）",
-    "zh-CN": "个文件）顸푌Ś",
+    "zh-CN": "个文件）",
     "en": "files)",
     "es": "archivos)"
   },
@@ -2449,7 +2449,7 @@
   },
   "取消移除": {
     "ja": "削除をキャンセル",
-    "zh-CN": "取消移除앸푌Ś",
+    "zh-CN": "取消移除",
     "en": "Cancel removal",
     "es": "Cancelar eliminación"
   },
@@ -2467,7 +2467,7 @@
   },
   "已處理的記錄保有備份；剩餘資料保留，可重新預覽。": {
     "ja": "処理済みの記録にはバックアップがあります。残りのデータは保持され、再確認できます。",
-    "zh-CN": "已处理的记录保有备份；剩余数据保留，可重新预览。ৈ푍Ś",
+    "zh-CN": "已处理的记录保有备份；剩余数据保留，可重新预览。",
     "en": "Processed records retain backups. Remaining data is preserved; preview again to retry.",
     "es": "Los registros procesados tienen copias de seguridad. Se conservan los datos pendientes; revisa otra vez para reintentar."
   },
@@ -2485,13 +2485,13 @@
   },
   "無法解碼": {
     "ja": "デコードできません",
-    "zh-CN": "无法解码䷸푍Ś",
+    "zh-CN": "无法解码",
     "en": "Could not decode",
     "es": "No se pudo decodificar"
   },
   "無法載入": {
     "ja": "読み込めません",
-    "zh-CN": "无法载入摐푍Ś",
+    "zh-CN": "无法载入",
     "en": "Could not load",
     "es": "No se pudo cargar"
   },
@@ -2503,7 +2503,7 @@
   },
   "圖片檢視": {
     "ja": "画像ビューア",
-    "zh-CN": "图片检视部푍Ś",
+    "zh-CN": "图片检视",
     "en": "Image viewer",
     "es": "Visor de imágenes"
   },
@@ -2569,7 +2569,7 @@
   },
   "閱讀設定": {
     "ja": "読書設定",
-    "zh-CN": "阅读设定蘰푎Ś",
+    "zh-CN": "阅读设定",
     "en": "Reading settings",
     "es": "Ajustes de lectura"
   },
@@ -2593,7 +2593,7 @@
   },
   "由右至左": {
     "ja": "右から左",
-    "zh-CN": "由右至左푎Ś",
+    "zh-CN": "由右至左",
     "en": "Right to left",
     "es": "De derecha a izquierda"
   },
@@ -2611,13 +2611,13 @@
   },
   "寬度適應": {
     "ja": "幅に合わせる",
-    "zh-CN": "宽度适应㦸푏Ś",
+    "zh-CN": "宽度适应",
     "en": "Fit width",
     "es": "Ajustar al ancho"
   },
   "高度適應": {
     "ja": "高さに合わせる",
-    "zh-CN": "高度适应倐푏Ś",
+    "zh-CN": "高度适应",
     "en": "Fit height",
     "es": "Ajustar a la altura"
   },
@@ -2641,7 +2641,7 @@
   },
   "重設縮放": {
     "ja": "ズームをリセット",
-    "zh-CN": "重设缩放쀸푏Ś",
+    "zh-CN": "重设缩放",
     "en": "Reset zoom",
     "es": "Restablecer zoom"
   },
@@ -2653,7 +2653,7 @@
   },
   "沉浸閱讀": {
     "ja": "没入表示",
-    "zh-CN": "沉浸阅读푏Ś",
+    "zh-CN": "沉浸阅读",
     "en": "Immersive reading",
     "es": "Lectura inmersiva"
   },
@@ -2665,13 +2665,13 @@
   },
   "沒有圖片": {
     "ja": "画像なし",
-    "zh-CN": "没有图片ᦈ푐Ś",
+    "zh-CN": "没有图片",
     "en": "No images",
     "es": "Sin imágenes"
   },
   "頁": {
     "ja": "ページ",
-    "zh-CN": "页쾀Ś",
+    "zh-CN": "页",
     "en": "pages",
     "es": "páginas"
   },
@@ -2695,7 +2695,7 @@
   },
   "滾輪縮放 · F11 沉浸閱讀 · ESC 返回": {
     "ja": "ホイールで拡大縮小 · F11 没入表示 · ESC 戻る",
-    "zh-CN": "滚轮缩放 · F11 沉浸阅读 · ESC 返回褰푐Ś",
+    "zh-CN": "滚轮缩放 · F11 沉浸阅读 · ESC 返回",
     "en": "Wheel to zoom · F11 immersive · ESC back",
     "es": "Rueda para zoom · F11 inmersivo · ESC volver"
   },
@@ -2707,13 +2707,13 @@
   },
   "清除搜尋": {
     "ja": "検索をクリア",
-    "zh-CN": "清除搜寻촠푐Ś",
+    "zh-CN": "清除搜寻",
     "en": "Clear search",
     "es": "Borrar búsqueda"
   },
   "搜尋範圍": {
     "ja": "検索範囲",
-    "zh-CN": "搜寻范围푐Ś",
+    "zh-CN": "搜寻范围",
     "en": "Search scope",
     "es": "Ámbito de búsqueda"
   },
@@ -2725,7 +2725,7 @@
   },
   "目前專案": {
     "ja": "現在のプロジェクト",
-    "zh-CN": "目前项目၀푑Ś",
+    "zh-CN": "目前项目",
     "en": "Current project",
     "es": "Proyecto actual"
   },
@@ -2755,7 +2755,7 @@
   },
   "搜尋結果": {
     "ja": "検索結果",
-    "zh-CN": "搜寻结果胐푑Ś",
+    "zh-CN": "搜寻结果",
     "en": "Search results",
     "es": "Resultados de búsqueda"
   },
@@ -2767,7 +2767,7 @@
   },
   "搜尋中…": {
     "ja": "検索中…",
-    "zh-CN": "搜寻中…궸푑Ś",
+    "zh-CN": "搜寻中…",
     "en": "Searching…",
     "es": "Buscando…"
   },
@@ -2803,7 +2803,7 @@
   },
   "試試較短的關鍵字，或切換搜尋範圍。": {
     "ja": "短いキーワードや別の検索範囲を試してください。",
-    "zh-CN": "试试较短的关键字，或切换搜寻范围。Ȁ",
+    "zh-CN": "试试较短的关键字，或切换搜寻范围。",
     "en": "Try shorter keywords or another search scope.",
     "es": "Prueba palabras más cortas u otro ámbito de búsqueda."
   },
@@ -2815,13 +2815,13 @@
   },
   "常用搜尋": {
     "ja": "保存済み検索",
-    "zh-CN": "常用搜寻拨푒Ś",
+    "zh-CN": "常用搜寻",
     "en": "Saved searches",
     "es": "Búsquedas guardadas"
   },
   "刪除常用搜尋 {0}": {
     "ja": "保存済み検索 {0} を削除",
-    "zh-CN": "删除常用搜寻 {0}Ś",
+    "zh-CN": "删除常用搜寻 {0}",
     "en": "Delete saved search {0}",
     "es": "Eliminar búsqueda guardada {0}"
   },
@@ -2857,13 +2857,13 @@
   },
   "選取結果後開啟，也可雙擊直接進入。": {
     "ja": "結果を選んで開くか、ダブルクリックで直接移動します。",
-    "zh-CN": "选取结果後开启，也可双击直接进入。Ȁ",
+    "zh-CN": "选取结果後开启，也可双击直接进入。",
     "en": "Select a result to open, or double-click to enter.",
     "es": "Selecciona un resultado para abrirlo o haz doble clic para entrar."
   },
   "處理進度": {
     "ja": "処理状況",
-    "zh-CN": "处理进度绰푓Ś",
+    "zh-CN": "处理进度",
     "en": "Progress",
     "es": "Progreso"
   },
@@ -2881,7 +2881,7 @@
   },
   "結構祖先": {
     "ja": "階層上の親",
-    "zh-CN": "结构祖先솸푓Ś",
+    "zh-CN": "结构祖先",
     "en": "Structural ancestor",
     "es": "Antecesor estructural"
   },
@@ -2899,7 +2899,7 @@
   },
   "子資料夾": {
     "ja": "子フォルダー",
-    "zh-CN": "子文件夹᭐푔Ś",
+    "zh-CN": "子文件夹",
     "en": "subfolders",
     "es": "subcarpetas"
   },
@@ -2917,13 +2917,13 @@
   },
   "全部收合": {
     "ja": "すべて折りたたむ",
-    "zh-CN": "全部收合廈푔Ś",
+    "zh-CN": "全部收合",
     "en": "Collapse all",
     "es": "Contraer todo"
   },
   "重設展開": {
     "ja": "展開をリセット",
-    "zh-CN": "重设展开甠푔Ś",
+    "zh-CN": "重设展开",
     "en": "Reset expansion",
     "es": "Restablecer expansión"
   },
@@ -2935,7 +2935,7 @@
   },
   "個資料夾": {
     "ja": "個のフォルダー",
-    "zh-CN": "个文件夹ꆐ푔Ś",
+    "zh-CN": "个文件夹",
     "en": "folders",
     "es": "carpetas"
   },
@@ -2947,13 +2947,13 @@
   },
   "此資料夾沒有直接影片": {
     "ja": "このフォルダーに直接含まれる動画はありません",
-    "zh-CN": "此文件夹没有直接影片Ś",
+    "zh-CN": "此文件夹没有直接影片",
     "en": "No videos directly in this folder",
     "es": "No hay vídeos directamente en esta carpeta"
   },
   "此影片無法解碼或已失效；首輪驗證 MP4／WebM，MKV／HEVC 不保證支援。": {
     "ja": "動画をデコードできないか無効です。MP4／WebMは検証済み、MKV／HEVCは保証されません。",
-    "zh-CN": "此影片无法解码或已失效；首轮验证 MP4／WebM，MKV／HEVC 不保证支援。耷Ś",
+    "zh-CN": "此影片无法解码或已失效；首轮验证 MP4／WebM，MKV／HEVC 不保证支援。",
     "en": "This video cannot be decoded or is unavailable. MP4/WebM are verified; MKV/HEVC support is not guaranteed.",
     "es": "El vídeo no se puede decodificar o no está disponible. Se han verificado MP4/WebM; no se garantiza MKV/HEVC."
   },
@@ -2971,13 +2971,13 @@
   },
   "載入字幕／拖到播放器": {
     "ja": "字幕を読み込む／プレーヤーにドロップ",
-    "zh-CN": "载入字幕／拖到播放器Ś",
+    "zh-CN": "载入字幕／拖到播放器",
     "en": "Load subtitles / drop onto player",
     "es": "Cargar subtítulos / soltar en el reproductor"
   },
   "關閉字幕": {
     "ja": "字幕をオフ",
-    "zh-CN": "关闭字幕䃠푕Ś",
+    "zh-CN": "关闭字幕",
     "en": "Disable subtitles",
     "es": "Desactivar subtítulos"
   },
@@ -3031,7 +3031,7 @@
   },
   "字幕大小": {
     "ja": "字幕サイズ",
-    "zh-CN": "字幕大小⅐푖Ś",
+    "zh-CN": "字幕大小",
     "en": "Subtitle size",
     "es": "Tamaño de subtítulos"
   },
@@ -3043,19 +3043,19 @@
   },
   "字幕顏色": {
     "ja": "字幕の色",
-    "zh-CN": "字幕颜色丐푖Ś",
+    "zh-CN": "字幕颜色",
     "en": "Subtitle color",
     "es": "Color de subtítulos"
   },
   "字幕背景": {
     "ja": "字幕の背景",
-    "zh-CN": "字幕背景摐푖Ś",
+    "zh-CN": "字幕背景",
     "en": "Subtitle background",
     "es": "Fondo de subtítulos"
   },
   "文字編碼": {
     "ja": "文字コード",
-    "zh-CN": "文字编码窨푖Ś",
+    "zh-CN": "文字编码",
     "en": "Text encoding",
     "es": "Codificación del texto"
   },
@@ -3067,13 +3067,13 @@
   },
   "固定延遲無法修復逐漸累積的時間差；請改用對應版本字幕。設定按影片與字幕來源保存。": {
     "ja": "固定遅延では徐々に広がるずれは直せません。対応する字幕を使用してください。設定は動画と字幕ソースごとに保存されます。",
-    "zh-CN": "固定延迟无法修复逐渐累积的时间差；请改用对应版本字幕。设定按影片与字幕来源保存。榘耷Ś",
+    "zh-CN": "固定延迟无法修复逐渐累积的时间差；请改用对应版本字幕。设定按影片与字幕来源保存。",
     "en": "A fixed delay cannot correct increasing drift. Use matching subtitles. Settings are saved per video and subtitle source.",
     "es": "Un retraso fijo no corrige un desfase creciente. Usa subtítulos de la versión correcta. Los ajustes se guardan por vídeo y origen de subtítulos."
   },
   "深色經典": {
     "ja": "クラシックダーク",
-    "zh-CN": "深色经典뼨푖Ś",
+    "zh-CN": "深色经典",
     "en": "Classic dark",
     "es": "Oscuro clásico"
   },
@@ -3085,7 +3085,7 @@
   },
   "霧白玻璃": {
     "ja": "ホワイトグラス",
-    "zh-CN": "雾白玻璃푖Ś",
+    "zh-CN": "雾白玻璃",
     "en": "Frosted glass",
     "es": "Cristal blanco"
   },
@@ -3097,13 +3097,13 @@
   },
   "暖紙墨橘": {
     "ja": "ペーパー＆オレンジ",
-    "zh-CN": "暖纸墨橘ᨨ푗Ś",
+    "zh-CN": "暖纸墨橘",
     "en": "Paper and ink",
     "es": "Papel y tinta"
   },
   "米白紙面、俐落黑線與醒目橘色，重現設計稿的編輯感。": {
     "ja": "生成りの紙、くっきりした墨色の線、鮮やかなオレンジの編集的な表情。",
-    "zh-CN": "米白纸面、俐落黑线与醒目橘色，重现设计稿的编辑感。푗Ś",
+    "zh-CN": "米白纸面、俐落黑线与醒目橘色，重现设计稿的编辑感。",
     "en": "Warm paper, crisp ink lines and bold orange for an editorial feel.",
     "es": "Papel cálido, líneas de tinta nítidas y naranja intenso con aire editorial."
   },

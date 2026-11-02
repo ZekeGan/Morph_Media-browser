@@ -51,6 +51,13 @@ test('every UI message has complete translations and preserves substitution valu
   assert.equal(fieldTypeLabel('constructor'), 'constructor')
   assert.equal(tr('應用程式設定'), '應用程式設定')
 })
+test('translations contain no corrupted characters', () => {
+  const garbled = /[ᄀ-ᇿ᐀-ᙿ가-힯-�]/
+  for (const [locale, messages] of Object.entries(catalog))
+    for (const [source, text] of Object.entries(messages))
+      assert.ok(!garbled.test(text), locale + ': "' + source + '" has garbled text')
+})
+
 test('only the shipped neutral transparent CELL baseline follows theme colors', () => {
   const cell = defaultCells(() => 'id')[0]
   assert.equal(cellColors(cell).color, 'var(--text)')
