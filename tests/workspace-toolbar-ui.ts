@@ -36,6 +36,10 @@ try {
     w.setBounds({ width: 1440, height: 900 })
   })
   await button('開啟專案 Toolbar').first().click()
+  // One refresh control lives in the top bar next to the application settings; the old rescan / panel buttons are gone.
+  assert.equal(await button('重新整理').count(), 1)
+  assert.equal(await page.locator('.titlebar').getByRole('button', { name: '重新整理' }).count(), 1)
+  assert.equal(await button('重新掃描').count(), 0)
   // Display settings live in one popover button instead of a permanent row.
   assert.equal(await page.locator('.card-inline-controls').count(), 0)
   await button('卡片顯示設定').click()

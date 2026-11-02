@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ActionIcon, Menu, Select, Tooltip } from '@mantine/core'
+import { ActionIcon, Menu, Select } from '@mantine/core'
 import type {
   ContentResult,
   ExplorerRequest,
@@ -15,6 +15,7 @@ import { MediaViewer } from './MediaViewer'
 import { usePlayback } from './Playback'
 import { FolderHeader } from './FolderParts'
 import { useFileVisibility } from './useFileVisibility'
+import { useRefreshNonce } from './refresh'
 import { Icon } from './icons'
 import { t as tr, useLocale } from './i18n'
 import './media-workspace.css'
@@ -25,7 +26,6 @@ export function MediaBrowser({
   entries,
   loading,
   error,
-  reload,
   onChild,
   run,
   act,
@@ -42,7 +42,6 @@ export function MediaBrowser({
   entries: ContentResult['entries']
   loading: boolean
   error: string
-  reload: () => void
   onChild: (name: string) => void
   configure: () => void
   childNames?: string[]
@@ -63,8 +62,8 @@ export function MediaBrowser({
     ),
     [view, setView] = useState<string>(prefs?.view ?? 'masonry')
   const [scope, setScope] = useState<'current' | 'descendants'>(prefs?.scope ?? 'current'),
-    [grouped, setGrouped] = useState(prefs?.grouped ?? false),
-    [version, setVersion] = useState(0)
+    [grouped, setGrouped] = useState(prefs?.grouped ?? false)
+  const version = useRefreshNonce()
   const [overview, setOverview] = useState<{
     entries: OverviewEntry[]
     notices: string[]
@@ -241,19 +240,6 @@ export function MediaBrowser({
             { value: 'list', label: tr('列表') },
           ]}
         />
-        <Tooltip label={tr('重新整理')}>
-          <ActionIcon
-            variant="subtle"
-            aria-label={tr('重新整理')}
-            disabled={pending || busy || !!opening}
-            onClick={() => {
-              reload()
-              setVersion((value) => value + 1)
-            }}
-          >
-            <Icon name="refresh" />
-          </ActionIcon>
-        </Tooltip>
         <Menu position="bottom-end">
           <Menu.Target>
             <ActionIcon variant="subtle" aria-label={tr('更多檔案選項')}>

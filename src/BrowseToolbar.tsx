@@ -17,10 +17,9 @@ import {
 } from '@mantine/core'
 import { cardPresets } from '../shared/layouts'
 import { cardDisplay } from '../shared/browse'
-import { type FolderRow, type Project, type Request, type Response } from '../shared/model'
+import { type FolderRow, type Project } from '../shared/model'
 import type { BrowseMode, BrowseState } from '../shared/explorer'
 type Props = {
-  act: (request: Request) => Promise<Response | undefined>
   boundariesOnly: boolean
   browse: BrowseState
   busy: boolean
@@ -55,7 +54,6 @@ type Props = {
 // The folder-mode toolbar (view mode, presets, filters, tools) and the CARD display controls under it.
 export function BrowseToolbar(props: Props) {
   const {
-    act,
     boundariesOnly,
     browse,
     busy,
@@ -382,17 +380,6 @@ export function BrowseToolbar(props: Props) {
               </Menu.Dropdown>
             </Menu>
           )}
-          <Tooltip label={tr('重新掃描')}>
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              aria-label={tr('重新掃描')}
-              disabled={busy}
-              onClick={() => void act({ action: 'scan' })}
-            >
-              <Icon name="refresh" />
-            </ActionIcon>
-          </Tooltip>
           <Tooltip label={tr('目前資料夾設定')}>
             <ActionIcon
               variant="subtle"

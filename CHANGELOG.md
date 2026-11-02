@@ -18,6 +18,8 @@ The application version is independent of portable record `schemaVersion`.
 
 - Fixed 161 Simplified Chinese interface strings that ended in garbled characters; a data test now rejects corrupted characters in any language.
 - Folder settings: saved images can now be deleted (Images tab → Saved images → Delete image). A confirmation lists the components/cover that use it; the image entry, its cover/component references and its managed file are removed in one safe write, and your original media files are never touched.
+- One refresh button: the folder toolbar's "Rescan" and the right panel's "Refresh" buttons are merged into a single "Refresh" button in the top bar next to the application settings; it rescans the current project and reloads the right-hand content.
+
 - Game folder panel: the field table's columns (field / source) can be resized by dragging the header separators; widths are remembered on this computer.
 - Watching UI tests (`MEDIA_VIEWER_TEST_VISIBLE=1`) no longer takes over your screen: the test window is half transparent, click-through and never activated, so the window you are using keeps the focus.
 - Fixed thumbnails and video/audio not loading when running `pnpm dev` (React 19 StrictMode re-attaches the same element after its `src` was cleared on detach): the gallery image, video and audio refs now restore the source. Packaged and production builds were not affected.
