@@ -6082,5 +6082,23 @@
     "en": "Colour of option {0}",
     "ja": "選択肢 {0} の色",
     "es": "Color de la opción {0}"
+  },
+  "新增選項": {
+    "ja": "選択肢を追加",
+    "zh-CN": "新增选项",
+    "en": "Add option",
+    "es": "Añadir opción"
+  },
+  "選用": {
+    "ja": "選択",
+    "zh-CN": "选用",
+    "en": "Use",
+    "es": "Usar"
+  },
+  "輸入新選項，所有資料夾共用": {
+    "ja": "新しい選択肢を入力（すべてのフォルダーで共通）",
+    "zh-CN": "输入新选项，所有文件夹共用",
+    "en": "Type a new option (shared by all folders)",
+    "es": "Escribe una opción nueva (compartida por todas las carpetas)"
   }
 }

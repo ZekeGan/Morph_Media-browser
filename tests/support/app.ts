@@ -24,7 +24,15 @@ export async function launchApp(
   page.on('pageerror', (error) => errors.push(error.message))
   page.setDefaultTimeout(15000)
   await page.evaluate('window.__name=(target)=>target')
-  await app.evaluate(({ BrowserWindow }, bounds) => {
+  await app.evaluate(({ BrowserWindow, dialog }, bounds) => {
+    // A native message box cannot be answered by the tests and would stall them until someone clicks it.
+    // Answer "discard" at once; tests that check a prompt replace this stub themselves.
+    dialog.showMessageBoxSync = (() => 1) as typeof dialog.showMessageBoxSync
+    dialog.showMessageBox = (async () => ({
+      response: 1,
+      checkboxChecked: false,
+    })) as typeof dialog.showMessageBox
+    dialog.showErrorBox = () => {}
     const win = BrowserWindow.getAllWindows()[0]
     win.setMinimumSize(0, 0)
     win.setBounds(bounds)

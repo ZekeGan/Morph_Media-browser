@@ -109,7 +109,8 @@ export function FolderPanel({
 
   const [error, setError] = useState(''),
     [privateValues, setPrivate] = useState(false),
-    [values, setValues] = useState<Record<string, unknown>>({})
+    [values, setValues] = useState<Record<string, unknown>>({}),
+    [newOptions, setNewOptions] = useState<Record<string, string>>({})
   const [tab, setTab] = useState<string | null>(initialTab),
     [tasks, setTasks] = useState<ActionTemplate[]>(),
     [targetDirty, setTargetDirty] = useState(false)
@@ -208,6 +209,28 @@ export function FolderPanel({
     )
       setValues({})
   }
+  // A new option joins the project's choice field (shared by every folder), then fills this folder's value.
+  const addOption = async (attributeId: string, option: string) => {
+    if (!option) return
+    const binding = project.fieldBindings.find((field) => field.attributeId === attributeId)
+    if (!binding) return
+    if (!binding.options?.includes(option)) {
+      const saved = await act({
+        action: 'saveProject',
+        project: {
+          ...project,
+          fieldBindings: project.fieldBindings.map((field) =>
+            field.attributeId === attributeId
+              ? { ...field, options: [...(field.options ?? []), option] }
+              : field
+          ),
+        },
+      })
+      if (!saved) return
+    }
+    edit(attributeId, option)
+    setNewOptions((v) => ({ ...v, [attributeId]: '' }))
+  }
   const renderField = (f: (typeof fields)[number]) => {
     const value = effective(f.attributeId),
       binding = project.fieldBindings.find((binding) => binding.attributeId === f.attributeId)
@@ -227,24 +250,61 @@ export function FolderPanel({
           onChange={(value) => edit(f.attributeId, value === null ? null : value === 'true')}
         />
       )
-    if (f.type === 'enum')
+    if (f.type === 'enum') {
+      const options = binding?.options ?? [],
+        draft = (newOptions[f.attributeId] ?? '').trim(),
+        known = options.includes(draft),
+        full = options.length >= 100
       return (
-        <Select
-          key={f.attributeId}
-          label={f.key}
-          placeholder={tr('未填')}
-          clearable
-          value={typeof value === 'string' ? value : null}
-          data={[
-            ...(binding?.options ?? []).map((option) => ({ value: option, label: option })),
-            ...(typeof value === 'string' && !binding?.options?.includes(value)
-              ? [{ value, label: value, disabled: true }]
-              : []),
-          ]}
-          disabled={disabled || !binding?.options?.length}
-          onChange={(value) => edit(f.attributeId, value)}
-        />
+        <Stack key={f.attributeId} gap={6}>
+          <Select
+            label={f.key}
+            placeholder={tr('未填')}
+            clearable
+            value={typeof value === 'string' ? value : null}
+            data={[
+              ...options.map((option) => ({ value: option, label: option })),
+              ...(typeof value === 'string' && !options.includes(value)
+                ? [{ value, label: value, disabled: true }]
+                : []),
+            ]}
+            disabled={disabled || !options.length}
+            onChange={(value) => edit(f.attributeId, value)}
+          />
+          {binding && (
+            <Group gap="xs" wrap="nowrap" align="flex-end">
+              <TextInput
+                flex={1}
+                size="xs"
+                aria-label={tr('新增選項') + ' ' + f.key}
+                placeholder={tr('輸入新選項，所有資料夾共用')}
+                maxLength={100}
+                value={newOptions[f.attributeId] ?? ''}
+                disabled={disabled || busy}
+                onChange={(event) => {
+                  const text = event.currentTarget.value
+                  setNewOptions((v) => ({ ...v, [f.attributeId]: text }))
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    void addOption(f.attributeId, draft)
+                  }
+                }}
+              />
+              <Button
+                size="xs"
+                variant="default"
+                disabled={disabled || busy || !draft || (full && !known)}
+                onClick={() => void addOption(f.attributeId, draft)}
+              >
+                {known ? tr('選用') : tr('新增選項')}
+              </Button>
+            </Group>
+          )}
+        </Stack>
       )
+    }
     if (f.type === 'url' || f.type === 'date')
       return (
         <TextInput

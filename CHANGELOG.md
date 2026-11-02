@@ -16,6 +16,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Folder settings: a choice (single-select) field now has an "Add option" box under its dropdown, so a new option no longer needs a trip to the block editor. The option is saved to the project (shared by every folder) and selected for this folder; the folder's own value still needs the usual save.
+- UI tests no longer stall on native Windows message boxes (e.g. "discard unsaved changes?"): the test launcher answers them automatically; a test that checks a prompt installs its own stub.
 - Docs: end-user guide (English and Traditional Chinese), portable data format reference, architecture diagram, English contributor overview, and a superseded-decisions index in `DECISIONS.md`; `WORK_ITEMS.md` refreshed. The pending-UI test now waits for the back-to-top button to disappear instead of racing React 19's update.
 - Merged Dependabot updates (React 19, Electron 45, `@types/node` 26, `tsx`, GitHub Actions) were checked: after importing a settings package the page reload was blocked by a native "discard unsaved changes?" dialog, because React 19 no longer applies a state update made after an `await` before a timer callback runs. The import now commits the state first (`flushSync`) and then reloads.
 - UI tests no longer pop windows over your work: in test mode (`MEDIA_VIEWER_TEST_DATA`) the app window is fully transparent, click-through, not activated and not in the taskbar, yet still rendered normally. Set `MEDIA_VIEWER_TEST_VISIBLE=1` to watch a test run.
