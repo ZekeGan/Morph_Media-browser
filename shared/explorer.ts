@@ -226,6 +226,7 @@ export type ExplorerRequest =
     }
   | { action: 'banner'; rowId: string; revision: number; assetId: string }
   | { action: 'cellImage'; rowId: string; revision: number; cellId: string; assetId: string | null }
+  | { action: 'deleteImage'; rowId: string; revision: number; assetId: string }
   | {
       action: 'bindTarget'
       rowId: string
