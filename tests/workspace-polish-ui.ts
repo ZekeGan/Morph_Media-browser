@@ -369,6 +369,8 @@ try {
         ?.title.includes('Folder-139')
     )
     await resize(800, 700)
+    // At this width the open right panel becomes an overlay with a scrim over the toolbar.
+    if (await button('關閉資料夾內容').isVisible()) await button('關閉資料夾內容').click()
     await picker.click()
     await picker.fill('Same-name')
     await page.getByRole('option').first().waitFor()
