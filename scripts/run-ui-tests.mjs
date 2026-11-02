@@ -1,9 +1,9 @@
-// Runs Electron UI tests (tests/*-ui.ts) one after another against the current build (`pnpm build` first).
+// Runs Electron UI tests (tests/*-ui.ts) one after another against out/ (rebuilt automatically when missing or older than the sources).
 //   node scripts/run-ui-tests.mjs                 every UI test (~12 min)
 //   node scripts/run-ui-tests.mjs --smoke         the fast core set (~1-2 min)
 //   node scripts/run-ui-tests.mjs --changed       tests mapped from files changed vs origin/main (+ working tree)
 //   node scripts/run-ui-tests.mjs video media     tests whose file name contains any of the words
-import { existsSync, readdirSync, rmSync } from 'node:fs'
+import { existsSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
@@ -73,6 +73,37 @@ function stopStrayElectron() {
   })
 }
 stopStrayElectron()
+
+// The tests launch `electron .` against out/, so a build older than its sources shows the old UI. Rebuild first when
+// out/ is missing or any source/config file is newer than the build output.
+function newestMtime(path) {
+  if (!existsSync(path)) return 0
+  const stat = statSync(path)
+  if (!stat.isDirectory()) return stat.mtimeMs
+  return readdirSync(path).reduce(
+    (latest, name) => Math.max(latest, newestMtime(join(path, name))),
+    0
+  )
+}
+const buildInputs = [
+  'src',
+  'shared',
+  'electron',
+  'electron.vite.config.ts',
+  'package.json',
+  'tsconfig.json',
+]
+const builtAt = newestMtime('out/main') && newestMtime('out/renderer') ? newestMtime('out') : 0
+if (!builtAt || buildInputs.some((path) => newestMtime(path) > builtAt)) {
+  console.log(
+    `Build is ${builtAt ? 'older than the sources' : 'missing'}; running pnpm build first.`
+  )
+  if (spawnSync('pnpm', ['build'], { stdio: 'inherit', shell: true }).status !== 0) {
+    console.log('pnpm build failed; UI tests not run.')
+    process.exit(1)
+  }
+}
+console.log('Build time:', new Date(newestMtime('out')).toLocaleString())
 
 const args = process.argv.slice(2)
 let chosen

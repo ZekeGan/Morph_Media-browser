@@ -16,6 +16,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- UI test runner (`pnpm test:ui:*`, `test:workspace`) now guarantees a current build: it prints the `out/` build time and runs `pnpm build` first when `out/` is missing or older than `src/`, `shared/`, `electron/` or the build config, so a stale build can no longer show old UI.
+- Packaging: electron-builder now ships only the app's five UI locales (`electronLanguages`), dropping unused Chromium language packs, and renderer-only libraries (bundled by Vite already) moved to `devDependencies` so they are no longer copied into `app.asar` a second time (`app.asar` 47 MB → 4 MB; unpacked app 402 MB → 316 MB). The app's own translations are unaffected.
 - Game folder panel: the field table's columns (field / source) can be resized by dragging the header separators; widths are remembered on this computer.
 - Watching UI tests (`MEDIA_VIEWER_TEST_VISIBLE=1`) no longer takes over your screen: the test window is half transparent, click-through and never activated, so the window you are using keeps the focus.
 - Fixed thumbnails and video/audio not loading when running `pnpm dev` (React 19 StrictMode re-attaches the same element after its `src` was cleared on detach): the gallery image, video and audio refs now restore the source. Packaged and production builds were not affected.
