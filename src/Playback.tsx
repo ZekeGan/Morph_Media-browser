@@ -60,13 +60,13 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   const focus = useRef<HTMLElement | null>(null),
     itemsRef = useRef(items),
     currentRef = useRef(current),
-    pickAnchor = useRef<number>()
+    pickAnchor = useRef<number | undefined>(undefined)
   itemsRef.current = items
   currentRef.current = current
   const body = useRef<HTMLDivElement>(null),
     sequence = useRef(0),
-    drag = useRef<{ x: number; y: number; left: number; top: number }>(),
-    dragged = useRef<string>()
+    drag = useRef<{ x: number; y: number; left: number; top: number } | undefined>(undefined),
+    dragged = useRef<string | undefined>(undefined)
   useEffect(() => {
     const resize = () => setPosition((value) => (value ? constrain(value.x, value.y) : value))
     window.addEventListener('resize', resize)

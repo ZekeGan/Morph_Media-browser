@@ -97,9 +97,9 @@ export function VideoViewer({
     wantsPlayback = useRef(initialFileId ? true : autoplay),
     pendingStart = useRef(false)
 
-  const hideTimer = useRef<ReturnType<typeof setTimeout>>(),
-    clickTimer = useRef<ReturnType<typeof setTimeout>>(),
-    nextRef = useRef<UpNext>()
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined),
+    clickTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined),
+    nextRef = useRef<UpNext | undefined>(undefined)
 
   const windowVisible = useRef(true)
 
@@ -107,7 +107,7 @@ export function VideoViewer({
     audioLive = useRef(audio),
     speed = useRef(rate),
     filesLive = useRef(videos),
-    currentFile = useRef<string>()
+    currentFile = useRef<string | undefined>(undefined)
 
   const file = videos.find((entry) => entry.id === fileId) ?? videos[0],
     index = videos.findIndex((entry) => entry.id === file?.id)

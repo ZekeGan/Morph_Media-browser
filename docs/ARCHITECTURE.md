@@ -2,7 +2,13 @@
 
 依目前程式整理；版本與依賴查 package.json。此頁只持有模組責任，功能規格由 [任務索引](README.md) 導向。舊 Next.js／View／Cell／DataType／JsonStorage 原型不是目標資料模型。
 
+## 名稱與識別字
+
+產品名稱是 **M:orph**（副標題 Media Browser）；套件名稱 `morph`、安裝檔名 `Morph`。為了相容既有資料，下列識別字**沿用舊名稱，不隨產品改名**：資料夾內的隱藏目錄 `.media-viewer`、記錄與設定的 `kind`（`media-viewer.folder`、`media-viewer.project`、`media-viewer.settings`）、使用者資料資料夾 `%APPDATA%\media-viewer`、拖放資料類型 `application/x-media-viewer-*`。這些是資料格式的一部分，更動需要遷移（見 [儲存安全](STORAGE_OPTIONS.md)）。
+
 ## 資料流與邊界
+
+![資料流與行程邊界：資料夾與專案設定成為可攜記錄，經專案版面顯示為卡片，另產生可重建的搜尋索引；下方是 renderer、preload、main 三層。](architecture.svg)
 
 `src/main.tsx → PlaybackProvider → App → DesktopShell / BrowseWorkspace → window.media / explorer / desktop → preload → main → Library / Explorer / WorkspaceStore`
 

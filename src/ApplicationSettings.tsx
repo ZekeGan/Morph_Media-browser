@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Alert, Button, Group, Modal, Select, Stack, Switch, Tabs, Text } from '@mantine/core'
 import { localeOptions, type LocaleId } from '../shared/locales'
 import { themes, useAppTheme } from './themes/ThemeProvider'
+import { flushSync } from 'react-dom'
 import { Icon } from './icons'
 
 export function ApplicationSettings({
@@ -115,9 +116,13 @@ export function ApplicationSettings({
         token: importPreview.token,
         mode: importMode,
       })
-      setImportPreview(undefined)
-      onDirty(false)
-      setTimeout(() => window.location.reload(), 0)
+      // The page is reloaded next; the unsaved-changes guard must already see "clean", so the state is committed first
+      // (React 19 no longer applies updates made after an await before a timer callback runs).
+      flushSync(() => {
+        setImportPreview(undefined)
+        onDirty(false)
+      })
+      window.location.reload()
     } catch (reason) {
       setError(String(reason))
       setSaving(false)

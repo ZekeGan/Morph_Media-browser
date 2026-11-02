@@ -25,7 +25,7 @@ export function RightPanel({
   onResizeEnd: (event: PointerEvent<HTMLDivElement>) => void
   header: ReactNode
   tabs?: ReactNode
-  bodyRef: RefObject<HTMLDivElement>
+  bodyRef: RefObject<HTMLDivElement | null>
   footer?: ReactNode
   children: ReactNode
 }) {

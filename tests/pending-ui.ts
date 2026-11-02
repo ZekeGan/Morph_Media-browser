@@ -132,7 +132,7 @@ try {
   await button('返回頂部').waitFor()
   await button('返回頂部').click()
   await page.waitForFunction(() => document.querySelector('.folder-panel-body')?.scrollTop === 0)
-  assert.equal(await button('返回頂部').count(), 0)
+  await button('返回頂部').waitFor({ state: 'detached' })
   await body.evaluate((element) => element.querySelector('#controlled-scroll-content')?.remove())
   const toolbar = page.locator('.workspace-toolbar'),
     mode = toolbar.locator('.center-mode'),

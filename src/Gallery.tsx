@@ -286,10 +286,10 @@ export function Gallery({
     ratios = useRef(new Map<string, number>()),
     frame = useRef(0),
     ratioFrame = useRef(0),
-    anchor = useRef<{ index: number; y: number; scrollTop: number }>(),
-    focusNext = useRef<number>(),
-    modeAnchor = useRef<{ index: number; origin: number }>(),
-    pickAnchor = useRef<number>()
+    anchor = useRef<{ index: number; y: number; scrollTop: number } | undefined>(undefined),
+    focusNext = useRef<number | undefined>(undefined),
+    modeAnchor = useRef<{ index: number; origin: number } | undefined>(undefined),
+    pickAnchor = useRef<number | undefined>(undefined)
   const images = useMemo(
       () => entries.filter((entry) => (mixed ? entry.kind !== 'folder' : entry.kind === 'image')),
       [entries, mixed]

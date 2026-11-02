@@ -32,9 +32,9 @@ type Props = {
   // Passed in on purpose: a bare `open` would silently resolve to window.open.
   open: (id: string, fromHistory?: number) => Promise<void>
   openConfig: (id: string, tab?: string) => void
-  panelBody: React.RefObject<HTMLDivElement>
+  panelBody: React.RefObject<HTMLDivElement | null>
   panelOpen: boolean
-  panelSlot: React.RefObject<HTMLDivElement>
+  panelSlot: React.RefObject<HTMLDivElement | null>
   project: Project
   ready: boolean
   resize: { current?: { id: string; start: number; width: number } }

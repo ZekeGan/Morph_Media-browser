@@ -12,8 +12,8 @@ export const videoTime = (value: number) => {
   return (h ? h + ':' + String(m).padStart(2, '0') : String(m)) + ':' + String(s).padStart(2, '0')
 }
 interface Props {
-  controls: RefObject<HTMLDivElement>
-  stage: RefObject<HTMLDivElement>
+  controls: RefObject<HTMLDivElement | null>
+  stage: RefObject<HTMLDivElement | null>
   panelHeight: number
   panelWidth: number
   subtitleSettings: ReactNode

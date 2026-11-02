@@ -60,7 +60,7 @@ export default function Tree({
   const canvas = useRef<HTMLDivElement>(null),
     [initialView, setInitialView] = useState(viewport),
     [flow, setFlow] = useState<ReactFlowInstance>(),
-    lastFocus = useRef<string>()
+    lastFocus = useRef<string | undefined>(undefined)
   const { nodes, edges } = useMemo(() => {
     const graph = new dagre.graphlib.Graph()
         .setGraph({ rankdir: 'LR', ranksep: 80, nodesep: 22 })

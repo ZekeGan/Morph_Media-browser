@@ -13,7 +13,7 @@ export function useVideoAudio() {
   const current = useRef(value),
     mounted = useRef(false),
     blocked = useRef(false),
-    timer = useRef<ReturnType<typeof setTimeout>>()
+    timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const persist = () => {
     timer.current = undefined

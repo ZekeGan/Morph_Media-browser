@@ -144,8 +144,8 @@ export function BrowseWorkspace({
     [, renderHistory] = useState(0)
   const scroll = useRef<HTMLDivElement>(null),
     state = useRef(browse),
-    resize = useRef<{ id: string; start: number; width: number }>(),
-    timer = useRef<ReturnType<typeof setTimeout>>()
+    resize = useRef<{ id: string; start: number; width: number } | undefined>(undefined),
+    timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const all = structure.length ? structure : rows,
     rootRow = all.find((r) => pathKey(r.path) === pathKey(root)),
     detail = all.find((r) => r.rowId === selected),
@@ -368,7 +368,7 @@ export function BrowseWorkspace({
     persist({ ...state.current, detailId: id })
   }
   // Wait out a possible double click first: entering a folder must not race with a preview of it.
-  const previewTimer = useRef<ReturnType<typeof setTimeout>>()
+  const previewTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   useEffect(() => {
     clearTimeout(previewTimer.current)
     if (highlight && browse.panelVisible !== false)

@@ -2,8 +2,24 @@
 
 The application version is independent of portable record `schemaVersion`.
 
+## Version guide
+
+| Versions | Theme |
+| --- | --- |
+| 0.38 | First packaged Windows build (installer and portable) |
+| 0.36 – 0.37 | M:orph identity, mark and icon; GPL-3.0 licence and name policy; five-language README; code split into modules; release tidy-up |
+| 0.35 | Component styles: weight, italic, borders, corners, presets, tag and choice colours |
+| 0.32 – 0.34 | Faster folder listing, tag "+N", per-game button hiding, search through fallback fields, help tooltips, paste-only source import |
+| 0.26 – 0.31 | Remembered browse settings, fallback fields and actions, E-Hentai / ExHentai tag namespaces, scrollable cells, n-th image cell |
+| 0.22 – 0.25 | Blurred cover fit, launch-game cell, single-click preview, shortcut (Locale Emulator) actions |
+| 0.20 – 0.21 | Japanese visual-novel engine detection, video failure help, UI audit fixes |
+
 ## Unreleased
 
+- Docs: end-user guide (English and Traditional Chinese), portable data format reference, architecture diagram, English contributor overview, and a superseded-decisions index in `DECISIONS.md`; `WORK_ITEMS.md` refreshed. The pending-UI test now waits for the back-to-top button to disappear instead of racing React 19's update.
+- Merged Dependabot updates (React 19, Electron 45, `@types/node` 26, `tsx`, GitHub Actions) were checked: after importing a settings package the page reload was blocked by a native "discard unsaved changes?" dialog, because React 19 no longer applies a state update made after an `await` before a timer callback runs. The import now commits the state first (`flushSync`) and then reloads.
+- UI tests no longer pop windows over your work: in test mode (`MEDIA_VIEWER_TEST_DATA`) the app window is fully transparent, click-through, not activated and not in the taskbar, yet still rendered normally. Set `MEDIA_VIEWER_TEST_VISIBLE=1` to watch a test run.
+- `pnpm clean:test` and the test runner skip folders that are still in use instead of failing.
 - README (all languages) now says the project is close to its first release instead of being in an early development stage; `SECURITY.md` no longer mentions an early-development state.
 - Workflow: changes are collected here and the version number is only raised when a release is made. A shared git hook (`.githooks/pre-commit`, enabled by `pnpm install`) runs the type check, the format check and the link check of the Markdown being committed; slow tests stay manual.
 - The UI test runner first stops Electron processes left over from an interrupted run (only those started from this project's `node_modules`). CI also runs the UI smoke tests in a separate, non-blocking job and uploads the screenshots on failure.

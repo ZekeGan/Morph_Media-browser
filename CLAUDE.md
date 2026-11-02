@@ -68,3 +68,4 @@ Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC �
 
 - 實質改變才更新主規格；實作差距／待查收只寫 `WORK_ITEMS.md`，未決選項只寫 `OPEN_DECISIONS.md`，取捨寫 `DECISIONS.md`。清除過時狀態與失效入口，不另產報告。
 - 回報：變更、實際檢查、限制；交接只留下一步需要的狀態、入口、驗證與阻礙。
+- 修改本檔的流程規則時，一併檢查 `docs/WORKFLOW_PROMPT.md`（本檔的通用版，供其他專案使用）是否要同步。

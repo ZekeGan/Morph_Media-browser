@@ -77,14 +77,17 @@ export function Reader({
   }, [error])
   const select = useRef<HTMLInputElement>(null),
     viewport = useRef<HTMLDivElement>(null),
-    drag = useRef<{
-      x: number
-      y: number
-      left: number
-      top: number
-      pan: boolean
-      moved: boolean
-    }>()
+    drag = useRef<
+      | {
+          x: number
+          y: number
+          left: number
+          top: number
+          pan: boolean
+          moved: boolean
+        }
+      | undefined
+    >(undefined)
   const cache = useRef(new Map<string, CachedImage>()),
     sequence = useRef(0),
     activeRef = useRef(''),
@@ -178,7 +181,9 @@ export function Reader({
       viewport.current.scrollTop = 0
     }
   }, [activeKey, rtl])
-  const anchor = useRef<{ x: number; y: number; ratioX: number; ratioY: number }>()
+  const anchor = useRef<{ x: number; y: number; ratioX: number; ratioY: number } | undefined>(
+    undefined
+  )
   const latest = useRef({ zoom, geometry, surface, box, active })
   latest.current = { zoom, geometry, surface, box, active }
   activeRef.current = activeKey

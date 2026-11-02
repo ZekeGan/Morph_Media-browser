@@ -140,5 +140,9 @@ console.log(
 if (!failed.length && existsSync(outputDir))
   for (const entry of readdirSync(outputDir))
     if (!existing.has(entry) && entry !== 'fixtures')
-      rmSync(join(outputDir, entry), { recursive: true, force: true })
+      try {
+        rmSync(join(outputDir, entry), { recursive: true, force: true })
+      } catch {
+        // A folder still held by a process is left for the next `pnpm clean:test`.
+      }
 process.exit(failed.length ? 1 : 0)

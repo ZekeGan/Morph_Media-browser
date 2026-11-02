@@ -96,7 +96,7 @@
 
 - **欄位清單顯示預覽資料（0.33.0）**：編輯器左側欄位清單的每個欄位，在欄位名稱下以一行顯示「使用真實資料預覽」所選資料夾目前的值（過長以「…」截斷，滑過顯示完整內容；沒有值顯示「（此筆沒有值）」），不必放進組件才知道內容。
 
-## 組件樣式（2026-11-02，0.35.0）
+## 組件樣式（2026-11-02 新增）
 
 - `style` 的選用欄位（缺省就是原樣）：`fontSize`（特小／小／中／大／特大 = 0.72／0.85／1／1.4／1.8 倍）、`weight`（細／一般／粗）、`italic`／`underline`／`strike`、`align`／`valign`、`lineHeight`（緊／鬆）、`letterSpacing`（加寬）、`padding`（緊湊／寬鬆）、`radius`（小／大）、`borderColor`＋`borderWidth`（細／粗，兩者並存才顯示）、`opacity`（柔和 0.7／淡 0.45）。不提供字型家族、陰影、漸層與自由 CSS，以維持三主題一致。
 - 標籤組件：`tagColors: 'namespace'` 依分類上色（female、male、language、parody、character、artist、group、cosplayer、mixed、other、reclass，其餘灰色）；`tagPrefix: false` 隱藏分類前綴。單選欄位：`optionColors`（選項→十六進位色）供「狀態徽章」使用；移除選項時一併移除其顏色。

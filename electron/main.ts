@@ -216,6 +216,16 @@ async function dispatch(request: Request): Promise<Response> {
   }
   return { snapshot: library.snapshot(), ...extra }
 }
+// Automated UI tests run the real app. Unless MEDIA_VIEWER_TEST_VISIBLE=1 their window stays out of the way:
+// fully transparent, click-through, never activated and not in the taskbar. It is still a normal visible window to
+// Chromium, so rendering and screenshots keep their normal speed (an off-screen window was ten times slower). Real use and `pnpm dev` are unaffected.
+const quietTest =
+  !!process.env.MEDIA_VIEWER_TEST_DATA && process.env.MEDIA_VIEWER_TEST_VISIBLE !== '1'
+if (quietTest) {
+  app.commandLine.appendSwitch('disable-features', 'CalculateNativeWinOcclusion')
+  app.commandLine.appendSwitch('disable-backgrounding-occluded-windows')
+  app.commandLine.appendSwitch('disable-renderer-backgrounding')
+}
 // The product is called M:orph now, but its data stays in the original folder so no settings or index are lost.
 if (process.env.MEDIA_VIEWER_TEST_DATA)
   app.setPath('userData', path.resolve(process.env.MEDIA_VIEWER_TEST_DATA))
@@ -495,6 +505,7 @@ else {
         frame: false,
         backgroundColor: '#202124',
         ...(existsSync(appIcon) ? { icon: appIcon } : {}),
+        ...(quietTest ? { opacity: 0, skipTaskbar: true } : {}),
         show: false,
         webPreferences: {
           preload: path.join(directory, '../preload/preload.cjs'),
@@ -502,6 +513,7 @@ else {
           nodeIntegration: false,
           sandbox: true,
           plugins: true,
+          ...(quietTest ? { backgroundThrottling: false } : {}),
         },
       })
       win.setMenu(null)
@@ -588,7 +600,11 @@ else {
           if (win && !win.isDestroyed()) win.webContents.reload()
         }, 300)
       })
-      win.once('ready-to-show', () => win?.show())
+      win.once('ready-to-show', () => {
+        if (!quietTest) return win?.show()
+        win?.setIgnoreMouseEvents(true)
+        win?.showInactive()
+      })
       await win.loadURL(devUrl ?? 'app://ui/index.html')
     })
     .catch((error) => {

@@ -35,6 +35,8 @@
 
 產品邊界見 [PRODUCT](PRODUCT.md)，找畫面可用 [畫面索引](UI_SCREEN_CATALOG.md)；兩者按需讀。音樂播放器等排程／未決細節見 [OPEN_DECISIONS](OPEN_DECISIONS.md)。
 
+使用者文件：[使用指南](USER_GUIDE.zh-TW.md)（[English](USER_GUIDE.md)）；資料格式：[DATA_FORMAT](DATA_FORMAT.md)；貢獻者英文概覽：[OVERVIEW](OVERVIEW.md)。
+
 ## 維護分工
 
 - 穩定執行／安全規則只在 CLAUDE；模組責任只在 ARCHITECTURE；命令、測試定位與文件檢查只在 IMPLEMENTATION。

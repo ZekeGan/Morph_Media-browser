@@ -9,7 +9,11 @@ let removed = 0
 if (existsSync(directory))
   for (const entry of readdirSync(directory))
     if (entry !== 'fixtures') {
-      rmSync(join(directory, entry), { recursive: true, force: true })
-      removed++
+      try {
+        rmSync(join(directory, entry), { recursive: true, force: true })
+        removed++
+      } catch {
+        console.log(`Could not remove ${entry} (still in use?)`)
+      }
     }
 console.log(`Removed ${removed} entries from ${directory} (fixtures kept).`)
