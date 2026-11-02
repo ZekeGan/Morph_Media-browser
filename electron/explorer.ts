@@ -633,6 +633,32 @@ export class Explorer {
         await saveFolder(row.path, record, req.revision)
         break
       }
+      case 'deleteImage': {
+        // One record write drops the asset and every reference to it; the file goes only after that write succeeds.
+        const { row, record } = await this.record(req.rowId, req.revision),
+          asset = record.assets.find((a) => a.assetId === req.assetId)
+        if (typeof req.assetId !== 'string' || !asset) throw new Error('圖片不存在')
+        const file = path.join(row.path, DATA_DIR, asset.relativePath)
+        await safePath(row.path, file)
+        record.assets = record.assets.filter((a) => a.assetId !== req.assetId)
+        const cellImages = record.details?.cellImages
+        if (cellImages)
+          for (const [key, id] of Object.entries(cellImages))
+            if (id === req.assetId) delete cellImages[key]
+        if (record.details?.bannerAssetId === req.assetId) delete record.details.bannerAssetId
+        if (record.details) validateDetails(record.details)
+        await saveFolder(row.path, record, req.revision)
+        // Only a regular file inside this folder's own assets directory that no other entry shares.
+        if (!record.assets.some((a) => a.relativePath === asset.relativePath)) {
+          try {
+            await safePath(row.path, file)
+            if ((await fs.lstat(file)).isFile()) await fs.unlink(file)
+          } catch {
+            // The record is already consistent; a leftover or missing file is harmless.
+          }
+        }
+        break
+      }
       case 'imageUrlPreview':
         return { imagePreview: await this.imageUrlPreview(req.url) }
       case 'imageUrlApply':

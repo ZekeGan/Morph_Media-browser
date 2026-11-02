@@ -154,6 +154,31 @@ export function FolderPanel({
     ).values(),
   ]
   const assets = row.record?.assets ?? []
+  // Confirm first, naming every place that shows the picture; the file and all references go in one write.
+  const deleteImage = (assetId: string, name: string) => {
+    const details = row.record?.details,
+      used = [
+        ...imageCells.flatMap((cell, index) =>
+          details?.cellImages?.[cell.attributeId ?? cell.cellId] === assetId
+            ? [tr('圖片') + (index + 1)]
+            : []
+        ),
+        ...(details?.bannerAssetId === assetId ? [tr('遊戲封面')] : []),
+      ]
+    if (
+      !window.confirm(
+        tr('刪除已保存的圖片「{name}」？').replace('{name}', name) +
+          (used.length
+            ? '\n' +
+              tr('正在使用：{places}，刪除後會一併清除。').replace('{places}', used.join('、'))
+            : '') +
+          '\n' +
+          tr('只刪除此資料夾內保存的副本，原始檔案不受影響。')
+      )
+    )
+      return
+    void run({ action: 'deleteImage', rowId: row.rowId, revision: row.record!.revision, assetId })
+  }
   const original = useMemo(
     () =>
       Object.fromEntries(
@@ -639,6 +664,16 @@ export function FolderPanel({
                         alt={a.originalName}
                       />
                       <figcaption>{a.originalName}</figcaption>
+                      <Button
+                        variant="subtle"
+                        color="red"
+                        size="compact-xs"
+                        aria-label={tr('刪除圖片 ') + a.originalName}
+                        disabled={disabled || fieldDirty}
+                        onClick={() => deleteImage(a.assetId, a.originalName)}
+                      >
+                        {tr('刪除圖片')}
+                      </Button>
                     </figure>
                   ))}
                 </div>

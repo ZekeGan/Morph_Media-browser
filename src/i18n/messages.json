@@ -6100,5 +6100,35 @@
     "zh-CN": "输入新选项，所有文件夹共用",
     "en": "Type a new option (shared by all folders)",
     "es": "Escribe una opción nueva (compartida por todas las carpetas)"
+  },
+  "刪除圖片": {
+    "zh-CN": "删除图片",
+    "en": "Delete image",
+    "ja": "画像を削除",
+    "es": "Eliminar imagen"
+  },
+  "刪除圖片 ": {
+    "zh-CN": "删除图片 ",
+    "en": "Delete image ",
+    "ja": "画像を削除 ",
+    "es": "Eliminar imagen "
+  },
+  "刪除已保存的圖片「{name}」？": {
+    "zh-CN": "删除已保存的图片“{name}”？",
+    "en": "Delete the saved image \"{name}\"?",
+    "ja": "保存済みの画像「{name}」を削除しますか？",
+    "es": "¿Eliminar la imagen guardada «{name}»?"
+  },
+  "正在使用：{places}，刪除後會一併清除。": {
+    "zh-CN": "正在使用：{places}，删除后会一并清除。",
+    "en": "In use by: {places}. These will be cleared too.",
+    "ja": "使用中：{places}。削除すると設定も解除されます。",
+    "es": "En uso en: {places}. También se quitarán."
+  },
+  "只刪除此資料夾內保存的副本，原始檔案不受影響。": {
+    "zh-CN": "只删除此文件夹内保存的副本，原始文件不受影响。",
+    "en": "Only the copy saved in this folder is deleted; original files are untouched.",
+    "ja": "このフォルダー内に保存したコピーのみ削除され、元のファイルには影響しません。",
+    "es": "Solo se elimina la copia guardada en esta carpeta; los archivos originales no se tocan."
   }
 }
