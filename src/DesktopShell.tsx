@@ -36,6 +36,7 @@ interface Props {
   onLink: () => void
   onProblems: () => void
   onSettings: () => void
+  onRefresh: () => void
   onProjectSettings: (projectId: string) => void
   onOverlay: (value: boolean) => void
   onDirty: (value: boolean) => void
@@ -534,6 +535,20 @@ export function DesktopShell(props: Props) {
               {playback.count > 99 ? '99+' : playback.count}
             </span>
           </span>
+        )}
+        {selected && (
+          <Tooltip label={tr('重新整理')}>
+            <ActionIcon
+              className="global-refresh"
+              aria-label={tr('重新整理')}
+              variant="subtle"
+              color="gray"
+              disabled={props.busy}
+              onClick={props.onRefresh}
+            >
+              <Icon name="refresh" />
+            </ActionIcon>
+          </Tooltip>
         )}
         <Tooltip label={tr('應用程式設定')}>
           <ActionIcon

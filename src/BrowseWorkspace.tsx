@@ -667,7 +667,6 @@ export function BrowseWorkspace({
         )}
       <section className="center-pane" aria-label={tr('資料夾瀏覽區')}>
         <BrowseToolbar
-          act={act}
           boundariesOnly={boundariesOnly}
           browse={browse}
           busy={busy}

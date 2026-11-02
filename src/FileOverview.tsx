@@ -2,19 +2,11 @@ import { visibleFile } from '../shared/media'
 import { useFileVisibility } from './useFileVisibility'
 import { createPortal } from 'react-dom'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import {
-  Alert,
-  Button,
-  Group,
-  Loader,
-  SegmentedControl,
-  Select,
-  Text,
-  Tooltip,
-} from '@mantine/core'
+import { Alert, Group, Loader, SegmentedControl, Select, Text, Tooltip } from '@mantine/core'
 import type { FolderRow } from '../shared/model'
 import type { OverviewEntry } from '../shared/explorer'
 import { Icon } from './icons'
+import { useRefreshNonce } from './refresh'
 import { orderedFileFolders } from '../shared/browse'
 import { t as tr, useLocale } from './i18n'
 
@@ -63,7 +55,7 @@ export function FileOverview({
   const [entries, setEntries] = useState<OverviewEntry[]>([]),
     [notices, setNotices] = useState<string[]>([]),
     [loading, setLoading] = useState(false),
-    [reload, setReload] = useState(0),
+    reload = useRefreshNonce(),
     [filter, setFilter] = useState('all')
   const [view, setView] = useState({ top: 0, height: 500, width: 600 }),
     viewport = useRef<HTMLDivElement>(null)
@@ -255,14 +247,6 @@ export function FileOverview({
                 { value: 'other', label: tr('其他') },
               ]}
             />
-            <Button
-              size="xs"
-              variant="subtle"
-              disabled={loading || busy}
-              onClick={() => setReload((value) => value + 1)}
-            >
-              {tr('重新整理')}
-            </Button>
           </Group>,
           toolbarTarget
         )}

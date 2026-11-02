@@ -238,7 +238,10 @@ try {
   const recordBytes = await fs.readFile(folderFile(media))
   await fs.unlink(folderFile(media))
   try {
-    await button('重新整理').click()
+    // The top-bar refresh also rescans (which would recreate the record), so reload the overview by changing its scope.
+    const scope = page.getByRole('radiogroup', { name: '檔案總覽範圍' })
+    await scope.getByText('目前資料夾', { exact: true }).click()
+    await scope.getByText('包含子資料夾', { exact: true }).click()
     await page.locator('.file-overview-notices').waitFor()
     assert.equal(await page.getByText('此範圍沒有可顯示的檔案', { exact: true }).count(), 0)
     await assert.rejects(fs.access(folderFile(media)))

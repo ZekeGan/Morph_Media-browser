@@ -7,6 +7,7 @@ import './game-actions.css'
 import { cacheFolderStats } from './folderStats'
 import { t as tr, useLocale } from './i18n'
 import { Icon } from './icons'
+import { useRefreshNonce } from './refresh'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { ActionIcon, Button, Group, Menu, Tooltip } from '@mantine/core'
 import { Card } from './Card'
@@ -112,6 +113,7 @@ export function FolderContent({
   const [content, setContent] = useState<ContentResult>(),
     [error, setError] = useState(''),
     [reload, setReload] = useState(0),
+    refresh = useRefreshNonce(),
     [, setReader] = useState(false),
     [fileReader, setFileReader] = useState(false),
     [documentFile, setDocumentFile] = useState<ContentResult['entries'][number]>()
@@ -159,7 +161,7 @@ export function FolderContent({
     return () => {
       alive = false
     }
-  }, [row.rowId, row.path, project.mediaCategory, reload])
+  }, [row.rowId, row.path, project.mediaCategory, reload, refresh])
   useEffect(() => {
     setFileReader(false)
     setDocumentFile(undefined)
@@ -190,7 +192,6 @@ export function FolderContent({
         entries={visibleEntries}
         loading={!!content.nextCursor && !error}
         error={[error, ...new Set(content.notices)].filter(Boolean).join('\n')}
-        reload={() => setReload((value) => value + 1)}
         onChild={onChild}
         run={run}
         act={act}

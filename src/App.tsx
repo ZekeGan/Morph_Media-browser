@@ -26,6 +26,7 @@ import { usePlayback } from './Playback'
 import { ProjectSettings } from './ProjectSettings'
 import { ApplicationSettings } from './ApplicationSettings'
 import { DesktopShell } from './DesktopShell'
+import { RefreshContext } from './refresh'
 import { Toasts } from './Toasts'
 import { saveCardPreset, visibleCells } from '../shared/layouts'
 import { BrowseWorkspace } from './BrowseWorkspace'
@@ -113,6 +114,7 @@ export function App() {
   }, [notifyError])
   const [settingsOverlay, setSettingsOverlay] = useState(false)
   const [toolbarTarget, setToolbarTarget] = useState<HTMLDivElement | null>(null)
+  const [refreshNonce, setRefreshNonce] = useState(0)
   const [createOpen, setCreateOpen] = useState(false),
     [input, setInput] = useState<ProjectInput>({
       // Filled with the localized default when the dialog opens (the locale is not loaded yet at first render).
@@ -352,157 +354,164 @@ export function App() {
           ) : null
         }
       />
-      <DesktopShell
-        toolbarRef={setToolbarTarget}
-        projects={snapshot.projects}
-        rows={snapshot.rows}
-        selected={selected}
-        busy={busy}
-        dirty={unsaved}
-        onSelect={openProject}
-        onCreate={beginCreate}
-        onSettings={() => {
-          if (confirmLeave()) setSettingsOpen(true)
-        }}
-        onProjectSettings={(id) => {
-          if (confirmLeave()) {
-            const p = snapshot.projects.find((p) => p.projectId === id)?.project
-            if (p) setSettings(structuredClone(p))
+      <RefreshContext.Provider value={refreshNonce}>
+        <DesktopShell
+          toolbarRef={setToolbarTarget}
+          projects={snapshot.projects}
+          rows={snapshot.rows}
+          selected={selected}
+          busy={busy}
+          dirty={unsaved}
+          onSelect={openProject}
+          onCreate={beginCreate}
+          onSettings={() => {
+            if (confirmLeave()) setSettingsOpen(true)
+          }}
+          onRefresh={() => {
+            if (editor) return
+            setRefreshNonce((value) => value + 1)
+            void act({ action: 'scan' })
+          }}
+          onProjectSettings={(id) => {
+            if (confirmLeave()) {
+              const p = snapshot.projects.find((p) => p.projectId === id)?.project
+              if (p) setSettings(structuredClone(p))
+            }
+          }}
+          onLink={() => void beginLink()}
+          onProblems={() => setProblems(true)}
+          onOverlay={setShellOverlay}
+          onDirty={setShellDirty}
+          onSnapshot={setSnapshot}
+          status={
+            snapshot.progress.active
+              ? tr(
+                  '掃描 {0} 筆 · 已建 {1} · 問題 {2}',
+                  snapshot.progress.visited,
+                  snapshot.progress.created,
+                  snapshot.progress.errors
+                )
+              : busy
+                ? tr('處理中…')
+                : unsaved
+                  ? tr('尚未保存')
+                  : tr('就緒')
           }
-        }}
-        onLink={() => void beginLink()}
-        onProblems={() => setProblems(true)}
-        onOverlay={setShellOverlay}
-        onDirty={setShellDirty}
-        onSnapshot={setSnapshot}
-        status={
-          snapshot.progress.active
-            ? tr(
-                '掃描 {0} 筆 · 已建 {1} · 問題 {2}',
-                snapshot.progress.visited,
-                snapshot.progress.created,
-                snapshot.progress.errors
-              )
-            : busy
-              ? tr('處理中…')
-              : unsaved
-                ? tr('尚未保存')
-                : tr('就緒')
-        }
-        footer={
-          <>
-            {snapshot.legacyAvailable && (
-              <Button variant="subtle" size="xs" onClick={() => act({ action: 'legacyPreview' })}>
-                {tr('檢視舊資料匯入')}
-              </Button>
-            )}
-            <Button
-              color="red"
-              variant="subtle"
-              size="xs"
-              disabled={busy || dirty}
-              onClick={() => act({ action: 'cleanupAllPreview' })}
-            >
-              {tr('清理全部已連結資料')}
-            </Button>
-          </>
-        }
-        banner={null}
-      >
-        {editor && project ? (
-          <Editor
-            key={`${project.projectId}:${templateCategory ?? 'card'}`}
-            act={act}
-            presets={!templateCategory}
-            targetLabel={
-              templateCategory
-                ? tr(
-                    '{0}資訊版面',
-                    categories.find((c) => c.value === templateCategory)?.label ?? tr('媒體')
-                  )
-                : tr('卡片')
-            }
-            onDirty={setEditorDirty}
-            project={
-              templateCategory
-                ? { ...project, cells: contentCells(project, templateCategory) }
-                : { ...project, cells: visibleCells(project) }
-            }
-            rows={(snapshot.structure ?? snapshot.rows).filter(
-              (r) => r.projectId === selected && !r.readonly
-            )}
-            busy={busy}
-            save={saveEdited}
-            close={() => {
-              setEditor(false)
-              setTemplateCategory(undefined)
-            }}
-          />
-        ) : project && !linked?.error ? (
-          <BrowseWorkspace
-            toolbarTarget={toolbarTarget}
-            key={project.projectId}
-            project={project}
-            root={linked!.root}
-            rows={rows}
-            structure={(snapshot.structure ?? snapshot.rows).filter(
-              (r) => r.projectId === selected
-            )}
-            selected={detailsId}
-            onSelect={chooseDetail}
-            onClose={closeDetail}
-            busy={busy}
-            act={act}
-            run={explore}
-            onDirty={setDetailDirty}
-            onOverlay={setSettingsOverlay}
-            notify={notifyError}
-            edit={(category) => {
-              if (!detailDirty || window.confirm(tr('放棄欄位草稿後編輯版面？'))) {
-                setTemplateCategory(category)
-                setEditor(true)
-              }
-            }}
-          />
-        ) : (
-          <div className="empty">
-            <h1>{tr('專案暫不可用')}</h1>
-            <p className="path">{linked?.root}</p>
-            <p>{tr('資料夾可能已搬移、離線，或記錄需要復原。')}</p>
-            <Alert color="orange" mt="lg">
-              {linked?.error ?? tr('請選擇專案或重新連結。')}
-            </Alert>
-            <Group justify="center" mt="md">
-              <Button disabled={busy} onClick={beginLink}>
-                {tr('重新連結專案位置')}
-              </Button>
-              {linked && (
-                <>
-                  <Button
-                    color="orange"
-                    variant="light"
-                    disabled={busy}
-                    onClick={() =>
-                      window.confirm(
-                        tr('從有效備份恢復根記錄與專案設定？目前損壞檔會另外保留。')
-                      ) && act({ action: 'restoreProject', projectId: linked.projectId })
-                    }
-                  >
-                    {tr('從備份復原專案')}
-                  </Button>
-                  <Button
-                    variant="default"
-                    disabled={busy}
-                    onClick={() => act({ action: 'unlink', projectId: linked.projectId })}
-                  >
-                    {tr('取消失效連結（保留可攜檔）')}
-                  </Button>
-                </>
+          footer={
+            <>
+              {snapshot.legacyAvailable && (
+                <Button variant="subtle" size="xs" onClick={() => act({ action: 'legacyPreview' })}>
+                  {tr('檢視舊資料匯入')}
+                </Button>
               )}
-            </Group>
-          </div>
-        )}
-      </DesktopShell>
+              <Button
+                color="red"
+                variant="subtle"
+                size="xs"
+                disabled={busy || dirty}
+                onClick={() => act({ action: 'cleanupAllPreview' })}
+              >
+                {tr('清理全部已連結資料')}
+              </Button>
+            </>
+          }
+          banner={null}
+        >
+          {editor && project ? (
+            <Editor
+              key={`${project.projectId}:${templateCategory ?? 'card'}`}
+              act={act}
+              presets={!templateCategory}
+              targetLabel={
+                templateCategory
+                  ? tr(
+                      '{0}資訊版面',
+                      categories.find((c) => c.value === templateCategory)?.label ?? tr('媒體')
+                    )
+                  : tr('卡片')
+              }
+              onDirty={setEditorDirty}
+              project={
+                templateCategory
+                  ? { ...project, cells: contentCells(project, templateCategory) }
+                  : { ...project, cells: visibleCells(project) }
+              }
+              rows={(snapshot.structure ?? snapshot.rows).filter(
+                (r) => r.projectId === selected && !r.readonly
+              )}
+              busy={busy}
+              save={saveEdited}
+              close={() => {
+                setEditor(false)
+                setTemplateCategory(undefined)
+              }}
+            />
+          ) : project && !linked?.error ? (
+            <BrowseWorkspace
+              toolbarTarget={toolbarTarget}
+              key={project.projectId}
+              project={project}
+              root={linked!.root}
+              rows={rows}
+              structure={(snapshot.structure ?? snapshot.rows).filter(
+                (r) => r.projectId === selected
+              )}
+              selected={detailsId}
+              onSelect={chooseDetail}
+              onClose={closeDetail}
+              busy={busy}
+              act={act}
+              run={explore}
+              onDirty={setDetailDirty}
+              onOverlay={setSettingsOverlay}
+              notify={notifyError}
+              edit={(category) => {
+                if (!detailDirty || window.confirm(tr('放棄欄位草稿後編輯版面？'))) {
+                  setTemplateCategory(category)
+                  setEditor(true)
+                }
+              }}
+            />
+          ) : (
+            <div className="empty">
+              <h1>{tr('專案暫不可用')}</h1>
+              <p className="path">{linked?.root}</p>
+              <p>{tr('資料夾可能已搬移、離線，或記錄需要復原。')}</p>
+              <Alert color="orange" mt="lg">
+                {linked?.error ?? tr('請選擇專案或重新連結。')}
+              </Alert>
+              <Group justify="center" mt="md">
+                <Button disabled={busy} onClick={beginLink}>
+                  {tr('重新連結專案位置')}
+                </Button>
+                {linked && (
+                  <>
+                    <Button
+                      color="orange"
+                      variant="light"
+                      disabled={busy}
+                      onClick={() =>
+                        window.confirm(
+                          tr('從有效備份恢復根記錄與專案設定？目前損壞檔會另外保留。')
+                        ) && act({ action: 'restoreProject', projectId: linked.projectId })
+                      }
+                    >
+                      {tr('從備份復原專案')}
+                    </Button>
+                    <Button
+                      variant="default"
+                      disabled={busy}
+                      onClick={() => act({ action: 'unlink', projectId: linked.projectId })}
+                    >
+                      {tr('取消失效連結（保留可攜檔）')}
+                    </Button>
+                  </>
+                )}
+              </Group>
+            </div>
+          )}
+        </DesktopShell>
+      </RefreshContext.Provider>
       <Modal
         opened={createOpen}
         onClose={() => {
