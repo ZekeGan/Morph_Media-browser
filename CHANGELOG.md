@@ -16,6 +16,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Watching UI tests (`MEDIA_VIEWER_TEST_VISIBLE=1`) no longer takes over your screen: the test window is half transparent, click-through and never activated, so the window you are using keeps the focus.
 - Fixed thumbnails and video/audio not loading when running `pnpm dev` (React 19 StrictMode re-attaches the same element after its `src` was cleared on detach): the gallery image, video and audio refs now restore the source. Packaged and production builds were not affected.
 - Folder settings: a choice (single-select) field now has an "Add option" box under its dropdown, so a new option no longer needs a trip to the block editor. The option is saved to the project (shared by every folder) and selected for this folder; the folder's own value still needs the usual save.
 - UI tests no longer stall on native Windows message boxes (e.g. "discard unsaved changes?"): the test launcher answers them automatically; a test that checks a prompt installs its own stub.

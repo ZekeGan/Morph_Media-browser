@@ -221,7 +221,10 @@ async function dispatch(request: Request): Promise<Response> {
 // Chromium, so rendering and screenshots keep their normal speed (an off-screen window was ten times slower). Real use and `pnpm dev` are unaffected.
 const quietTest =
   !!process.env.MEDIA_VIEWER_TEST_DATA && process.env.MEDIA_VIEWER_TEST_VISIBLE !== '1'
-if (quietTest) {
+// MEDIA_VIEWER_TEST_VISIBLE=1 lets you watch: half transparent, click-through and never activated, so the window
+// you are working in keeps the focus and the clicks.
+const watchTest = !!process.env.MEDIA_VIEWER_TEST_DATA && !quietTest
+if (quietTest || watchTest) {
   app.commandLine.appendSwitch('disable-features', 'CalculateNativeWinOcclusion')
   app.commandLine.appendSwitch('disable-backgrounding-occluded-windows')
   app.commandLine.appendSwitch('disable-renderer-backgrounding')
@@ -505,7 +508,7 @@ else {
         frame: false,
         backgroundColor: '#202124',
         ...(existsSync(appIcon) ? { icon: appIcon } : {}),
-        ...(quietTest ? { opacity: 0, skipTaskbar: true } : {}),
+        ...(quietTest ? { opacity: 0, skipTaskbar: true } : watchTest ? { opacity: 0.6 } : {}),
         show: false,
         webPreferences: {
           preload: path.join(directory, '../preload/preload.cjs'),
@@ -513,7 +516,7 @@ else {
           nodeIntegration: false,
           sandbox: true,
           plugins: true,
-          ...(quietTest ? { backgroundThrottling: false } : {}),
+          ...(quietTest || watchTest ? { backgroundThrottling: false } : {}),
         },
       })
       win.setMenu(null)
@@ -601,7 +604,7 @@ else {
         }, 300)
       })
       win.once('ready-to-show', () => {
-        if (!quietTest) return win?.show()
+        if (!quietTest && !watchTest) return win?.show()
         win?.setIgnoreMouseEvents(true)
         win?.showInactive()
       })
