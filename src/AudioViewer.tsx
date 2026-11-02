@@ -106,6 +106,7 @@ export function AudioViewer({
       starting.current = false
     }
   }
+  const wantedUrl = useRef<string | undefined>(undefined)
   const bind = (current: HTMLAudioElement | null) => {
     const old = node.current
     if (old && old !== current) {
@@ -114,8 +115,12 @@ export function AudioViewer({
       old.load()
     }
     node.current = current
+    // StrictMode re-attaches the same node after its src was cleared above.
+    if (current && wantedUrl.current && !current.getAttribute('src'))
+      current.src = wantedUrl.current
   }
   const bindRef = useRef(bind)
+  wantedUrl.current = file.url
   // Keep a stable ref so ordinary state updates never detach the audio source.
   useEffect(() => {
     let alive = true,

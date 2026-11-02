@@ -107,7 +107,8 @@ export function VideoViewer({
     audioLive = useRef(audio),
     speed = useRef(rate),
     filesLive = useRef(videos),
-    currentFile = useRef<string | undefined>(undefined)
+    currentFile = useRef<string | undefined>(undefined),
+    wantedUrl = useRef<string | undefined>(undefined)
 
   const file = videos.find((entry) => entry.id === fileId) ?? videos[0],
     index = videos.findIndex((entry) => entry.id === file?.id)
@@ -117,6 +118,7 @@ export function VideoViewer({
   speed.current = rate
   filesLive.current = videos
   currentFile.current = file?.id
+  wantedUrl.current = file?.url
 
   const countdown = (value?: UpNext) => {
     nextRef.current = value
@@ -137,6 +139,8 @@ export function VideoViewer({
     if (previous && previous !== node) release(previous)
 
     if (node) {
+      // StrictMode detaches and re-attaches the same node after release() cleared its src.
+      if (wantedUrl.current && !node.getAttribute('src')) node.src = wantedUrl.current
       node.muted = true
       if (audioLive.current.ready) {
         node.volume = audioLive.current.volume

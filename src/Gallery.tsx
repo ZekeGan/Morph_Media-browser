@@ -77,11 +77,14 @@ const Tile = memo(
     const [error, setError] = useState(false),
       [fallback, setFallback] = useState(false),
       [visible, setVisible] = useState(false)
-    const image = useRef<HTMLImageElement | null>(null)
+    const image = useRef<HTMLImageElement | null>(null),
+      wanted = useRef<string | undefined>(undefined)
     const bindImage = useCallback((node: HTMLImageElement | null) => {
       const previous = image.current
       image.current = node
       if (previous && previous !== node) previous.removeAttribute('src')
+      // StrictMode detaches and re-attaches the same node; React does not set the cleared src again.
+      if (node && wanted.current && !node.getAttribute('src')) node.src = wanted.current
     }, [])
     const animated = entry.mime === 'image/gif',
       animate = animated && playing && visible,
@@ -91,6 +94,7 @@ const Tile = memo(
           : animate || fallback
             ? entry.url
             : (entry.thumb ?? entry.url)
+    wanted.current = entry.kind === 'image' ? source : entry.thumb
     useEffect(() => {
       if (!animated) return
       const element = image.current?.closest('.gallery-tile')
