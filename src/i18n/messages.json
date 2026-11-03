@@ -6940,5 +6940,17 @@
     "en": "Application version",
     "ja": "アプリのバージョン",
     "es": "Versión de la aplicación"
+  },
+  "自訂顏色": {
+    "zh-CN": "自定义颜色",
+    "en": "Custom colour",
+    "ja": "カスタムカラー",
+    "es": "Color personalizado"
+  },
+  "預覽": {
+    "zh-CN": "预览",
+    "en": "Preview",
+    "ja": "プレビュー",
+    "es": "Vista previa"
   }
 }

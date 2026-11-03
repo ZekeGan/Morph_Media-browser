@@ -15,3 +15,6 @@
 @media (max-width: 620px) { .game-action-editor { grid-template-columns: minmax(0, 1fr); } }
 
 .game-candidate { position:absolute; left:10px; top:10px; z-index:1; padding:4px 8px; background:var(--panel); color:var(--muted); border-radius:var(--radius); font-size:12px; }
+.action-custom-color { margin-top: 8px; font-size: 12px; color: var(--muted); }
+.action-custom-color summary { cursor: pointer; }
+.action-custom-color > :not(summary) { margin-top: 8px; }

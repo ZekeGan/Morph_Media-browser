@@ -3,7 +3,8 @@ import {
   ActionIcon,
   Alert,
   Button,
-  ColorInput,
+  ColorPicker,
+  ColorSwatch,
   Group,
   Select,
   Stack,
@@ -289,6 +290,20 @@ export function GameActionTargets({
   )
 }
 
+// Colours offered at a glance; anything else is one click away under "custom colour".
+const actionColors = [
+  '#168c77',
+  '#2f80ed',
+  '#7c5cff',
+  '#d6336c',
+  '#e5484d',
+  '#e8590c',
+  '#f59f00',
+  '#2f9e44',
+  '#1098ad',
+  '#868e96',
+]
+
 export function GameActionEditor({
   tasks,
   onChange,
@@ -427,12 +442,48 @@ export function GameActionEditor({
             }))}
             onChange={(value) => value && update({ kind: value as ActionKind })}
           />
-          <ColorInput
-            label={tr('顏色')}
-            value={current.color}
-            disabled={disabled}
-            onChange={(value) => /^#[0-9a-f]{6}$/i.test(value) && update({ color: value })}
-          />
+          <div>
+            <Text size="sm" fw={500} mb={6}>
+              {tr('顏色')}
+            </Text>
+            <Group gap={8} role="radiogroup" aria-label={tr('顏色')}>
+              {actionColors.map((color) => (
+                <ColorSwatch
+                  key={color}
+                  component="button"
+                  type="button"
+                  color={color}
+                  size={26}
+                  role="radio"
+                  aria-checked={current.color.toLowerCase() === color}
+                  aria-label={color}
+                  disabled={disabled}
+                  style={{ cursor: disabled ? 'default' : 'pointer', color: '#fff' }}
+                  onClick={() => update({ color })}
+                >
+                  {current.color.toLowerCase() === color && <Icon name="check" size={14} />}
+                </ColorSwatch>
+              ))}
+            </Group>
+            <details className="action-custom-color">
+              <summary>{tr('自訂顏色')}</summary>
+              <ColorPicker
+                format="hex"
+                fullWidth
+                size="sm"
+                value={current.color}
+                onChange={(value) => /^#[0-9a-f]{6}$/i.test(value) && update({ color: value })}
+              />
+            </details>
+          </div>
+          <div>
+            <Text size="xs" c="dimmed" mb={4}>
+              {tr('預覽')}
+            </Text>
+            <Button size="xs" style={{ background: current.color, color: '#fff' }} tabIndex={-1}>
+              {current.id === 'default-launch-game' ? tr(current.label) : current.label}
+            </Button>
+          </div>
           <Tooltip
             events={{ hover: true, focus: true, touch: false }}
             label={tr('保存版型後，在遊戲操作中指定此資料夾的目標。')}

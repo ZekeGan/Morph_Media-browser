@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Game toolbar editor: the button colour is picked from a row of ten ready-made swatches (the chosen one shows a tick), "custom colour" opens an inline picker instead of a drop-down that landed below the dialog, and a preview button shows the label in the chosen colour.
 - The version number is shown in the app: "v0.39.0" in the status bar and "M:orph 0.39.0" at the bottom of Application settings (read from package.json when the interface is built).
 - Problems and recovery: scan messages that only say a game folder is protected ("inside is not written to") are no longer counted as problems; they sit in a folded "Game folder protection notes" section with an explanation, so the status bar and the dialog only show things that need doing.
 - Motion: dialogs, menus and popovers share one short pop-in; sidebar group actions, row-info and column-hide buttons fade instead of popping; groups ease open and the chevron turns; the narrow-window scrim, status text and settings tabs fade in; entering a folder fades the list; reordering table columns slides them to their new place. All of it stops under reduced motion. The hidden-sidebar peek no longer nudges the page when it opens or closes.
