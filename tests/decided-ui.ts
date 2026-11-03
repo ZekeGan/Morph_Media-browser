@@ -130,7 +130,7 @@ try {
   await page.locator('.folder-panel').waitFor()
   await page.locator('.folder-panel-header strong').getByText('Library', { exact: true }).waitFor()
   await page.locator('.center-mode').getByText('卡片', { exact: true }).click()
-  await button('更改樣式').click()
+  await button('編輯版面').click()
   await page.locator('.editor-page').waitFor()
   await button('新增方案').click()
   await page.getByLabel('方案名稱', { exact: true }).fill('空白 QA')

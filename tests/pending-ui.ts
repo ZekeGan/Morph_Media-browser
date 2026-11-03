@@ -160,14 +160,14 @@ try {
   )
   await button('退出閱讀器').click()
   await toolbar.getByText('資料夾', { exact: true }).click()
-  await button('更改樣式').click()
+  await button('編輯版面').click()
   await page.locator('.editor-toolbar').waitFor()
   const saveBox = (await button('儲存變更').boundingBox())!,
     undoBox = (await button('復原').boundingBox())!
   assert.ok(Math.abs(saveBox.y - undoBox.y) < 12)
   await page.screenshot({ path: path.join(root, 'editor.png') })
   await button('取消').click()
-  await button('更改樣式').click()
+  await button('編輯版面').click()
   await button('刪除欄位 Flag').click()
   const deletion = page.getByRole('dialog', { name: '刪除自訂欄位', exact: true })
   await deletion.waitFor()

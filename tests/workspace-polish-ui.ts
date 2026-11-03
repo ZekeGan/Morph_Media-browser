@@ -113,10 +113,10 @@ let locale: LocaleId = 'zh-TW'
 const tr = (text: string) => catalog[locale][text] ?? text
 const button = (text: string) => page.getByRole('button', { name: tr(text), exact: true })
 const edit = async () => {
-  if (await button('更改樣式').isVisible()) await button('更改樣式').click()
+  if (await button('編輯版面').isVisible()) await button('編輯版面').click()
   else {
-    await button('CELL 方案選單').click()
-    await page.getByRole('menuitem', { name: tr('更改樣式'), exact: true }).click()
+    await button('版面方案選單').click()
+    await page.getByRole('menuitem', { name: tr('編輯版面'), exact: true }).click()
   }
 }
 const open = async (name: string) => {

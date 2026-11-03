@@ -158,7 +158,7 @@ try {
   if (child)
     await page.locator('.media-subfolder').getByRole('button', { name: child, exact: true }).click()
   if (args.includes('--editor')) {
-    await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+    await page.getByRole('button', { name: '編輯版面', exact: true }).click()
     await page.locator('.editor-page').waitFor()
     const select = option('select')
     if (select) await page.locator('.editor-cell').nth(Number(select)).click()

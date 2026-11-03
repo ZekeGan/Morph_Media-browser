@@ -7,7 +7,14 @@ import {
   type KindSample,
 } from '../shared/kind'
 import { GameActionEditor, GameActionTargets } from './GameActions'
-import { cardPresets, rowCells } from '../shared/layouts'
+import {
+  addCommonFields,
+  cardPresets,
+  presetDraft,
+  rowCells,
+  syncPresetDraft,
+} from '../shared/layouts'
+import { commonFieldNames } from './commonFields'
 import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
 import { Icon } from './icons'
@@ -967,11 +974,28 @@ export function FolderPanel({
                 <Text c="dimmed" size="sm">
                   {tr('專案尚未配置欄位。')}
                 </Text>
-                {onEditLayout && (
-                  <Button size="compact-sm" variant="light" onClick={onEditLayout}>
-                    {tr('新增欄位')}
+                <Group gap={6} wrap="nowrap">
+                  <Button
+                    size="compact-sm"
+                    variant="filled"
+                    disabled={busy || fieldDirty}
+                    onClick={() =>
+                      void act({
+                        action: 'saveProject',
+                        project: syncPresetDraft(
+                          addCommonFields(presetDraft(project), commonFieldNames())
+                        ),
+                      })
+                    }
+                  >
+                    {tr('加入常用欄位')}
                   </Button>
-                )}
+                  {onEditLayout && (
+                    <Button size="compact-sm" variant="light" onClick={onEditLayout}>
+                      {tr('新增欄位')}
+                    </Button>
+                  )}
+                </Group>
               </Group>
             )}
             {!!otherFields.length && (

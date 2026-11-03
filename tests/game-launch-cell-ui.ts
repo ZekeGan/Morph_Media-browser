@@ -86,7 +86,7 @@ try {
     false
   )
   // The editor offers it for game projects only.
-  await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+  await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page
     .locator('.basic-palette')
     .getByRole('button', { name: '啟動遊戲', exact: true })

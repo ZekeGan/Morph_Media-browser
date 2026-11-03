@@ -199,3 +199,46 @@ export function removePreset(project: Project): Project {
     ),
   }
 }
+
+export interface CommonFieldNames {
+  rating: string
+  tags: string
+  status: string
+  statuses: string[]
+  note: string
+}
+// A starting set of fields (rating, tags, status, note) added to the project and placed under the card's existing
+// components, so a new project is usable without opening the layout editor. Fields whose name is already taken, and
+// components that no longer fit, are skipped.
+export function addCommonFields(project: Project, names: CommonFieldNames): Project {
+  const wanted = [
+    { alias: names.rating, type: 'number', kind: 'field-number' },
+    { alias: names.tags, type: 'tags', kind: 'field-tags' },
+    { alias: names.status, type: 'enum', kind: 'field-enum', options: names.statuses },
+    { alias: names.note, type: 'string', kind: 'field-text' },
+  ] as const
+  const bindings = [...project.fieldBindings],
+    cells = [...project.cells]
+  let y = Math.max(0, ...cells.map((c) => c.grid.y + c.grid.h))
+  for (const item of wanted) {
+    const alias = item.alias.trim()
+    if (!alias || bindings.some((f) => f.alias.toLowerCase() === alias.toLowerCase())) continue
+    if (cells.length >= 50 || y + 1 > 100) break
+    const attributeId = crypto.randomUUID()
+    bindings.push({
+      alias,
+      attributeId,
+      type: item.type,
+      ...('options' in item ? { options: [...item.options] } : {}),
+    })
+    cells.push({
+      cellId: crypto.randomUUID(),
+      kind: item.kind,
+      attributeId,
+      grid: { x: 0, y, w: 12, h: 1 },
+      style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
+    })
+    y += 1
+  }
+  return { ...project, fieldBindings: bindings, cells }
+}

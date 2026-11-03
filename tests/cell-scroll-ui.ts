@@ -111,7 +111,7 @@ try {
   await page.keyboard.press('PageDown')
   assert.ok((await metrics()).top > 0)
   // The editor's field list shows the previewed folder's real value on one line, the whole value on hover.
-  await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+  await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   const value = page.locator('.palette-field[data-attribute-id="tags"] .palette-field-value')
   await value.waitFor()
   assert.equal(await value.innerText(), '（此筆沒有值）', 'a folder without the field')

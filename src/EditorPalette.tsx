@@ -26,7 +26,8 @@ import type {
   Request,
   Response,
 } from '../shared/model'
-import { editorFields } from '../shared/layouts'
+import { addCommonFields, editorFields } from '../shared/layouts'
+import { commonFieldNames } from './commonFields'
 import { typeKinds } from './editorKinds'
 
 // One line of the previewed folder's value for a field; long values are cut with "…" and shown whole on hover.
@@ -234,6 +235,16 @@ export function EditorPalette(props: EditorPaletteProps) {
           <Text size="xs" c="dimmed" mb={6}>
             {tr('還沒有欄位。按「＋ 新增欄位」建立，再拖到畫布。')}
           </Text>
+        )}
+        {!draft.fieldBindings.length && (
+          <Button
+            size="compact-xs"
+            variant="filled"
+            mb={6}
+            onClick={() => change(addCommonFields(draft, commonFieldNames()))}
+          >
+            {tr('加入常用欄位')}
+          </Button>
         )}
         <Stack gap="xs">{draft.fieldBindings.map((binding) => paletteField(binding))}</Stack>
       </section>

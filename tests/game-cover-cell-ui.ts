@@ -122,7 +122,7 @@ for (const [w, h] of [
       'contain'
     )
     assert.equal(await page.locator('.folder-card .cell-blur-bg').count(), 1)
-    await button('更改樣式').click()
+    await button('編輯版面').click()
     await page
       .locator('.editor-cell .cell-image, .editor-cell .cell-image-placeholder')
       .first()

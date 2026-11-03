@@ -322,7 +322,7 @@ try {
   await page.getByRole('button', { name: '關閉資料夾設定', exact: true }).click()
   await drawer.waitFor({ state: 'hidden' })
   await page.getByRole('button', { name: '切換右側內容', exact: true }).click()
-  await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+  await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.getByRole('button', { name: '新增方案', exact: true }).click()
   await page.getByLabel('方案名稱', { exact: true }).fill('第二方案')
   await page.getByRole('button', { name: '確認', exact: true }).click()

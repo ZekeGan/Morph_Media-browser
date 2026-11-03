@@ -114,7 +114,7 @@ export function BrowseToolbar(props: Props) {
             <>
               <div className="preset-controls">
                 <Select
-                  aria-label={tr('CELL 版面方案')}
+                  aria-label={tr('版面方案')}
                   size="xs"
                   value={project.activeLayoutId ?? presets[0].id}
                   allowDeselect={false}
@@ -125,22 +125,21 @@ export function BrowseToolbar(props: Props) {
                   disabled={busy}
                   onChange={(id) => id && pickPreset(id)}
                 />
-                <Tooltip label={tr('更改樣式')}>
-                  <ActionIcon
-                    aria-label={tr('更改樣式')}
-                    variant="default"
-                    disabled={busy}
-                    onClick={() => edit()}
-                  >
-                    <Icon name="edit" />
-                  </ActionIcon>
-                </Tooltip>
+                <Button
+                  size="xs"
+                  variant="default"
+                  leftSection={<Icon name="edit" />}
+                  disabled={busy}
+                  onClick={() => edit()}
+                >
+                  {tr('編輯版面')}
+                </Button>
               </div>
               <Menu>
                 <Menu.Target>
                   <ActionIcon
                     className="compact-presets"
-                    aria-label={tr('CELL 方案選單')}
+                    aria-label={tr('版面方案選單')}
                     variant="subtle"
                   >
                     <Icon name="grid" />
@@ -153,7 +152,7 @@ export function BrowseToolbar(props: Props) {
                     </Menu.Item>
                   ))}
                   <Menu.Divider />
-                  <Menu.Item onClick={() => edit()}>{tr('更改樣式')}</Menu.Item>
+                  <Menu.Item onClick={() => edit()}>{tr('編輯版面')}</Menu.Item>
                 </Menu.Dropdown>
               </Menu>
             </>

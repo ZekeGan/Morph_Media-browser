@@ -137,7 +137,7 @@ try {
   await copy.click()
   await copy.getByText('已複製', { exact: true }).waitFor()
   assert.equal(await app.evaluate(({ clipboard }) => clipboard.readText()), 'false')
-  await button('更改樣式').click()
+  await button('編輯版面').click()
   await page.locator('.editor-toolbar').waitFor()
   const palette = page.locator('.basic-palette .palette-item').first()
   // The drag picture is our own copy that keeps the item's middle under the cursor; the native one is blank.
@@ -225,7 +225,7 @@ try {
   assert.equal(saved.cells[0].presentation, 'progress')
   assert.equal(saved.cells[0].maximum, 10)
   assert.equal(saved.cells[0].copyValue, true)
-  await button('更改樣式').click()
+  await button('編輯版面').click()
   await page.locator('.editor-cell').first().click()
   assert.equal(
     await page.getByRole('textbox', { name: '顯示方式', exact: true }).inputValue(),

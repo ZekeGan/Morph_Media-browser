@@ -62,7 +62,7 @@ const { app, page } = await launchApp(local, errors, { width: 1500, height: 950 
 let passed = false
 try {
   await page.getByRole('button', { name: '開啟專案 Fields', exact: true }).first().click()
-  await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+  await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.locator('.editor-page').waitFor()
 
   // The component with a display condition opens its condition section and offers the enum's options.

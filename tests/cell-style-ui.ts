@@ -157,7 +157,7 @@ try {
   assert.notEqual(green, await badges.first().evaluate((node) => getComputedStyle(node).color))
 
   // Editor: set the style of the selected cell through the Style section.
-  await page.getByRole('button', { name: '更改樣式', exact: true }).click()
+  await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.locator('.editor-cell').first().click()
   const inspector = page.getByRole('complementary', { name: '組件設定', exact: true })
   const section = inspector.getByRole('button', { name: '樣式', exact: true })

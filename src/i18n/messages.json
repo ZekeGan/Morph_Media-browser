@@ -617,24 +617,6 @@
     "en": "Folder browser",
     "es": "Explorador de carpetas"
   },
-  "CELL 版面方案": {
-    "ja": "CELLレイアウト",
-    "zh-CN": "CELL 版面方案",
-    "en": "CELL layout preset",
-    "es": "Diseño CELL"
-  },
-  "更改樣式": {
-    "ja": "レイアウトを編集",
-    "zh-CN": "更改样式",
-    "en": "Edit layout",
-    "es": "Editar diseño"
-  },
-  "CELL 方案選單": {
-    "ja": "CELLレイアウトメニュー",
-    "zh-CN": "CELL 方案选单",
-    "en": "CELL preset menu",
-    "es": "Menú de diseños CELL"
-  },
   "瀏覽模式": {
     "ja": "閲覧モード",
     "zh-CN": "浏览模式",
@@ -6484,5 +6466,53 @@
     "en": "Ctrl/Shift+click to select several folders, then set their type in bulk",
     "ja": "Ctrl／Shift+クリックで複数のフォルダーを選び、種類を一括指定できます",
     "es": "Ctrl/Mayús+clic para seleccionar varias carpetas y asignar su tipo en bloque"
+  },
+  "編輯版面": {
+    "zh-CN": "编辑版面",
+    "en": "Edit layout",
+    "ja": "レイアウトを編集",
+    "es": "Editar diseño"
+  },
+  "版面方案選單": {
+    "zh-CN": "版面方案菜单",
+    "en": "Layout preset menu",
+    "ja": "レイアウトプリセットメニュー",
+    "es": "Menú de diseños"
+  },
+  "加入常用欄位": {
+    "zh-CN": "加入常用字段",
+    "en": "Add common fields",
+    "ja": "よく使う項目を追加",
+    "es": "Añadir campos comunes"
+  },
+  "狀態": {
+    "zh-CN": "状态",
+    "en": "Status",
+    "ja": "状態",
+    "es": "Estado"
+  },
+  "備註": {
+    "zh-CN": "备注",
+    "en": "Notes",
+    "ja": "メモ",
+    "es": "Notas"
+  },
+  "未開始": {
+    "zh-CN": "未开始",
+    "en": "Not started",
+    "ja": "未着手",
+    "es": "Sin empezar"
+  },
+  "進行中": {
+    "zh-CN": "进行中",
+    "en": "In progress",
+    "ja": "進行中",
+    "es": "En curso"
+  },
+  "已完成": {
+    "zh-CN": "已完成",
+    "en": "Done",
+    "ja": "完了",
+    "es": "Hecho"
   }
 }

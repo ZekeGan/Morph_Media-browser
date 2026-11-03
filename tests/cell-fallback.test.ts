@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cellField } from '../shared/cells'
-import { rowCells } from '../shared/layouts'
+import { addCommonFields, rowCells } from '../shared/layouts'
 import {
   cellsWithoutField,
   validateProject,
@@ -231,4 +231,28 @@ test('a folder takes the layout set for its kind unless it picks its own', () =>
   )
   assert.deepEqual(rowCells(project, folder('media')), [])
   assert.deepEqual(rowCells({ ...project, folderLayouts: { f1: 'a' } }, folder('book')), [])
+})
+
+test('common fields are added with matching cells, skipping names already in use', () => {
+  const names = { rating: '評分', tags: '標籤', status: '狀態', statuses: ['a', 'b'], note: '備註' }
+  const base = { ...modelProject(), fieldBindings: [], cells: [] } as unknown as Project
+  const next = addCommonFields(base, names)
+  assert.deepEqual(
+    next.fieldBindings.map((f) => f.alias),
+    ['評分', '標籤', '狀態', '備註']
+  )
+  assert.deepEqual(
+    next.cells.map((c) => c.kind),
+    ['field-number', 'field-tags', 'field-enum', 'field-text']
+  )
+  assert.deepEqual(
+    next.cells.map((c) => c.grid.y),
+    [0, 1, 2, 3]
+  )
+  assert.ok(next.cells.every((c, i) => c.attributeId === next.fieldBindings[i].attributeId))
+  assert.deepEqual(next.fieldBindings[2].options, ['a', 'b'])
+  validateProject(next)
+  const again = addCommonFields({ ...next, cells: [] } as Project, names)
+  assert.equal(again.fieldBindings.length, 4, 'existing names are not duplicated')
+  assert.equal(again.cells.length, 0)
 })
