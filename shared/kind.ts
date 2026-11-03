@@ -45,3 +45,19 @@ export function detectFolderKind(row: FolderRow, sample?: KindSample): DetectedK
   }
   return { kind: 'general', source: 'default' }
 }
+
+// The kind the interface follows for a folder. While projects still carry a category, a manga project hints that its
+// folders are books and a game project that they are games when nothing else tells; everything else is general.
+export function effectiveKind(
+  row: FolderRow,
+  project: { mediaCategory: string },
+  sample?: KindSample
+): FolderKind {
+  const detected = detectFolderKind(row, sample)
+  if (detected.source !== 'default') return detected.kind
+  return project.mediaCategory === 'manga'
+    ? 'book'
+    : project.mediaCategory === 'game'
+      ? 'game'
+      : 'general'
+}

@@ -4,6 +4,7 @@ import { ActionIcon, Button, FocusTrap, Tooltip } from '@mantine/core'
 import type { ExplorerRequest, ExplorerResponse, MediaEntry } from '../shared/explorer'
 import type { FolderRow, Project, Request, Response } from '../shared/model'
 import { canPreviewMedia, mediaQueue } from '../shared/media'
+import { effectiveKind } from '../shared/kind'
 import { MediaQueue } from './MediaQueue'
 import { Icon } from './icons'
 import { t as tr } from './i18n'
@@ -48,7 +49,7 @@ export function MediaViewer({
     [showQueue, setShowQueue] = useState(false),
     [queueMounted, setQueueMounted] = useState(false),
     [manga, setManga] = useState(
-      project.mediaCategory === 'manga' || row.record?.details?.reading?.mode === 'manga'
+      effectiveKind(row, project) === 'book' || row.record?.details?.reading?.mode === 'manga'
     )
   const queueSlot = useRef<HTMLDivElement>(null),
     queueToggle = useRef<HTMLButtonElement>(null)
@@ -172,7 +173,7 @@ export function MediaViewer({
                       <small className="media-viewer-source" title={row.path}>
                         {row.name}
                       </small>
-                      {project.mediaCategory !== 'manga' && (
+                      {effectiveKind(row, project) !== 'book' && (
                         <Button
                           size="compact-xs"
                           variant="subtle"

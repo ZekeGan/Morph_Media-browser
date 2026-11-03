@@ -1,5 +1,11 @@
 import { metadataSources, sourceForUrl } from '../shared/sources'
-import { detectFolderKind, folderKinds, sampleOf, type KindSample } from '../shared/kind'
+import {
+  detectFolderKind,
+  effectiveKind,
+  folderKinds,
+  sampleOf,
+  type KindSample,
+} from '../shared/kind'
 import { GameActionEditor, GameActionTargets } from './GameActions'
 import { cardPresets, rowCells } from '../shared/layouts'
 import { t as tr, useLocale } from './i18n'
@@ -129,7 +135,7 @@ export function FolderPanel({
     [targetDirty, setTargetDirty] = useState(false)
   useEffect(() => {
     setTab(
-      initialTab === 'source' || (initialTab === 'game' && project.mediaCategory !== 'game')
+      initialTab === 'source' || (initialTab === 'game' && effectiveKind(row, project) !== 'game')
         ? 'fields'
         : initialTab
     )
@@ -160,6 +166,7 @@ export function FolderPanel({
     }
   }, [row.rowId])
   const detectedKind = detectFolderKind(row, sample)
+  const isGame = effectiveKind(row, project, sample) === 'game'
   const kindLabel: Record<string, string> = {
     game: tr('遊戲'),
     book: tr('書籍／漫畫'),
@@ -203,11 +210,10 @@ export function FolderPanel({
     ).values(),
   ]
   const assets = row.record?.assets ?? []
-  const showImages = imageCells.length > 0 || assets.length > 0 || project.mediaCategory === 'game'
+  const showImages = imageCells.length > 0 || assets.length > 0 || isGame
   useEffect(() => {
-    if ((tab === 'images' && !showImages) || (tab === 'game' && project.mediaCategory !== 'game'))
-      setTab('fields')
-  }, [tab, showImages, project.mediaCategory])
+    if ((tab === 'images' && !showImages) || (tab === 'game' && !isGame)) setTab('fields')
+  }, [tab, showImages, isGame])
   // Confirm first, naming every place that shows the picture; the file and all references go in one write.
   const deleteImage = (assetId: string, name: string) => {
     const details = row.record?.details,
@@ -570,14 +576,14 @@ export function FolderPanel({
   }
   // Boundaries belong to games; other projects only see them when a game was actually detected in this folder.
   const gameDetected = !!row.boundary || !!row.record?.details?.boundary?.state
-  const showBoundary = project.mediaCategory === 'game' || gameDetected
+  const showBoundary = isGame || gameDetected
   // What this folder still lacks, each with a button that goes straight to the place that fixes it.
   const empty = (value: unknown) =>
     value == null || value === '' || (Array.isArray(value) && value.length === 0)
   const todo: { key: string; text: string; button: string; go: () => void }[] = []
   if (row.record && !disabled) {
     if (
-      project.mediaCategory === 'game' &&
+      isGame &&
       gameActionTemplates(project).some((t) => t.id === 'default-launch-game') &&
       !row.record.details?.targets?.['default-launch-game']
     )
@@ -587,7 +593,7 @@ export function FolderPanel({
         button: tr('指定啟動檔'),
         go: () => setTab('game'),
       })
-    if (project.mediaCategory === 'game' && !row.record.details?.bannerAssetId && !assets.length)
+    if (isGame && !row.record.details?.bannerAssetId && !assets.length)
       todo.push({
         key: 'cover',
         text: tr('還沒有封面'),
@@ -640,7 +646,7 @@ export function FolderPanel({
           {error}
         </Alert>
       )}
-      {project.mediaCategory !== 'game' && row.boundary && (
+      {!isGame && row.boundary && (
         <Alert color="blue" className="folder-boundary-note">
           <Group justify="space-between" wrap="nowrap" gap="xs">
             <Text size="sm">{tr('偵測到遊戲，為了保護內部檔案，不會在裡面建立記錄。')}</Text>
@@ -679,7 +685,7 @@ export function FolderPanel({
             )}
           </Tabs.Tab>
           {showImages && <Tabs.Tab value="images">{tr('圖片')}</Tabs.Tab>}
-          {project.mediaCategory === 'game' && <Tabs.Tab value="game">{tr('遊戲操作')}</Tabs.Tab>}
+          {isGame && <Tabs.Tab value="game">{tr('遊戲操作')}</Tabs.Tab>}
           <Tabs.Tab value="advanced">{tr('進階')}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="fields" pt="md">
@@ -1053,7 +1059,7 @@ export function FolderPanel({
                 {tr('目前版面沒有圖片組件，無須為每個資料夾指定圖片。')}
               </Text>
             )}
-            {project.mediaCategory === 'game' && (
+            {isGame && (
               <section className="settings-section">
                 <Text fw={600} mb="sm">
                   {tr('遊戲封面')}
@@ -1090,7 +1096,7 @@ export function FolderPanel({
                             : ''
                         )
                         .filter(Boolean),
-                      ...(project.mediaCategory === 'game' &&
+                      ...(isGame &&
                       (row.record?.details?.bannerAssetId ?? assets[0]?.assetId) === a.assetId
                         ? [tr('封面')]
                         : []),

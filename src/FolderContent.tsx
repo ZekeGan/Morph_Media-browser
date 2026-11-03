@@ -1,6 +1,7 @@
 import { MediaBrowser } from './MediaBrowser'
 import { MediaViewer } from './MediaViewer'
 import { isGameFolder, visibleFile } from '../shared/media'
+import { effectiveKind } from '../shared/kind'
 import { useFileVisibility } from './useFileVisibility'
 import { DocumentViewer } from './DocumentViewer'
 import './game-actions.css'
@@ -247,7 +248,7 @@ export function FolderContent({
                   start={content.entries
                     .filter((entry) => entry.kind === 'image')
                     .findIndex((entry) => entry.id === selectedFile.id)}
-                  manga={project.mediaCategory === 'manga'}
+                  manga={effectiveKind(row, project) === 'book'}
                   prefs={row.record?.details?.reading}
                   close={() => setFileReader(false)}
                   save={(prefs) =>
@@ -571,7 +572,7 @@ export function FolderContent({
         onChild={onChild}
       />
       <div className="media-info-template">
-        {project.mediaCategory === 'manga' && first && (
+        {effectiveKind(row, project) === 'book' && first && (
           <img
             className="manga-cover"
             src={first.thumb ?? first.url}
@@ -601,7 +602,7 @@ export function FolderContent({
         <Gallery
           entries={content.entries}
           loading={!!content.nextCursor && !error}
-          manga={project.mediaCategory === 'manga'}
+          manga={effectiveKind(row, project) === 'book'}
           prefs={row.record?.details?.reading}
           onReader={setReader}
           suspended={!!galleryFile}
