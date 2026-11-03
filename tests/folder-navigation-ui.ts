@@ -292,7 +292,7 @@ try {
   await side(-1, '.react-flow')
   await current('B')
   await page.keyboard.press('Escape')
-  await right().getByRole('button', { name: '資料夾設定', exact: true }).click()
+  await right().getByRole('tab', { name: '設定', exact: true }).click()
   await page.locator('.folder-panel-dock-settings').waitFor()
   // Settings are a panel tab, so history navigation still works and the settings follow the folder.
   await side(-1, '.react-flow')

@@ -42,7 +42,7 @@ let passed = false
 try {
   await page.getByRole('button', { name: '開啟專案 Pics', exact: true }).first().click()
   await page.locator('.folder-panel-header').waitFor()
-  await page.getByRole('button', { name: '資料夾設定', exact: true }).click()
+  await page.getByRole('tab', { name: '設定', exact: true }).click()
   await page.locator('.folder-panel-dock-settings').waitFor()
   await page.getByRole('tab', { name: '圖片', exact: true }).click()
   assert.equal(await page.locator('.images figure').count(), 2)

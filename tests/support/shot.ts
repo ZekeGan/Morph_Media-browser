@@ -166,10 +166,7 @@ try {
     if (section) await page.getByRole('button', { name: section, exact: true }).click()
   }
   if (args.includes('--settings'))
-    await page
-      .locator('.folder-panel-header')
-      .getByRole('button', { name: '資料夾設定', exact: true })
-      .click()
+    await page.getByRole('tab', { name: '設定', exact: true }).click()
   if (args.includes('--mark')) {
     // Ctrl+click marks the first two folders so the batch type bar can be inspected.
     const items = page.locator('.folder-card, .folder-table tbody tr')

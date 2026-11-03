@@ -156,15 +156,6 @@ export function BrowsePanel(props: Props) {
                   {tr('進入此資料夾')}
                 </Button>
               )}
-              <Tooltip label={tr('資料夾設定')}>
-                <ActionIcon
-                  aria-label={tr('資料夾設定')}
-                  variant="subtle"
-                  onClick={() => openConfig(detail.rowId)}
-                >
-                  <Icon name="settings" />
-                </ActionIcon>
-              </Tooltip>
               {kind === 'book' && (
                 <Tooltip label={tr('編輯此專案所有漫畫的資訊版面；CARD 版面獨立')}>
                   <ActionIcon
@@ -216,7 +207,6 @@ export function BrowsePanel(props: Props) {
                 onClick={() => !config && openConfig(detail.rowId)}
               >
                 {tr('設定')}
-                {config ? ' · ' + config.name : ''}
               </Button>
               <span className="folder-panel-dock-spacer" />
               {config && (

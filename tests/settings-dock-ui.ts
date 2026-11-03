@@ -28,7 +28,7 @@ try {
   await button('開啟專案 Dock Test').first().click()
   await page.locator('.folder-panel-header').waitFor()
   // Settings always dock into the right panel; there is no drawer or dock toggle.
-  await button('資料夾設定').click()
+  await page.getByRole('tab', { name: '設定', exact: true }).click()
   await page.locator('.folder-panel-dock-settings').waitFor()
   assert.equal(await page.locator('.mantine-Drawer-content').count(), 0)
   assert.equal(await button('改為抽屜顯示設定').count(), 0)
@@ -53,7 +53,7 @@ try {
   ;({ app, page } = await launch())
   await button('開啟專案 Dock Test').first().click()
   await page.locator('.folder-panel-header').waitFor()
-  await button('資料夾設定').click()
+  await page.getByRole('tab', { name: '設定', exact: true }).click()
   await page.locator('.folder-panel-dock-settings').waitFor()
   assert.equal(await fs.readFile(path.join(media, 'original.txt'), 'utf8'), 'PRESERVE ORIGINAL')
   assert.deepEqual(errors, [])

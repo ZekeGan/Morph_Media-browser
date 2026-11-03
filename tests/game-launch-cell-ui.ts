@@ -74,7 +74,7 @@ try {
   await page.waitForFunction(
     () => document.querySelector('.folder-panel-header strong')?.textContent === 'Unbound'
   )
-  await page.getByRole('button', { name: '資料夾設定', exact: true }).click()
+  await page.getByRole('tab', { name: '設定', exact: true }).click()
   await page.getByRole('tab', { name: '遊戲操作', exact: true }).click()
   await page.getByRole('textbox', { name: '選擇資料夾內的捷徑' }).click()
   await page.getByRole('option', { name: 'Game - LE.lnk', exact: true }).click()
