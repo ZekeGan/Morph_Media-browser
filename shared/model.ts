@@ -738,7 +738,7 @@ export function validateProject(v: unknown): asserts v is Project {
     if (
       !obj(v.contentCells) ||
       !Object.keys(v.contentCells).every((k) =>
-        ['manga', 'album', 'game', 'video', 'other'].includes(k)
+        ['book', 'media', 'general', 'manga', 'album', 'game', 'video', 'other'].includes(k)
       )
     )
       throw new Error('內容模板不合法')

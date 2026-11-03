@@ -33,6 +33,7 @@ type Props = {
   display: ReturnType<typeof cardDisplay>
   edit: (category?: string) => void
   folderMode: boolean
+  hasGames: boolean
   openConfig: (id: string, tab?: string) => void
   orderedColumns: { id: string; label: string }[]
   persist: (next: BrowseState) => void
@@ -67,6 +68,7 @@ export function BrowseToolbar(props: Props) {
     display,
     edit,
     folderMode,
+    hasGames,
     openConfig,
     orderedColumns,
     persist,
@@ -88,28 +90,26 @@ export function BrowseToolbar(props: Props) {
     <>
       <div className={'workspace-toolbar' + (folderMode ? '' : ' file-mode-toolbar')}>
         <div className="toolbar-left">
-          {!['game', 'media', 'manga'].includes(project.mediaCategory) && (
-            <SegmentedControl
-              aria-label={tr('展示內容')}
-              size="xs"
-              value={browse.contentMode ?? 'folders'}
-              disabled={busy || !ready}
-              data={[
-                { value: 'folders', label: tr('資料夾') },
-                { value: 'files', label: tr('檔案') },
-              ]}
-              onChange={(value) => {
-                setFilePreview(undefined)
-                persist({
-                  ...state.current,
-                  contentMode: value as 'folders' | 'files',
-                  fileRootId: detail?.rowId ?? currentFolder?.rowId,
-                  filePresentation: state.current.filePresentation ?? 'tiles',
-                  fileScope: state.current.fileScope ?? 'descendants',
-                })
-              }}
-            />
-          )}
+          <SegmentedControl
+            aria-label={tr('展示內容')}
+            size="xs"
+            value={browse.contentMode ?? 'folders'}
+            disabled={busy || !ready}
+            data={[
+              { value: 'folders', label: tr('資料夾') },
+              { value: 'files', label: tr('檔案') },
+            ]}
+            onChange={(value) => {
+              setFilePreview(undefined)
+              persist({
+                ...state.current,
+                contentMode: value as 'folders' | 'files',
+                fileRootId: detail?.rowId ?? currentFolder?.rowId,
+                filePresentation: state.current.filePresentation ?? 'tiles',
+                fileScope: state.current.fileScope ?? 'descendants',
+              })
+            }}
+          />
           {folderMode && browse.mode === 'CARD' && (
             <>
               <div className="preset-controls">
@@ -158,7 +158,7 @@ export function BrowseToolbar(props: Props) {
               </Menu>
             </>
           )}
-          {folderMode && project.mediaCategory === 'game' && browse.mode !== 'TREE' && (
+          {folderMode && hasGames && browse.mode !== 'TREE' && (
             <>
               <Select
                 className="game-boundary-filter"

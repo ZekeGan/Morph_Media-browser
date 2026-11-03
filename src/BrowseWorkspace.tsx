@@ -162,9 +162,6 @@ export function BrowseWorkspace({
           target = all.find((r) => r.rowId === (selected ?? saved.detailId)) ?? rootRow,
           next = {
             ...saved,
-            ...(['game', 'media', 'manga'].includes(project.mediaCategory)
-              ? { contentMode: 'folders' as const }
-              : {}),
             location:
               target && pathKey(target.path) !== pathKey(root) ? target.path : saved.location || '',
             locations: undefined,
@@ -173,10 +170,6 @@ export function BrowseWorkspace({
           }
         setBrowse(next)
         state.current = next
-        if (project.mediaCategory === 'manga' && saved.contentMode === 'files')
-          void window.desktop
-            .updateWorkspace({ action: 'browse', projectId: project.projectId, value: next })
-            .catch((e) => notify(String(e)))
         const history = { items: [next.location], index: 0 }
         histories.current = { CARD: history, TABLE: history, TREE: history }
         setHighlight(target?.rowId)
@@ -252,13 +245,7 @@ export function BrowseWorkspace({
         root,
         browse.mode,
         location
-      ).filter(
-        (row) =>
-          !boundariesOnly ||
-          project.mediaCategory !== 'game' ||
-          browse.mode === 'TREE' ||
-          isGameFolder(row)
-      ),
+      ).filter((row) => !boundariesOnly || browse.mode === 'TREE' || isGameFolder(row)),
     [all, project, root, browse.mode, location, display, density, boundariesOnly]
   )
   const filtered = useMemo(
@@ -493,18 +480,8 @@ export function BrowseWorkspace({
     crumbs = folderBreadcrumbs(all, root, currentFolder?.path ?? root)
   const overviewRoot =
     all.find((row) => row.rowId === browse.fileRootId) ?? currentFolder ?? rootRow
-  const folderMode =
-    ['game', 'media', 'manga'].includes(project.mediaCategory) || browse.contentMode !== 'files'
-  useEffect(() => {
-    if (
-      ready &&
-      ['game', 'media', 'manga'].includes(project.mediaCategory) &&
-      browse.contentMode === 'files'
-    ) {
-      setFilePreview(undefined)
-      persist({ ...state.current, contentMode: 'folders' })
-    }
-  }, [ready, project.mediaCategory, browse.contentMode])
+  const folderMode = browse.contentMode !== 'files'
+  const hasGames = all.some(isGameFolder)
   const panelOpen = !!detail && browse.panelVisible !== false
   const settingsBody = config && (
     <Suspense fallback={<p>{tr('載入設定…')}</p>}>
@@ -681,6 +658,7 @@ export function BrowseWorkspace({
           display={display}
           edit={edit}
           folderMode={folderMode}
+          hasGames={hasGames}
           openConfig={openConfig}
           orderedColumns={orderedColumns}
           persist={persist}

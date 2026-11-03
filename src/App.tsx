@@ -435,7 +435,14 @@ export function App() {
                 templateCategory
                   ? tr(
                       '{0}資訊版面',
-                      categories.find((c) => c.value === templateCategory)?.label ?? tr('媒體')
+                      (
+                        {
+                          book: tr('書籍／漫畫'),
+                          game: tr('遊戲'),
+                          media: tr('影音'),
+                          general: tr('一般'),
+                        } as Record<string, string>
+                      )[templateCategory] ?? tr('一般')
                     )
                   : tr('卡片')
               }

@@ -1,7 +1,7 @@
 import { MediaBrowser } from './MediaBrowser'
 import { MediaViewer } from './MediaViewer'
 import { isGameFolder, visibleFile } from '../shared/media'
-import { effectiveKind } from '../shared/kind'
+import { effectiveKind, sampleOf } from '../shared/kind'
 import { useFileVisibility } from './useFileVisibility'
 import { DocumentViewer } from './DocumentViewer'
 import './game-actions.css'
@@ -125,9 +125,7 @@ export function FolderContent({
       contentRow.current = row.rowId
     }
     setError('')
-    const paged =
-      ['album', 'manga', 'media'].includes(project.mediaCategory) ||
-      (project.mediaCategory === 'game' && !isGameFolder(row))
+    const paged = !isGameFolder(row)
     void (async () => {
       let cursor: string | undefined
       const counted: ContentResult['entries'] = []
@@ -162,7 +160,7 @@ export function FolderContent({
     return () => {
       alive = false
     }
-  }, [row.rowId, row.path, project.mediaCategory, reload, refresh])
+  }, [row.rowId, row.path, reload, refresh])
   useEffect(() => {
     setFileReader(false)
     setDocumentFile(undefined)
@@ -179,10 +177,9 @@ export function FolderContent({
   if (!content) return <p className="media-loading">{tr('載入內容…')}</p>
   const visibleEntries = content.entries.filter((entry) => visibleFile(entry, visibility))
   const selectedFile = visibleEntries.find((entry) => entry.id === selectedFileId) ?? selectedEntry
-  // Everything that is not a dedicated game ROOT or manga work uses the unified folder page.
-  const unified =
-    ['media', 'music', 'album', 'video', 'other'].includes(project.mediaCategory) ||
-    (project.mediaCategory === 'game' && !isGameFolder(row))
+  const kind = effectiveKind(row, project, sampleOf(content.entries))
+  // Everything that is not a dedicated game ROOT or book uses the unified folder page.
+  const unified = kind !== 'book' && !(kind === 'game' && isGameFolder(row))
   if (unified && (!selectedFile || ['audio', 'video'].includes(selectedFile.kind)))
     return (
       <MediaBrowser
@@ -248,7 +245,7 @@ export function FolderContent({
                   start={content.entries
                     .filter((entry) => entry.kind === 'image')
                     .findIndex((entry) => entry.id === selectedFile.id)}
-                  manga={effectiveKind(row, project) === 'book'}
+                  manga={kind === 'book'}
                   prefs={row.record?.details?.reading}
                   close={() => setFileReader(false)}
                   save={(prefs) =>
@@ -270,7 +267,7 @@ export function FolderContent({
         )}
       </div>
     )
-  if (project.mediaCategory === 'video' || selectedFile?.kind === 'video')
+  if (selectedFile?.kind === 'video')
     return (
       <Suspense fallback={<p>{tr('載入播放器…')}</p>}>
         <VideoViewer
@@ -291,7 +288,7 @@ export function FolderContent({
       row.record?.assets.find((a) => a.assetId === row.record?.details?.bannerAssetId) ??
       row.record?.assets[0],
     first = content.entries.find((e) => e.kind === 'image')
-  if (project.mediaCategory === 'game' && isGameFolder(row)) {
+  if (kind === 'game' && isGameFolder(row)) {
     const disabled = busy || !row.record || row.readonly || row.stopped || !!row.error
     const fields = [
       ...new Map(
@@ -572,7 +569,7 @@ export function FolderContent({
         onChild={onChild}
       />
       <div className="media-info-template">
-        {effectiveKind(row, project) === 'book' && first && (
+        {kind === 'book' && first && (
           <img
             className="manga-cover"
             src={first.thumb ?? first.url}
@@ -584,12 +581,12 @@ export function FolderContent({
           />
         )}
         {/* The default template (name and path) repeats the panel header and folder details, so only a user-edited one is shown. */}
-        {project.contentCells?.[project.mediaCategory]?.length ? (
+        {project.contentCells?.[kind]?.length ? (
           <Card
             project={{
               ...project,
               folderLayouts: undefined,
-              cells: contentCells(project, project.mediaCategory),
+              cells: contentCells(project, kind),
             }}
             row={row}
             open={() => {
@@ -598,11 +595,11 @@ export function FolderContent({
           />
         ) : null}
       </div>
-      {['manga', 'album'].includes(project.mediaCategory) ? (
+      {
         <Gallery
           entries={content.entries}
           loading={!!content.nextCursor && !error}
-          manga={effectiveKind(row, project) === 'book'}
+          manga={kind === 'book'}
           prefs={row.record?.details?.reading}
           onReader={setReader}
           suspended={!!galleryFile}
@@ -617,7 +614,7 @@ export function FolderContent({
               })
           }}
         />
-      ) : null}
+      }
     </div>
   )
 }

@@ -140,7 +140,7 @@ export function FolderPanel({
         : initialTab
     )
     setTasks(undefined)
-  }, [row.rowId, initialTab, project.mediaCategory])
+  }, [row.rowId, initialTab])
   const [source, setSource] = useState(''),
     [preview, setPreview] = useState<MetadataPreview>(),
     [keys, setKeys] = useState<string[]>([]),
@@ -204,7 +204,7 @@ export function FolderPanel({
     otherFields = fields.filter((f) => !configured.has(f.attributeId))
   const imageCells = [
     ...new Map(
-      [...rowCells(project, row), ...contentCells(project, project.mediaCategory)]
+      [...rowCells(project, row), ...contentCells(project, effectiveKind(row, project, sample))]
         .filter((c) => c.kind === 'image')
         .map((c) => [c.cellId, c])
     ).values(),

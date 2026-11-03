@@ -6,6 +6,7 @@ import { RightPanel } from './RightPanel'
 import { lazy, Suspense } from 'react'
 import { ActionIcon, Button, Tooltip } from '@mantine/core'
 import { pathKey } from '../shared/browse'
+import { effectiveKind } from '../shared/kind'
 import { type FolderRow, type Project, type Request, type Response } from '../shared/model'
 import type { BrowseState, ExplorerRequest, ExplorerResponse } from '../shared/explorer'
 const FolderContent = lazy(() =>
@@ -80,6 +81,7 @@ export function BrowsePanel(props: Props) {
     togglePanel,
     history,
   } = props
+  const kind = detail ? effectiveKind(detail, project) : 'general'
   return (
     <div
       ref={panelSlot}
@@ -91,7 +93,7 @@ export function BrowsePanel(props: Props) {
     >
       {detail && panelOpen && (
         <RightPanel
-          className={project.mediaCategory === 'video' ? 'video-panel' : ''}
+          className={kind === 'media' ? 'video-panel' : ''}
           label={tr('資料夾內容')}
           resizerLabel={tr('調整資料夾內容寬度')}
           width={browse.panelWidth}
@@ -126,7 +128,7 @@ export function BrowsePanel(props: Props) {
                   <Icon name="arrow-right" />
                 </ActionIcon>
               </Tooltip>
-              {project.mediaCategory !== 'video' && <strong>{detail.name}</strong>}
+              {kind !== 'media' && <strong>{detail.name}</strong>}
 
               <Tooltip label={tr('在檔案總管開啟')}>
                 <ActionIcon
@@ -147,14 +149,14 @@ export function BrowsePanel(props: Props) {
                   <Icon name="settings" />
                 </ActionIcon>
               </Tooltip>
-              {project.mediaCategory === 'manga' && (
+              {kind === 'book' && (
                 <Tooltip label={tr('編輯此專案所有漫畫的資訊版面；CARD 版面獨立')}>
                   <ActionIcon
                     aria-label={tr('編輯漫畫展示')}
                     variant="subtle"
                     color="gray"
                     disabled={busy}
-                    onClick={() => edit('manga')}
+                    onClick={() => edit('book')}
                   >
                     <Icon name="layout" />
                   </ActionIcon>
