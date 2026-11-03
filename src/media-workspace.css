@@ -1181,3 +1181,7 @@
 .workspace-toolbar .mantine-Select-root { min-width: 96px; }
 .workspace-toolbar .scope-button { max-width: 260px; }
 .workspace-toolbar .workspace-file-tools, .workspace-toolbar .workspace-file-scope { padding: 0; border: 0; }
+
+/* Icon-only segments: the name is a tooltip and a visually hidden label. */
+.icon-seg { position: relative; display: inline-flex; align-items: center; justify-content: center; padding-inline: 2px; }
+.icon-seg .seg-text { position: absolute; inset: 0; overflow: hidden; opacity: 0; font-size: 1px; white-space: nowrap; }

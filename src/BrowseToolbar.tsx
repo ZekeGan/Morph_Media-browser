@@ -1,6 +1,7 @@
 import './media-workspace.css'
 import { t as tr } from './i18n'
 import { Icon } from './icons'
+import { iconLabel } from './IconLabel'
 import {
   ActionIcon,
   Button,
@@ -126,14 +127,9 @@ export function BrowseToolbar(props: Props) {
               value={browse.mode}
               data={(['CARD', 'TABLE', 'TREE'] as const).map((mode) => ({
                 value: mode,
-                label: (
-                  <>
-                    <Icon
-                      name={mode === 'CARD' ? 'grid' : mode === 'TABLE' ? 'list' : 'tree'}
-                      size={14}
-                    />
-                    {mode === 'CARD' ? tr('卡片') : mode === 'TABLE' ? tr('表格') : tr('樹狀圖')}
-                  </>
+                label: iconLabel(
+                  mode === 'CARD' ? 'grid' : mode === 'TABLE' ? 'list' : 'tree',
+                  mode === 'CARD' ? tr('卡片') : mode === 'TABLE' ? tr('表格') : tr('樹狀圖')
                 ),
               }))}
               disabled={busy || !ready}
@@ -160,15 +156,16 @@ export function BrowseToolbar(props: Props) {
                   disabled={busy}
                   onChange={(id) => id && pickPreset(id)}
                 />
-                <Button
-                  size="xs"
-                  variant="default"
-                  leftSection={<Icon name="edit" />}
-                  disabled={busy}
-                  onClick={() => edit()}
-                >
-                  {tr('編輯版面')}
-                </Button>
+                <Tooltip label={tr('編輯版面')} openDelay={350} withArrow>
+                  <ActionIcon
+                    variant="default"
+                    aria-label={tr('編輯版面')}
+                    disabled={busy}
+                    onClick={() => edit()}
+                  >
+                    <Icon name="layout" size={16} />
+                  </ActionIcon>
+                </Tooltip>
               </div>
               <Menu>
                 <Menu.Target>

@@ -113,7 +113,8 @@ try {
   await open()
   await page.locator('.center-pane').waitFor()
   await page.locator('.center-mode').getByText('卡片', { exact: true }).waitFor()
-  assert.equal(await page.locator('.center-mode').innerText(), '卡片\n表格\n樹狀圖')
+  const modeText = (await page.locator('.center-mode').textContent()) ?? ''
+  for (const name of ['卡片', '表格', '樹狀圖']) assert.ok(modeText.includes(name), name)
   await page.locator('.center-mode').getByText('表格', { exact: true }).click()
   await button('切換右側內容').click()
   assert.equal(await page.locator('.folder-panel').count(), 0)

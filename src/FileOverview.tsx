@@ -15,13 +15,14 @@ import {
 import type { FolderRow } from '../shared/model'
 import type { OverviewEntry } from '../shared/explorer'
 import { Icon } from './icons'
+import { iconLabel } from './IconLabel'
 import { useRefreshNonce } from './refresh'
 import { t as tr, useLocale } from './i18n'
 
 type Presentation = 'tiles' | 'groups' | 'list'
 const presentations = [
-  { value: 'tiles', icon: 'grid', label: '縮圖' },
-  { value: 'groups', icon: 'folder', label: '分組' },
+  { value: 'tiles', icon: 'image', label: '縮圖' },
+  { value: 'groups', icon: 'layers', label: '分組' },
   { value: 'list', icon: 'list', label: '清單' },
 ] as const
 export function FileOverview({
@@ -162,12 +163,7 @@ export function FileOverview({
               onChange={(value) => change(scope, value as Presentation)}
               data={presentations.map(({ value, icon, label }) => ({
                 value,
-                label: (
-                  <span className="content-switch-label">
-                    <Icon name={icon} size={14} />
-                    {tr(label)}
-                  </span>
-                ),
+                label: iconLabel(icon, tr(label)),
               }))}
             />
             <Select
