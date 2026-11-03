@@ -170,6 +170,12 @@ try {
       .locator('.folder-panel-header')
       .getByRole('button', { name: '資料夾設定', exact: true })
       .click()
+  if (args.includes('--mark')) {
+    // Ctrl+click marks the first two folders so the batch type bar can be inspected.
+    const items = page.locator('.folder-card, .folder-table tbody tr')
+    await items.nth(0).click({ modifiers: ['Control'] })
+    await items.nth(1).click({ modifiers: ['Control'] })
+  }
   const click = option('click')
   if (click) await page.getByRole('button', { name: click, exact: true }).first().click()
   const press = option('press')

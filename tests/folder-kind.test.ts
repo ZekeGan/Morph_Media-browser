@@ -102,3 +102,64 @@ test('the folderKind request stores or clears the manual kind and rejects unknow
   })
   assert.equal((await readFolder(rowA().path)).details?.kind, undefined)
 })
+
+test('folderKinds sets the kind of several folders and reports the ones that fail', async (t) => {
+  const base = path.resolve('.test-output')
+  await fs.mkdir(base, { recursive: true })
+  const root = await fs.mkdtemp(path.join(base, 'folder-kinds-')),
+    media = path.join(root, 'media'),
+    local = path.join(root, 'local')
+  for (const name of ['A', 'B']) await fs.mkdir(path.join(media, name), { recursive: true })
+  const lib = new Library(local, undefined, false)
+  await lib.init()
+  const desktop: DesktopOperations = {
+    choose: async () => undefined,
+    open: async () => {},
+    launch: async () => {},
+    thumbnail: async () => Buffer.from('x'),
+  }
+  const explorer = new Explorer(lib, local, desktop)
+  t.after(async () => {
+    explorer.index.close()
+    const target = await fs.realpath(root)
+    if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup')
+    await fs.rm(target, { recursive: true, force: true })
+  })
+  await lib.create(media, { name: 'Kinds', depth: { mode: 'through', level: 2 } })
+  const rowOf = (name: string) => lib.snapshot().rows.find((r) => r.name === name)!
+  const a = rowOf('A'),
+    b = rowOf('B')
+  const result = await explorer.request({
+    action: 'folderKinds',
+    rows: [
+      { rowId: a.rowId, revision: a.record!.revision },
+      { rowId: b.rowId, revision: b.record!.revision + 5 },
+    ],
+    kind: 'media',
+  })
+  assert.equal((await readFolder(rowOf('A').path)).details?.kind, 'media')
+  assert.equal(
+    (await readFolder(rowOf('B').path)).details?.kind,
+    undefined,
+    'a stale revision is not written'
+  )
+  assert.match(result.notice?.message ?? JSON.stringify(result.notice), /失敗|b/i)
+  await assert.rejects(
+    explorer.request({ action: 'folderKinds', rows: [], kind: 'media' }),
+    /批次範圍不合法/
+  )
+  await assert.rejects(
+    explorer.request({
+      action: 'folderKinds',
+      rows: [{ rowId: a.rowId, revision: 1 }],
+      kind: 'x' as never,
+    }),
+    /類型不合法/
+  )
+  await explorer.request({
+    action: 'folderKinds',
+    rows: [{ rowId: a.rowId, revision: rowOf('A').record!.revision }],
+    kind: null,
+  })
+  assert.equal((await readFolder(rowOf('A').path)).details?.kind, undefined)
+})

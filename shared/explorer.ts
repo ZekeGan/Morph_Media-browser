@@ -217,6 +217,11 @@ export type ExplorerRequest =
       kind: import('./kind').FolderKind | null
     }
   | {
+      action: 'folderKinds'
+      rows: { rowId: string; revision: number }[]
+      kind: import('./kind').FolderKind | null
+    }
+  | {
       action: 'playback'
       rowId: string
       revision: number

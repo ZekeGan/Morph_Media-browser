@@ -6436,5 +6436,53 @@
     "en": "Follow the project's current layout",
     "ja": "プロジェクトの現在のレイアウトに従う",
     "es": "Seguir el diseño actual del proyecto"
+  },
+  "批次指定資料夾類型": {
+    "zh-CN": "批量指定文件夹类型",
+    "en": "Set folder type in bulk",
+    "ja": "フォルダーの種類を一括指定",
+    "es": "Asignar tipo de carpeta en bloque"
+  },
+  "已選 {0} 個資料夾": {
+    "zh-CN": "已选 {0} 个文件夹",
+    "en": "{0} folders selected",
+    "ja": "{0} 個のフォルダーを選択中",
+    "es": "{0} carpetas seleccionadas"
+  },
+  "{0} 個無法修改，將略過": {
+    "zh-CN": "{0} 个无法修改，将略过",
+    "en": "{0} cannot be changed and will be skipped",
+    "ja": "{0} 個は変更できないためスキップします",
+    "es": "{0} no se pueden cambiar y se omitirán"
+  },
+  "指定類型": {
+    "zh-CN": "指定类型",
+    "en": "Set type",
+    "ja": "種類を指定",
+    "es": "Asignar tipo"
+  },
+  "指定類型…": {
+    "zh-CN": "指定类型…",
+    "en": "Set type…",
+    "ja": "種類を指定…",
+    "es": "Asignar tipo…"
+  },
+  "自動偵測": {
+    "zh-CN": "自动检测",
+    "en": "Detect automatically",
+    "ja": "自動検出",
+    "es": "Detectar automáticamente"
+  },
+  "取消選取": {
+    "zh-CN": "取消选择",
+    "en": "Clear selection",
+    "ja": "選択を解除",
+    "es": "Borrar selección"
+  },
+  "Ctrl／Shift 點選可多選資料夾，再批次指定類型": {
+    "zh-CN": "按住 Ctrl／Shift 点选可多选文件夹，再批量指定类型",
+    "en": "Ctrl/Shift+click to select several folders, then set their type in bulk",
+    "ja": "Ctrl／Shift+クリックで複数のフォルダーを選び、種類を一括指定できます",
+    "es": "Ctrl/Mayús+clic para seleccionar varias carpetas y asignar su tipo en bloque"
   }
 }

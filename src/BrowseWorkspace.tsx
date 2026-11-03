@@ -21,6 +21,7 @@ import {
 import { createPortal } from 'react-dom'
 import { ActionIcon, Breadcrumbs, Pagination, Tooltip } from '@mantine/core'
 import { Card } from './Card'
+import { KindBatchBar } from './KindBatchBar'
 import { cardPresets } from '../shared/layouts'
 import {
   browserRows,
@@ -88,10 +89,12 @@ export function BrowseWorkspace({
     [page, setPage] = useState(1)
   const [sort, setSort] = useState({ field: 'name', asc: true }),
     [highlight, setHighlight] = useState<string>(),
+    [marked, setMarked] = useState<string[]>([]),
     [configId, setConfigId] = useState<string>(),
     [configDirty, setConfigDirty] = useState(false),
     [expanded, setExpanded] = useState(false)
   const [filePreview, setFilePreview] = useState<OverviewEntry>()
+  const markAnchor = useRef<string>(undefined)
   const panelSlot = useRef<HTMLDivElement>(null),
     panelToggle = useRef<HTMLButtonElement>(null)
   const panelBody = useRef<HTMLDivElement>(null),
@@ -571,8 +574,24 @@ export function BrowseWorkspace({
     resize.current = undefined
     persist(state.current)
   }
+  // Ctrl/Cmd+click marks folders one by one, Shift+click marks a range; a plain click clears the marks.
   const gestures = (id: string) => ({
-    onClick: () => setHighlight(id),
+    onClick: (e: React.MouseEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        markAnchor.current = id
+        setMarked((now) => (now.includes(id) ? now.filter((m) => m !== id) : [...now, id]))
+        return
+      }
+      const from = current.findIndex((r) => r.rowId === markAnchor.current),
+        to = current.findIndex((r) => r.rowId === id)
+      if (e.shiftKey && from >= 0 && to >= 0) {
+        setMarked(current.slice(Math.min(from, to), Math.max(from, to) + 1).map((r) => r.rowId))
+        return
+      }
+      markAnchor.current = id
+      if (marked.length) setMarked([])
+      setHighlight(id)
+    },
     onDoubleClick: () => void open(id),
     onContextMenu: (e: React.MouseEvent) => {
       e.preventDefault()
@@ -729,7 +748,7 @@ export function BrowseWorkspace({
               )}
             </Breadcrumbs>
           </nav>
-          <small className="view-count">
+          <small className="view-count" title={tr('Ctrl／Shift 點選可多選資料夾，再批次指定類型')}>
             {filtered.length} {tr('筆')}
             {browse.mode === 'CARD'
               ? ' · ' +
@@ -755,6 +774,14 @@ export function BrowseWorkspace({
             timer.current = setTimeout(() => persist(state.current), 400)
           }}
         >
+          {folderMode && marked.length > 0 && (
+            <KindBatchBar
+              rows={all.filter((r) => marked.includes(r.rowId))}
+              busy={busy}
+              run={run}
+              clear={() => setMarked([])}
+            />
+          )}
           {!folderMode && overviewRoot ? (
             <FileOverview
               toolbarTarget={overviewTools}
@@ -885,7 +912,10 @@ export function BrowseWorkspace({
                     <tr
                       key={r.rowId}
                       data-row-id={r.rowId}
-                      className={highlight === r.rowId ? 'selected' : ''}
+                      className={
+                        (highlight === r.rowId ? 'selected ' : '') +
+                        (marked.includes(r.rowId) ? 'marked' : '')
+                      }
                       tabIndex={0}
                       {...gestures(r.rowId)}
                     >
@@ -931,7 +961,11 @@ export function BrowseWorkspace({
                 <article
                   key={row.rowId}
                   data-row-id={row.rowId}
-                  className={'folder-card ' + (highlight === row.rowId ? 'selected' : '')}
+                  className={
+                    'folder-card ' +
+                    (highlight === row.rowId ? 'selected ' : '') +
+                    (marked.includes(row.rowId) ? 'marked' : '')
+                  }
                   tabIndex={0}
                   {...gestures(row.rowId)}
                 >

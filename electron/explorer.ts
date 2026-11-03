@@ -405,6 +405,39 @@ export class Explorer {
           })
         )
       }
+      case 'folderKinds': {
+        if (req.kind !== null && !isFolderKind(req.kind)) throw new Error('資料夾類型不合法')
+        if (
+          !Array.isArray(req.rows) ||
+          !req.rows.length ||
+          req.rows.length > 1000 ||
+          new Set(req.rows.map((r) => r.rowId)).size !== req.rows.length
+        )
+          throw new Error('批次範圍不合法')
+        // Each folder keeps its own record: one that cannot be written is reported and the rest still change.
+        const failed: string[] = []
+        let saved = 0
+        for (const item of req.rows)
+          try {
+            await this.details(item.rowId, item.revision, (d) => {
+              if (req.kind === null) delete d.kind
+              else d.kind = req.kind
+            })
+            saved++
+          } catch (e) {
+            failed.push(`${item.rowId}: ${String(e)}`)
+          }
+        const snapshot = this.library.snapshot()
+        this.index.sync(snapshot)
+        return {
+          snapshot,
+          notice: completionNotice(
+            saved,
+            failed.length,
+            `已指定 ${saved} 個資料夾的類型${failed.length ? '\n失敗（已成功項目保留）：\n' + failed.join('\n') : ''}`
+          ),
+        }
+      }
       case 'playback': {
         const f = await this.file(req.rowId, req.fileId)
         if (!f.mime.startsWith('video/')) throw new Error('不是影片')
