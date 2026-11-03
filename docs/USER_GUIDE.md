@@ -49,7 +49,7 @@ If you already created a project and only moved to another computer or folder, u
 
 ## 6. Add information to a folder
 
-Open a folder's **Folder settings**:
+Open a folder's **Folder settings**. The "Still to add" card at the top lists what this folder lacks (launch file, cover, work data); its buttons take you straight to the right place:
 
 - **Data**: fill in this folder's fields. While something is unsaved, a Save / Discard bar stays at the bottom and the tab shows a dot.
 - **Import from source** (at the top of the Data tab): paste the address of the work and the source is recognised from it (E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library, Wikimedia Commons; for Steam the App ID works too). **Get preview** is enabled only for a known site, and you choose which fields to import afterwards. Nothing is fetched unless you ask. Some sources carry adult content; using them is up to you.
@@ -58,7 +58,7 @@ Open a folder's **Folder settings**:
 ## 7. Games
 
 - Game folders are detected and protected: M:orph never creates records inside a game. If one is missed, mark it as a game root by hand.
-- In Folder settings → **Game actions**, bind actions to this game: an EXE (with arguments), a folder, a file, a web address, or a **shortcut** inside the game folder (for example a Locale Emulator `.lnk`, which keeps its own settings). Use "Customize toolbar" to add actions.
+- In Folder settings → **Game actions**, bind actions to this game: an EXE (with arguments), a folder, a file, a web address, or a **shortcut** inside the game folder (for example a Locale Emulator `.lnk`, which keeps its own settings). Use "Customize toolbar" to add actions, and the play icon next to an action to test-launch it.
 - Only bound actions appear in the button row, and the eye icon next to each action hides it for this game. A "Launch game" component can list fallback actions and starts whichever one this game has.
 
 ## 8. Appearance, language and backup

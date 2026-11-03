@@ -51,6 +51,7 @@ export function FolderPanel({
   act,
   run,
   onDirty,
+  onEditLayout,
   initialTab = 'fields',
 }: {
   row: FolderRow
@@ -59,6 +60,7 @@ export function FolderPanel({
   act: Act
   run: Run
   onDirty: (dirty: boolean) => void
+  onEditLayout?: () => void
   initialTab?: string
 }) {
   const sourceLabels: Record<string, string> = {
@@ -500,36 +502,82 @@ export function FolderPanel({
     const result = await act({ action: 'cleanupPreview', rowId: row.rowId, scope })
     if (result?.preview) setCleanup(result.preview)
   }
+  // What this folder still lacks, each with a button that goes straight to the place that fixes it.
+  const empty = (value: unknown) =>
+    value == null || value === '' || (Array.isArray(value) && value.length === 0)
+  const todo: { key: string; text: string; button: string; go: () => void }[] = []
+  if (row.record && !disabled) {
+    if (
+      project.mediaCategory === 'game' &&
+      gameActionTemplates(project).some((t) => t.id === 'default-launch-game') &&
+      !row.record.details?.targets?.['default-launch-game']
+    )
+      todo.push({
+        key: 'launch',
+        text: tr('尚未指定啟動檔'),
+        button: tr('指定啟動檔'),
+        go: () => setTab('game'),
+      })
+    if (project.mediaCategory === 'game' && !row.record.details?.bannerAssetId && !assets.length)
+      todo.push({
+        key: 'cover',
+        text: tr('還沒有封面'),
+        button: tr('選擇封面'),
+        go: () => setTab('images'),
+      })
+    if (
+      mainFields.length &&
+      mainFields.every((f) => empty(original[f.attributeId])) &&
+      !row.record.attributes.some((a) => a.sourceRecord)
+    )
+      todo.push({
+        key: 'data',
+        text: tr('尚無作品資料'),
+        button: tr('從網址取得資料'),
+        go: () => {
+          setTab('fields')
+          requestAnimationFrame(() => {
+            const input = document.getElementById('folder-source-url')
+            input?.scrollIntoView({ block: 'center' })
+            input?.focus()
+          })
+        },
+      })
+  }
   return (
     <Stack gap="md" className="folder-settings">
       <div className="folder-settings-intro">
-        <Text size="sm" c="dimmed" className="path">
+        <Text size="xs" c="dimmed" className="path-line" title={row.path}>
           {row.path}
         </Text>
-        <Group gap="xs">
-          <Badge color={row.error ? 'red' : row.readonly || row.stopped ? 'orange' : 'gray'}>
-            {row.error
-              ? tr('需要處理')
-              : row.readonly
-                ? tr('受保護')
-                : row.stopped
-                  ? tr('已停止記錄')
-                  : tr('資料夾設定')}
+        {(row.error || row.readonly || row.stopped) && (
+          <Badge color={row.error ? 'red' : 'orange'}>
+            {row.error ? tr('需要處理') : row.readonly ? tr('受保護') : tr('已停止記錄')}
           </Badge>
-          <Button
-            size="compact-xs"
-            variant="subtle"
-            onClick={() => void act({ action: 'open', rowId: row.rowId })}
-          >
-            {tr('在檔案總管開啟')}
-          </Button>
-        </Group>
+        )}
       </div>
       {row.error && <Alert color="orange">{row.error}</Alert>}
       {error && (
         <Alert color="orange" withCloseButton onClose={() => setError('')}>
           {error}
         </Alert>
+      )}
+      {todo.length > 0 && (
+        <section className="settings-section folder-todo" aria-label={tr('還可以補上')}>
+          <Text fw={600} size="sm" mb={6}>
+            {tr('還可以補上')}
+          </Text>
+          <Stack gap={6}>
+            {todo.map((item) => (
+              <Group key={item.key} justify="space-between" wrap="nowrap" gap="xs">
+                <Text size="sm">{item.text}</Text>
+                <Button size="compact-sm" variant="light" onClick={item.go}>
+                  {item.button}
+                </Button>
+              </Group>
+            ))}
+          </Stack>
+        </section>
       )}
       <Tabs value={tab} onChange={setTab} keepMounted={false}>
         <Tabs.List>
@@ -571,6 +619,7 @@ export function FolderPanel({
               <section className="settings-section">
                 <Stack gap="sm">
                   <TextInput
+                    id="folder-source-url"
                     disabled={busy}
                     label={
                       <HelpLabel
@@ -766,9 +815,16 @@ export function FolderPanel({
             )}
             {mainFields.map(renderField)}
             {!mainFields.length && (
-              <Text c="dimmed" size="sm">
-                {tr('專案尚未配置欄位，可在積木編輯器新增。')}
-              </Text>
+              <Group justify="space-between" wrap="nowrap" gap="xs">
+                <Text c="dimmed" size="sm">
+                  {tr('專案尚未配置欄位。')}
+                </Text>
+                {onEditLayout && (
+                  <Button size="compact-sm" variant="light" onClick={onEditLayout}>
+                    {tr('新增欄位')}
+                  </Button>
+                )}
+              </Group>
             )}
             {!!otherFields.length && (
               <Accordion variant="separated">

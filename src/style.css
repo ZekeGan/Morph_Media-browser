@@ -285,3 +285,6 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .image-thumb-empty { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; }
 .image-thumb-mini { width:28px; height:20px; object-fit:contain; border-radius:2px; background:var(--inset); }
 .folder-source { padding-bottom:2px; }
+.folder-settings-intro { display:flex; align-items:center; gap:8px; min-width:0; }
+.folder-settings-intro .path-line { flex:1; min-width:0; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.folder-todo { border-color:var(--accent); }

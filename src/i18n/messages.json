@@ -6178,5 +6178,65 @@
     "zh-CN": "清除指定",
     "en": "Clear choice",
     "es": "Quitar selección"
+  },
+  "還可以補上": {
+    "ja": "追加できる項目",
+    "zh-CN": "还可以补充",
+    "en": "Still to add",
+    "es": "Aún se puede añadir"
+  },
+  "尚未指定啟動檔": {
+    "ja": "起動ファイルが未指定です",
+    "zh-CN": "尚未指定启动文件",
+    "en": "No launch file set",
+    "es": "Sin archivo de inicio"
+  },
+  "指定啟動檔": {
+    "ja": "起動ファイルを指定",
+    "zh-CN": "指定启动文件",
+    "en": "Set launch file",
+    "es": "Indicar archivo de inicio"
+  },
+  "還沒有封面": {
+    "ja": "カバーがありません",
+    "zh-CN": "还没有封面",
+    "en": "No cover yet",
+    "es": "Aún no hay portada"
+  },
+  "選擇封面": {
+    "ja": "カバーを選択",
+    "zh-CN": "选择封面",
+    "en": "Choose cover",
+    "es": "Elegir portada"
+  },
+  "尚無作品資料": {
+    "ja": "作品データがありません",
+    "zh-CN": "尚无作品数据",
+    "en": "No work data yet",
+    "es": "Aún no hay datos de la obra"
+  },
+  "從網址取得資料": {
+    "ja": "URLからデータを取得",
+    "zh-CN": "从网址获取数据",
+    "en": "Get data from a link",
+    "es": "Obtener datos de un enlace"
+  },
+  "專案尚未配置欄位。": {
+    "ja": "このプロジェクトにはまだフィールドがありません。",
+    "zh-CN": "项目尚未配置字段。",
+    "en": "This project has no fields yet.",
+    "es": "Este proyecto aún no tiene campos."
+  },
+  "測試啟動": {
+    "ja": "テスト起動",
+    "zh-CN": "测试启动",
+    "en": "Test launch",
+    "es": "Probar inicio"
+  },
+  "測試啟動 {0}": {
+    "ja": "{0} をテスト起動",
+    "zh-CN": "测试启动 {0}",
+    "en": "Test launch {0}",
+    "es": "Probar inicio de {0}"
   }
 }

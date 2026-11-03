@@ -517,6 +517,7 @@ export function BrowseWorkspace({
         act={act}
         run={run}
         onDirty={reportDirty}
+        onEditLayout={() => edit()}
       />
     </Suspense>
   )

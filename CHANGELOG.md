@@ -6,6 +6,7 @@ The application version is independent of portable record `schemaVersion`.
 
 | Versions | Theme |
 | --- | --- |
+| 0.39 | Folder settings redesign (import inside Data, sticky save bar, image thumbnails and delete, "still to add" card, test launch), one top-bar refresh button, smaller package, translation fixes |
 | 0.38 | First packaged Windows build (installer and portable) |
 | 0.36 – 0.37 | M:orph identity, mark and icon; GPL-3.0 licence and name policy; five-language README; code split into modules; release tidy-up |
 | 0.35 | Component styles: weight, italic, borders, corners, presets, tag and choice colours |
@@ -16,11 +17,13 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+## 0.39.0 — 2026-11-03
+
+- Folder settings, round two: a "Still to add" card lists what a folder lacks (launch file, cover, work data) with a button that jumps to the right place; the path is one slim line and the duplicate "open in Explorer" button is gone (the panel header icon remains); an empty project shows an "Add field" button; each game action has a "test launch" icon and its target path sits on one line.
 - Folder settings redesign (fewer steps): website import now sits at the top of the Data tab instead of its own tab; a sticky Save / Discard bar with an unsaved count appears at the bottom (plus a dot on the Data tab); image and game-cover choices are a thumbnail that opens a menu to pick a saved image, import a new one or clear it.
 - Fixed 161 Simplified Chinese interface strings that ended in garbled characters; a data test now rejects corrupted characters in any language.
 - Folder settings: saved images can now be deleted (Images tab → Saved images → Delete image). A confirmation lists the components/cover that use it; the image entry, its cover/component references and its managed file are removed in one safe write, and your original media files are never touched.
 - One refresh button: the folder toolbar's "Rescan" and the right panel's "Refresh" buttons are merged into a single "Refresh" button in the top bar next to the application settings; it rescans the current project and reloads the right-hand content.
-
 - UI test runner (`pnpm test:ui:*`, `test:workspace`) now guarantees a current build: it prints the `out/` build time and runs `pnpm build` first when `out/` is missing or older than `src/`, `shared/`, `electron/` or the build config, so a stale build can no longer show old UI.
 - Packaging: electron-builder now ships only the app's five UI locales (`electronLanguages`), dropping unused Chromium language packs, and renderer-only libraries (bundled by Vite already) moved to `devDependencies` so they are no longer copied into `app.asar` a second time (`app.asar` 47 MB → 4 MB; unpacked app 402 MB → 316 MB). The app's own translations are unaffected.
 - Game folder panel: the field table's columns (field / source) can be resized by dragging the header separators; widths are remembered on this computer.

@@ -146,6 +146,27 @@ export function GameActionTargets({
                 <Text size="xs" c="dimmed">
                   {kindLabel(template.kind)}
                 </Text>
+                <Tooltip label={tr('測試啟動')}>
+                  <ActionIcon
+                    variant="subtle"
+                    aria-label={tr('測試啟動 {0}', tr(template.label))}
+                    disabled={disabled || !bound}
+                    onClick={() => {
+                      if (
+                        ['exe', 'file-app', 'shortcut'].includes(template.kind) &&
+                        !window.confirm(tr('啟動「{0}」？', tr(template.label)))
+                      )
+                        return
+                      void run({
+                        action: 'runTarget',
+                        rowId: row.rowId,
+                        templateId: template.id,
+                      })
+                    }}
+                  >
+                    <Icon name="play" size={16} />
+                  </ActionIcon>
+                </Tooltip>
                 <Tooltip
                   label={
                     !bound
@@ -180,6 +201,11 @@ export function GameActionTargets({
                 </Tooltip>
               </Group>
             </Group>
+            {['exe', 'folder', 'file-app'].includes(template.kind) && (
+              <Text size="sm" c="dimmed" className="path-line" title={target?.path}>
+                {target?.kind === template.kind ? target.path : tr('尚未綁定目標')}
+              </Text>
+            )}
             {template.kind === 'url' ? (
               <TextInput
                 label={tr('網址')}
@@ -208,11 +234,7 @@ export function GameActionTargets({
                   onChange={(value) => setChoice({ ...choice, [template.id]: value ?? '' })}
                 />
               </>
-            ) : (
-              <Text size="sm" c="dimmed" className="path">
-                {target?.kind === template.kind ? target.path : tr('尚未綁定目標')}
-              </Text>
-            )}
+            ) : null}
             {target?.kind === 'file-app' && target.application && (
               <Text size="xs" c="dimmed" className="path">
                 {tr('應用程式')} · {target.application.path}
