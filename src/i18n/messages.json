@@ -6922,5 +6922,17 @@
     "en": "Game only",
     "ja": "ゲーム専用",
     "es": "Solo juegos"
+  },
+  "遊戲資料夾的保護提示": {
+    "zh-CN": "游戏文件夹的保护提示",
+    "en": "Game folder protection notes",
+    "ja": "ゲームフォルダーの保護に関する通知",
+    "es": "Avisos de protección de carpetas de juegos"
+  },
+  "這些是遊戲資料夾，工具只在遊戲根目錄這一層建立記錄，內部不會寫入。這不是錯誤。": {
+    "zh-CN": "这些是游戏文件夹，工具只在游戏根目录这一层建立记录，内部不会写入。这不是错误。",
+    "en": "These are game folders: a record is only made at the game's root and nothing is written inside. This is not an error.",
+    "ja": "これらはゲームフォルダーです。記録はゲームのルートの階層にだけ作られ、内部には何も書き込まれません。エラーではありません。",
+    "es": "Son carpetas de juegos: solo se crea un registro en la raíz del juego y no se escribe nada dentro. No es un error."
   }
 }

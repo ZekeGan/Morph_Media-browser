@@ -12,10 +12,16 @@ export const problemItems = (snapshot: Overview) => ({
   broken: snapshot.rows.filter((r) => r.error && !r.duplicate),
   stopped: snapshot.rows.filter((r) => r.stopped && !r.error && !r.duplicate),
 })
+// Scan messages that only say a game folder is being protected are notes, not problems.
+const isNote = (text: string) => /內部不寫入|唯讀且不深入/.test(text)
+export const splitMessages = (messages: string[]) => ({
+  notes: messages.filter(isNote),
+  others: messages.filter((text) => !isNote(text)),
+})
 export const problemCount = (snapshot: Overview) => {
   const { roots, duplicates, broken, stopped } = problemItems(snapshot)
   const structured = roots.length + duplicates.length + broken.length + stopped.length
-  return structured || snapshot.problems.length
+  return structured || splitMessages(snapshot.problems).others.length
 }
 const shortPath = (path: string) => {
   const parts = path.split(/[\\/]+/).filter(Boolean),
@@ -42,7 +48,8 @@ export function ProblemsDialog({
 }) {
   useLocale()
   const { roots, duplicates, broken, stopped } = problemItems(snapshot),
-    count = roots.length + duplicates.length + broken.length + stopped.length
+    count = roots.length + duplicates.length + broken.length + stopped.length,
+    { notes, others } = splitMessages(snapshot.problems)
   const entry = (
     key: string,
     title: string,
@@ -99,7 +106,7 @@ export function ProblemsDialog({
   return (
     <Modal opened={opened} onClose={close} title={tr('問題與復原')} size="xl">
       <Stack>
-        {!count && !snapshot.problems.length ? (
+        {!count && !others.length ? (
           <Alert color="teal" variant="light">
             {tr('目前沒有需要處理的問題。')}
           </Alert>
@@ -182,19 +189,52 @@ export function ProblemsDialog({
             )
           )
         )}
-        {!!snapshot.problems.length && (
+        {!!others.length && (
           <Accordion variant="separated">
             <Accordion.Item value="messages">
               <Accordion.Control>
-                {tr('其他訊息')} ({snapshot.problems.length})
+                {tr('其他訊息')} ({others.length})
               </Accordion.Control>
               <Accordion.Panel>
                 <Stack gap="xs">
-                  {snapshot.problems.map((text, index) => (
+                  {others.map((text, index) => (
                     <Text size="xs" className="path" key={index}>
                       {text}
                     </Text>
                   ))}
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        )}
+        {!!notes.length && (
+          <Accordion variant="separated">
+            <Accordion.Item value="notes">
+              <Accordion.Control>
+                {tr('遊戲資料夾的保護提示')} ({notes.length})
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Text size="xs" c="dimmed" mb="xs">
+                  {tr(
+                    '這些是遊戲資料夾，工具只在遊戲根目錄這一層建立記錄，內部不會寫入。這不是錯誤。'
+                  )}
+                </Text>
+                <Stack gap={6}>
+                  {notes.map((text, index) => {
+                    const match = /^(.+?): (.+)$/.exec(text)
+                    return (
+                      <div key={index}>
+                        <Text size="sm" className="path" title={match?.[1] ?? text}>
+                          {shortPath(match?.[1] ?? text)}
+                        </Text>
+                        {match && (
+                          <Text size="xs" c="dimmed">
+                            {match[2]}
+                          </Text>
+                        )}
+                      </div>
+                    )
+                  })}
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>
