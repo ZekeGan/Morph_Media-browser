@@ -38,7 +38,6 @@ test('saved images can be deleted: references cleared in one write, file removed
   })
   await lib.create(media, {
     name: 'Games',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 2 },
   })
   const rowOf = () => lib.snapshot().rows.find((r) => r.name === 'Game A')!

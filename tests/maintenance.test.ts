@@ -24,7 +24,6 @@ async function fixture(t: { after: (callback: () => Promise<void>) => void }) {
   await lib.init()
   await lib.create(media, {
     name: 'Primary',
-    mediaCategory: 'other',
     scanAll: true,
     depth: { mode: 'through', level: 3 },
   })
@@ -90,14 +89,12 @@ test('full removal includes historical protected descendants and archives, repor
     id = lib.snapshot().projects[0].projectId
   await lib.create(path.join(media, 'A'), {
     name: 'Nested',
-    mediaCategory: 'other',
     scanAll: true,
     depth: { mode: 'through', level: 2 },
   })
   const nestedId = lib.snapshot().projects[1].projectId
   await lib.create(media, {
     name: 'Same root',
-    mediaCategory: 'other',
     depth: { mode: 'through', level: 1 },
   })
   await fs.writeFile(path.join(media, '.media-viewer', 'unknown.txt'), 'KEEP')
@@ -117,7 +114,6 @@ test('full removal includes historical protected descendants and archives, repor
   assert.ok((await fs.readdir(local)).some((name) => name === 'maintenance-backups'))
   await lib.create(path.join(media, 'A'), {
     name: 'New',
-    mediaCategory: 'other',
     depth: { mode: 'through', level: 1 },
   })
   assert.equal(lib.snapshot().projects.length, 1)
@@ -130,7 +126,6 @@ test('full removal restores a pristine metadata tree and a recreated project get
   assert.equal(await exists(path.join(media, '.media-viewer')), false)
   await lib.create(media, {
     name: 'New',
-    mediaCategory: 'other',
     scanAll: true,
     depth: { mode: 'through', level: 3 },
   })
@@ -224,7 +219,6 @@ test('full removal invalidates changed bindings and added metadata, excludes anc
     ancestor = lib.snapshot().projects[0].projectId
   await lib.create(path.join(media, 'A'), {
     name: 'Nested',
-    mediaCategory: 'other',
     scanAll: true,
     depth: { mode: 'through', level: 1 },
   })
@@ -242,7 +236,6 @@ test('full removal invalidates changed bindings and added metadata, excludes anc
   const stale = await lib.previewFullRemoval(ancestor)
   await lib.create(media, {
     name: 'Other',
-    mediaCategory: 'other',
     depth: { mode: 'through', level: 1 },
   })
   await assert.rejects(lib.fullRemoveProject(stale.token), /失效/)
@@ -252,7 +245,6 @@ test('field deletion counts false and zero across shared/private values and proj
     first = lib.snapshot().projects[0].projectId
   await lib.create(media, {
     name: 'Shared',
-    mediaCategory: 'other',
     scanAll: true,
     depth: { mode: 'through', level: 2 },
   })
@@ -325,7 +317,6 @@ test('field deletion also scrubs backup-only references and preserves unrelated 
   })
   await lib.create(path.join(media, 'A'), {
     name: 'Backup only',
-    mediaCategory: 'other',
     depth: { mode: 'through', level: 1 },
   })
   const other = lib.snapshot().projects[1].project!,

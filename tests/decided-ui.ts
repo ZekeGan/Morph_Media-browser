@@ -53,7 +53,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 const state = await library.create(media, {
     name: 'Decided QA',
-    mediaCategory: 'album',
     depth: { mode: 'through', level: 2 },
   }),
   project = state.projects[0].project!

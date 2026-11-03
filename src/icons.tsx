@@ -231,20 +231,6 @@ const paths = {
 } satisfies Record<string, ReactNode>
 
 export type IconName = keyof typeof paths
-export const projectIconName = (category?: string): IconName =>
-  category === 'media'
-    ? 'grid'
-    : category === 'game'
-      ? 'game'
-      : category === 'music'
-        ? 'music'
-        : category === 'video'
-          ? 'video'
-          : category === 'manga'
-            ? 'book'
-            : category === 'album'
-              ? 'image'
-              : 'folder'
 export function Icon({
   name,
   size = 18,

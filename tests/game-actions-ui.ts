@@ -25,7 +25,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 const snapshot = await library.create(media, {
     name: 'Game actions test',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 3 },
   }),
   project = snapshot.projects[0].project!
@@ -38,7 +37,6 @@ const imageName = 'A very long controlled image filename '.repeat(4) + '.png',
 await fs.writeFile(path.join(album, imageName), pixel)
 await library.create(album, {
   name: 'Image title test',
-  mediaCategory: 'album',
   depth: { mode: 'through', level: 1 },
 })
 const originalRecord = await fs.readFile(folderFile(game), 'utf8'),

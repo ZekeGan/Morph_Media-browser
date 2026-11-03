@@ -64,7 +64,6 @@
 
 ## 測試定位與失敗處理
 
-影音轉換使用 `tests/media-conversion.test.ts` 驗證四種來源分類的預覽不寫入、模板映射、原子備份、過期拒絕、重開與分類恢復；`tests/media-conversion-ui.ts` 驗證實際預覽／取消／轉換／恢復入口，均限受控資料。
 
 
 | 入口 | 涵蓋 |

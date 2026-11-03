@@ -229,7 +229,6 @@ test('archive viewing supports stored and deflated images with readonly ranges a
   await fs.writeFile(file, bytes)
   const snapshot = await lib.create(media, {
       name: 'Archive',
-      mediaCategory: 'manga',
       depth: { mode: 'through', level: 1 },
     }),
     row = snapshot.rows[0],
@@ -285,7 +284,6 @@ test('file overview preserves source identity, pagination, boundaries and portab
   }
   const snapshot = await lib.create(media, {
       name: 'Images',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 2 },
     }),
     root = snapshot.rows.find((row) => row.path === media)!,
@@ -336,7 +334,6 @@ test('saved queries keep field identities through alias changes and support numb
   const { media, lib, explorer } = await fixture(t)
   let state = await lib.create(media, {
       name: 'Search',
-      mediaCategory: 'other',
       depth: { mode: 'through', level: 1 },
     }),
     project = state.projects[0].project!
@@ -474,7 +471,6 @@ test('source preview and fill/replace protect manual edits, preserve provenance,
   })
   const state = await lib.create(media, {
     name: 'Sources',
-    mediaCategory: 'manga',
     depth: { mode: 'through', level: 1 },
   })
   await lib.saveProject({

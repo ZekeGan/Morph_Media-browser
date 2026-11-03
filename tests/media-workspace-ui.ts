@@ -78,7 +78,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(media, {
   name: 'Mixed QA',
-  mediaCategory: 'media',
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })

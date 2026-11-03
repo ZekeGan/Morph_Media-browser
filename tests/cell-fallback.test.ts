@@ -93,7 +93,6 @@ test('launch cells validate their fallback actions', () => {
   const base = modelProject(),
     launch = (patch: Partial<Cell>) => ({
       ...base,
-      mediaCategory: 'game' as const,
       layoutPresets: undefined,
       activeLayoutId: undefined,
       contentCells: undefined,

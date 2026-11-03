@@ -19,7 +19,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(media, {
   name: 'Portable',
-  mediaCategory: 'manga',
   depth: { mode: 'through', level: 2 },
 })
 

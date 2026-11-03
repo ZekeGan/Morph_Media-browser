@@ -4,6 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Library } from '../electron/library'
 import { DATA_DIR } from '../shared/model'
+import { migrateRecord } from '../shared/project-export'
 import { ensureFolder, exists, folderFile, readFolder, saveFolder } from '../electron/files'
 
 const png = Buffer.concat([Buffer.from('89504e470d0a1a0a', 'hex'), Buffer.alloc(64, 7)])
@@ -28,7 +29,6 @@ async function source(root: string) {
   await lib.init()
   await lib.create(media, {
     name: 'Export me',
-    mediaCategory: 'manga',
     depth: { mode: 'through', level: 2 },
   })
   const row = () => lib.snapshot().rows.find((r) => r.name === 'A')!
@@ -193,4 +193,27 @@ test('export refuses a destination inside the project; import warns when the pro
   const dst = await target(root, 'dst')
   const preview = await src.lib.previewProjectImport(dir, dst.media)
   assert.match(preview.blocker ?? '', /仍連結在另一個位置/)
+})
+
+test('an export from before folder types is upgraded: categories dropped, templates keyed by kind', () => {
+  const old = {
+    name: 'Old',
+    mediaCategory: 'media',
+    mediaSourceCategory: 'video',
+    contentCells: {
+      manga: [{ cellId: 'a' }],
+      album: [{ cellId: 'b' }],
+      video: [{ cellId: 'c' }],
+      game: [],
+    },
+  }
+  const next = migrateRecord(1, structuredClone(old), 'project') as Record<string, any>
+  assert.equal('mediaCategory' in next, false)
+  assert.equal('mediaSourceCategory' in next, false)
+  assert.deepEqual(Object.keys(next.contentCells).sort(), ['book', 'game', 'media'])
+  assert.equal(next.contentCells.media[0].cellId, 'c')
+  assert.equal(next.contentCells.book[0].cellId, 'a')
+  const folder = { folderId: 'f' }
+  assert.deepEqual(migrateRecord(1, folder, 'folder'), folder)
+  assert.equal(migrateRecord(2, old, 'project'), old)
 })

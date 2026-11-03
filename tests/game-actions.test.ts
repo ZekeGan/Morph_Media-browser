@@ -56,7 +56,6 @@ test('game targets require explicit selection, preserve arguments and leave orig
   })
   await library.create(media, {
     name: 'Games',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 1 },
   })
   const row = () => library.snapshot().rows[0]

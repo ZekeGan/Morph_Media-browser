@@ -25,7 +25,6 @@ const lib = new Library(local, undefined, false)
 await lib.init()
 await lib.create(media, {
   name: 'Pending Album',
-  mediaCategory: 'album',
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })
@@ -35,7 +34,6 @@ project.fieldBindings = [{ attributeId: 'flag', alias: 'Flag', type: 'boolean' }
 await lib.saveProject(syncPresetDraft(project))
 await lib.create(media, {
   name: 'Pending Manga',
-  mediaCategory: 'manga',
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })

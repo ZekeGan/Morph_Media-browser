@@ -51,7 +51,6 @@ const lib = new Library(local, undefined, false)
 await lib.init()
 await lib.create(media, {
   name: '主題查收 · Theme QA',
-  mediaCategory: 'manga',
   scanAll: true,
   depth: { mode: 'through', level: 1 },
 })

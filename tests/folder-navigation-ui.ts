@@ -21,13 +21,11 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(media, {
   name: 'Navigation',
-  mediaCategory: 'media',
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })
 await library.create(multi, {
   name: 'Multi navigation',
-  mediaCategory: 'album',
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })

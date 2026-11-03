@@ -315,15 +315,15 @@ export const cellType = (kind: string) =>
     'field-date-only': 'date',
   })[kind] ?? 'string'
 // Content templates are kept per folder kind; templates saved under the old category names are still found.
-const legacyContentKey: Record<string, string> = { book: 'manga' }
+const legacyContentKeys: Record<string, string[]> = {
+  book: ['manga'],
+  media: ['video', 'album', 'music', 'other'],
+}
 export const contentCells = (
-  project: { cells: Cell[]; contentCells?: Record<string, Cell[]>; mediaSourceCategory?: string },
+  project: { cells: Cell[]; contentCells?: Record<string, Cell[]> },
   kind: string
 ) =>
-  project.contentCells?.[kind] ??
-  project.contentCells?.[
-    kind === 'media' && project.mediaSourceCategory
-      ? project.mediaSourceCategory
-      : legacyContentKey[kind]
-  ] ??
+  [kind, ...(legacyContentKeys[kind] ?? [])]
+    .map((key) => project.contentCells?.[key])
+    .find((cells) => cells) ??
   visibleCells(project).filter((c) => ['name', 'path'].includes(c.kind))

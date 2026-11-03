@@ -74,7 +74,6 @@ test('the folderKind request stores or clears the manual kind and rejects unknow
   })
   await lib.create(media, {
     name: 'Kinds',
-    mediaCategory: 'media',
     depth: { mode: 'through', level: 2 },
   })
   const rowA = () => lib.snapshot().rows.find((r) => r.name === 'A')!

@@ -51,7 +51,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 const created = await library.create(media, {
   name: 'Shot',
-  mediaCategory: kind,
   scanAll: true,
   depth: { mode: 'through', level: 2 },
 })
@@ -67,7 +66,7 @@ if (args.includes('--fields')) {
     getchu = crypto.randomUUID()
   await library.saveProject({
     ...project,
-    ...(project.mediaCategory === 'game'
+    ...(kind === 'game'
       ? {
           actionTemplates: [
             {
@@ -120,7 +119,7 @@ if (args.includes('--fields')) {
         grid: { x: 0, y: 9, w: 6, h: 3 },
         style,
       },
-      ...(project.mediaCategory === 'game'
+      ...(kind === 'game'
         ? [
             {
               cellId: crypto.randomUUID(),

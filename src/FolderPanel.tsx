@@ -135,7 +135,7 @@ export function FolderPanel({
     [targetDirty, setTargetDirty] = useState(false)
   useEffect(() => {
     setTab(
-      initialTab === 'source' || (initialTab === 'game' && effectiveKind(row, project) !== 'game')
+      initialTab === 'source' || (initialTab === 'game' && effectiveKind(row) !== 'game')
         ? 'fields'
         : initialTab
     )
@@ -166,7 +166,7 @@ export function FolderPanel({
     }
   }, [row.rowId])
   const detectedKind = detectFolderKind(row, sample)
-  const isGame = effectiveKind(row, project, sample) === 'game'
+  const isGame = effectiveKind(row, sample) === 'game'
   const kindLabel: Record<string, string> = {
     game: tr('遊戲'),
     book: tr('書籍／漫畫'),
@@ -204,7 +204,7 @@ export function FolderPanel({
     otherFields = fields.filter((f) => !configured.has(f.attributeId))
   const imageCells = [
     ...new Map(
-      [...rowCells(project, row), ...contentCells(project, effectiveKind(row, project, sample))]
+      [...rowCells(project, row), ...contentCells(project, effectiveKind(row, sample))]
         .filter((c) => c.kind === 'image')
         .map((c) => [c.cellId, c])
     ).values(),

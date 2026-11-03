@@ -20,7 +20,6 @@ const lib = new Library(local, undefined, false)
 await lib.init()
 await lib.create(media, {
   name: 'Search project',
-  mediaCategory: 'other',
   depth: { mode: 'through', level: 2 },
 })
 let project = lib.snapshot().projects[0].project!
@@ -53,7 +52,6 @@ await explorer.request({
 explorer.index.close()
 await lib.create(other, {
   name: 'Other project',
-  mediaCategory: 'other',
   depth: { mode: 'through', level: 2 },
 })
 const workspace = new WorkspaceStore(local, ['zh-TW'])

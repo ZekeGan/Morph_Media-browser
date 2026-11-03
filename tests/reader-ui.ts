@@ -38,7 +38,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(comic, {
   name: 'Reader test',
-  mediaCategory: 'manga',
   depth: { mode: 'through', level: 1 },
   scanAll: true,
 })

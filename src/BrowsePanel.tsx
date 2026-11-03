@@ -81,7 +81,7 @@ export function BrowsePanel(props: Props) {
     togglePanel,
     history,
   } = props
-  const kind = detail ? effectiveKind(detail, project) : 'general'
+  const kind = detail ? effectiveKind(detail) : 'general'
   return (
     <div
       ref={panelSlot}

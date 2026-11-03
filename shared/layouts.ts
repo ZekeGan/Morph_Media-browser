@@ -117,7 +117,7 @@ export function saveCardPreset(
 export function rowCells(project: Project, row: FolderRow): Cell[] {
   const chosen =
     (row.record?.folderId && project.folderLayouts?.[row.record.folderId]) ||
-    project.kindLayouts?.[effectiveKind(row, project)]
+    project.kindLayouts?.[effectiveKind(row)]
   return chosen
     ? (cardPresets(project).find((preset) => preset.id === chosen)?.cells ?? visibleCells(project))
     : visibleCells(project)

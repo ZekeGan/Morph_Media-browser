@@ -71,9 +71,9 @@ for (const name of ['Game.exe', 'UnityPlayer.dll'])
 const lib = new Library(local, undefined, false)
 await lib.init()
 const input = { depth: { mode: 'through' as const, level: 1 }, scanAll: true }
-await lib.create(album, { ...input, name: '相簿收藏', mediaCategory: 'album' })
-await lib.create(game, { ...input, name: '遊戲收藏', mediaCategory: 'game' })
-await lib.create(video, { ...input, name: '影片收藏', mediaCategory: 'video' })
+await lib.create(album, { ...input, name: '相簿收藏' })
+await lib.create(game, { ...input, name: '遊戲收藏' })
+await lib.create(video, { ...input, name: '影片收藏' })
 const env: Record<string, string> = Object.fromEntries(
   Object.entries({ ...process.env, MEDIA_VIEWER_TEST_DATA: local }).filter(
     (e): e is [string, string] => e[1] !== undefined

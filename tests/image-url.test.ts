@@ -136,7 +136,6 @@ test('cover from image URL is saved as a portable asset, and failures keep the o
   })
   await lib.create(media, {
     name: 'Games',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 2 },
   })
   let row = lib.snapshot().rows.find((r) => r.name === 'Game A')!

@@ -76,16 +76,6 @@ function Depth({
   )
 }
 export function App() {
-  const categories = [
-    { value: 'media', label: tr('媒體') },
-    { value: 'manga', label: tr('漫畫') },
-    { value: 'album', label: tr('相簿') },
-    { value: 'game', label: tr('遊戲') },
-    { value: 'video', label: tr('影片') },
-    { value: 'music', label: tr('音樂') },
-    { value: 'other', label: tr('其他') },
-  ]
-
   useLocale()
 
   const [snapshot, setSnapshot] = useState(empty),
@@ -121,7 +111,6 @@ export function App() {
     [input, setInput] = useState<ProjectInput>({
       // Filled with the localized default when the dialog opens (the locale is not loaded yet at first render).
       name: '',
-      mediaCategory: 'manga',
       depth: { mode: 'through', level: 50 },
       scanAll: true,
     })
@@ -543,14 +532,6 @@ export function App() {
             maxLength={100}
             onChange={(e) => setInput({ ...input, name: e.currentTarget.value })}
           />
-          <Select
-            label={tr('媒體分類')}
-            data={categories.filter((category) =>
-              ['media', 'manga', 'game'].includes(category.value)
-            )}
-            value={input.mediaCategory}
-            onChange={(v) => setInput({ ...input, mediaCategory: v ?? 'other' })}
-          />
           <Button
             variant="default"
             disabled={busy}
@@ -672,7 +653,6 @@ export function App() {
             root={snapshot.projects.find((p) => p.projectId === settings.projectId)?.root ?? ''}
             busy={busy}
             dirty={settingsDirty}
-            categories={categories}
             change={setSettings}
             act={act}
             close={() => setSettings(undefined)}

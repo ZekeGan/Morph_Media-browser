@@ -89,7 +89,7 @@ export async function importLegacy(
       if (!linked) {
         if (ex.refs.some((r) => keyPath(r.root) === keyPath(root)))
           throw new Error('此根已連結至另一專案，現有資料保留；請先取消連結再匯入')
-        await ex.create(root, { name: `${view.name}（匯入）`, mediaCategory: 'other', depth })
+        await ex.create(root, { name: `${view.name}（匯入）`, depth })
         linked = ex.state.projects.at(-1)!
       }
       const project = linked.project!

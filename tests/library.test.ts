@@ -40,7 +40,6 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
 }
 const input = {
   name: '漫畫',
-  mediaCategory: 'manga',
   depth: { mode: 'through' as const, level: 2 },
 }
 test('project removal previews are read-only; stale plans fail before writes; shared data and archived backups survive', async (t) => {

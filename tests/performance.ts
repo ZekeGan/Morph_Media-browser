@@ -160,7 +160,6 @@ try {
   const start = performance.now()
   const snapshot = await library.create(media, {
     name: '效能測試',
-    mediaCategory: 'manga',
     depth: { mode: 'exact', level: 2 },
   })
   const firstScanMs = performance.now() - start

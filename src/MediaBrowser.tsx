@@ -54,12 +54,7 @@ export function MediaBrowser({
   busy: boolean
 }) {
   useLocale()
-  const [filter, setFilter] = useState<MediaFilter>(
-      prefs?.filter ??
-        (project.mediaCategory === 'music' || project.mediaSourceCategory === 'music'
-          ? 'audio'
-          : 'all')
-    ),
+  const [filter, setFilter] = useState<MediaFilter>(prefs?.filter ?? 'all'),
     [view, setView] = useState<string>(prefs?.view ?? 'masonry')
   const [scope, setScope] = useState<'current' | 'descendants'>(prefs?.scope ?? 'current'),
     [grouped, setGrouped] = useState(prefs?.grouped ?? false)

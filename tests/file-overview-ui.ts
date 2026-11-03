@@ -42,7 +42,6 @@ for (const category of ['album', 'video'] as const) {
     )
   let snapshot = await library.create(media, {
     name,
-    mediaCategory: category,
     depth: { mode: 'through', level: 1 },
   })
   const linked = snapshot.projects.at(-1)!,

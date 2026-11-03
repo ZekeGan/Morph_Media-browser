@@ -177,7 +177,7 @@ export function FolderContent({
   if (!content) return <p className="media-loading">{tr('載入內容…')}</p>
   const visibleEntries = content.entries.filter((entry) => visibleFile(entry, visibility))
   const selectedFile = visibleEntries.find((entry) => entry.id === selectedFileId) ?? selectedEntry
-  const kind = effectiveKind(row, project, sampleOf(content.entries))
+  const kind = effectiveKind(row, sampleOf(content.entries))
   // Everything that is not a dedicated game ROOT or book uses the unified folder page.
   const unified = kind !== 'book' && !(kind === 'game' && isGameFolder(row))
   if (unified && (!selectedFile || ['audio', 'video'].includes(selectedFile.kind)))

@@ -117,7 +117,6 @@ export interface Project {
   rootFolderId: string
   revision: number
   name: string
-  mediaCategory: string
   depth: { mode: 'through' | 'exact'; level: number }
   fieldBindings: {
     alias: string
@@ -132,7 +131,6 @@ export interface Project {
   excludedRelativePaths: string[]
   contentCells?: Record<string, Cell[]>
   actionTemplates?: ActionTemplate[]
-  mediaSourceCategory?: 'album' | 'video' | 'music' | 'other'
   layoutPresets?: { id: string; name: string; cells: Cell[] }[]
   activeLayoutId?: string
   folderLayouts?: Record<string, string>
@@ -228,7 +226,6 @@ export interface FieldDeletionPreview {
 }
 export interface ProjectInput {
   name: string
-  mediaCategory: string
   depth: Project['depth']
   scanAll?: boolean
 }
@@ -630,7 +627,6 @@ export function validateProject(v: unknown): asserts v is Project {
     !integer(v.revision, 1, Number.MAX_SAFE_INTEGER) ||
     !text(v.name, 100) ||
     !v.name.trim() ||
-    !text(v.mediaCategory, 40) ||
     !obj(v.depth) ||
     !['through', 'exact'].includes(v.depth.mode) ||
     !integer(v.depth.level, 1, 50) ||
@@ -651,21 +647,6 @@ export function validateProject(v: unknown): asserts v is Project {
     new Set(v.fieldBindings.map((f) => f.alias.toLowerCase())).size !== v.fieldBindings.length
   )
     throw new Error('組件 ID 或欄位別名重複')
-  if (
-    v.mediaCategory !== 'game' &&
-    [
-      ...v.cells,
-      ...(Array.isArray(v.layoutPresets)
-        ? v.layoutPresets.flatMap((p: { cells?: unknown }) =>
-            Array.isArray(p?.cells) ? p.cells : []
-          )
-        : []),
-      ...(obj(v.contentCells)
-        ? Object.values(v.contentCells).flatMap((cells) => (Array.isArray(cells) ? cells : []))
-        : []),
-    ].some((c: unknown) => obj(c) && (c.kind === 'game-cover' || c.kind === 'game-launch'))
-  )
-    throw new Error('遊戲組件只能用於遊戲專案')
   for (const cell of v.cells)
     if (cell.fallbackIds) {
       const type = v.fieldBindings.find((f) => f.attributeId === cell.attributeId)?.type
@@ -739,11 +720,6 @@ export function validateProject(v: unknown): asserts v is Project {
         contentCells: undefined,
       })
   } else if (v.activeLayoutId !== undefined) throw new Error('方案清單不存在')
-  if (
-    v.mediaSourceCategory !== undefined &&
-    !['album', 'video', 'music', 'other'].includes(v.mediaSourceCategory)
-  )
-    throw new Error('媒體來源分類不合法')
   if (v.contentCells !== undefined) {
     if (
       !obj(v.contentCells) ||

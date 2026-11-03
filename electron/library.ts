@@ -189,7 +189,6 @@ export class Library {
       rootFolderId: 'pending',
       revision: 1,
       name: input.name,
-      mediaCategory: input.mediaCategory,
       depth: input.depth,
       fieldBindings: [],
       cells: defaultCells(randomUUID),
@@ -391,8 +390,8 @@ export class Library {
       next.revision
     )
     if (
-      JSON.stringify([next.scanAll, next.depth, next.mediaCategory, next.traversal]) !==
-      JSON.stringify([current.scanAll, current.depth, current.mediaCategory, current.traversal])
+      JSON.stringify([next.scanAll, next.depth, next.traversal]) !==
+      JSON.stringify([current.scanAll, current.depth, current.traversal])
     )
       return this.scan()
     linked.project = { ...structuredClone(next), revision: next.revision + 1 }

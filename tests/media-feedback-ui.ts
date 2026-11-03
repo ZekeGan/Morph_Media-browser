@@ -44,19 +44,18 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(media, {
   name: 'Media feedback',
-  mediaCategory: 'media',
   scanAll: true,
   depth: { mode: 'through', level: 1 },
 })
 await library.create(manga, {
   name: 'Manga feedback',
-  mediaCategory: 'manga',
   scanAll: true,
   depth: { mode: 'through', level: 1 },
 })
 const snapshot = library.snapshot(),
   projects = snapshot.projects.map((entry) => entry.project!),
-  mangaProject = projects.find((project) => project.mediaCategory === 'manga')!
+  rootOf = (projectId: string) => snapshot.projects.find((e) => e.projectId === projectId)!.root,
+  mangaProject = snapshot.projects.find((entry) => entry.root === manga)!.project!
 const store = new WorkspaceStore(local, ['zh-TW'])
 await store.init()
 await store.update(
@@ -81,10 +80,8 @@ for (const dir of [media, manga, single]) {
 }
 for (const project of projects)
   originals.set(
-    projectFile(project.mediaCategory === 'manga' ? manga : media, project.projectId),
-    await fs.readFile(
-      projectFile(project.mediaCategory === 'manga' ? manga : media, project.projectId)
-    )
+    projectFile(rootOf(project.projectId), project.projectId),
+    await fs.readFile(projectFile(rootOf(project.projectId), project.projectId))
   )
 const env = Object.fromEntries(
   Object.entries({ ...process.env, MEDIA_VIEWER_TEST_DATA: local }).filter(

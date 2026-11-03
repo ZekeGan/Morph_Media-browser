@@ -15,7 +15,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 const created = await library.create(media, {
   name: 'Choices',
-  mediaCategory: 'manga',
   scanAll: true,
   depth: { mode: 'through', level: 2 },
 })

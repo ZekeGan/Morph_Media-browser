@@ -19,7 +19,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(media, {
   name: 'Broken',
-  mediaCategory: 'video',
   scanAll: true,
   depth: { mode: 'through', level: 1 },
 })

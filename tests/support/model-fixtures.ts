@@ -50,7 +50,6 @@ export function modelProject(): Project {
     rootFolderId: 'folder',
     revision: 1,
     name: '受控專案',
-    mediaCategory: 'manga',
     depth: { mode: 'through', level: 3 },
     fieldBindings: [{ alias: 'TITLE', attributeId: 'title', type: 'string' }],
     cells,

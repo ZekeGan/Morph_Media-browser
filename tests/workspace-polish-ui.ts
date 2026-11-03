@@ -52,13 +52,11 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(album, {
   name: 'Polish Album',
-  mediaCategory: 'album',
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })
 const snapshot = await library.create(game, {
   name: 'Polish Game',
-  mediaCategory: 'game',
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })
@@ -79,7 +77,7 @@ for (const linked of snapshot.projects) {
         widths: {},
         panelWidth: 420,
         panelVisible: true,
-        contentMode: linked.project!.mediaCategory === 'game' ? 'files' : 'folders',
+        contentMode: linked.root === game ? 'files' : 'folders',
         detailId: row.rowId,
       },
     },

@@ -106,7 +106,6 @@ test('new media projects reopen without migration, enumerate audio and hidden fl
   await library.init()
   await library.create(media, {
     name: 'Mixed',
-    mediaCategory: 'media',
     scanAll: true,
     depth: { mode: 'through', level: 1 },
   })
@@ -148,7 +147,6 @@ test('new media projects reopen without migration, enumerate audio and hidden fl
     assert.equal(entries.find((file) => file.name === 'secret.txt')?.hidden, true)
   const reopened = new Library(local, undefined, false)
   await reopened.init()
-  assert.equal(reopened.snapshot().projects[0].project?.mediaCategory, 'media')
   assert.equal((await hiddenFileNames(media)).has('normal.ini'), false)
   assert.deepEqual(await fs.readFile(folderFile(media)), before)
   for (const [name, bytes] of Object.entries(originals))

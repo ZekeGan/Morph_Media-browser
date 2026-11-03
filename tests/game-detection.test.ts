@@ -9,7 +9,6 @@ import { DATA_DIR } from '../shared/model'
 import { browserRows } from '../shared/browse'
 const input = {
   name: 'Games',
-  mediaCategory: 'game',
   depth: { mode: 'through' as const, level: 1 },
   scanAll: true,
 }
@@ -742,7 +741,7 @@ test('multi-platform bundles and every App variant remain untouched, even with o
   }
   await saveFolder(app, manual.record, manual.record.revision)
   const before = await fs.readFile(folderFile(app)),
-    state = await lib.create(media, { ...input, mediaCategory: 'album' })
+    state = await lib.create(media, input)
   assert.equal(state.rows.find((row) => row.path === look)!.boundary, undefined)
   assert.ok(state.rows.find((row) => row.path === app)!.readonly)
   assert.deepEqual(await fs.readFile(folderFile(app)), before)

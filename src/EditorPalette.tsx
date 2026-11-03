@@ -198,9 +198,8 @@ export function EditorPalette(props: EditorPaletteProps) {
               'spacer',
               'system-info',
               'image',
-              ...(draft.mediaCategory === 'game'
-                ? ['game-cover' as const, 'game-launch' as const]
-                : []),
+              'game-cover' as const,
+              'game-launch' as const,
               'divider',
               'open-folder',
             ] as CellKind[]

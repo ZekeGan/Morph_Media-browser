@@ -1,5 +1,5 @@
 import { t as tr, useLocale } from './i18n'
-import { Icon, projectIconName } from './icons'
+import { Icon } from './icons'
 import { BrandMark } from './BrandMark'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import {
@@ -282,9 +282,7 @@ export function DesktopShell(props: Props) {
         aria-label={tr('開啟專案 {0}', title(p))}
         onClick={() => props.onSelect(p.projectId)}
       >
-        <span className="project-mark">
-          {p.error ? '!' : <Icon name={projectIconName(p.project?.mediaCategory)} />}
-        </span>
+        <span className="project-mark">{p.error ? '!' : <Icon name="folder" />}</span>
         <span className="project-name">{title(p)}</span>
       </button>
       <div
@@ -762,7 +760,7 @@ export function DesktopShell(props: Props) {
                         onClick={() => props.onSelect(p.projectId)}
                       >
                         <span>
-                          <Icon name={projectIconName(p.project?.mediaCategory)} />
+                          <Icon name="folder" />
                         </span>
                         <strong>{title(p)}</strong>
                         <small>{p.root}</small>

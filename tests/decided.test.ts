@@ -107,7 +107,6 @@ test('new portable fields save through real library paths without changing schem
   await lib.init()
   const state = await lib.create(media, {
     name: 'Typed',
-    mediaCategory: 'other',
     depth: { mode: 'through', level: 1 },
   })
   const project = {

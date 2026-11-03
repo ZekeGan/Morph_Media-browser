@@ -1,7 +1,6 @@
 import { t as tr, useLocale } from './i18n'
-import { HelpLabel, HelpTip } from './HelpTip'
+import { HelpTip } from './HelpTip'
 import { useState } from 'react'
-import { convertMediaProject } from '../shared/media'
 import { cardPresets } from '../shared/layouts'
 import { folderKinds } from '../shared/kind'
 import { Alert, Button, Group, Select, Stack, Tabs, Text, TextInput } from '@mantine/core'
@@ -19,7 +18,6 @@ export function ProjectSettings({
   root,
   busy,
   dirty,
-  categories,
   change,
   act,
   close,
@@ -28,14 +26,12 @@ export function ProjectSettings({
   root: string
   busy: boolean
   dirty: boolean
-  categories: { value: string; label: string }[]
   change: (project: Project) => void
   act: (request: Request) => Promise<Response | undefined>
   close: () => void
 }) {
   useLocale()
 
-  const [conversion, setConversion] = useState(false)
   const [preview, setPreview] = useState<ProjectRemovalPreview>(),
     [result, setResult] = useState<CleanupResult>()
   const [fullPreview, setFullPreview] = useState<FullRemovalPreview>()
@@ -53,30 +49,6 @@ export function ProjectSettings({
               value={project.name}
               maxLength={100}
               onChange={(event) => change({ ...project, name: event.currentTarget.value })}
-            />
-            <Select
-              mt="md"
-              label={
-                <HelpLabel
-                  label={tr('媒體分類')}
-                  help={tr('決定右側內容的呈現方式，不更改原始資料夾。')}
-                />
-              }
-              data={categories.filter((category) =>
-                ['media', 'manga', 'game', project.mediaCategory].includes(category.value)
-              )}
-              allowDeselect={false}
-              value={project.mediaCategory}
-              onChange={(value) => {
-                if (
-                  value === 'media' &&
-                  ['album', 'music', 'video', 'other'].includes(project.mediaCategory)
-                ) {
-                  setConversion(true)
-                  return
-                }
-                if (value) change({ ...project, mediaCategory: value })
-              }}
             />
           </section>
           <section className="settings-section">
@@ -118,62 +90,6 @@ export function ProjectSettings({
               />
             ))}
           </section>
-          {['album', 'video', 'music', 'other'].includes(project.mediaCategory) && (
-            <section className="settings-section">
-              <Button
-                variant="default"
-                disabled={busy || dirty}
-                onClick={() => setConversion(!conversion)}
-              >
-                {tr('預覽轉換為媒體專案')}
-              </Button>
-              {conversion && (
-                <Stack>
-                  <Text size="sm">
-                    {tr(
-                      '保留專案身分、欄位、版面、封面及舊播放偏好。改用共用媒體頁，進入資料夾不自動播放；保存前可取消，保存時建立原設定備份。'
-                    )}
-                  </Text>
-                  <Button
-                    disabled={busy}
-                    onClick={async () => {
-                      const result = await act({
-                        action: 'saveProject',
-                        project: convertMediaProject(project),
-                      })
-                      if (result) close()
-                    }}
-                  >
-                    {tr('確認轉換')}
-                  </Button>
-                  <Button variant="subtle" onClick={() => setConversion(false)}>
-                    {tr('取消')}
-                  </Button>
-                </Stack>
-              )}
-            </section>
-          )}
-          {project.mediaCategory === 'media' && project.mediaSourceCategory && (
-            <Button
-              variant="default"
-              disabled={busy || dirty}
-              onClick={async () => {
-                if (
-                  await act({
-                    action: 'saveProject',
-                    project: {
-                      ...project,
-                      mediaCategory: project.mediaSourceCategory!,
-                      mediaSourceCategory: undefined,
-                    },
-                  })
-                )
-                  close()
-              }}
-            >
-              {tr('恢復原分類')}
-            </Button>
-          )}
           <div>
             <Text size="xs" c="dimmed">
               {tr('資料夾位置')}

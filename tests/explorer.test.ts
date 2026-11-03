@@ -66,7 +66,6 @@ test('game candidate boundaries protect Unity/RPGMaker/Unreal/Godot and readonly
     }
   let snapshot = await lib.create(media, {
     name: 'Games',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 5 },
   })
   assert.equal(snapshot.rows.length, 5)
@@ -104,7 +103,6 @@ test('typed attributes, explicit private override, stale revision and partial ba
   await fs.mkdir(path.join(media, 'B'))
   let s = await lib.create(media, {
       name: 'Project',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 2 },
     }),
     p = s.projects[0].project!
@@ -219,7 +217,6 @@ test('SQLite supports Unicode substrings, comma AND, quotes, exclusion, OR, date
   await fs.mkdir(path.join(media, 'other'))
   let s = await lib.create(media, {
       name: 'P',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 2 },
     }),
     p = s.projects[0].project!
@@ -264,7 +261,6 @@ test('SQLite supports Unicode substrings, comma AND, quotes, exclusion, OR, date
   let p2 = (
     await lib.create(media, {
       name: 'P2',
-      mediaCategory: 'other',
       depth: { mode: 'through', level: 2 },
     })
   ).projects.at(-1)!.project!
@@ -302,7 +298,6 @@ test('searching a field also looks in the fallback fields its cells list, and no
   for (const name of ['A', 'B', 'C']) await fs.mkdir(path.join(media, name))
   let s = await lib.create(media, {
       name: 'Names',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 2 },
     }),
     p = s.projects[0].project!
@@ -358,7 +353,6 @@ test('search sync detects same-revision values, private overrides, aliases, path
   const { lib, media, explorer } = await fixture(t)
   const snapshot = await lib.create(media, {
     name: 'Search sync',
-    mediaCategory: 'other',
     depth: { mode: 'through', level: 1 },
   })
   const project = snapshot.projects[0].project!,
@@ -425,7 +419,6 @@ test('range streaming, traversal rejection, subtitle import/cleanup and safe lau
   await fs.writeFile(path.join(root, 'external.srt'), '1\n00:00:00,000 --> 00:00:01,500\nhello\n')
   let s = await lib.create(media, {
       name: 'P',
-      mediaCategory: 'video',
       depth: { mode: 'through', level: 1 },
     }),
     row = s.rows[0]
@@ -501,7 +494,6 @@ test('E-Hentai public API validates host/identity, namespaces and portable previ
   const { media, lib, explorer } = await fixture(t)
   await lib.create(media, {
     name: 'P',
-    mediaCategory: 'manga',
     depth: { mode: 'through', level: 1 },
   })
   const payload = {
@@ -616,7 +608,6 @@ test('1000-row SQLite warm substring benchmark includes one-character Chinese qu
   const { lib, media, explorer } = await fixture(t)
   const s = await lib.create(media, {
       name: 'P',
-      mediaCategory: 'other',
       depth: { mode: 'through', level: 1 },
     }),
     base = s.rows[0]
@@ -657,7 +648,6 @@ test('multiple optional image CELL slots remain independent and survive portable
   const { root, media, lib, explorer } = await fixture(t)
   let snapshot = await lib.create(media, {
     name: 'Images',
-    mediaCategory: 'album',
     depth: { mode: 'through', level: 1 },
   })
   let p = snapshot.projects[0].project!
@@ -756,7 +746,6 @@ test('Steam import is namespaced, preserves manual values and rejects a source c
   const { media, lib, explorer } = await fixture(t)
   await lib.create(media, {
     name: 'Steam',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 1 },
   })
   const payload = {
@@ -840,7 +829,6 @@ test('paged contents show an ordered first batch, remain row-bound and recheck c
     )
   const state = await lib.create(media, {
       name: 'Many',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
     }),
     row = state.rows[0],
@@ -854,7 +842,6 @@ test('paged contents show an ordered first batch, remain row-bound and recheck c
   await assert.rejects(explorer.content(row.rowId, 501), /分批/)
   const other = await lib.create(media, {
       name: 'Other',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
     }),
     otherId = other.rows.find((r) => r.projectId !== row.projectId)!.rowId
@@ -891,7 +878,6 @@ test('the n-th image of a folder is chosen by natural file order, direct files o
   await fs.writeFile(path.join(media, 'sub', '0.jpg'), 'IMAGE')
   const state = await lib.create(media, {
       name: 'Nth',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
     }),
     row = state.rows[0],
@@ -921,7 +907,6 @@ test('warm thumbnails bypass cold work; cancelled queued work is skipped and sha
     await fs.writeFile(path.join(media, name), 'IMAGE')
   const state = await lib.create(media, {
       name: 'Thumbnails',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
     }),
     row = state.rows[0],

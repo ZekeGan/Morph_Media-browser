@@ -1,15 +1,5 @@
 import type { MediaEntry } from './explorer'
-import type { FolderRow, Project } from './model'
-
-export const convertMediaProject = (project: Project): Project => {
-  if (!['album', 'video', 'music', 'other'].includes(project.mediaCategory))
-    throw Error('此分類不需轉換')
-  return {
-    ...project,
-    mediaCategory: 'media',
-    mediaSourceCategory: project.mediaCategory as Project['mediaSourceCategory'],
-  }
-}
+import type { FolderRow } from './model'
 
 export type MediaFilter = 'all' | 'image' | 'video' | 'audio' | 'other'
 export interface FileVisibility {

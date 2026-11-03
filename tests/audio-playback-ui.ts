@@ -73,13 +73,11 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(media, {
   name: 'Audio media',
-  mediaCategory: 'media',
   scanAll: true,
   depth: { mode: 'through', level: 1 },
 })
 await library.create(music, {
   name: 'Audio legacy',
-  mediaCategory: 'music',
   scanAll: true,
   depth: { mode: 'through', level: 1 },
 })

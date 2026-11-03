@@ -6,6 +6,7 @@ import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared
 import { describeError } from './errors'
 import { launchChoice } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
+import { effectiveKind } from '../shared/kind'
 import { useEffect, useState } from 'react'
 import { httpUrl } from '../shared/fields'
 import { useFolderStats } from './folderStats'
@@ -114,12 +115,11 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
   if (cell.kind === 'spacer')
     return preview ? <span className="spacer-preview" aria-label={tr('空白間距')} /> : null
   if (cell.kind === 'system-info') {
-    const category = {
-      manga: tr('漫畫'),
-      album: tr('相簿'),
-      video: tr('影片'),
+    const kinds: Record<string, string> = {
+      book: tr('書籍／漫畫'),
       game: tr('遊戲'),
-      other: tr('其他'),
+      media: tr('影音'),
+      general: tr('一般'),
     }
     return (
       <span
@@ -137,7 +137,9 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
             ? stats
               ? `${(stats.size / 1024 / 1024).toLocaleString(currentLocale(), { maximumFractionDigits: 2 })} MB`
               : tr('尚未計算')
-            : (category[project?.mediaCategory as keyof typeof category] ?? tr('其他'))}
+            : row
+              ? kinds[effectiveKind(row)]
+              : ''}
       </span>
     )
   }

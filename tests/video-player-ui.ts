@@ -82,7 +82,6 @@ async function runGroup(group: Group, fixture: string) {
   await lib.init()
   await lib.create(media, {
     name: 'Player QA',
-    mediaCategory: 'video',
     scanAll: true,
     depth: { mode: 'through', level: 1 },
   })

@@ -13,7 +13,6 @@ const library = new Library(local, undefined, false)
 await library.init()
 await library.create(media, {
   name: 'Toolbar',
-  mediaCategory: 'album',
   scanAll: true,
   depth: { mode: 'through', level: 2 },
 })

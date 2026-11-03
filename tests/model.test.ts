@@ -207,28 +207,6 @@ test('validation preserves existing optional null compatibility and rejected inp
   assert.deepEqual(legacy, before)
 })
 
-test('game cover cells are accepted only by game projects', () => {
-  const withCover = (category: string, where: 'cells' | 'preset' | 'content') => {
-    const project = modelProject()
-    const cover = {
-      cellId: 'game-cover-cell',
-      kind: 'game-cover' as const,
-      grid: { x: 0, y: 8, w: 12, h: 3 },
-      style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
-    }
-    project.mediaCategory = category
-    if (where === 'cells') project.cells.push(cover)
-    else if (where === 'preset')
-      project.layoutPresets![0].cells.push({ ...cover, cellId: 'game-cover-preset' })
-    else project.contentCells!.manga.push({ ...cover, cellId: 'game-cover-content' })
-    return project
-  }
-  for (const where of ['cells', 'preset', 'content'] as const) {
-    assert.doesNotThrow(() => validateProject(withCover('game', where)))
-    reject(validateProject, withCover('manga', where), '遊戲組件只能用於遊戲專案')
-  }
-})
-
 test('image fit is limited to image cells and valid values', () => {
   const project = modelProject()
   const cell = {
@@ -357,7 +335,6 @@ test('shortcut targets stay inside the game folder, take no arguments, and launc
     assert.throws(() => validateDetails(shortcut(bad) as never), Error, JSON.stringify(bad))
 
   const project = modelProject()
-  project.mediaCategory = 'game'
   const launch = {
     cellId: 'launch',
     kind: 'game-launch' as const,

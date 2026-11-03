@@ -3,7 +3,7 @@ import { DATA_DIR } from './model'
 // A project export is a folder: manifest.json plus files/<path relative to the project root> holding the
 // project's managed files (folder records, the project definition, images and subtitles). It carries no media.
 export const EXPORT_KIND = 'media-viewer.project-export'
-export const EXPORT_VERSION = 1
+export const EXPORT_VERSION = 2
 
 export interface ExportManifest {
   kind: typeof EXPORT_KIND
@@ -38,8 +38,33 @@ export interface ProjectImportPreview {
 }
 
 // Older exports are upgraded here, one version at a time, before they are validated and written. When the data
-// model changes (for example a per-folder type), bump EXPORT_VERSION and add the step for the previous version.
-const steps: Record<number, (value: unknown, kind: 'folder' | 'project') => unknown> = {}
+// model changes, bump EXPORT_VERSION and add the step for the previous version.
+const steps: Record<number, (value: unknown, kind: 'folder' | 'project') => unknown> = {
+  // 1 -> 2: project categories are gone; content templates are keyed by folder kind (manga -> book, the
+  // album/video/music/other family -> media) and folders carry their own kind.
+  1: (value, kind) => {
+    if (kind !== 'project' || !value || typeof value !== 'object') return value
+    const {
+      mediaCategory: _category,
+      mediaSourceCategory: source,
+      contentCells,
+      ...rest
+    } = value as Record<string, unknown>
+    if (!contentCells || typeof contentCells !== 'object') return rest
+    const next: Record<string, unknown> = {}
+    for (const [key, cells] of Object.entries(contentCells as Record<string, unknown>)) {
+      const target =
+        key === 'manga'
+          ? 'book'
+          : ['album', 'video', 'music', 'other'].includes(key)
+            ? 'media'
+            : key
+      // The category the project was converted from wins when several media templates exist.
+      if (!(target in next) || key === source) next[target] = cells
+    }
+    return { ...rest, contentCells: next }
+  },
+}
 export function migrateRecord(version: number, value: unknown, kind: 'folder' | 'project') {
   for (let v = version; v < EXPORT_VERSION; v++) {
     const step = steps[v]

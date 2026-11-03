@@ -75,7 +75,8 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 | 欄位 | 說明 |
 | --- | --- |
 | `projectId`、`rootFolderId`、`revision`、`name` | 身分與版本；`rootFolderId` 指向根資料夾的記錄 |
-| `mediaCategory` | `media`、`manga`、`game`（舊分類 `album`、`video`、`music`、`other` 仍可讀取） |
+| `contentCells` | 內容模板，以資料夾類型為鍵（`book`、`game`、`media`、`general`；舊鍵 `manga`、`album`、`video`、`music`、`other` 仍可讀取）；舊 `mediaCategory`／`mediaSourceCategory` 已移除，讀到時忽略 |
+| `kindLayouts` | 各資料夾類型套用的 CELL 版面方案 ID（資料夾自選的版面優先） |
 | `depth` | `{ mode: 'through' | 'exact', level }` 掃描層級 |
 | `fieldBindings` | 專案的欄位清單：`{ alias, attributeId, type, options?, optionColors? }` |
 | `cells` | 預設卡片版面：組件陣列，見下 |

@@ -18,7 +18,6 @@ const lib = new Library(local, undefined, false)
 await lib.init()
 await lib.create(media, {
   name: 'Preview',
-  mediaCategory: 'game',
   scanAll: true,
   depth: { mode: 'through', level: 2 },
 })

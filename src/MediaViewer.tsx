@@ -49,7 +49,7 @@ export function MediaViewer({
     [showQueue, setShowQueue] = useState(false),
     [queueMounted, setQueueMounted] = useState(false),
     [manga, setManga] = useState(
-      effectiveKind(row, project) === 'book' || row.record?.details?.reading?.mode === 'manga'
+      effectiveKind(row) === 'book' || row.record?.details?.reading?.mode === 'manga'
     )
   const queueSlot = useRef<HTMLDivElement>(null),
     queueToggle = useRef<HTMLButtonElement>(null)
@@ -173,7 +173,7 @@ export function MediaViewer({
                       <small className="media-viewer-source" title={row.path}>
                         {row.name}
                       </small>
-                      {effectiveKind(row, project) !== 'book' && (
+                      {effectiveKind(row) !== 'book' && (
                         <Button
                           size="compact-xs"
                           variant="subtle"

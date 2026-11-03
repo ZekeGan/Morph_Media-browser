@@ -125,7 +125,6 @@ test('conditional templates persist across reopening and field removal previews 
   await lib.init()
   await lib.create(media, {
     name: 'Cells',
-    mediaCategory: 'other',
     depth: { mode: 'through', level: 1 },
   })
   const project = lib.snapshot().projects[0].project!,

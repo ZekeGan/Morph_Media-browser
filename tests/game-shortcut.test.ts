@@ -95,7 +95,6 @@ test('shortcut actions are chosen from the folder, opened through the system and
   })
   await library.create(media, {
     name: 'Games',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 1 },
   })
   const project = library.snapshot().projects[0].project!

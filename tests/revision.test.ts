@@ -52,7 +52,6 @@ test('all-depth inventory and independent CARD/TREE/TABLE display; presets keep 
   await fs.mkdir(path.join(media, 'A', 'B', 'C'), { recursive: true })
   const s = await lib.create(media, {
       name: 'All',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
       scanAll: true,
     }),
@@ -113,7 +112,6 @@ test('breadcrumbs stay inside the project and depth uses indexed folders, not pr
   const { media, lib } = await fixture(t),
     s = await lib.create(media, {
       name: 'Navigation',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
       scanAll: true,
     }),
@@ -151,7 +149,6 @@ test('editor field sources distinguish shared and current-project private data w
   const { media, lib } = await fixture(t),
     s = await lib.create(media, {
       name: 'Fields',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
     }),
     root = s.structure![0],
@@ -222,7 +219,6 @@ test('navigation reads existing records beyond legacy depth without initializing
   await fs.mkdir(b, { recursive: true })
   let s = await lib.create(media, {
       name: 'Legacy',
-      mediaCategory: 'album',
       depth: { mode: 'through', level: 1 },
     }),
     p = s.projects[0].project!
@@ -250,7 +246,6 @@ test('game root opens but protected children never gain records through navigati
   await fs.writeFile(path.join(game, 'UnityPlayer.dll'), 'ORIGINAL')
   let s = await lib.create(media, {
     name: 'Games',
-    mediaCategory: 'game',
     depth: { mode: 'through', level: 1 },
     scanAll: true,
   })
@@ -304,7 +299,6 @@ test(
     const { media, lib } = await fixture(t)
     let s = await lib.create(media, {
       name: 'Case',
-      mediaCategory: 'other',
       depth: { mode: 'through', level: 1 },
       scanAll: true,
     })
@@ -324,7 +318,6 @@ test('new projects do not invent TITLE; explicitly configured fields survive rec
   const { root, media, lib } = await fixture(t),
     state = await lib.create(media, {
       name: 'Empty fields',
-      mediaCategory: 'manga',
       depth: { mode: 'through', level: 1 },
     })
   const project = state.projects[0].project!

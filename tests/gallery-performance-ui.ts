@@ -47,7 +47,6 @@ await library.init()
 for (const category of ['album', 'manga'])
   await library.create(media, {
     name: 'Large ' + category,
-    mediaCategory: category,
     depth: { mode: 'through', level: 1 },
     scanAll: true,
   })
@@ -70,11 +69,7 @@ page.on('request', (request) => {
 await page.evaluate('window.__name=(target)=>target')
 try {
   const state = (await page.evaluate(() => window.media.request({ action: 'snapshot' }))).snapshot,
-    row = state.rows.find(
-      (row) =>
-        row.projectId ===
-        state.projects.find((p) => p.project?.mediaCategory === 'album')!.projectId
-    )!
+    row = state.rows.find((row) => row.projectId === state.projects[0].projectId)!
   const started = performance.now(),
     content: any = await page.evaluate(
       (id) => window.explorer.request({ action: 'content', rowId: id, limit: 96 } as any),
