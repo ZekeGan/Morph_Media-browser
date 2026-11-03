@@ -191,6 +191,7 @@ try {
   await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
   await page.getByRole('tab', { name: '連結與資料', exact: true }).click()
   const beforeRemoval = await fs.readFile(folderFile(media), 'utf8')
+  await page.getByRole('button', { name: '危險操作', exact: true }).click()
   await button('預覽完全移除').click()
   const settings = page.getByRole('dialog', { name: '專案設定 · Pending Manga', exact: true })
   await settings.getByText('Pending Album', { exact: false }).first().waitFor()

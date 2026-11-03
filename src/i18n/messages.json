@@ -6233,12 +6233,6 @@
     "en": "Imported from a website",
     "es": "Importado de un sitio web"
   },
-  "危險區": {
-    "ja": "危険ゾーン",
-    "zh-CN": "危险区",
-    "en": "Danger zone",
-    "es": "Zona de peligro"
-  },
   "修改會同步到使用這個資料夾的其他專案。": {
     "ja": "変更は、このフォルダーを使う他のプロジェクトにも反映されます。",
     "zh-CN": "修改会同步到使用这个文件夹的其他项目。",
@@ -6556,5 +6550,11 @@
     "en": "Following the project's current layout: {0}",
     "ja": "プロジェクトの現在のレイアウト：{0}",
     "es": "Siguiendo el diseño actual del proyecto: {0}"
+  },
+  "危險操作": {
+    "zh-CN": "危险操作",
+    "en": "Dangerous actions",
+    "ja": "危険な操作",
+    "es": "Acciones peligrosas"
   }
 }
