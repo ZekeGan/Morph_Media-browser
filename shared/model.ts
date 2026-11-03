@@ -707,12 +707,7 @@ export function validateProject(v: unknown): asserts v is Project {
       })
   } else if (v.activeLayoutId !== undefined) throw new Error('方案清單不存在')
   if (v.contentCells !== undefined) {
-    if (
-      !obj(v.contentCells) ||
-      !Object.keys(v.contentCells).every((k) =>
-        ['book', 'media', 'general', 'manga', 'album', 'game', 'video', 'other'].includes(k)
-      )
-    )
+    if (!obj(v.contentCells) || !Object.keys(v.contentCells).every((k) => /^[a-z]{2,20}$/.test(k)))
       throw new Error('內容模板不合法')
     for (const cells of Object.values(v.contentCells))
       validateProject({ ...v, cells, contentCells: undefined })

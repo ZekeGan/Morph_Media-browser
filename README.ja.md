@@ -93,7 +93,7 @@ pnpm dev
 | `pnpm test` | データとロジックのテスト |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Electron の UI テスト（変更分／中核／すべて） |
 | `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm dist` | Windows のインストーラーとポータブル版を `release/` に作成 |
+| `pnpm dist` | Windows のインストーラーとポータブル版を `release/morph <バージョン>/` に作成 |
 | `pnpm shot <game\|manga\|album\|other>` | 内蔵のサンプルデータでスクリーンショット |
 
 検証の詳細は [IMPLEMENTATION](docs/IMPLEMENTATION.md) を参照してください。GitHub Actions は、プッシュのたびに型チェック、書式チェック、データテストを実行します。

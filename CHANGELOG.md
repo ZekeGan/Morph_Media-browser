@@ -17,6 +17,10 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Removed the importer for data from the very first versions (the "older data" section and dialog) and the old category names for content templates; project files keep loading, old templates under those names are just no longer used.
+- Folder details: the location shows only the last two folders (the hover title and the copy button still give the whole path).
+- Packages are written to `release/morph <version>/` (one folder per version; the 0.38.0 files moved to `release/morph 0.38.0/`).
+- Housekeeping: the folder settings Advanced tab and the folders table were split out of their big files (`FolderAdvanced.tsx`, `FolderTable.tsx`).
 - Folder details: the location now shows the folder's full path (wrapping instead of only its name), and a "Data source" row lists the website(s) the data was imported from as links that open in the browser (on every kind of folder page); the line above the game field table is gone and its rows name the site instead.
 - Game field table: imported fields show plain names (Source URL, Circle / brand ID, Work ID, …; the stored code is a hover hint), the source column shows the site's name instead of repeating the whole address on every row, and a "Data from: DLsite" line above the table names the site once (rows from other places, such as typed by hand, still say so).
 - Folder settings: explanations that only matter sometimes moved into "?" hints (folder type reason, layout priority, shared / this-project effect, settings backup scope, per-type default layouts); the layout dropdown's first option now names the layout in force. The scan-boundary block says in plain words what was found and what each button does, with the raw detection evidence tucked under "Why it was detected".

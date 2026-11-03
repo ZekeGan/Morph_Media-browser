@@ -124,7 +124,7 @@ test('optional project rules preserve CARD limits, presets and first error order
   )
   reject(validateProject, { ...project, activeLayoutId: 'missing' }, '作用中方案不存在')
   reject(validateProject, { ...project, layoutPresets: undefined }, '方案清單不存在')
-  reject(validateProject, { ...project, contentCells: { invalid: [] } }, '內容模板不合法')
+  reject(validateProject, { ...project, contentCells: { 'Bad Key!': [] } }, '內容模板不合法')
   reject(
     validateProject,
     { ...project, savedSearches: Array.from({ length: 101 }, () => project.savedSearches![0]) },

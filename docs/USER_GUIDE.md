@@ -6,7 +6,7 @@ This guide is for people who **use** M:orph. The labels below are the ones on sc
 
 ## 1. Install and start
 
-There are two ways to run M:orph (take them from the project's releases, or from `release/` after building it yourself):
+There are two ways to run M:orph (take them from the project's releases, or from `release/morph <version>/` after building it yourself):
 
 - **Portable** `Morph-Portable-<version>.exe`: double-click and it runs, good for trying it out. The first start is a little slow.
 - **Installer** `Morph-Setup-<version>.exe`: lets you choose the folder, installs for the current user only and needs no administrator rights. Uninstall from "Settings → Apps".

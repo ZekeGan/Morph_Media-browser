@@ -93,7 +93,7 @@ pnpm dev
 | `pnpm test` | 資料與邏輯測試 |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Electron UI 測試（依改動／核心項目／全部） |
 | `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm dist` | 建置 Windows 安裝程式與免安裝版到 `release/` |
+| `pnpm dist` | 建置 Windows 安裝程式與免安裝版到 `release/morph <版本>/` |
 | `pnpm shot <game\|manga\|album\|other>` | 用內建範例資料截圖 |
 
 驗證方式見 [IMPLEMENTATION](docs/IMPLEMENTATION.md)。每次推送，GitHub Actions 會執行型別檢查、格式檢查與資料測試。

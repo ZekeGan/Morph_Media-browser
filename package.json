@@ -70,7 +70,7 @@
     "productName": "Morph",
     "copyright": "Copyright (C) 2024-2026 Zeke Gan",
     "directories": {
-      "output": "release",
+      "output": "release/morph ${version}",
       "buildResources": "build"
     },
     "files": [

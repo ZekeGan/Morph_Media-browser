@@ -93,7 +93,7 @@ pnpm dev
 | `pnpm test` | Pruebas de datos y lógica |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Pruebas de interfaz con Electron (cambios / conjunto básico / todo) |
 | `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm dist` | Crea el instalador de Windows y una versión portátil en `release/` |
+| `pnpm dist` | Crea el instalador de Windows y una versión portátil en `release/morph <versión>/` |
 | `pnpm shot <game\|manga\|album\|other>` | Captura la aplicación con datos de ejemplo integrados |
 
 Los detalles de verificación están en [IMPLEMENTATION](docs/IMPLEMENTATION.md). GitHub Actions ejecuta la comprobación de tipos, el formato y las pruebas de datos en cada envío.

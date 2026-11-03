@@ -93,7 +93,7 @@ pnpm dev
 | `pnpm test` | Data and logic tests |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Electron UI tests (changed files / core set / everything) |
 | `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm dist` | Build the Windows installer and a portable exe into `release/` |
+| `pnpm dist` | Build the Windows installer and a portable exe into `release/morph <version>/` |
 | `pnpm shot <game\|manga\|album\|other>` | Screenshot the app with built-in sample data |
 
 Details of verification are in [IMPLEMENTATION](docs/IMPLEMENTATION.md). GitHub Actions runs the type-check, format check and data tests on every push.

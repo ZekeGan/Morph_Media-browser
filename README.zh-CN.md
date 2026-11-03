@@ -93,7 +93,7 @@ pnpm dev
 | `pnpm test` | 数据与逻辑测试 |
 | `pnpm test:ui:changed` / `:smoke` / `:all` | Electron UI 测试（按改动／核心项目／全部） |
 | `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm dist` | 构建 Windows 安装程序与免安装版到 `release/` |
+| `pnpm dist` | 构建 Windows 安装程序与免安装版到 `release/morph <版本>/` |
 | `pnpm shot <game\|manga\|album\|other>` | 用内置示例数据截图 |
 
 验证方式见 [IMPLEMENTATION](docs/IMPLEMENTATION.md)。每次推送，GitHub Actions 会执行类型检查、格式检查与数据测试。
