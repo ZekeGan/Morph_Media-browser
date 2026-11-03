@@ -20,8 +20,6 @@ export function ApplicationSettings({
   onDirty: (value: boolean) => void
   actions: {
     busy: boolean
-    legacyAvailable: boolean
-    legacy: () => void
     cleanAll: () => void
   }
 }) {
@@ -249,17 +247,6 @@ export function ApplicationSettings({
         </Tabs.Panel>
         <Tabs.Panel value="data" pt="lg">
           <Stack gap="lg">
-            {actions.legacyAvailable && (
-              <section className="settings-section">
-                <Text fw={600}>{tr('舊版資料')}</Text>
-                <Text size="xs" c="dimmed" mb="xs">
-                  {tr('偵測到舊版資料，可預覽後匯入。')}
-                </Text>
-                <Button variant="default" disabled={actions.busy} onClick={actions.legacy}>
-                  {tr('檢視舊資料匯入')}
-                </Button>
-              </section>
-            )}
             <section className="settings-section">
               <Group gap={4} wrap="nowrap" mb="xs">
                 <Text fw={600}>{tr('設定備份')}</Text>

@@ -411,45 +411,6 @@ test(
   }
 )
 
-test('legacy string import backs up originals and retry preserves user edits', async (t) => {
-  const { root, p1, lib } = await fixture(t)
-  const base = path.join(root, 'local', 'app-data')
-  const write = async (file: string, value: unknown) => {
-    const target = path.join(base, file)
-    await fs.mkdir(path.dirname(target), { recursive: true })
-    await fs.writeFile(target, JSON.stringify(value))
-  }
-  await write('view.json', [{ id: 'old-view', name: '舊收藏', targetFolderPath: p1 }])
-  await write('viewColumn/old-view.json', ['title'])
-  await write('column/title.json', { id: 'old-column', dataSource: 'USER', dataType: 'STRING' })
-  await write('viewFolder/old-view.json', ['old-folder'])
-  await write('folder/old-folder.json', {
-    lastReadPath: path.join(p1, 'A'),
-    cells: [{ key: 'title', value: '舊作品' }],
-  })
-  let preview = await lib.previewLegacy()
-  const imported = await lib.importLegacy(preview.token, ['old-view'], input.depth)
-  assert.deepEqual(imported.imported, ['舊收藏（匯入）'])
-  assert.deepEqual(imported.warnings, [])
-  assert.ok(await exists(path.join(imported.backup, 'view.json')))
-  let s = lib.snapshot(),
-    a = s.rows.find((r) => r.name === 'A')!
-  const id = s.projects[0].project!.fieldBindings[0].attributeId
-  assert.equal(a.record!.attributes.find((v) => v.attributeId === id)!.value, '舊作品')
-  await lib.saveValues(a.rowId, a.record!.revision, { [id]: '手動修正' })
-  preview = await lib.previewLegacy()
-  await lib.importLegacy(preview.token, ['old-view'], input.depth)
-  s = lib.snapshot()
-  a = s.rows.find((r) => r.name === 'A')!
-  assert.equal(s.projects.length, 1)
-  assert.equal(a.record!.attributes.find((v) => v.attributeId === id)!.value, '手動修正')
-  assert.equal((await fs.readdir(path.join(root, 'local', 'legacy-backups'))).length, 2)
-  assert.equal(
-    ((await readJson(path.join(base, 'folder/old-folder.json'))) as any).cells[0].value,
-    '舊作品'
-  )
-})
-
 test('depth modes, portable values, templates, fresh-device reconnect and images', async (t) => {
   const { root, p1, p2, lib } = await fixture(t)
   let s = await createTextProject(lib, p1),

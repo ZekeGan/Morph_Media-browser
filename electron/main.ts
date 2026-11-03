@@ -194,18 +194,6 @@ async function dispatch(request: Request): Promise<Response> {
     case 'cleanup':
       extra.cleanup = await library.cleanup(request.token, request.restart)
       break
-    case 'legacyPreview':
-      extra.legacy = await library.previewLegacy()
-      break
-    case 'legacyImport': {
-      const result = await library.importLegacy(request.token, request.ids, request.depth)
-      extra.notice = completionNotice(
-        result.imported.length,
-        result.warnings.length,
-        `已建立：${result.imported.join('、') || '無'}\n舊檔備份：${result.backup}\n${result.warnings.join('\n')}`
-      )
-      break
-    }
     case 'exportProject': {
       const chosen = await dialog.showOpenDialog(win!, {
         title: nt('選擇匯出位置'),

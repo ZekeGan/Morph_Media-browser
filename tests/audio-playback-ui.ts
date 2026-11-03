@@ -155,10 +155,12 @@ try {
         .locator('.folder-details')
         .getByRole('button', { name: '在檔案總管開啟', exact: true })
         .waitFor()
+      // The details show the last two folders of the path; the full path is the hover title.
       assert.equal(
-        path.normalize(await page.locator('.folder-details-path').innerText()),
+        path.normalize((await page.locator('.folder-details-path').getAttribute('title')) ?? ''),
         path.normalize(music)
       )
+      assert.match(await page.locator('.folder-details-path').innerText(), /Music$/)
       await page.locator('.folder-details summary').click()
     }
     await page.locator('.media-thumbnail').filter({ hasText: 'embedded.mp3' }).click()

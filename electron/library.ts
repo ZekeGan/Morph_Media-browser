@@ -17,7 +17,6 @@ import {
   type CleanupPreview,
   type CleanupResult,
   type LinkedProject,
-  type LegacyPreview,
   type ProjectRemovalPreview,
 } from '../shared/model'
 import {
@@ -38,14 +37,12 @@ import {
 } from './files'
 import { detectGame, insideAppBundle } from './game-detection'
 import { identifyImage } from '../shared/images'
-import type { LegacyImportResult } from '../shared/model'
 import type { FieldDeletionPreview, FullRemovalPreview } from '../shared/model'
 import { managedTree, type Change, type ManagedFile } from './maintenance'
 import * as fieldRemovalFns from './library-field-removal'
 import * as removalFns from './library-removal'
 import * as exportFns from './library-export'
 import * as cleanupFns from './library-cleanup'
-import * as legacyFns from './library-legacy'
 import * as scanFns from './library-scan'
 export interface PlanEntry {
   dir: string
@@ -95,7 +92,6 @@ export class Library {
   >()
   cancelled = false
   hiddenKnown = new Set<string>()
-  legacyPlan?: { token: string; hash: string; views: any[] }
   importPlans = new Map<string, exportFns.ImportPlan>()
   tail: Promise<unknown> = Promise.resolve()
   state: Snapshot = {
@@ -103,7 +99,6 @@ export class Library {
     rows: [],
     problems: [],
     progress: { visited: 0, created: 0, errors: 0, active: false, cancelled: false },
-    legacyAvailable: false,
   }
   constructor(
     readonly userData: string,
@@ -142,7 +137,6 @@ export class Library {
         throw new Error('本機專案清單損壞；原檔保留，可從專案根重新連結')
       this.refs = refs
     }
-    this.state.legacyAvailable = await exists(path.join(this.userData, 'app-data', 'view.json'))
     return this.scan()
   }
   async persistRefs() {
@@ -563,15 +557,5 @@ export class Library {
   }
   async cleanup(token: string, restart: boolean): Promise<CleanupResult> {
     return cleanupFns.cleanup(this, token, restart)
-  }
-  async previewLegacy(): Promise<LegacyPreview> {
-    return legacyFns.previewLegacy(this)
-  }
-  async importLegacy(
-    token: string,
-    ids: string[],
-    depth: Project['depth']
-  ): Promise<LegacyImportResult> {
-    return legacyFns.importLegacy(this, token, ids, depth)
   }
 }

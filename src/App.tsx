@@ -1,20 +1,9 @@
 import { syncPresetDraft } from '../shared/layouts'
 import { t as tr, useLocale } from './i18n'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Group,
-  Modal,
-  NumberInput,
-  Select,
-  Stack,
-  Text,
-} from '@mantine/core'
+import { Alert, Button, Checkbox, Group, Modal, Stack, Text } from '@mantine/core'
 import type {
   CleanupPreview,
-  LegacyPreview,
   Project,
   ProjectInput,
   Request,
@@ -42,39 +31,8 @@ const empty: Snapshot = {
   rows: [],
   problems: [],
   progress: { visited: 0, created: 0, errors: 0, active: false, cancelled: false },
-  legacyAvailable: false,
 }
 type Act = (request: Request) => Promise<Response | undefined>
-function Depth({
-  depth,
-  change,
-}: {
-  depth: Project['depth']
-  change: (d: Project['depth']) => void
-}) {
-  useLocale()
-
-  return (
-    <Group align="end">
-      <Select
-        label={tr('顯示模式（根為第 1 層）')}
-        value={depth.mode}
-        data={[
-          { value: 'through', label: tr('顯示第 1 至 N 層') },
-          { value: 'exact', label: tr('只顯示第 N 層') },
-        ]}
-        onChange={(v) => change({ ...depth, mode: v as 'through' | 'exact' })}
-      />
-      <NumberInput
-        label={tr('N 層')}
-        min={1}
-        max={50}
-        value={depth.level}
-        onChange={(v) => typeof v === 'number' && change({ ...depth, level: v })}
-      />
-    </Group>
-  )
-}
 export function App() {
   useLocale()
 
@@ -137,9 +95,7 @@ export function App() {
     [shellOverlay, setShellOverlay] = useState(false)
   const [appearanceDirty, setAppearanceDirty] = useState(false)
   const [cleanup, setCleanup] = useState<CleanupPreview>(),
-    [restart, setRestart] = useState(false),
-    [legacy, setLegacy] = useState<LegacyPreview>(),
-    [legacyIds, setLegacyIds] = useState<string[]>([])
+    [restart, setRestart] = useState(false)
   const [projectImport, setProjectImport] = useState<ProjectImportPreview>(),
     [overwrite, setOverwrite] = useState(false)
   const act: Act = useCallback(
@@ -162,10 +118,6 @@ export function App() {
         if (result.projectImport) {
           setProjectImport(result.projectImport)
           setOverwrite(false)
-        }
-        if (result.legacy) {
-          setLegacy(result.legacy)
-          setLegacyIds([])
         }
         return result
       } catch (error) {
@@ -193,7 +145,6 @@ export function App() {
     editor ||
     detailDirty ||
     !!cleanup ||
-    !!legacy ||
     problems ||
     shellOverlay ||
     settingsOverlay
@@ -394,11 +345,6 @@ export function App() {
           }
           footer={
             <>
-              {snapshot.legacyAvailable && (
-                <Button variant="subtle" size="xs" onClick={() => act({ action: 'legacyPreview' })}>
-                  {tr('檢視舊資料匯入')}
-                </Button>
-              )}
               <Button
                 color="red"
                 variant="subtle"
@@ -568,11 +514,6 @@ export function App() {
         onDirty={setAppearanceDirty}
         actions={{
           busy,
-          legacyAvailable: !!snapshot.legacyAvailable,
-          legacy: () => {
-            setSettingsOpen(false)
-            void act({ action: 'legacyPreview' })
-          },
           cleanAll: () => {
             setSettingsOpen(false)
             void act({ action: 'cleanupAllPreview' })
@@ -738,54 +679,6 @@ export function App() {
                 {tr('匯入')}
               </Button>
             </Group>
-          </Stack>
-        )}
-      </Modal>
-      <Modal
-        opened={!!legacy}
-        onClose={() => setLegacy(undefined)}
-        title={tr('舊資料匯入預覽')}
-        size="xl"
-      >
-        {legacy && (
-          <Stack>
-            {legacy.warnings.map((w, i) => (
-              <Alert key={i} color="orange">
-                {w}
-              </Alert>
-            ))}
-            {legacy.projects.map((p) => (
-              <Checkbox
-                key={p.id}
-                checked={legacyIds.includes(p.id)}
-                onChange={(e) =>
-                  setLegacyIds(
-                    e.currentTarget.checked
-                      ? [...legacyIds, p.id]
-                      : legacyIds.filter((id) => id !== p.id)
-                  )
-                }
-                label={tr('{0} · {1} · {2} 筆', p.name, p.root, p.values)}
-              />
-            ))}
-            <Depth depth={input.depth} change={(depth) => setInput({ ...input, depth })} />
-            <Button
-              loading={busy}
-              disabled={!legacyIds.length}
-              onClick={async () => {
-                if (
-                  await act({
-                    action: 'legacyImport',
-                    token: legacy.token,
-                    ids: legacyIds,
-                    depth: input.depth,
-                  })
-                )
-                  setLegacy(undefined)
-              }}
-            >
-              {tr('備份舊檔並匯入選定專案')}
-            </Button>
           </Stack>
         )}
       </Modal>

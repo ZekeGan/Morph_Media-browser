@@ -105,10 +105,6 @@ export async function previewCleanup(
       skipped.push(`${dir}: ${message(e)}`)
     }
   }
-  if (scope === 'all' && ex.state.legacyAvailable)
-    skipped.push(
-      `${path.join(ex.userData, 'app-data')}: 舊版資料與匯入備份保留，未列入可攜 POC 清理`
-    )
   const preview: CleanupPreview = {
     token: randomUUID(),
     paths: entries.flatMap((e) => e.files.map((f) => f.path)),

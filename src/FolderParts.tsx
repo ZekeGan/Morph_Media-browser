@@ -31,7 +31,11 @@ export function FolderDetails({
     [copyError, setCopyError] = useState(''),
     timer = useRef(0)
   useEffect(() => () => window.clearTimeout(timer.current), [])
-  const sources = importSources(row),
+  // Only the last two folders are shown (with an ellipsis in front); the copy button still copies the whole path.
+  const parts = row.path.split(/[\\/]+/).filter(Boolean),
+    separator = row.path.includes('\\') ? '\\' : '/',
+    shortPath = (parts.length > 2 ? '…' + separator : '') + parts.slice(-2).join(separator),
+    sources = importSources(row),
     fields = project.fieldBindings.flatMap((field) => {
       const text = shown(fieldValue(row, field.attributeId))
       return text === undefined ? [] : [{ id: field.attributeId, label: field.alias, text }]
@@ -43,7 +47,9 @@ export function FolderDetails({
         <div className="folder-details-row">
           <dt>{tr('位置')}</dt>
           <dd>
-            <span className="folder-details-path">{row.path}</span>
+            <span className="folder-details-path" title={row.path}>
+              {shortPath}
+            </span>
             <Tooltip label={copied ? tr('已複製') : tr('複製完整路徑')}>
               <ActionIcon
                 variant="subtle"

@@ -229,7 +229,6 @@ export async function scan(ex: Library) {
     structure,
     problems,
     progress,
-    legacyAvailable: ex.state.legacyAvailable,
   }
   return ex.snapshot()
 }

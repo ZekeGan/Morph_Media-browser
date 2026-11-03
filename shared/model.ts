@@ -110,7 +110,6 @@ export interface FolderRecord {
   details?: FolderDetails
 }
 export interface Project {
-  legacySourceId?: string
   kind: 'media-viewer.project'
   schemaVersion: 1
   projectId: string
@@ -174,7 +173,6 @@ export interface Snapshot {
   problems: string[]
   structure?: FolderRow[]
   progress: ScanProgress
-  legacyAvailable: boolean
 }
 export interface CleanupPreview {
   token: string
@@ -229,16 +227,6 @@ export interface ProjectInput {
   depth: Project['depth']
   scanAll?: boolean
 }
-export interface LegacyPreview {
-  token: string
-  projects: { id: string; name: string; root: string; values: number }[]
-  warnings: string[]
-}
-export interface LegacyImportResult {
-  imported: string[]
-  warnings: string[]
-  backup: string
-}
 export type Request =
   | {
       action:
@@ -247,7 +235,6 @@ export type Request =
         | 'cancelScan'
         | 'link'
         | 'cleanupAllPreview'
-        | 'legacyPreview'
         | 'chooseRoot'
         | 'chooseBundle'
     }
@@ -268,7 +255,6 @@ export type Request =
   | { action: 'open' | 'restore' | 'copyIdentity' | 'resume'; rowId: string }
   | { action: 'cleanupPreview'; rowId: string; scope: 'folder' | 'private' }
   | { action: 'cleanup'; token: string; restart: boolean }
-  | { action: 'legacyImport'; token: string; ids: string[]; depth: Project['depth'] }
   | { action: 'exportProject'; projectId: string }
   | { action: 'projectImportPreview'; bundleToken: string; rootToken: string }
   | { action: 'projectImport'; token: string; overwrite: boolean }
@@ -281,7 +267,6 @@ export interface Response {
   fullRemovalPreview?: FullRemovalPreview
   fieldDeletionPreview?: FieldDeletionPreview
   recoveryPath?: string
-  legacy?: LegacyPreview
   projectImport?: import('./project-export').ProjectImportPreview
   notice?: Notice
   cancelled?: boolean
