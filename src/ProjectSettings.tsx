@@ -64,10 +64,10 @@ export function ProjectSettings({
             />
           </section>
           <section className="settings-section">
-            <Text fw={600}>{tr('各類型的預設版面')}</Text>
-            <Text size="xs" c="dimmed">
-              {tr('版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。')}
-            </Text>
+            <Group gap={4} wrap="nowrap">
+              <Text fw={600}>{tr('各類型的預設版面')}</Text>
+              <HelpTip text={tr('版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。')} />
+            </Group>
             {folderKinds.map((kind) => (
               <Select
                 key={kind}

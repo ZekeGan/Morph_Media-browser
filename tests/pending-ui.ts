@@ -111,7 +111,7 @@ try {
   await button('目前資料夾設定').click()
   const drawer = page.locator('.folder-panel-dock-settings'),
     scheme = drawer.getByRole('textbox', { name: '此資料夾的版面方案', exact: true })
-  assert.equal(await scheme.inputValue(), '遵循類型與專案設定')
+  assert.match(await scheme.inputValue(), /^遵循類型與專案設定（目前：/)
   assert.equal(await drawer.locator('.mantine-Divider-root').count(), 1)
   await scheme.click()
   await page.getByRole('option', { name: '預設版面', exact: true }).click()
@@ -119,7 +119,7 @@ try {
     document.querySelector('.statusbar')?.textContent?.includes('就緒')
   )
   await scheme.click()
-  await page.getByRole('option', { name: '遵循類型與專案設定', exact: true }).click()
+  await page.getByRole('option', { name: /^遵循類型與專案設定/ }).click()
   await page.waitForFunction(() =>
     document.querySelector('.statusbar')?.textContent?.includes('就緒')
   )

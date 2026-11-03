@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Folder settings: explanations that only matter sometimes moved into "?" hints (folder type reason, layout priority, shared / this-project effect, settings backup scope, per-type default layouts); the layout dropdown's first option now names the layout in force. The scan-boundary block says in plain words what was found and what each button does, with the raw detection evidence tucked under "Why it was detected".
 - Selecting and un-selecting a folder is instant: a folder that can be visited as-is is shown in the panel at once while its visit runs behind it (a refused visit goes back to the previous folder), and clearing the selection no longer waits for a double-click timer.
 - Files view groups: space between the heading line and its files, and between tile rows.
 - Clicking the selected folder again (or pressing Esc) clears the selection and the right panel goes back to the folder the path bar is on; a double click still enters the folder.

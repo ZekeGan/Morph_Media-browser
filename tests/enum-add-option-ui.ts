@@ -55,10 +55,9 @@ try {
   await savebar.getByRole('button', { name: '放棄', exact: true }).click()
   await savebar.waitFor({ state: 'hidden' })
   assert.equal(await page.getByRole('textbox', { name: '狀態', exact: true }).inputValue(), '')
-  // The shared / this-project switch lives in the data tab and explains what it changes.
-  await page.getByText('修改會同步到使用這個資料夾的其他專案。').waitFor()
+  // The shared / this-project switch lives in the data tab; its explanation is a hover tip and the tab shows a badge.
   await page.locator('label').filter({ hasText: '僅目前專案' }).click()
-  await page.getByText('修改只用於目前專案；其他專案仍用共用資料。').waitFor()
+  await page.getByRole('tab', { name: /私有/ }).waitFor()
   // The folder type is detected and can be set by hand.
   const kind = page.getByRole('textbox', { name: '資料夾類型', exact: true })
   await kind.waitFor()

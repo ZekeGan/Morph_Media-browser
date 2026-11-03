@@ -6227,12 +6227,6 @@
     "en": "Automatic (detected as {0})",
     "es": "Automático (detectado como {0})"
   },
-  "遵循類型與專案設定": {
-    "zh-CN": "遵循类型与项目设置",
-    "en": "Follow folder type and project",
-    "ja": "種類とプロジェクト設定に従う",
-    "es": "Seguir el tipo y el proyecto"
-  },
   "各類型的預設版面": {
     "zh-CN": "各类型的默认版面",
     "en": "Default layout per folder type",
@@ -6364,24 +6358,6 @@
     "en": "Layout priority: the folder's own choice › type default › the project's current layout.",
     "ja": "レイアウトの優先順位：フォルダー指定 › 種類の既定 › プロジェクトの現在のレイアウト。",
     "es": "Prioridad del diseño: el propio de la carpeta › el del tipo › el actual del proyecto."
-  },
-  "使用此資料夾自選的版面": {
-    "zh-CN": "使用此文件夹自选的版面",
-    "en": "Using this folder's own layout",
-    "ja": "このフォルダー専用のレイアウトを使用中",
-    "es": "Usando el diseño propio de esta carpeta"
-  },
-  "依「{0}」類型的預設版面：{1}": {
-    "zh-CN": "按“{0}”类型的默认版面：{1}",
-    "en": "Default layout for type “{0}”: {1}",
-    "ja": "種類「{0}」の既定レイアウト：{1}",
-    "es": "Diseño predeterminado del tipo «{0}»: {1}"
-  },
-  "依專案目前版面：{0}": {
-    "zh-CN": "按项目当前版面：{0}",
-    "en": "Following the project's current layout: {0}",
-    "ja": "プロジェクトの現在のレイアウト：{0}",
-    "es": "Siguiendo el diseño actual del proyecto: {0}"
   },
   "危險操作": {
     "zh-CN": "危险操作",
@@ -6676,5 +6652,71 @@
     "en": "Hide this column",
     "ja": "この列を隠す",
     "es": "Ocultar esta columna"
+  },
+  "已手動指定類型；選「自動」可改回自動判斷。": {
+    "zh-CN": "已手动指定类型；选“自动”可改回自动判断。",
+    "en": "The type was set by hand; choose “Automatic” to go back to detection.",
+    "ja": "種類は手動で指定されています。「自動」を選ぶと自動判定に戻ります。",
+    "es": "El tipo se fijó a mano; elige «Automático» para volver a la detección."
+  },
+  "也可以手動指定。": {
+    "zh-CN": "也可以手动指定。",
+    "en": "You can also set it by hand.",
+    "ja": "手動で指定することもできます。",
+    "es": "También puedes fijarlo a mano."
+  },
+  "遵循類型與專案設定（目前：{0}）": {
+    "zh-CN": "遵循类型与项目设置（当前：{0}）",
+    "en": "Follow type and project (now: {0})",
+    "ja": "種類とプロジェクト設定に従う（現在：{0}）",
+    "es": "Seguir tipo y proyecto (ahora: {0})"
+  },
+  "遊戲資料夾裡的檔案很多，也不該被改動。所以只把「遊戲根目錄（ROOT）」這一層當成一筆資料夾記錄，裡面的子資料夾受保護，不會被掃描或寫入。": {
+    "zh-CN": "游戏文件夹里的文件很多，也不该被改动。所以只把“游戏根目录（ROOT）”这一层当成一条文件夹记录，里面的子文件夹受保护，不会被扫描或写入。",
+    "en": "A game folder holds many files that must not be touched, so only the game's root folder (ROOT) becomes a folder record; the subfolders inside are protected and never scanned or written.",
+    "ja": "ゲームフォルダーには多数のファイルがあり、変更すべきではありません。そのため「ゲームのルート（ROOT）」の階層だけをフォルダー記録とし、内側のサブフォルダーは保護されてスキャンも書き込みもされません。",
+    "es": "Una carpeta de juego contiene muchos archivos que no deben tocarse, así que solo la carpeta raíz del juego (ROOT) se convierte en registro; las subcarpetas están protegidas y no se escanean ni se escriben."
+  },
+  "這個資料夾看起來是 {0} 遊戲。": {
+    "zh-CN": "这个文件夹看起来是 {0} 游戏。",
+    "en": "This folder looks like a {0} game.",
+    "ja": "このフォルダーは {0} のゲームのようです。",
+    "es": "Esta carpeta parece un juego de {0}."
+  },
+  "這個資料夾看起來像遊戲或封裝程式，但無法確定是哪種引擎。": {
+    "zh-CN": "这个文件夹看起来像游戏或封装程序，但无法确定是哪种引擎。",
+    "en": "This folder looks like a game or a packaged app, but the engine could not be identified.",
+    "ja": "このフォルダーはゲームまたはパッケージ化されたアプリのようですが、エンジンを特定できません。",
+    "es": "Esta carpeta parece un juego o una aplicación empaquetada, pero no se pudo identificar el motor."
+  },
+  "請確認它是不是遊戲：": {
+    "zh-CN": "请确认它是不是游戏：",
+    "en": "Please say whether it is a game:",
+    "ja": "ゲームかどうかを確認してください：",
+    "es": "Indica si es un juego:"
+  },
+  "把這個資料夾當成遊戲的根目錄：記錄放在這一層，裡面的檔案受保護。": {
+    "zh-CN": "把这个文件夹当成游戏的根目录：记录放在这一层，里面的文件受保护。",
+    "en": "Treat this folder as the game's root: its record lives here and the files inside are protected.",
+    "ja": "このフォルダーをゲームのルートとして扱います。記録はこの階層に置かれ、内側のファイルは保護されます。",
+    "es": "Trata esta carpeta como la raíz del juego: su registro está aquí y los archivos de dentro quedan protegidos."
+  },
+  "只查看裡面的檔案，不會在內部寫入任何東西。": {
+    "zh-CN": "只查看里面的文件，不会在内部写入任何东西。",
+    "en": "Only look at the files inside; nothing is written inside.",
+    "ja": "内部のファイルを見るだけで、内部には何も書き込みません。",
+    "es": "Solo se ven los archivos de dentro; no se escribe nada."
+  },
+  "取消遊戲判定，當成一般資料夾；之後不再提示。": {
+    "zh-CN": "取消游戏判定，当成一般文件夹；之后不再提示。",
+    "en": "Drop the game detection and treat it as an ordinary folder; you will not be asked again.",
+    "ja": "ゲーム判定を取り消し、通常のフォルダーとして扱います。以後は確認しません。",
+    "es": "Descarta la detección de juego y trátala como carpeta normal; no se volverá a preguntar."
+  },
+  "判斷依據": {
+    "zh-CN": "判断依据",
+    "en": "Why it was detected",
+    "ja": "判定の根拠",
+    "es": "Por qué se detectó"
   }
 }

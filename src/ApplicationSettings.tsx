@@ -261,10 +261,10 @@ export function ApplicationSettings({
               </section>
             )}
             <section className="settings-section">
-              <Text fw={600}>{tr('設定備份')}</Text>
-              <Text size="xs" c="dimmed" mb="xs">
-                {tr('匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。')}
-              </Text>
+              <Group gap={4} wrap="nowrap" mb="xs">
+                <Text fw={600}>{tr('設定備份')}</Text>
+                <HelpTip text={tr('匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。')} />
+              </Group>
               <Stack>
                 <Group>
                   <Button disabled={saving} onClick={() => void transfer('export')}>

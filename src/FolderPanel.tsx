@@ -38,6 +38,7 @@ import {
   Text,
   TextInput,
   Textarea,
+  Tooltip,
 } from '@mantine/core'
 import { ImageUrlImport } from './ImageUrlImport'
 import {
@@ -184,17 +185,8 @@ export function FolderPanel({
     const preset = cardPresets(project).find((p) => p.id === id) ?? cardPresets(project)[0]
     return preset.id === 'default' && preset.name === '預設版面' ? tr('預設版面') : preset.name
   }
-  const folderLayoutId = row.record && project.folderLayouts?.[row.record.folderId]
   const kindLayoutId = project.kindLayouts?.[effectiveKind(row, sample)]
-  const layoutSource = folderLayoutId
-    ? tr('使用此資料夾自選的版面')
-    : kindLayoutId
-      ? tr(
-          '依「{0}」類型的預設版面：{1}',
-          kindLabel[effectiveKind(row, sample)],
-          layoutName(kindLayoutId)
-        )
-      : tr('依專案目前版面：{0}', layoutName(project.activeLayoutId))
+  const effectiveLayout = layoutName(kindLayoutId ?? project.activeLayoutId)
   const kindReason: Record<string, string> = {
     game: tr('偵測到遊戲引擎'),
     reading: tr('已用漫畫模式閱讀'),
@@ -716,7 +708,15 @@ export function FolderPanel({
               <div>
                 <Group gap={4} wrap="nowrap">
                   <Text fw={600}>{tr('資料夾資料')}</Text>
-                  <HelpTip text={tr('填寫與此資料夾有關的資訊，保存後立即顯示。')} />
+                  <HelpTip
+                    text={
+                      tr('填寫與此資料夾有關的資訊，保存後立即顯示。') +
+                      ' ' +
+                      (privateValues
+                        ? tr('修改只用於目前專案；其他專案仍用共用資料。')
+                        : tr('修改會同步到使用這個資料夾的其他專案。'))
+                    }
+                  />
                 </Group>
               </div>
               <SegmentedControl
@@ -736,20 +736,21 @@ export function FolderPanel({
                 }}
               />
             </Group>
-            <Text size="xs" c="dimmed">
-              {privateValues
-                ? tr('修改只用於目前專案；其他專案仍用共用資料。')
-                : tr('修改會同步到使用這個資料夾的其他專案。')}
-            </Text>
             {row.record && (
               <Select
-                label={tr('資料夾類型')}
-                description={
-                  row.record.details?.kind
-                    ? undefined
-                    : sample || detectedKind.source !== 'default'
-                      ? kindReason[detectedKind.source]
-                      : tr('偵測中…')
+                label={
+                  <HelpLabel
+                    label={tr('資料夾類型')}
+                    help={
+                      row.record.details?.kind
+                        ? tr('已手動指定類型；選「自動」可改回自動判斷。')
+                        : (sample || detectedKind.source !== 'default'
+                            ? kindReason[detectedKind.source]
+                            : tr('偵測中…')) +
+                          '。' +
+                          tr('也可以手動指定。')
+                    }
+                  />
                 }
                 allowDeselect={false}
                 value={row.record.details?.kind ?? 'auto'}
@@ -774,12 +775,16 @@ export function FolderPanel({
             )}
             {row.record && (
               <Select
-                label={tr('此資料夾的版面方案')}
-                description={layoutSource}
+                label={
+                  <HelpLabel
+                    label={tr('此資料夾的版面方案')}
+                    help={tr('版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。')}
+                  />
+                }
                 allowDeselect={false}
                 value={project.folderLayouts?.[row.record.folderId] ?? ''}
                 data={[
-                  { value: '', label: tr('遵循類型與專案設定') },
+                  { value: '', label: tr('遵循類型與專案設定（目前：{0}）', effectiveLayout) },
                   ...cardPresets(project).map((preset) => ({
                     value: preset.id,
                     label:
@@ -1201,33 +1206,78 @@ export function FolderPanel({
           <Stack>
             {showBoundary && (
               <section className="settings-section">
-                <Text fw={600}>{tr('掃描邊界')}</Text>
+                <Group gap={4} wrap="nowrap">
+                  <Text fw={600}>{tr('掃描邊界')}</Text>
+                  <HelpTip
+                    text={tr(
+                      '遊戲資料夾裡的檔案很多，也不該被改動。所以只把「遊戲根目錄（ROOT）」這一層當成一筆資料夾記錄，裡面的子資料夾受保護，不會被掃描或寫入。'
+                    )}
+                  />
+                </Group>
                 {row.boundary ? (
                   <>
-                    <Text size="sm" c="dimmed">
-                      {row.boundary.engines.join('／')} · {row.boundary.evidence.join('；')}
+                    <Text size="sm" mt={4}>
+                      {row.boundary.engines.length
+                        ? tr('這個資料夾看起來是 {0} 遊戲。', row.boundary.engines.join('／'))
+                        : tr('這個資料夾看起來像遊戲或封裝程式，但無法確定是哪種引擎。')}
+                    </Text>
+                    <Text size="xs" c="dimmed">
+                      {tr('請確認它是不是遊戲：')}
                     </Text>
                     <Group mt="sm">
-                      <Button size="xs" disabled={disabled} onClick={() => boundary('root')}>
-                        {tr('確認遊戲 ROOT')}
-                      </Button>
-                      <Button
-                        size="xs"
-                        variant="default"
-                        disabled={disabled}
-                        onClick={() => boundary('root', true)}
+                      <Tooltip
+                        multiline
+                        maw={240}
+                        withArrow
+                        label={tr(
+                          '把這個資料夾當成遊戲的根目錄：記錄放在這一層，裡面的檔案受保護。'
+                        )}
                       >
-                        {tr('唯讀查看內部')}
-                      </Button>
-                      <Button
-                        size="xs"
-                        variant="subtle"
-                        disabled={disabled}
-                        onClick={() => boundary('not-game')}
+                        <Button size="xs" disabled={disabled} onClick={() => boundary('root')}>
+                          {tr('確認遊戲 ROOT')}
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        multiline
+                        maw={240}
+                        withArrow
+                        label={tr('只查看裡面的檔案，不會在內部寫入任何東西。')}
                       >
-                        {tr('這不是遊戲目錄')}
-                      </Button>
+                        <Button
+                          size="xs"
+                          variant="default"
+                          disabled={disabled}
+                          onClick={() => boundary('root', true)}
+                        >
+                          {tr('唯讀查看內部')}
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        multiline
+                        maw={240}
+                        withArrow
+                        label={tr('取消遊戲判定，當成一般資料夾；之後不再提示。')}
+                      >
+                        <Button
+                          size="xs"
+                          variant="subtle"
+                          disabled={disabled}
+                          onClick={() => boundary('not-game')}
+                        >
+                          {tr('這不是遊戲目錄')}
+                        </Button>
+                      </Tooltip>
                     </Group>
+                    {!!row.boundary.evidence.length && (
+                      <details className="boundary-evidence">
+                        <summary>{tr('判斷依據')}</summary>
+                        <ul>
+                          {row.boundary.evidence.map((item, index) => (
+                            <li key={index}>{item}</li>
+                          ))}
+                        </ul>
+                      </details>
+                    )}
                   </>
                 ) : (
                   <Button size="xs" mt="sm" disabled={disabled} onClick={() => boundary('root')}>
