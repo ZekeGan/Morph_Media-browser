@@ -243,6 +243,17 @@ export function BrowseWorkspace({
       ? browse.location
       : ''
   const currentFolder = all.find((r) => pathKey(r.path) === pathKey(location || root))
+  // Entering another folder replaces the list at once; a short fade keeps the swap from flashing.
+  const shownLocation = useRef(location)
+  useEffect(() => {
+    if (shownLocation.current === location) return
+    shownLocation.current = location
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+      scroll.current?.animate([{ opacity: 0.35 }, { opacity: 1 }], {
+        duration: 140,
+        easing: 'ease-out',
+      })
+  }, [location])
   const base = useMemo(
     () =>
       browserRows(

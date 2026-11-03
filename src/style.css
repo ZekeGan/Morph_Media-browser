@@ -299,3 +299,20 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .sidebar-slot[data-open='false'][data-peek='true'] > .project-sidebar { position: absolute; left: 0; top: 0; bottom: 0; pointer-events: auto; background: var(--sidebar); box-shadow: 10px 0 28px rgba(0, 0, 0, 0.38); animation: sidebar-peek 0.14s ease-out; }
 @keyframes sidebar-peek { from { transform: translateX(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .sidebar-slot[data-peek='true'] { animation: none; } }
+
+/* Motion: one short duration and curve for everything that fades or slides; all of it stops under reduced motion. */
+:root { --motion-fast: 120ms; --motion: 180ms; --ease: cubic-bezier(0.2, 0, 0, 1); }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes drop-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.project-actions, .group-actions { transition: opacity var(--motion-fast) var(--ease), visibility 0s linear var(--motion-fast); }
+.sidebar-project:hover .project-actions, .sidebar-project:has(:focus-visible) .project-actions, .section-heading:hover .group-actions, .section-heading:has(:focus-visible) .group-actions, .project-actions.menu-open, .group-actions.menu-open { transition-delay: 0s; }
+.row-info, .folder-table th .column-hide { transition: opacity var(--motion-fast) var(--ease); }
+.section-chevron { transition: transform var(--motion-fast) var(--ease); }
+.section-projects { animation: drop-in var(--motion-fast) var(--ease); }
+.panel-scrim { animation: fade-in var(--motion) var(--ease); }
+.statusbar > span:first-child { animation: fade-in var(--motion) var(--ease); }
+.mantine-Tabs-panel { animation: fade-in var(--motion-fast) var(--ease); }
+@media (prefers-reduced-motion: reduce) {
+  .project-actions, .group-actions, .row-info, .folder-table th .column-hide, .section-chevron { transition: none; }
+  .section-projects, .panel-scrim, .statusbar > span:first-child, .mantine-Tabs-panel { animation: none; }
+}

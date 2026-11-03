@@ -1,4 +1,11 @@
-import type { Dispatch, MutableRefObject, SetStateAction, HTMLAttributes } from 'react'
+import {
+  useLayoutEffect,
+  useRef,
+  type Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  HTMLAttributes,
+} from 'react'
 import { t as tr } from './i18n'
 import { Icon } from './icons'
 import { BoundaryFlag } from './BoundaryFlag'
@@ -55,9 +62,39 @@ export function FolderTable({
   panelOpen: boolean
   showPanelFor: (id: string) => void
 }) {
+  const table = useRef<HTMLTableElement>(null),
+    seen = useRef({ order: '', lefts: new Map<string, number>() })
+  const order = columns.map((c) => c.id).join('|')
+  // When the column order changes, slide each moved column from where it was to where it now is.
+  useLayoutEffect(() => {
+    const head = table.current?.tHead?.rows[0]
+    if (!head || !table.current) return
+    const lefts = new Map(
+      Array.from(head.cells).map((cell) => [cell.dataset.columnId ?? '', cell.offsetLeft])
+    )
+    const previous = seen.current
+    seen.current = { order, lefts }
+    if (
+      !previous.order ||
+      previous.order === order ||
+      matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+      return
+    const rows = [head, ...Array.from(table.current.tBodies[0]?.rows ?? [])]
+    Array.from(head.cells).forEach((cell, index) => {
+      const id = cell.dataset.columnId ?? '',
+        shift = (previous.lefts.get(id) ?? lefts.get(id)!) - lefts.get(id)!
+      if (!shift) return
+      for (const row of rows)
+        row.cells[index]?.animate(
+          [{ transform: `translateX(${shift}px)` }, { transform: 'none' }],
+          { duration: 180, easing: 'cubic-bezier(0.2, 0, 0, 1)' }
+        )
+    })
+  })
   return (
     <div className="table-scroll">
-      <table className="folder-table">
+      <table className="folder-table" ref={table}>
         <thead>
           <tr>
             {columns.map((c) => (

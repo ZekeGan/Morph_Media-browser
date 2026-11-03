@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { MantineProvider } from '@mantine/core'
+import { MantineProvider, Menu, Modal, Popover } from '@mantine/core'
 import type { ThemeId } from '../../shared/themes'
 import type { LocaleId } from '../../shared/locales'
 import { setLocale, useLocale } from '../i18n'
@@ -119,6 +119,18 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
           primaryColor: definition.accent,
           defaultRadius: theme === 'paper' ? 'xs' : 'md',
           fontFamily: "system-ui, 'Microsoft JhengHei', sans-serif",
+          respectReducedMotion: true,
+          components: {
+            Modal: Modal.extend({
+              defaultProps: { transitionProps: { transition: 'pop', duration: 150 } },
+            }),
+            Menu: Menu.extend({
+              defaultProps: { transitionProps: { transition: 'pop', duration: 120 } },
+            }),
+            Popover: Popover.extend({
+              defaultProps: { transitionProps: { transition: 'pop', duration: 120 } },
+            }),
+          },
         }}
       >
         {children}

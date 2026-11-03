@@ -852,7 +852,9 @@ export function DesktopShell(props: Props) {
         </main>
       </div>
       <footer className="statusbar">
-        <span role="status">{saving ? tr('保存側欄設定…') : props.status}</span>
+        <span role="status" key={saving ? 'saving' : props.status}>
+          {saving ? tr('保存側欄設定…') : props.status}
+        </span>
         <span>
           {projects.length} {tr('個已連結專案')}
         </span>
