@@ -1185,3 +1185,16 @@
 /* Icon-only segments: the name is a tooltip and a visually hidden label. */
 .icon-seg { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-width: 22px; line-height: 0; }
 .icon-seg .seg-text { position: absolute; inset: 0; overflow: hidden; opacity: 0; font-size: 1px; white-space: nowrap; }
+
+/* The game field table: three columns while the panel is wide, one small card per field when it is narrow. */
+.game-content { container: gamepanel / inline-size; }
+.game-fields td:nth-child(2) { overflow-wrap: anywhere; }
+@container gamepanel (max-width: 520px) {
+    .game-fields, .game-fields tbody { display: block; }
+    .game-fields colgroup, .game-fields thead { display: none; }
+    .game-fields tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 8px 12px; }
+    .game-fields td { display: block; padding: 0; border: 0; white-space: normal; overflow-wrap: anywhere; }
+    .game-fields td:nth-child(1) { grid-column: 1; grid-row: 1; font-size: 11px; color: var(--muted); }
+    .game-fields td:nth-child(3) { grid-column: 2; grid-row: 1; font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .game-fields td:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+}
