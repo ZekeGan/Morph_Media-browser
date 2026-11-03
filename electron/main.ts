@@ -68,6 +68,14 @@ async function selectFolder() {
   const result = await dialog.showOpenDialog(win!, { properties: ['openDirectory'] })
   return result.canceled ? undefined : result.filePaths[0]
 }
+// The renderer never names paths: a picked folder is remembered here and referred to by a short-lived token.
+function rememberChoice(path: string) {
+  for (const [id, item] of rootChoices) if (item.expires < Date.now()) rootChoices.delete(id)
+  if (rootChoices.size >= 10) rootChoices.delete(rootChoices.keys().next().value!)
+  const token = randomUUID()
+  rootChoices.set(token, { path, expires: Date.now() + 60 * 60 * 1000 })
+  return { token, path }
+}
 async function dispatch(request: Request): Promise<Response> {
   let extra: Partial<Response> = {}
   switch (request.action) {
@@ -93,13 +101,8 @@ async function dispatch(request: Request): Promise<Response> {
       break
     case 'chooseRoot': {
       const root = await selectFolder()
-      if (root) {
-        for (const [id, item] of rootChoices) if (item.expires < Date.now()) rootChoices.delete(id)
-        if (rootChoices.size >= 10) rootChoices.delete(rootChoices.keys().next().value!)
-        const token = randomUUID()
-        rootChoices.set(token, { path: root, expires: Date.now() + 60 * 60 * 1000 })
-        extra.rootSelection = { token, path: root }
-      } else extra.cancelled = true
+      if (root) extra.rootSelection = rememberChoice(root)
+      else extra.cancelled = true
       break
     }
     case 'create': {
@@ -220,27 +223,23 @@ async function dispatch(request: Request): Promise<Response> {
       extra.notice = completionNotice(result.files, result.skipped, `已匯出到：${result.dir}`)
       break
     }
-    case 'projectImportPreview': {
-      const bundle = await dialog.showOpenDialog(win!, {
+    case 'chooseBundle': {
+      const chosen = await dialog.showOpenDialog(win!, {
         title: nt('選擇專案匯出資料夾'),
         properties: ['openDirectory'],
       })
-      if (bundle.canceled || !bundle.filePaths[0]) {
-        extra.cancelled = true
-        break
-      }
-      const root = await dialog.showOpenDialog(win!, {
-        title: nt('選擇要放入資料的根資料夾'),
-        properties: ['openDirectory'],
-      })
-      if (root.canceled || !root.filePaths[0]) {
-        extra.cancelled = true
-        break
-      }
-      extra.projectImport = await library.previewProjectImport(
-        bundle.filePaths[0],
-        root.filePaths[0]
-      )
+      if (chosen.canceled || !chosen.filePaths[0]) extra.cancelled = true
+      else extra.rootSelection = rememberChoice(chosen.filePaths[0])
+      break
+    }
+    case 'projectImportPreview': {
+      const bundle = rootChoices.get(request.bundleToken),
+        root = rootChoices.get(request.rootToken)
+      if (!bundle || !root || bundle.expires < Date.now() || root.expires < Date.now())
+        throw new Error('資料夾選擇已失效，請重新選擇')
+      extra.projectImport = await library.previewProjectImport(bundle.path, root.path)
+      rootChoices.delete(request.bundleToken)
+      rootChoices.delete(request.rootToken)
       break
     }
     case 'projectImport': {

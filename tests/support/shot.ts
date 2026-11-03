@@ -178,6 +178,8 @@ try {
   }
   const click = option('click')
   if (click) await page.getByRole('button', { name: click, exact: true }).first().click()
+  const text = option('text')
+  if (text) await page.getByText(text, { exact: true }).first().click()
   const press = option('press')
   if (press) await page.keyboard.press(press)
   await page.waitForTimeout(900)

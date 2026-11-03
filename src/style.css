@@ -295,3 +295,5 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .image-library figure small { display:block; margin:2px 0; }
 .game-target { padding:10px 12px; }
 .game-target.unbound { border-color:var(--accent); }
+.pick-path { flex:1; min-width:0; display:flex; align-items:center; padding:0 12px; min-height:36px; border:1px solid var(--line); border-radius:8px; background:var(--soft); color:var(--text); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pick-path[data-empty="true"] { color:var(--muted); }

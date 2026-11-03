@@ -457,7 +457,7 @@ try {
   await page.getByRole('button', { name: '關閉媒體檢視器', exact: true }).click()
   await page.getByRole('dialog', { name: '播放佇列', exact: true }).waitFor({ state: 'hidden' })
   await page.getByRole('button', { name: '新增專案', exact: true }).click()
-  const create = page.getByRole('dialog', { name: '建立媒體專案', exact: true })
+  const create = page.getByRole('dialog', { name: '新增專案', exact: true })
   await create.getByLabel('專案名稱').fill('新專案')
   await app.evaluate(({ dialog }, folder) => {
     dialog.showOpenDialog = (async () => ({

@@ -249,6 +249,7 @@ export type Request =
         | 'cleanupAllPreview'
         | 'legacyPreview'
         | 'chooseRoot'
+        | 'chooseBundle'
     }
   | { action: 'create'; input: ProjectInput; rootToken?: string }
   | { action: 'saveProject'; project: Project }
@@ -269,7 +270,7 @@ export type Request =
   | { action: 'cleanup'; token: string; restart: boolean }
   | { action: 'legacyImport'; token: string; ids: string[]; depth: Project['depth'] }
   | { action: 'exportProject'; projectId: string }
-  | { action: 'projectImportPreview' }
+  | { action: 'projectImportPreview'; bundleToken: string; rootToken: string }
   | { action: 'projectImport'; token: string; overwrite: boolean }
 export interface Response {
   snapshot: Snapshot

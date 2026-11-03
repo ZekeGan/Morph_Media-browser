@@ -99,7 +99,7 @@ try {
     .locator('.project-sidebar')
     .getByRole('button', { name: '新增專案', exact: true })
     .click()
-  const create = page.getByRole('dialog', { name: '建立媒體專案', exact: true })
+  const create = page.getByRole('dialog', { name: '新增專案', exact: true })
   await create.getByLabel('專案名稱', { exact: true }).fill('Keep draft')
   await create.getByRole('button', { name: '選擇資料夾', exact: true }).click()
   assert.equal(await toast.count(), 0)

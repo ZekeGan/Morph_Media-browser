@@ -275,18 +275,6 @@
     "en": "Unlink unavailable project (keep files)",
     "es": "Desvincular proyecto no disponible (conservar archivos)"
   },
-  "取消建立專案？尚未建立資料。": {
-    "ja": "作成を中止しますか？データはまだ作成されていません。",
-    "zh-CN": "取消建立项目？尚未建立数据。翿",
-    "en": "Cancel project creation? No data has been created.",
-    "es": "¿Cancelar la creación? Aún no se han creado datos."
-  },
-  "建立媒體專案": {
-    "ja": "メディアプロジェクトを作成",
-    "zh-CN": "建立媒体项目\u0001",
-    "en": "Create media project",
-    "es": "Crear proyecto multimedia"
-  },
   "專案名稱": {
     "ja": "プロジェクト名",
     "zh-CN": "项目名称",
@@ -6509,12 +6497,6 @@
     "ja": "完了",
     "es": "Hecho"
   },
-  "已有匯出的專案資料？改為匯入": {
-    "zh-CN": "已有导出的项目数据？改为导入",
-    "en": "Have exported project data? Import it instead",
-    "ja": "エクスポート済みのプロジェクトデータがある場合はインポート",
-    "es": "¿Tienes datos exportados? Impórtalos"
-  },
   "目前設定已保存": {
     "zh-CN": "当前设置已保存",
     "en": "Settings saved",
@@ -6556,5 +6538,101 @@
     "en": "Dangerous actions",
     "ja": "危険な操作",
     "es": "Acciones peligrosas"
+  },
+  "新增方式": {
+    "zh-CN": "新增方式",
+    "en": "How to add",
+    "ja": "追加方法",
+    "es": "Cómo añadir"
+  },
+  "從資料夾建立": {
+    "zh-CN": "从文件夹创建",
+    "en": "Create from a folder",
+    "ja": "フォルダーから作成",
+    "es": "Crear desde una carpeta"
+  },
+  "匯入匯出的專案資料": {
+    "zh-CN": "导入导出的项目数据",
+    "en": "Import exported project data",
+    "ja": "エクスポートしたデータをインポート",
+    "es": "Importar datos exportados"
+  },
+  "選一個資料夾開始瀏覽；原始資料夾不會被搬移或刪除。": {
+    "zh-CN": "选一个文件夹开始浏览；原始文件夹不会被移动或删除。",
+    "en": "Pick a folder to start browsing. The original folder is never moved or deleted.",
+    "ja": "フォルダーを選んで閲覧を始めます。元のフォルダーは移動も削除もされません。",
+    "es": "Elige una carpeta para empezar. La carpeta original nunca se mueve ni se borra."
+  },
+  "要瀏覽的資料夾": {
+    "zh-CN": "要浏览的文件夹",
+    "en": "Folder to browse",
+    "ja": "閲覧するフォルダー",
+    "es": "Carpeta que explorar"
+  },
+  "取消新增專案？尚未建立資料。": {
+    "zh-CN": "取消新增项目？尚未建立数据。",
+    "en": "Cancel adding the project? Nothing has been created yet.",
+    "ja": "プロジェクトの追加をキャンセルしますか？まだデータは作成されていません。",
+    "es": "¿Cancelar? Aún no se ha creado nada."
+  },
+  "把先前「匯出專案資料」得到的資料夾，放回一個根資料夾。匯入前會先預覽，不會直接寫入。": {
+    "zh-CN": "把先前“导出项目数据”得到的文件夹，放回一个根文件夹。导入前会先预览，不会直接写入。",
+    "en": "Put a folder made earlier with “Export project data” back into a root folder. You see a preview first; nothing is written until you confirm.",
+    "ja": "以前「プロジェクトデータをエクスポート」で作ったフォルダーを、ルートフォルダーに戻します。先にプレビューを表示し、確認するまで書き込みません。",
+    "es": "Devuelve a una carpeta raíz la carpeta creada con «Exportar datos del proyecto». Verás una vista previa antes de escribir nada."
+  },
+  "匯出的資料夾": {
+    "zh-CN": "导出的文件夹",
+    "en": "Exported folder",
+    "ja": "エクスポートしたフォルダー",
+    "es": "Carpeta exportada"
+  },
+  "選擇匯出資料夾": {
+    "zh-CN": "选择导出文件夹",
+    "en": "Choose exported folder",
+    "ja": "エクスポート先を選択",
+    "es": "Elegir carpeta exportada"
+  },
+  "已選匯出資料夾": {
+    "zh-CN": "已选导出文件夹",
+    "en": "Selected exported folder",
+    "ja": "選択したエクスポートフォルダー",
+    "es": "Carpeta exportada elegida"
+  },
+  "放入的根資料夾": {
+    "zh-CN": "放入的根文件夹",
+    "en": "Root folder to put it in",
+    "ja": "配置先のルートフォルダー",
+    "es": "Carpeta raíz de destino"
+  },
+  "選擇放入位置": {
+    "zh-CN": "选择放入位置",
+    "en": "Choose destination",
+    "ja": "配置先を選択",
+    "es": "Elegir destino"
+  },
+  "已選放入位置": {
+    "zh-CN": "已选放入位置",
+    "en": "Selected destination",
+    "ja": "選択した配置先",
+    "es": "Destino elegido"
+  },
+  "請先選擇匯出的資料夾": {
+    "zh-CN": "请先选择导出的文件夹",
+    "en": "Choose the exported folder first",
+    "ja": "先にエクスポートしたフォルダーを選んでください",
+    "es": "Elige primero la carpeta exportada"
+  },
+  "請再選擇要放入的根資料夾": {
+    "zh-CN": "请再选择要放入的根文件夹",
+    "en": "Now choose the root folder to put it in",
+    "ja": "次に配置先のルートフォルダーを選んでください",
+    "es": "Ahora elige la carpeta raíz de destino"
+  },
+  "預覽匯入": {
+    "zh-CN": "预览导入",
+    "en": "Preview import",
+    "ja": "インポートをプレビュー",
+    "es": "Vista previa de importación"
   }
 }

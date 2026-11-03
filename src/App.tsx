@@ -11,7 +11,6 @@ import {
   Select,
   Stack,
   Text,
-  TextInput,
 } from '@mantine/core'
 import type {
   CleanupPreview,
@@ -26,6 +25,7 @@ import type { ProjectImportPreview } from '../shared/project-export'
 import { Editor } from './Editor'
 import { usePlayback } from './Playback'
 import { ProjectSettings } from './ProjectSettings'
+import { CreateProjectDialog, type CreateMode } from './CreateProjectDialog'
 import { ApplicationSettings } from './ApplicationSettings'
 import { DesktopShell } from './DesktopShell'
 import { RefreshContext } from './refresh'
@@ -114,14 +114,11 @@ export function App() {
       depth: { mode: 'through', level: 50 },
       scanAll: true,
     })
-  const [rootChoice, setRootChoice] = useState<{ token: string; path: string }>(),
+  const [createMode, setCreateMode] = useState<CreateMode>('create'),
+    [rootChoice, setRootChoice] = useState<{ token: string; path: string }>(),
     [createGroup, setCreateGroup] = useState(''),
     [groups, setGroups] = useState<WorkspacePrefs['groups']>([]),
     [settingsOpen, setSettingsOpen] = useState(false)
-  useEffect(() => {
-    if (createOpen)
-      setInput((current) => (current.name ? current : { ...current, name: tr('我的媒體') }))
-  }, [createOpen])
   useEffect(() => {
     if (createOpen)
       void window.desktop
@@ -243,9 +240,11 @@ export function App() {
     if (rowId) setDetailsId(rowId)
     return true
   }
-  const beginCreate = () => {
+  const beginCreate = (mode: CreateMode = 'create') => {
     if (confirmLeave()) {
       clearEditors()
+      setCreateMode(mode)
+      setInput((current) => ({ ...current, name: '' }))
       setRootChoice(undefined)
       setCreateGroup('')
       setCreateOpen(true)
@@ -360,7 +359,7 @@ export function App() {
           busy={busy}
           dirty={unsaved}
           onSelect={openProject}
-          onCreate={beginCreate}
+          onCreate={() => beginCreate()}
           onSettings={() => {
             if (confirmLeave()) setSettingsOpen(true)
           }}
@@ -377,7 +376,6 @@ export function App() {
             }
           }}
           onLink={() => void beginLink()}
-          onImport={() => void act({ action: 'projectImportPreview' })}
           onProblems={() => setProblems(true)}
           onOverlay={setShellOverlay}
           onDirty={setShellDirty}
@@ -518,89 +516,50 @@ export function App() {
           )}
         </DesktopShell>
       </RefreshContext.Provider>
-      <Modal
+      <CreateProjectDialog
         opened={createOpen}
-        onClose={() => {
-          if (!busy && window.confirm(tr('取消建立專案？尚未建立資料。'))) setCreateOpen(false)
+        initialMode={createMode}
+        busy={busy}
+        input={input}
+        setInput={setInput}
+        groups={groups}
+        group={createGroup}
+        setGroup={setCreateGroup}
+        rootChoice={rootChoice}
+        setRootChoice={setRootChoice}
+        act={act}
+        close={() => {
+          if (
+            !busy &&
+            ((!rootChoice && !input.name.trim()) ||
+              window.confirm(tr('取消新增專案？尚未建立資料。')))
+          )
+            setCreateOpen(false)
         }}
-        title={tr('建立媒體專案')}
-        size="lg"
-      >
-        <Stack>
-          <TextInput
-            label={tr('專案名稱')}
-            value={input.name}
-            maxLength={100}
-            onChange={(e) => setInput({ ...input, name: e.currentTarget.value })}
-          />
-          <Button
-            variant="default"
-            disabled={busy}
-            onClick={async () => {
-              const result = await act({ action: 'chooseRoot' })
-              if (result?.rootSelection) setRootChoice(result.rootSelection)
-            }}
-          >
-            {tr('選擇資料夾')}
-          </Button>
-          <p className="path" aria-label={tr('已選資料夾')}>
-            {rootChoice?.path ?? tr('尚未選擇資料夾')}
-          </p>
-          <Select
-            label={tr('所屬群組')}
-            disabled={!rootChoice}
-            value={createGroup}
-            allowDeselect={false}
-            data={[
-              { value: '', label: tr('未分類') },
-              ...groups.map((g) => ({ value: g.id, label: g.name })),
-            ]}
-            onChange={(v) => setCreateGroup(v ?? '')}
-          />
-
-          <Button
-            loading={busy}
-            disabled={!rootChoice || !input.name.trim()}
-            onClick={async () => {
-              const result = await act({ action: 'create', input, rootToken: rootChoice!.token })
-              if (result && !result.cancelled) {
-                const id = result.snapshot.projects.at(-1)?.projectId
-                if (id) {
-                  if (createGroup)
-                    try {
-                      await window.desktop.updateWorkspace({
-                        action: 'moveProject',
-                        projectId: id,
-                        groupId: createGroup,
-                      })
-                    } catch (e) {
-                      notifyError(tr('專案已建立，但群組保存失敗：') + String(e))
-                    }
-                  openProject(id, undefined, true)
+        create={async () => {
+          const result = await act({ action: 'create', input, rootToken: rootChoice!.token })
+          if (result && !result.cancelled) {
+            const id = result.snapshot.projects.at(-1)?.projectId
+            if (id) {
+              if (createGroup)
+                try {
+                  await window.desktop.updateWorkspace({
+                    action: 'moveProject',
+                    projectId: id,
+                    groupId: createGroup,
+                  })
+                } catch (e) {
+                  notifyError(tr('專案已建立，但群組保存失敗：') + String(e))
                 }
-              }
-            }}
-          >
-            {tr('完成建立')}
-          </Button>
-          <Button
-            variant="subtle"
-            size="compact-sm"
-            disabled={busy}
-            onClick={() => {
-              setCreateOpen(false)
-              void act({ action: 'projectImportPreview' })
-            }}
-          >
-            {tr('已有匯出的專案資料？改為匯入')}
-          </Button>
-          {(!rootChoice || !input.name.trim()) && (
-            <small className="muted" role="status">
-              {!input.name.trim() ? tr('請輸入專案名稱') : tr('請先選擇要瀏覽的資料夾')}
-            </small>
-          )}
-        </Stack>
-      </Modal>
+              openProject(id, undefined, true)
+            }
+          }
+        }}
+        preview={async (bundleToken, rootToken) => {
+          const result = await act({ action: 'projectImportPreview', bundleToken, rootToken })
+          if (result?.projectImport) setCreateOpen(false)
+        }}
+      />
       <ApplicationSettings
         opened={settingsOpen}
         close={() => setSettingsOpen(false)}
@@ -615,7 +574,7 @@ export function App() {
               disabled={busy}
               onClick={() => {
                 setSettingsOpen(false)
-                void act({ action: 'projectImportPreview' })
+                beginCreate('import')
               }}
             >
               {tr('匯入專案資料')}
