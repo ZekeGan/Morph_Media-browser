@@ -370,6 +370,12 @@ try {
   await card('Game').dblclick()
   await header().getByText('Game', { exact: true }).waitFor()
   await page.locator('.game-fields').waitFor()
+  // The three-column table only shows when the panel is wide: drag the panel wider first.
+  const grip = (await page.getByRole('separator', { name: '調整資料夾內容寬度' }).boundingBox())!
+  await page.mouse.move(grip.x + 2, grip.y + grip.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(grip.x - 320, grip.y + grip.height / 2, { steps: 6 })
+  await page.mouse.up()
   // The game table's columns can be resized by dragging the header separators.
   const gameColumn = () =>
     page

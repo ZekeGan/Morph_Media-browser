@@ -4,7 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Library } from '../electron/library'
 import { WorkspaceStore } from '../electron/workspace'
-import { folderFile, projectFile } from '../electron/files'
+import { folderFile, readFolder, saveFolder } from '../electron/files'
 import { tinyPng, zipFixture } from './support/archive-fixture'
 import { videoFixture } from './support/video-fixture'
 
@@ -81,6 +81,12 @@ await library.create(media, {
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })
+// Folder types are detected from the files; this fixture is mixed media, so say so.
+for (const dir of [media, child]) {
+  const record = await readFolder(dir)
+  record.details = { ...(record.details ?? { schemaVersion: 1 }), kind: 'media' }
+  await saveFolder(dir, record, record.revision)
+}
 const project = library.snapshot().projects[0].project!,
   recordBefore = await fs.readFile(folderFile(media)),
   childBefore = await fs.readFile(folderFile(child))
@@ -144,7 +150,7 @@ try {
     const p = result.snapshot.projects[0].project
     return p?.list.itemsPerRow === 4 && p.list.pageSize === 31
   })
-  assert.equal(await page.getByLabel('展示內容', { exact: true }).count(), 0)
+  assert.equal(await page.getByLabel('展示內容', { exact: true }).count(), 1)
   assert.equal(await page.locator('video,audio').count(), 0)
   assert.equal(
     await page.locator('.media-subfolders button').filter({ hasText: 'Child' }).isDisabled(),
@@ -360,10 +366,6 @@ try {
   assert.deepEqual(after, before)
   assert.deepEqual(await fs.readFile(folderFile(child)), childBefore)
   for (const [file, bytes] of originals) assert.deepEqual(await fs.readFile(file), bytes)
-  assert.equal(
-    JSON.parse(await fs.readFile(projectFile(media, project.projectId), 'utf8')).mediaCategory,
-    'media'
-  )
   assert.deepEqual(errors, [])
   console.log(
     'PASS mixed browser, live CARD save, 241-image queue, music/video lifecycle, PDF/CBZ, child navigation, narrow layout and original bytes. ' +

@@ -102,6 +102,9 @@ try {
   for (const next of ['ja', 'zh-CN', 'en', 'es', 'zh-TW'] as const) {
     await button('應用程式設定').click()
     await setLanguage(next)
+    await page.waitForFunction(
+      () => !!document.querySelector('.application-settings [role=status]')?.textContent?.trim()
+    )
     await page.keyboard.press('Escape')
     await settings().waitFor({ state: 'hidden' })
     await page.waitForFunction(() => !document.querySelector('.dirty-indicator'))
@@ -156,6 +159,9 @@ try {
   ] as const) {
     await button('應用程式設定').click()
     await button(name + ' 主題').click()
+    await page.waitForFunction(
+      () => !!document.querySelector('.application-settings [role=status]')?.textContent?.trim()
+    )
     await page.keyboard.press('Escape')
     await settings().waitFor({ state: 'hidden' })
     await page.waitForFunction(() => !document.querySelector('.dirty-indicator'))

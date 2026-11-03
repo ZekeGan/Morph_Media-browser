@@ -183,8 +183,6 @@ export function BrowseToolbar(props: Props) {
                       {p.id === 'default' && p.name === '預設版面' ? tr('預設版面') : p.name}
                     </Menu.Item>
                   ))}
-                  <Menu.Divider />
-                  <Menu.Item onClick={() => edit()}>{tr('編輯版面')}</Menu.Item>
                 </Menu.Dropdown>
               </Menu>
             </>
@@ -261,9 +259,7 @@ export function BrowseToolbar(props: Props) {
                       ' · ' +
                       (display.level === 'all'
                         ? tr('全部')
-                        : tr('第 ') + display.level + tr(' 層')) +
-                      ' · ' +
-                      tr('每列 {0}', density.itemsPerRow)}
+                        : tr('第 ') + display.level + tr(' 層'))}
                   </span>
                 </Button>
               </Popover.Target>

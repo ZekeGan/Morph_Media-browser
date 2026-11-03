@@ -1250,124 +1250,6 @@ export function FolderPanel({
                       {tr('重新啟用記錄')}
                     </Button>
                   )}
-                  <details className="settings-section">
-                    <summary>{tr('全部已存屬性與來源')}</summary>
-                    <pre>{JSON.stringify(row.record, null, 2) ?? tr('沒有可攜記錄')}</pre>
-                  </details>
-                  <Accordion variant="separated" className="danger-accordion">
-                    <Accordion.Item value="danger">
-                      <Accordion.Control c="red">{tr('危險操作')}</Accordion.Control>
-                      <Accordion.Panel>
-                        <section className="settings-section cleanup-section">
-                          <Group gap={4} wrap="nowrap">
-                            <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
-                            <HelpTip
-                              text={tr('原始資料夾與媒體保留。先預覽範圍，確認後才清理。')}
-                            />
-                          </Group>
-                          <Group>
-                            <Button
-                              size="xs"
-                              variant="default"
-                              color="red"
-                              disabled={busy || fieldDirty || row.readonly}
-                              onClick={() => void previewCleanup('folder')}
-                            >
-                              {tr('預覽清除此資料夾資料')}
-                            </Button>
-                            {!!row.record?.projectOverrides[row.projectId]?.length && (
-                              <Button
-                                size="xs"
-                                variant="subtle"
-                                color="red"
-                                disabled={busy || fieldDirty}
-                                onClick={() => void previewCleanup('private')}
-                              >
-                                {tr('只清此專案私有覆寫')}
-                              </Button>
-                            )}
-                          </Group>
-                          {cleanup && (
-                            <Stack mt="md">
-                              <Alert color="orange" title={tr('清理預覽')}>
-                                {cleanup.scope === 'private'
-                                  ? tr('只移除目前專案私有覆寫')
-                                  : tr('移除此資料夾的受管記錄及資產')}
-                                {tr('；共')}
-                                {cleanup.count} {tr('筆。未知檔案、離線與未連結副本不在範圍。')}
-                              </Alert>
-                              <div className="file-list">
-                                {cleanup.paths.map((p) => (
-                                  <div key={p}>{p}</div>
-                                ))}
-                              </div>
-                              {cleanup.skipped.map((s, i) => (
-                                <Text key={i} size="xs" c="dimmed">
-                                  {s}
-                                </Text>
-                              ))}
-                              {cleanup.scope === 'folder' && (
-                                <Checkbox
-                                  label={
-                                    <HelpLabel
-                                      label={tr('清除後立即重新開始記錄')}
-                                      help={tr('預設停止記錄，避免下次掃描立即建立資料。')}
-                                    />
-                                  }
-                                  checked={restart}
-                                  onChange={(e) => setRestart(e.currentTarget.checked)}
-                                />
-                              )}
-                              <Group justify="flex-end">
-                                <Button
-                                  variant="default"
-                                  disabled={busy}
-                                  onClick={() => setCleanup(undefined)}
-                                >
-                                  {tr('取消清理')}
-                                </Button>
-                                <Button
-                                  color="red"
-                                  disabled={busy || fieldDirty}
-                                  loading={busy}
-                                  onClick={async () => {
-                                    const result = await act({
-                                      action: 'cleanup',
-                                      token: cleanup.token,
-                                      restart,
-                                    })
-                                    if (result?.cleanup) {
-                                      setCleanupResult(result.cleanup)
-                                      setCleanup(undefined)
-                                    } else {
-                                      setCleanup(undefined)
-                                      setError(tr('清理未完成，請重新預覽範圍後重試。'))
-                                    }
-                                  }}
-                                >
-                                  {tr('確認清理列出的本程式資料')}
-                                </Button>
-                              </Group>
-                            </Stack>
-                          )}
-                          {cleanupResult && (
-                            <Alert
-                              mt="md"
-                              color={cleanupResult.failed.length ? 'orange' : 'teal'}
-                              title={tr('已清理 ') + cleanupResult.removed + tr(' 筆')}
-                            >
-                              <Text size="sm">{tr('原始媒體保留。')}</Text>
-                              {[...cleanupResult.failed, ...cleanupResult.skipped].map((s, i) => (
-                                <Text size="xs" key={i}>
-                                  {s}
-                                </Text>
-                              ))}
-                            </Alert>
-                          )}
-                        </section>
-                      </Accordion.Panel>
-                    </Accordion.Item>
-                  </Accordion>
                   {row.duplicate && (
                     <Button
                       color="orange"
@@ -1394,6 +1276,122 @@ export function FolderPanel({
                 </Stack>
               </section>
             )}
+            <details className="settings-section">
+              <summary>{tr('全部已存屬性與來源')}</summary>
+              <pre>{JSON.stringify(row.record, null, 2) ?? tr('沒有可攜記錄')}</pre>
+            </details>
+            <Accordion variant="separated" className="danger-accordion">
+              <Accordion.Item value="danger">
+                <Accordion.Control c="red">{tr('危險操作')}</Accordion.Control>
+                <Accordion.Panel>
+                  <section className="settings-section cleanup-section">
+                    <Group gap={4} wrap="nowrap">
+                      <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
+                      <HelpTip text={tr('原始資料夾與媒體保留。先預覽範圍，確認後才清理。')} />
+                    </Group>
+                    <Group>
+                      <Button
+                        size="xs"
+                        variant="default"
+                        color="red"
+                        disabled={busy || fieldDirty || row.readonly}
+                        onClick={() => void previewCleanup('folder')}
+                      >
+                        {tr('預覽清除此資料夾資料')}
+                      </Button>
+                      {!!row.record?.projectOverrides[row.projectId]?.length && (
+                        <Button
+                          size="xs"
+                          variant="subtle"
+                          color="red"
+                          disabled={busy || fieldDirty}
+                          onClick={() => void previewCleanup('private')}
+                        >
+                          {tr('只清此專案私有覆寫')}
+                        </Button>
+                      )}
+                    </Group>
+                    {cleanup && (
+                      <Stack mt="md">
+                        <Alert color="orange" title={tr('清理預覽')}>
+                          {cleanup.scope === 'private'
+                            ? tr('只移除目前專案私有覆寫')
+                            : tr('移除此資料夾的受管記錄及資產')}
+                          {tr('；共')}
+                          {cleanup.count} {tr('筆。未知檔案、離線與未連結副本不在範圍。')}
+                        </Alert>
+                        <div className="file-list">
+                          {cleanup.paths.map((p) => (
+                            <div key={p}>{p}</div>
+                          ))}
+                        </div>
+                        {cleanup.skipped.map((s, i) => (
+                          <Text key={i} size="xs" c="dimmed">
+                            {s}
+                          </Text>
+                        ))}
+                        {cleanup.scope === 'folder' && (
+                          <Checkbox
+                            label={
+                              <HelpLabel
+                                label={tr('清除後立即重新開始記錄')}
+                                help={tr('預設停止記錄，避免下次掃描立即建立資料。')}
+                              />
+                            }
+                            checked={restart}
+                            onChange={(e) => setRestart(e.currentTarget.checked)}
+                          />
+                        )}
+                        <Group justify="flex-end">
+                          <Button
+                            variant="default"
+                            disabled={busy}
+                            onClick={() => setCleanup(undefined)}
+                          >
+                            {tr('取消清理')}
+                          </Button>
+                          <Button
+                            color="red"
+                            disabled={busy || fieldDirty}
+                            loading={busy}
+                            onClick={async () => {
+                              const result = await act({
+                                action: 'cleanup',
+                                token: cleanup.token,
+                                restart,
+                              })
+                              if (result?.cleanup) {
+                                setCleanupResult(result.cleanup)
+                                setCleanup(undefined)
+                              } else {
+                                setCleanup(undefined)
+                                setError(tr('清理未完成，請重新預覽範圍後重試。'))
+                              }
+                            }}
+                          >
+                            {tr('確認清理列出的本程式資料')}
+                          </Button>
+                        </Group>
+                      </Stack>
+                    )}
+                    {cleanupResult && (
+                      <Alert
+                        mt="md"
+                        color={cleanupResult.failed.length ? 'orange' : 'teal'}
+                        title={tr('已清理 ') + cleanupResult.removed + tr(' 筆')}
+                      >
+                        <Text size="sm">{tr('原始媒體保留。')}</Text>
+                        {[...cleanupResult.failed, ...cleanupResult.skipped].map((s, i) => (
+                          <Text size="xs" key={i}>
+                            {s}
+                          </Text>
+                        ))}
+                      </Alert>
+                    )}
+                  </section>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
           </Stack>
         </Tabs.Panel>
       </Tabs>

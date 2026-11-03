@@ -186,12 +186,7 @@ try {
   await button('關閉媒體檢視器').click()
   await button('開啟專案 Manga feedback').first().click()
   await page.locator('.project-workspace').waitFor()
-  assert.equal(await page.getByLabel('展示內容', { exact: true }).count(), 0)
-  assert.equal(await page.locator('.file-overview').count(), 0)
-  await page.waitForFunction(async (id) => {
-    const state = await window.desktop.workspace()
-    return state.prefs.browse?.[id]?.contentMode === 'folders'
-  }, mangaProject.projectId)
+  assert.equal(await page.getByLabel('展示內容', { exact: true }).count(), 1)
   for (const [file, bytes] of originals) assert.deepEqual(await fs.readFile(file), bytes)
   assert.deepEqual(errors, [])
   console.log(

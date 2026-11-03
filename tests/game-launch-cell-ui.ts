@@ -46,12 +46,16 @@ await ensureFolder(path.join(media, 'Bound'), false)
 const record = await readFolder(path.join(media, 'Bound'))
 record.details = {
   schemaVersion: 1,
+  kind: 'game',
   targets: {
     'default-launch-game': { kind: 'exe', path: 'Game.exe', relative: true, args: [] },
     le: { kind: 'shortcut', path: 'Game - LE.lnk', relative: true, args: [] },
   },
 }
 await fs.writeFile(folderFile(path.join(media, 'Bound')), JSON.stringify(record))
+const unbound = await readFolder(path.join(media, 'Unbound'))
+unbound.details = { schemaVersion: 1, kind: 'game' }
+await fs.writeFile(folderFile(path.join(media, 'Unbound')), JSON.stringify(unbound))
 await lib.scan()
 
 const errors: string[] = []

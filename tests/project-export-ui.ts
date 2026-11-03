@@ -49,9 +49,12 @@ try {
 
   // Importing the bundle while the same project is still linked shows the preview with a blocker.
   await answer([bundle, elsewhere])
-  await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
-  await page.getByRole('tab', { name: '資料與備份', exact: true }).click()
-  await page.getByRole('button', { name: '匯入專案資料', exact: true }).click()
+  await page.getByRole('button', { name: '新增專案', exact: true }).first().click()
+  const create = page.getByRole('dialog', { name: '新增專案', exact: true })
+  await create.getByText('匯入匯出的專案資料', { exact: true }).click()
+  await create.getByRole('button', { name: '選擇匯出資料夾', exact: true }).click()
+  await create.getByRole('button', { name: '選擇放入位置', exact: true }).click()
+  await create.getByRole('button', { name: '預覽匯入', exact: true }).click()
   const dialog = page.getByRole('dialog', { name: '匯入專案資料', exact: true })
   await dialog.waitFor()
   await dialog.getByText('仍連結在另一個位置').waitFor()

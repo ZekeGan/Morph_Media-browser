@@ -6,7 +6,7 @@ import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { Library } from '../electron/library'
 import { WorkspaceStore } from '../electron/workspace'
-import { folderFile, projectFile } from '../electron/files'
+import { folderFile, projectFile, readFolder, saveFolder } from '../electron/files'
 import { catalog } from '../src/i18n/catalog'
 import type { LocaleId } from '../shared/locales'
 
@@ -55,6 +55,12 @@ await library.create(album, {
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })
+// An album of photos is not a comic: set its type so the plain image viewer is used.
+{
+  const record = await readFolder(album)
+  record.details = { ...(record.details ?? { schemaVersion: 1 }), kind: 'general' }
+  await saveFolder(album, record, record.revision)
+}
 const snapshot = await library.create(game, {
   name: 'Polish Game',
   scanAll: true,
@@ -77,7 +83,7 @@ for (const linked of snapshot.projects) {
         widths: {},
         panelWidth: 420,
         panelVisible: true,
-        contentMode: linked.root === game ? 'files' : 'folders',
+        contentMode: 'folders',
         detailId: row.rowId,
       },
     },
@@ -86,7 +92,11 @@ for (const linked of snapshot.projects) {
 }
 // A legacy original-size preference must open safely at the new height-fit baseline.
 const albumRecord = JSON.parse(await fs.readFile(folderFile(album), 'utf8'))
-albumRecord.details = { schemaVersion: 1, reading: { page: 0, fit: 'original' } }
+albumRecord.details = {
+  schemaVersion: 1,
+  kind: 'general',
+  reading: { page: 0, fit: 'original' },
+}
 await fs.writeFile(folderFile(album), JSON.stringify(albumRecord))
 const originals = new Map<string, Buffer>()
 for (const file of [
@@ -113,11 +123,7 @@ let locale: LocaleId = 'zh-TW'
 const tr = (text: string) => catalog[locale][text] ?? text
 const button = (text: string) => page.getByRole('button', { name: tr(text), exact: true })
 const edit = async () => {
-  if (await button('編輯版面').isVisible()) await button('編輯版面').click()
-  else {
-    await button('版面方案選單').click()
-    await page.getByRole('menuitem', { name: tr('編輯版面'), exact: true }).click()
-  }
+  await button('編輯版面').click()
 }
 const open = async (name: string) => {
   await page
@@ -344,6 +350,9 @@ try {
     )) {
       await button('應用程式設定').click()
       await page.locator('.theme-option').nth(index).click()
+      await page.waitForFunction(
+        () => !!document.querySelector('.application-settings [role=status]')?.textContent?.trim()
+      )
       await page.keyboard.press('Escape')
       await page.locator('[role=dialog]').waitFor({ state: 'hidden' })
       await edit()
@@ -362,7 +371,7 @@ try {
           )
       )
       await page.screenshot({ path: path.join(screens, `scheme-${theme}.png`) })
-      await page.keyboard.press('Escape')
+      await button('取消').click()
       await page.keyboard.press('Control+k')
       await page.locator('.folder-search-dialog').waitFor()
       await page.locator('.search-footer button').first().focus()
@@ -392,6 +401,9 @@ try {
         })
         .click()
       locale = next
+      await page.waitForFunction(
+        () => !!document.querySelector('.application-settings [role=status]')?.textContent?.trim()
+      )
       await page.keyboard.press('Escape')
       await resize(800, 700)
       if (await button('關閉資料夾內容').isVisible()) await button('關閉資料夾內容').click()
@@ -411,7 +423,7 @@ try {
           })
       )
       assert.ok(visible)
-      await page.keyboard.press('Escape')
+      await button('取消').click()
       await page.keyboard.press('Control+k')
       await page.locator('.folder-search-dialog').waitFor()
       assert.ok(
@@ -429,7 +441,7 @@ try {
     }
   }
   await open('Polish Game')
-  assert.equal(await page.locator('[aria-label="展示內容"]').count(), 0)
+  assert.equal(await page.locator('[aria-label="展示內容"]').count(), 1)
   assert.equal(await page.locator('.file-overview').count(), 0)
   await page.reload()
   await page.getByRole('button', { name: '開啟專案 Polish Game', exact: true }).first().waitFor()

@@ -526,6 +526,7 @@ export function FolderContent({
           run={run}
           act={act}
           busy={busy}
+          manga={kind === 'book' || row.record?.details?.reading?.mode === 'manga'}
           close={() => setGalleryFile(undefined)}
         />
       )}

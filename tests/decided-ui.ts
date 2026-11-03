@@ -258,8 +258,18 @@ try {
   await page.waitForFunction(() =>
     document.querySelector('.file-overview-row > .path')?.textContent?.includes('2 files')
   )
-  await page.keyboard.press('Escape')
+  // Choosing a language applies and saves at once.
+  await page.waitForFunction(() => document.documentElement.lang === 'en')
+  await page
+    .getByRole('dialog')
+    .getByRole('textbox', { name: 'Interface language', exact: true })
+    .click()
+  await page.getByRole('option', { name: '繁體中文', exact: true }).click()
   await page.waitForFunction(() => document.documentElement.lang === 'zh-TW')
+  await page.waitForFunction(
+    () => !!document.querySelector('.application-settings [role=status]')?.textContent?.trim()
+  )
+  await page.keyboard.press('Escape')
   await button('應用程式設定').click()
   await settings().getByRole('tab', { name: '資料與備份', exact: true }).click()
   const exported = path.join(root, 'exported.json')
@@ -293,7 +303,7 @@ try {
   await settings().getByText('設定匯入預覽', { exact: true }).waitFor()
   assert.equal(
     await page.evaluate(() => window.desktop.workspace()).then((state) => state.prefs.theme),
-    undefined
+    'dark'
   )
   await choose('匯入方式', '以匯入設定取代')
   await settings().getByRole('button', { name: '備份並匯入', exact: true }).click()

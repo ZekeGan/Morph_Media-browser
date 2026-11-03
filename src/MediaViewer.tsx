@@ -31,6 +31,7 @@ export function MediaViewer({
   run,
   act,
   busy,
+  manga: mangaHint,
 }: {
   row: FolderRow
   project: Project
@@ -42,6 +43,8 @@ export function MediaViewer({
   run: (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
   act: (request: Request) => Promise<Response | undefined>
   busy: boolean
+  // The folder page already knows the folder's type (it looked at the files); without it only the record is used.
+  manga?: boolean
 }) {
   const [audioNext, setAudioNext] = useState(false)
   const [queueView, setQueueView] = useState<'list' | 'images'>('list')
@@ -49,7 +52,7 @@ export function MediaViewer({
     [showQueue, setShowQueue] = useState(false),
     [queueMounted, setQueueMounted] = useState(false),
     [manga, setManga] = useState(
-      effectiveKind(row) === 'book' || row.record?.details?.reading?.mode === 'manga'
+      mangaHint ?? (effectiveKind(row) === 'book' || row.record?.details?.reading?.mode === 'manga')
     )
   const queueSlot = useRef<HTMLDivElement>(null),
     queueToggle = useRef<HTMLButtonElement>(null)

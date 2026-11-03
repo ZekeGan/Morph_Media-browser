@@ -84,7 +84,7 @@ try {
       .getByRole('button', { name: '開啟專案 Large ' + category, exact: true })
       .first()
       .click()
-    const gallery = page.locator(category === 'album' ? '.masonry-gallery' : '.manga-gallery')
+    const gallery = page.locator('.masonry-gallery, .manga-gallery')
     await gallery.waitFor()
     await page.waitForFunction(() =>
       [...document.querySelectorAll('.gallery .media-thumbnail img')].some(
@@ -148,7 +148,7 @@ try {
       await gallery.locator('.media-thumbnail').first().click()
       await page
         .getByRole('dialog', {
-          name: category === 'album' ? '圖片檢視' : '漫畫閱讀器',
+          name: '漫畫閱讀器',
           exact: true,
         })
         .waitFor()

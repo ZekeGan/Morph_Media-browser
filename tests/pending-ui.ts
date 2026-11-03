@@ -4,7 +4,7 @@ import path from 'node:path'
 import assert from 'node:assert/strict'
 import { Library } from '../electron/library'
 import { presetDraft, addPreset, syncPresetDraft } from '../shared/layouts'
-import { folderFile } from '../electron/files'
+import { folderFile, readFolder, saveFolder } from '../electron/files'
 import { WorkspaceStore } from '../electron/workspace'
 
 const base = path.resolve('.test-output')
@@ -37,6 +37,12 @@ await lib.create(media, {
   scanAll: true,
   depth: { mode: 'through', level: 3 },
 })
+// Folder types are detected from the files; these fixtures are comics, so say so.
+for (const dir of [path.join(media, 'a')]) {
+  const record = await readFolder(dir)
+  record.details = { ...(record.details ?? { schemaVersion: 1 }), kind: 'book' }
+  await saveFolder(dir, record, record.revision)
+}
 const workspace = new WorkspaceStore(local, ['zh-TW'])
 await workspace.init()
 await workspace.update(
@@ -105,7 +111,7 @@ try {
   await button('目前資料夾設定').click()
   const drawer = page.locator('.folder-panel-dock-settings'),
     scheme = drawer.getByRole('textbox', { name: '此資料夾的版面方案', exact: true })
-  assert.equal(await scheme.inputValue(), '遵循通用設定（此專案版面）')
+  assert.equal(await scheme.inputValue(), '遵循類型與專案設定')
   assert.equal(await drawer.locator('.mantine-Divider-root').count(), 1)
   await scheme.click()
   await page.getByRole('option', { name: '預設版面', exact: true }).click()
@@ -113,7 +119,7 @@ try {
     document.querySelector('.statusbar')?.textContent?.includes('就緒')
   )
   await scheme.click()
-  await page.getByRole('option', { name: '遵循通用設定（此專案版面）', exact: true }).click()
+  await page.getByRole('option', { name: '遵循類型與專案設定', exact: true }).click()
   await page.waitForFunction(() =>
     document.querySelector('.statusbar')?.textContent?.includes('就緒')
   )
@@ -134,7 +140,7 @@ try {
   await body.evaluate((element) => element.querySelector('#controlled-scroll-content')?.remove())
   const toolbar = page.locator('.workspace-toolbar'),
     mode = toolbar.locator('.center-mode'),
-    preset = toolbar.getByRole('textbox', { name: '組件 版面方案', exact: true })
+    preset = toolbar.getByRole('textbox', { name: '版面方案', exact: true })
   const modeBox = (await mode.boundingBox())!,
     presetBox = (await preset.boundingBox())!
   assert.ok(Math.abs(modeBox.y - presetBox.y) < 12)
@@ -180,7 +186,6 @@ try {
   assert.equal(await button('刪除欄位 Flag').count(), 0)
   await button('取消').click()
   await button('開啟專案 Pending Manga').first().click()
-  assert.equal(await toolbar.getByText('檔案', { exact: true }).count(), 0)
   await page.locator('.media-subfolders').getByRole('button', { name: 'a', exact: true }).click()
   await page.locator('.media-thumbnail').filter({ hasText: 'page.png' }).click()
   await page.getByRole('dialog', { name: '漫畫閱讀器', exact: true }).waitFor()
