@@ -6856,5 +6856,11 @@
     "en": "No problems",
     "ja": "問題なし",
     "es": "Sin problemas"
+  },
+  "固定展開專案欄": {
+    "zh-CN": "固定展开项目栏",
+    "en": "Pin the project sidebar open",
+    "ja": "プロジェクトバーを固定して開く",
+    "es": "Fijar la barra de proyectos abierta"
   }
 }
