@@ -167,3 +167,7 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 12. Mac 啟動驗收與辨識分開：Windows 對 `.app` 顯示平台不相容並拒絕啟動，辨識與邊界保護仍有效；macOS 需另驗原生 App 啟動、參數、搬移、缺檔、最低版本／架構、權限與系統拒絕。無 macOS 環境時必須明列未執行，不用 Windows 假目錄測試宣稱 Mac 可啟動。
 
 歷史診斷界線：原 2026-10-26 覆蓋研究只查官方資料；2026-10-27 的唯讀診斷確認上述七款指定目錄的結構／標記與所列限制。TyranoManualSample 封包內引擎及本次實際掃描行為未驗證。該次診斷只讀取指定內容。後續修正已在 tests/game-detection.test.ts 與資料回歸使用受控資料樹驗證，沒有重掃真實收藏或啟動遊戲；macOS 原生啟動未執行，其他變體仍待樣本驗證。啟動動作與參數設計見 [遊戲內容頁](GAME_VIEWER_DESIGN.md)。
+
+## 2026-11-04 新增規則（尚未用真實樣本驗證）
+
+依公開的部署結構補上：CRYENGINE（`CrySystem.dll`）、Adventure Game Studio（`acsetup.cfg`）、MonoGame／FNA／XNA（框架 DLL）、Source（`hl2.exe` 或 `bin/engine.dll`＋`tier0.dll`）、Source 2（`engine2.dll`）、Adobe AIR（`META-INF/AIR/application.xml`）、DOSBox 套件（`dosbox.exe` 或 `dosbox*.conf`＋EXE）、PC-98 模擬器（Neko Project II 類執行檔＋磁碟映像）。目前只用合成資料夾測試，真實遊戲樣本到手前一律視為候選，需以「確認 ROOT／這不是遊戲」人工把關；日本 galgame 的 CatSystem2、Majiro、SoftPal、Circus、FVP、Live Maker、SMILE GAME BUILDER、RPG Developer Bakin 因缺少可信的部署特徵，等有樣本再補。

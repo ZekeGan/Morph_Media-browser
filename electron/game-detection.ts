@@ -167,6 +167,39 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
       add('LÖVE', 'love.dll + .love + EXE')
     if ((await file('cocos2d.dll')) && (await folder('resources')))
       add('Cocos', 'cocos2d.dll + resources + EXE')
+    // Engines recognised from the files their runtime ships next to the EXE (public deployment layouts).
+    if (
+      (await file('CrySystem.dll')) ||
+      (await file('Bin64/CrySystem.dll')) ||
+      (await file('Bin32/CrySystem.dll'))
+    )
+      add('CRYENGINE', 'CrySystem.dll + EXE')
+    if (await file('acsetup.cfg')) add('Adventure Game Studio', 'acsetup.cfg + EXE')
+    if (
+      (await file('MonoGame.Framework.dll')) ||
+      (await file('FNA.dll')) ||
+      (await file('Microsoft.Xna.Framework.dll'))
+    )
+      add('MonoGame／FNA／XNA', 'MonoGame／FNA／XNA 框架 DLL + EXE')
+    if (
+      (await file('hl2.exe')) ||
+      ((await file('bin/engine.dll')) && (await file('bin/tier0.dll')))
+    )
+      add('Source', 'hl2.exe 或 bin/engine.dll + tier0.dll')
+    if ((await file('bin/win64/engine2.dll')) || (await file('game/bin/win64/engine2.dll')))
+      add('Source 2', 'engine2.dll + EXE')
+    if (await file('META-INF/AIR/application.xml'))
+      add('Adobe AIR', 'META-INF/AIR/application.xml + EXE')
+    if (
+      (await file('dosbox.exe')) ||
+      ((await files('', /^dosbox.*\.conf$/i)).length > 0 && exes.length > 0)
+    )
+      add('DOSBox 套件', 'dosbox.exe 或 dosbox*.conf（DOS 遊戲包裝，內容需人工確認）')
+    if (
+      exes.some((e) => /^(np2|np21|np21w|xnp2|t98-next)/i.test(e.name)) &&
+      (await files('', /\.(hdi|fdi|d88|nhd|hdm|nfd)$/i)).length > 0
+    )
+      add('PC-98 模擬器', 'Neko Project II 類執行檔 + 磁碟映像（PC-98 遊戲收藏）')
     if (await file('www/c2runtime.js')) add('Construct', 'c2runtime.js + EXE（候選）')
     if ((await files('', /\.xp3$/i)).length)
       add('KiriKiri', 'XP3 + EXE（可能為補丁／工具，需確認）')
