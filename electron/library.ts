@@ -43,6 +43,7 @@ import type { FieldDeletionPreview, FullRemovalPreview } from '../shared/model'
 import { managedTree, type Change, type ManagedFile } from './maintenance'
 import * as fieldRemovalFns from './library-field-removal'
 import * as removalFns from './library-removal'
+import * as exportFns from './library-export'
 import * as cleanupFns from './library-cleanup'
 import * as legacyFns from './library-legacy'
 import * as scanFns from './library-scan'
@@ -95,6 +96,7 @@ export class Library {
   cancelled = false
   hiddenKnown = new Set<string>()
   legacyPlan?: { token: string; hash: string; views: any[] }
+  importPlans = new Map<string, exportFns.ImportPlan>()
   tail: Promise<unknown> = Promise.resolve()
   state: Snapshot = {
     projects: [],
@@ -286,6 +288,15 @@ export class Library {
   }
   async fullRemoveProject(token: string): Promise<CleanupResult> {
     return removalFns.fullRemoveProject(this, token)
+  }
+  async exportProject(projectId: string, dest: string, appVersion: string) {
+    return exportFns.exportProject(this, projectId, dest, appVersion)
+  }
+  async previewProjectImport(bundle: string, root: string) {
+    return exportFns.previewProjectImport(this, bundle, root)
+  }
+  async applyProjectImport(token: string, overwrite: boolean) {
+    return exportFns.applyProjectImport(this, token, overwrite)
   }
   async removableRoot(
     root: string,

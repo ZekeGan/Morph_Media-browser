@@ -12,6 +12,24 @@ const messages = {
     en: 'Import settings package',
     es: 'Importar paquete de ajustes',
   },
+  選擇匯出位置: {
+    ja: 'エクスポート先を選択',
+    'zh-CN': '选择导出位置',
+    en: 'Choose where to export',
+    es: 'Elige dónde exportar',
+  },
+  選擇專案匯出資料夾: {
+    ja: 'プロジェクトのエクスポートフォルダーを選択',
+    'zh-CN': '选择项目导出文件夹',
+    en: 'Choose the project export folder',
+    es: 'Elige la carpeta de exportación del proyecto',
+  },
+  選擇要放入資料的根資料夾: {
+    ja: 'データを入れるルートフォルダーを選択',
+    'zh-CN': '选择要放入数据的根文件夹',
+    en: 'Choose the root folder to import into',
+    es: 'Elige la carpeta raíz donde importar',
+  },
   '部分資料清理失敗：': {
     ja: '一部のデータを消去できませんでした：',
     'zh-CN': '部分数据清理失败：',

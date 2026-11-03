@@ -38,6 +38,7 @@ interface Props {
   onSettings: () => void
   onRefresh: () => void
   onProjectSettings: (projectId: string) => void
+  onExportProject: (projectId: string) => void
   onOverlay: (value: boolean) => void
   onDirty: (value: boolean) => void
   onSnapshot: (snapshot: Snapshot) => void
@@ -331,6 +332,12 @@ export function DesktopShell(props: Props) {
               onClick={() => props.onProjectSettings(p.projectId)}
             >
               {tr('專案設定')}
+            </Menu.Item>
+            <Menu.Item
+              disabled={!p.project || !!p.error}
+              onClick={() => props.onExportProject(p.projectId)}
+            >
+              {tr('匯出專案資料')}
             </Menu.Item>
             <Menu.Divider />
             <Menu.Label>{tr('移至群組')}</Menu.Label>

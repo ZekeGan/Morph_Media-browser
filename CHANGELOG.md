@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- One-click project data export / import: the project menu has "Export project data" (a folder with a verified manifest plus the project's records, images and subtitles, no media), and Application settings → Links and maintenance has "Import project data" (preview first, existing records kept, overwrites backed up, rolled back on failure). Imports pass through a versioned migration hook so older exports can be upgraded when the data model changes.
 - Folder settings: the scan-boundary block (mark as game root, etc.) is only shown for game projects or when a game was detected in the folder; non-game projects also get a short "game detected, internals protected" note with a shortcut to those settings.
 - Folder settings, round three: the panel remembers the tab you were on when you switch folders; the Shared / This project switch moved from Advanced into the Data tab with a line explaining its effect; the website-import preview is now a current-vs-new table with a sticky action bar; the saved-images list became an always-open image library that shows where each image is used; game actions that are not bound yet get an accent border. (Source notes under fields, Ctrl+S to save and the danger-zone divider arrived in the same batch.)
 ## 0.39.0 — 2026-11-03

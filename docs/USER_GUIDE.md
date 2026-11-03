@@ -66,6 +66,7 @@ Open a folder's **Folder settings**. The "Still to add" card at the top lists wh
 The gear at the top right opens **Application settings**:
 
 - **Appearance**: three themes (Classic dark, Frosted glass, Paper and ink) and five languages, previewed before you save.
+- **Project data**: the project menu's "Export project data" saves the project's records, images and subtitles (no media) to a folder; Links and maintenance → "Import project data" puts them back into a root folder after a preview.
 - **Transfer settings**: export or import a settings package (groups, favourites, preferences; no media and no paths). Import shows a preview and backs up the current settings first, so it can be undone.
 - **Connections and maintenance**: relink, and clean up the data M:orph created (the scope is previewed first; your original media is not deleted).
 

@@ -6328,5 +6328,35 @@
     "zh-CN": "边界设置",
     "en": "Boundary settings",
     "es": "Ajustes de límite"
+  },
+  "匯出專案資料": {
+    "ja": "プロジェクトデータをエクスポート",
+    "zh-CN": "导出项目数据",
+    "en": "Export project data",
+    "es": "Exportar datos del proyecto"
+  },
+  "匯入專案資料": {
+    "ja": "プロジェクトデータをインポート",
+    "zh-CN": "导入项目数据",
+    "en": "Import project data",
+    "es": "Importar datos del proyecto"
+  },
+  "放入：{0}": {
+    "ja": "取り込み先：{0}",
+    "zh-CN": "放入：{0}",
+    "en": "Into: {0}",
+    "es": "En: {0}"
+  },
+  "資料夾記錄 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。": {
+    "ja": "フォルダー記録 {0} 件。新規 {1} ファイル、同一 {2}、内容が異なるもの {3}。",
+    "zh-CN": "文件夹记录 {0} 个；新增 {1} 个文件，内容相同 {2} 个，内容不同 {3} 个。",
+    "en": "{0} folder records; {1} new files, {2} identical, {3} different.",
+    "es": "{0} registros de carpeta; {1} archivos nuevos, {2} idénticos, {3} distintos."
+  },
+  "覆寫目標位置內容不同的檔案（覆寫前會先備份）": {
+    "ja": "内容が異なるファイルを上書き（上書き前にバックアップ）",
+    "zh-CN": "覆盖目标位置内容不同的文件（覆盖前会先备份）",
+    "en": "Overwrite files whose content differs (backed up first)",
+    "es": "Sobrescribir archivos con contenido distinto (con copia previa)"
   }
 }

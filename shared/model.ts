@@ -269,6 +269,9 @@ export type Request =
   | { action: 'cleanupPreview'; rowId: string; scope: 'folder' | 'private' }
   | { action: 'cleanup'; token: string; restart: boolean }
   | { action: 'legacyImport'; token: string; ids: string[]; depth: Project['depth'] }
+  | { action: 'exportProject'; projectId: string }
+  | { action: 'projectImportPreview' }
+  | { action: 'projectImport'; token: string; overwrite: boolean }
 export interface Response {
   snapshot: Snapshot
   preview?: CleanupPreview
@@ -279,6 +282,7 @@ export interface Response {
   fieldDeletionPreview?: FieldDeletionPreview
   recoveryPath?: string
   legacy?: LegacyPreview
+  projectImport?: import('./project-export').ProjectImportPreview
   notice?: Notice
   cancelled?: boolean
   rootSelection?: { token: string; path: string }

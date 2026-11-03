@@ -10,6 +10,7 @@ import {
   NumberInput,
   Select,
   Stack,
+  Text,
   TextInput,
 } from '@mantine/core'
 import type {
@@ -21,6 +22,7 @@ import type {
   Response,
   Snapshot,
 } from '../shared/model'
+import type { ProjectImportPreview } from '../shared/project-export'
 import { Editor } from './Editor'
 import { usePlayback } from './Playback'
 import { ProjectSettings } from './ProjectSettings'
@@ -152,6 +154,8 @@ export function App() {
     [restart, setRestart] = useState(false),
     [legacy, setLegacy] = useState<LegacyPreview>(),
     [legacyIds, setLegacyIds] = useState<string[]>([])
+  const [projectImport, setProjectImport] = useState<ProjectImportPreview>(),
+    [overwrite, setOverwrite] = useState(false)
   const act: Act = useCallback(
     async (request) => {
       if (busyRef.current && request.action !== 'cancelScan') return
@@ -168,6 +172,10 @@ export function App() {
         if (result.preview?.scope === 'all') {
           setCleanup(result.preview)
           setRestart(false)
+        }
+        if (result.projectImport) {
+          setProjectImport(result.projectImport)
+          setOverwrite(false)
         }
         if (result.legacy) {
           setLegacy(result.legacy)
@@ -372,6 +380,7 @@ export function App() {
             setRefreshNonce((value) => value + 1)
             void act({ action: 'scan' })
           }}
+          onExportProject={(projectId) => void act({ action: 'exportProject', projectId })}
           onProjectSettings={(id) => {
             if (confirmLeave()) {
               const p = snapshot.projects.find((p) => p.projectId === id)?.project
@@ -601,6 +610,16 @@ export function App() {
             <Button variant="default" disabled={busy} onClick={() => void beginLink()}>
               {tr('重新連結專案')}
             </Button>
+            <Button
+              variant="default"
+              disabled={busy}
+              onClick={() => {
+                setSettingsOpen(false)
+                void act({ action: 'projectImportPreview' })
+              }}
+            >
+              {tr('匯入專案資料')}
+            </Button>
             {snapshot.legacyAvailable && (
               <Button
                 variant="default"
@@ -729,6 +748,64 @@ export function App() {
             >
               {tr('確認清理列出的本程式資料')}
             </Button>
+          </Stack>
+        )}
+      </Modal>
+      <Modal
+        opened={!!projectImport}
+        onClose={() => setProjectImport(undefined)}
+        title={tr('匯入專案資料')}
+        size="lg"
+      >
+        {projectImport && (
+          <Stack>
+            <Text fw={600}>{projectImport.projectName}</Text>
+            <Text size="sm" c="dimmed" className="path">
+              {tr('放入：{0}', projectImport.root)}
+            </Text>
+            {projectImport.blocker && <Alert color="red">{projectImport.blocker}</Alert>}
+            {projectImport.warnings.map((warning, index) => (
+              <Alert key={index} color="orange">
+                {warning}
+              </Alert>
+            ))}
+            <Text size="sm">
+              {tr(
+                '資料夾記錄 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。',
+                projectImport.folders,
+                projectImport.added,
+                projectImport.same,
+                projectImport.conflicts
+              )}
+            </Text>
+            {projectImport.conflicts > 0 && (
+              <Checkbox
+                checked={overwrite}
+                onChange={(event) => setOverwrite(event.currentTarget.checked)}
+                label={tr('覆寫目標位置內容不同的檔案（覆寫前會先備份）')}
+              />
+            )}
+            <Group justify="flex-end">
+              <Button variant="default" onClick={() => setProjectImport(undefined)}>
+                {tr('取消')}
+              </Button>
+              <Button
+                loading={busy}
+                disabled={!!projectImport.blocker || projectImport.files === 0}
+                onClick={async () => {
+                  if (
+                    await act({
+                      action: 'projectImport',
+                      token: projectImport.token,
+                      overwrite,
+                    })
+                  )
+                    setProjectImport(undefined)
+                }}
+              >
+                {tr('匯入')}
+              </Button>
+            </Group>
           </Stack>
         )}
       </Modal>

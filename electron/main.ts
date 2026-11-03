@@ -203,6 +203,60 @@ async function dispatch(request: Request): Promise<Response> {
       )
       break
     }
+    case 'exportProject': {
+      const chosen = await dialog.showOpenDialog(win!, {
+        title: nt('選擇匯出位置'),
+        properties: ['openDirectory', 'createDirectory'],
+      })
+      if (chosen.canceled || !chosen.filePaths[0]) {
+        extra.cancelled = true
+        break
+      }
+      const result = await library.exportProject(
+        request.projectId,
+        chosen.filePaths[0],
+        app.getVersion()
+      )
+      extra.notice = completionNotice(result.files, result.skipped, `已匯出到：${result.dir}`)
+      break
+    }
+    case 'projectImportPreview': {
+      const bundle = await dialog.showOpenDialog(win!, {
+        title: nt('選擇專案匯出資料夾'),
+        properties: ['openDirectory'],
+      })
+      if (bundle.canceled || !bundle.filePaths[0]) {
+        extra.cancelled = true
+        break
+      }
+      const root = await dialog.showOpenDialog(win!, {
+        title: nt('選擇要放入資料的根資料夾'),
+        properties: ['openDirectory'],
+      })
+      if (root.canceled || !root.filePaths[0]) {
+        extra.cancelled = true
+        break
+      }
+      extra.projectImport = await library.previewProjectImport(
+        bundle.filePaths[0],
+        root.filePaths[0]
+      )
+      break
+    }
+    case 'projectImport': {
+      const result = await library.applyProjectImport(request.token, request.overwrite === true)
+      extra.notice = completionNotice(
+        result.written,
+        0,
+        `已匯入「${result.projectName}」：寫入 ${result.written} 個檔案，保留 ${result.kept} 個${
+          result.backup
+            ? `
+覆寫前備份：${result.backup}`
+            : ''
+        }`
+      )
+      break
+    }
     default:
       throw new Error('不支援的操作')
   }
