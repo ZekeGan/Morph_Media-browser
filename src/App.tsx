@@ -377,6 +377,7 @@ export function App() {
             }
           }}
           onLink={() => void beginLink()}
+          onImport={() => void act({ action: 'projectImportPreview' })}
           onProblems={() => setProblems(true)}
           onOverlay={setShellOverlay}
           onDirty={setShellDirty}
@@ -581,6 +582,17 @@ export function App() {
             }}
           >
             {tr('完成建立')}
+          </Button>
+          <Button
+            variant="subtle"
+            size="compact-sm"
+            disabled={busy}
+            onClick={() => {
+              setCreateOpen(false)
+              void act({ action: 'projectImportPreview' })
+            }}
+          >
+            {tr('已有匯出的專案資料？改為匯入')}
           </Button>
           {(!rootChoice || !input.name.trim()) && (
             <small className="muted" role="status">

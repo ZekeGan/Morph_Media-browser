@@ -6514,5 +6514,11 @@
     "en": "Done",
     "ja": "完了",
     "es": "Hecho"
+  },
+  "已有匯出的專案資料？改為匯入": {
+    "zh-CN": "已有导出的项目数据？改为导入",
+    "en": "Have exported project data? Import it instead",
+    "ja": "エクスポート済みのプロジェクトデータがある場合はインポート",
+    "es": "¿Tienes datos exportados? Impórtalos"
   }
 }

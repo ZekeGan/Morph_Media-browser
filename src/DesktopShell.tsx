@@ -34,6 +34,7 @@ interface Props {
   onSelect: (projectId: string, rowId?: string) => boolean
   onCreate: () => void
   onLink: () => void
+  onImport: () => void
   onProblems: () => void
   onSettings: () => void
   onRefresh: () => void
@@ -651,6 +652,16 @@ export function DesktopShell(props: Props) {
               >
                 <Icon name="plus" size={16} /> {tr('新增專案')}
               </Button>
+              <Button
+                fullWidth
+                size="compact-sm"
+                variant="subtle"
+                color="gray"
+                disabled={props.busy}
+                onClick={props.onImport}
+              >
+                {tr('匯入專案資料')}
+              </Button>
             </div>
           </aside>
           <div
@@ -723,6 +734,9 @@ export function DesktopShell(props: Props) {
                 <Group>
                   <Button onClick={props.onCreate} disabled={props.busy}>
                     <Icon name="plus" size={16} /> {tr('新增專案')}
+                  </Button>
+                  <Button variant="default" onClick={props.onImport} disabled={props.busy}>
+                    {tr('匯入專案資料')}
                   </Button>
                   <Button variant="default" onClick={props.onLink} disabled={props.busy}>
                     {tr('重新連結既有專案')}
