@@ -1,4 +1,5 @@
 import type { Cell, FolderRow, Project } from './model'
+import { effectiveKind } from './kind'
 export function projectImageCells(project: Project): Cell[] {
   return [
     ...new Map(
@@ -112,8 +113,11 @@ export function saveCardPreset(
   }
 }
 
+// A folder's own choice wins, then the layout set for its kind, then the project's active layout.
 export function rowCells(project: Project, row: FolderRow): Cell[] {
-  const chosen = row.record?.folderId && project.folderLayouts?.[row.record.folderId]
+  const chosen =
+    (row.record?.folderId && project.folderLayouts?.[row.record.folderId]) ||
+    project.kindLayouts?.[effectiveKind(row, project)]
   return chosen
     ? (cardPresets(project).find((preset) => preset.id === chosen)?.cells ?? visibleCells(project))
     : visibleCells(project)
@@ -189,6 +193,9 @@ export function removePreset(project: Project): Project {
     cells: structuredClone(first.cells),
     folderLayouts: Object.fromEntries(
       Object.entries(project.folderLayouts ?? {}).filter(([, id]) => id !== project.activeLayoutId)
+    ),
+    kindLayouts: Object.fromEntries(
+      Object.entries(project.kindLayouts ?? {}).filter(([, id]) => id !== project.activeLayoutId)
     ),
   }
 }

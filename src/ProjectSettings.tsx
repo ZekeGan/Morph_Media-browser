@@ -2,6 +2,8 @@ import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
 import { useState } from 'react'
 import { convertMediaProject } from '../shared/media'
+import { cardPresets } from '../shared/layouts'
+import { folderKinds } from '../shared/kind'
 import { Alert, Button, Group, Select, Stack, Tabs, Text, TextInput } from '@mantine/core'
 import type {
   Project,
@@ -76,6 +78,45 @@ export function ProjectSettings({
                 if (value) change({ ...project, mediaCategory: value })
               }}
             />
+          </section>
+          <section className="settings-section">
+            <Text fw={600}>{tr('各類型的預設版面')}</Text>
+            <Text size="xs" c="dimmed">
+              {tr('每個資料夾依其類型套用；資料夾設定中另選的版面優先。')}
+            </Text>
+            {folderKinds.map((kind) => (
+              <Select
+                key={kind}
+                mt="xs"
+                label={
+                  {
+                    game: tr('遊戲'),
+                    book: tr('書籍／漫畫'),
+                    media: tr('影音'),
+                    general: tr('一般'),
+                  }[kind]
+                }
+                allowDeselect={false}
+                value={project.kindLayouts?.[kind] ?? ''}
+                disabled={busy}
+                data={[
+                  { value: '', label: tr('遵循專案目前版面') },
+                  ...cardPresets(project).map((preset) => ({
+                    value: preset.id,
+                    label:
+                      preset.id === 'default' && preset.name === '預設版面'
+                        ? tr('預設版面')
+                        : preset.name,
+                  })),
+                ]}
+                onChange={(id) => {
+                  const kindLayouts = { ...project.kindLayouts }
+                  if (id) kindLayouts[kind] = id
+                  else delete kindLayouts[kind]
+                  change({ ...project, kindLayouts })
+                }}
+              />
+            ))}
           </section>
           {['album', 'video', 'music', 'other'].includes(project.mediaCategory) && (
             <section className="settings-section">

@@ -941,7 +941,7 @@ export function FolderPanel({
                   allowDeselect={false}
                   value={project.folderLayouts?.[row.record.folderId] ?? ''}
                   data={[
-                    { value: '', label: tr('遵循通用設定（此專案版面）') },
+                    { value: '', label: tr('遵循類型與專案設定') },
                     ...cardPresets(project).map((preset) => ({
                       value: preset.id,
                       label:

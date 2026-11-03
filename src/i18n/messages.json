@@ -6412,5 +6412,29 @@
     "zh-CN": "自动（检测为 {0}）",
     "en": "Automatic (detected as {0})",
     "es": "Automático (detectado como {0})"
+  },
+  "遵循類型與專案設定": {
+    "zh-CN": "遵循类型与项目设置",
+    "en": "Follow folder type and project",
+    "ja": "種類とプロジェクト設定に従う",
+    "es": "Seguir el tipo y el proyecto"
+  },
+  "各類型的預設版面": {
+    "zh-CN": "各类型的默认版面",
+    "en": "Default layout per folder type",
+    "ja": "種類ごとの既定レイアウト",
+    "es": "Diseño predeterminado por tipo"
+  },
+  "每個資料夾依其類型套用；資料夾設定中另選的版面優先。": {
+    "zh-CN": "每个文件夹按其类型套用；文件夹设置中另选的版面优先。",
+    "en": "Each folder uses the layout of its type; a layout chosen in the folder's settings wins.",
+    "ja": "各フォルダーはその種類のレイアウトを使い、フォルダー設定で選んだレイアウトが優先されます。",
+    "es": "Cada carpeta usa el diseño de su tipo; el elegido en los ajustes de la carpeta tiene prioridad."
+  },
+  "遵循專案目前版面": {
+    "zh-CN": "遵循项目当前版面",
+    "en": "Follow the project's current layout",
+    "ja": "プロジェクトの現在のレイアウトに従う",
+    "es": "Seguir el diseño actual del proyecto"
   }
 }

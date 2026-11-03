@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cellField } from '../shared/cells'
+import { rowCells } from '../shared/layouts'
 import {
   cellsWithoutField,
   validateProject,
@@ -207,4 +208,28 @@ test('optional text, box and colour styles are validated', () => {
   assert.throws(() => validateProject(choice({ C: '#2f9e44' })), 'unknown option')
   assert.throws(() => validateProject(choice({ A: 'green' })), 'not hex')
   assert.throws(() => validateProject(choice({ A: '#2f9e44' }, 'string')), 'not an enum')
+})
+
+test('a folder takes the layout set for its kind unless it picks its own', () => {
+  const project = {
+    ...modelProject(),
+    layoutPresets: [
+      { id: 'a', name: 'A', cells: [] },
+      { id: 'b', name: 'B', cells: [cell({ cellId: 'only-b' })] },
+    ],
+    activeLayoutId: 'a',
+    cells: [],
+    kindLayouts: { book: 'b' },
+  } as Project
+  const folder = (kind?: string, folderId = 'f1') =>
+    ({
+      projectId: 'project',
+      record: { folderId, attributes: [], projectOverrides: {}, details: kind ? { kind } : {} },
+    }) as unknown as FolderRow
+  assert.deepEqual(
+    rowCells(project, folder('book')).map((c) => c.cellId),
+    ['only-b']
+  )
+  assert.deepEqual(rowCells(project, folder('media')), [])
+  assert.deepEqual(rowCells({ ...project, folderLayouts: { f1: 'a' } }, folder('book')), [])
 })

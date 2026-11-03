@@ -136,6 +136,8 @@ export interface Project {
   layoutPresets?: { id: string; name: string; cells: Cell[] }[]
   activeLayoutId?: string
   folderLayouts?: Record<string, string>
+  // Card layout preset applied to every folder of a kind (book, game, media, general) unless the folder picks its own.
+  kindLayouts?: Record<string, string>
   scanAll?: boolean
   cardView?: { mode: 'multi' | 'single'; level: number | 'all' }
   traversal?: Record<string, boolean>
@@ -704,6 +706,14 @@ export function validateProject(v: unknown): asserts v is Project {
       !Object.entries(v.folderLayouts).every(([folder, preset]) => id(folder) && id(preset)))
   )
     throw new Error('資料夾版面指定不合法')
+  if (
+    v.kindLayouts !== undefined &&
+    (!obj(v.kindLayouts) ||
+      !Object.entries(v.kindLayouts).every(
+        ([kind, preset]) => ['book', 'game', 'media', 'general'].includes(kind) && id(preset)
+      ))
+  )
+    throw new Error('類型版面指定不合法')
   if (v.layoutPresets !== undefined) {
     if (
       !Array.isArray(v.layoutPresets) ||
