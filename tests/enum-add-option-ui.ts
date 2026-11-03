@@ -60,6 +60,10 @@ try {
   await page.getByText('修改會同步到使用這個資料夾的其他專案。').waitFor()
   await page.locator('label').filter({ hasText: '僅目前專案' }).click()
   await page.getByText('修改只用於目前專案；其他專案仍用共用資料。').waitFor()
+  // Scan boundaries belong to games: a manga project with no detected game does not show them.
+  await page.getByRole('tab', { name: '進階', exact: true }).click()
+  await page.getByText('全部已存屬性與來源').waitFor()
+  assert.equal(await page.getByText('掃描邊界', { exact: true }).count(), 0)
   assert.deepEqual(errors, [])
   passed = true
   console.log('PASS add choice option from folder settings. ' + root)

@@ -6316,5 +6316,17 @@
     "zh-CN": "相同",
     "en": "Same",
     "es": "Igual"
+  },
+  "偵測到遊戲，為了保護內部檔案，不會在裡面建立記錄。": {
+    "ja": "ゲームを検出しました。内部ファイルを守るため、中には記録を作成しません。",
+    "zh-CN": "检测到游戏，为了保护内部文件，不会在里面创建记录。",
+    "en": "A game was detected. To protect its files, no records are created inside it.",
+    "es": "Se detectó un juego. Para proteger sus archivos, no se crean registros dentro."
+  },
+  "邊界設定": {
+    "ja": "境界の設定",
+    "zh-CN": "边界设置",
+    "en": "Boundary settings",
+    "es": "Ajustes de límite"
   }
 }

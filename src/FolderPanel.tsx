@@ -538,6 +538,9 @@ export function FolderPanel({
     const result = await act({ action: 'cleanupPreview', rowId: row.rowId, scope })
     if (result?.preview) setCleanup(result.preview)
   }
+  // Boundaries belong to games; other projects only see them when a game was actually detected in this folder.
+  const gameDetected = !!row.boundary || !!row.record?.details?.boundary?.state
+  const showBoundary = project.mediaCategory === 'game' || gameDetected
   // What this folder still lacks, each with a button that goes straight to the place that fixes it.
   const empty = (value: unknown) =>
     value == null || value === '' || (Array.isArray(value) && value.length === 0)
@@ -605,6 +608,16 @@ export function FolderPanel({
       {error && (
         <Alert color="orange" withCloseButton onClose={() => setError('')}>
           {error}
+        </Alert>
+      )}
+      {project.mediaCategory !== 'game' && row.boundary && (
+        <Alert color="blue" className="folder-boundary-note">
+          <Group justify="space-between" wrap="nowrap" gap="xs">
+            <Text size="sm">{tr('偵測到遊戲，為了保護內部檔案，不會在裡面建立記錄。')}</Text>
+            <Button size="compact-sm" variant="light" onClick={() => setTab('advanced')}>
+              {tr('邊界設定')}
+            </Button>
+          </Group>
         </Alert>
       )}
       {todo.length > 0 && (
@@ -1077,42 +1090,43 @@ export function FolderPanel({
         </Tabs.Panel>
         <Tabs.Panel value="advanced" pt="md">
           <Stack>
-            {' '}
-            <section className="settings-section">
-              <Text fw={600}>{tr('掃描邊界')}</Text>
-              {row.boundary ? (
-                <>
-                  <Text size="sm" c="dimmed">
-                    {row.boundary.engines.join('／')} · {row.boundary.evidence.join('；')}
-                  </Text>
-                  <Group mt="sm">
-                    <Button size="xs" disabled={disabled} onClick={() => boundary('root')}>
-                      {tr('確認遊戲 ROOT')}
-                    </Button>
-                    <Button
-                      size="xs"
-                      variant="default"
-                      disabled={disabled}
-                      onClick={() => boundary('root', true)}
-                    >
-                      {tr('唯讀查看內部')}
-                    </Button>
-                    <Button
-                      size="xs"
-                      variant="subtle"
-                      disabled={disabled}
-                      onClick={() => boundary('not-game')}
-                    >
-                      {tr('這不是遊戲目錄')}
-                    </Button>
-                  </Group>
-                </>
-              ) : (
-                <Button size="xs" mt="sm" disabled={disabled} onClick={() => boundary('root')}>
-                  {tr('標記為遊戲 ROOT')}
-                </Button>
-              )}
-            </section>
+            {showBoundary && (
+              <section className="settings-section">
+                <Text fw={600}>{tr('掃描邊界')}</Text>
+                {row.boundary ? (
+                  <>
+                    <Text size="sm" c="dimmed">
+                      {row.boundary.engines.join('／')} · {row.boundary.evidence.join('；')}
+                    </Text>
+                    <Group mt="sm">
+                      <Button size="xs" disabled={disabled} onClick={() => boundary('root')}>
+                        {tr('確認遊戲 ROOT')}
+                      </Button>
+                      <Button
+                        size="xs"
+                        variant="default"
+                        disabled={disabled}
+                        onClick={() => boundary('root', true)}
+                      >
+                        {tr('唯讀查看內部')}
+                      </Button>
+                      <Button
+                        size="xs"
+                        variant="subtle"
+                        disabled={disabled}
+                        onClick={() => boundary('not-game')}
+                      >
+                        {tr('這不是遊戲目錄')}
+                      </Button>
+                    </Group>
+                  </>
+                ) : (
+                  <Button size="xs" mt="sm" disabled={disabled} onClick={() => boundary('root')}>
+                    {tr('標記為遊戲 ROOT')}
+                  </Button>
+                )}
+              </section>
+            )}
             <details className="settings-section">
               <summary>{tr('全部已存屬性與來源')}</summary>
               <pre>{JSON.stringify(row.record, null, 2) ?? tr('沒有可攜記錄')}</pre>
