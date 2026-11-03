@@ -44,6 +44,11 @@ for (const folder of folders[kind]) {
   const top = path.join(media, folder.split('/')[0])
   for (let index = 1; index <= 3; index++) await fs.writeFile(path.join(top, `${index}.png`), png)
 }
+// --big N adds N files to the first folder, to see how heavy folders behave.
+const big = Number(option('big') ?? 0)
+if (big)
+  for (let index = 0; index < big; index++)
+    await fs.writeFile(path.join(media, folders[kind][0].split('/')[0], `extra-${index}.png`), png)
 if (kind === 'game') {
   await fs.writeFile(path.join(media, 'Game A', 'Game.exe'), 'x')
   await fs.writeFile(path.join(media, 'Game B', 'Game.exe'), 'x')
@@ -229,6 +234,38 @@ try {
       '| center:',
       await page.getByRole('navigation', { name: '資料夾路徑' }).innerText()
     )
+  }
+  if (args.includes('--panel-timing')) {
+    // Close the panel, then time how long opening it takes to show the folder's content.
+    await page.locator('.folder-card').first().click()
+    await page.waitForTimeout(800)
+    await page.getByRole('button', { name: '關閉資料夾內容', exact: true }).click()
+    await page.waitForTimeout(600)
+    const timing = await page.evaluate(async () => {
+      const toggle = document.querySelector<HTMLElement>('[aria-label="切換右側內容"]')!
+      const start = performance.now()
+      toggle.click()
+      let shell = 0
+      await new Promise<void>((resolve) => {
+        const tick = () => {
+          if (!shell && document.querySelector('.folder-panel-header'))
+            shell = performance.now() - start
+          const loading = document.querySelector('.folder-panel-body .media-loading')
+          const body = document.querySelector('.folder-panel-body')
+          if (
+            shell &&
+            body &&
+            !loading &&
+            document.querySelectorAll('.media-thumbnail img').length > 0
+          )
+            resolve()
+          else requestAnimationFrame(tick)
+        }
+        tick()
+      })
+      return { shell: Math.round(shell), content: Math.round(performance.now() - start) }
+    })
+    console.log('panel open:', JSON.stringify(timing))
   }
   const text = option('text')
   if (text)

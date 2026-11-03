@@ -748,6 +748,16 @@ export function BrowseWorkspace({
       fileScope: state.current.fileScope ?? 'descendants',
     })
   }
+  // The panel's code is fetched while the app is idle (and when the pointer reaches its button), so the first
+  // opening does not wait for it.
+  const preloadPanel = () => {
+    void import('./FolderContent')
+    void import('./FolderPanel')
+  }
+  useEffect(() => {
+    const timer = window.setTimeout(preloadPanel, 1200)
+    return () => window.clearTimeout(timer)
+  }, [])
   const togglePanel = () => {
     if (panelSlot.current?.contains(document.activeElement)) panelToggle.current?.focus()
     setExpanded(false)
@@ -766,6 +776,7 @@ export function BrowseWorkspace({
               variant="subtle"
               color="gray"
               aria-label={tr('切換右側內容')}
+              onMouseEnter={preloadPanel}
               aria-pressed={browse.panelVisible !== false}
               disabled={!ready}
               onClick={togglePanel}

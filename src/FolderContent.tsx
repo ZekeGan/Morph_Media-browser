@@ -4,6 +4,7 @@ import { isGameFolder, visibleFile } from '../shared/media'
 import { effectiveKind, sampleOf } from '../shared/kind'
 import { importedFieldLabels } from './importedFieldLabels'
 import { isUrl, siteName } from './importSource'
+import { PanelSkeleton } from './PanelSkeleton'
 import { useFileVisibility } from './useFileVisibility'
 import { DocumentViewer } from './DocumentViewer'
 import './game-actions.css'
@@ -42,6 +43,15 @@ const describeSource = (source?: string) =>
       : source === 'manual'
         ? tr('手動')
         : source
+
+// The last folders' listings, so opening the panel on a folder seen a moment ago shows it at once while a fresh
+// listing loads behind it.
+const contentCache = new Map<string, ContentResult>()
+const rememberContent = (rowId: string, value: ContentResult) => {
+  contentCache.delete(rowId)
+  contentCache.set(rowId, value)
+  if (contentCache.size > 24) contentCache.delete(contentCache.keys().next().value!)
+}
 
 export function FolderContent({
   row,
@@ -123,7 +133,9 @@ export function FolderContent({
     />
   )
 
-  const [content, setContent] = useState<ContentResult>(),
+  const [content, setContent] = useState<ContentResult | undefined>(() =>
+      contentCache.get(row.rowId)
+    ),
     [error, setError] = useState(''),
     [reload, setReload] = useState(0),
     refresh = useRefreshNonce(),
@@ -133,7 +145,7 @@ export function FolderContent({
   useEffect(() => {
     let alive = true
     if (contentRow.current !== row.rowId) {
-      setContent(undefined)
+      setContent(contentCache.get(row.rowId))
       contentRow.current = row.rowId
     }
     setError('')
@@ -141,6 +153,7 @@ export function FolderContent({
     void (async () => {
       let cursor: string | undefined
       const counted: ContentResult['entries'] = []
+      let accumulated: ContentResult | undefined
       do {
         const response = await window.explorer.request({
           action: 'content',
@@ -151,18 +164,21 @@ export function FolderContent({
         const chunk = response.content
         if (!chunk) throw new Error(tr('無法取得資料夾內容'))
         const append = !!cursor
-        setContent((previous) =>
-          append && previous
+        accumulated =
+          append && accumulated
             ? {
                 ...chunk,
-                entries: [...previous.entries, ...chunk.entries],
-                notices: [...previous.notices, ...chunk.notices],
+                entries: [...accumulated.entries, ...chunk.entries],
+                notices: [...accumulated.notices, ...chunk.notices],
               }
             : chunk
-        )
+        setContent(accumulated)
         counted.push(...chunk.entries)
         cursor = chunk.nextCursor
-        if (!cursor) cacheFolderStats(row.rowId, counted)
+        if (!cursor) {
+          cacheFolderStats(row.rowId, counted)
+          if (accumulated) rememberContent(row.rowId, accumulated)
+        }
         // Yield between chunks so navigation and the first screen can render.
         if (cursor) await new Promise((resolve) => setTimeout(resolve, 50))
       } while (alive && cursor)
@@ -186,7 +202,7 @@ export function FolderContent({
         </Button>
       </p>
     )
-  if (!content) return <p className="media-loading">{tr('載入內容…')}</p>
+  if (!content) return <PanelSkeleton />
   const visibleEntries = content.entries.filter((entry) => visibleFile(entry, visibility))
   const selectedFile = visibleEntries.find((entry) => entry.id === selectedFileId) ?? selectedEntry
   const kind = effectiveKind(row, sampleOf(content.entries))
@@ -251,7 +267,7 @@ export function FolderContent({
               <img className="single-file-image" src={selectedFile.url} alt={selectedFile.name} />
             </button>
             {fileReader && (
-              <Suspense fallback={<p>{tr('載入內容…')}</p>}>
+              <Suspense fallback={<PanelSkeleton />}>
                 <Reader
                   images={content.entries.filter((entry) => entry.kind === 'image')}
                   start={content.entries

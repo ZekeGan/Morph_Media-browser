@@ -1235,3 +1235,10 @@
 
 .statusbar .status-problems { color: var(--muted); }
 .statusbar .status-problems.has-problems { color: var(--mantine-color-orange-5, #f08c00); font-weight: 600; }
+
+.panel-skeleton { display: flex; flex-direction: column; gap: 10px; padding: 14px 4px; }
+.panel-skeleton i { display: block; height: 14px; border-radius: 6px; background: var(--soft); animation: skeleton-pulse 1.1s ease-in-out infinite; }
+.panel-skeleton > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+.panel-skeleton > div i { height: 96px; }
+@keyframes skeleton-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .panel-skeleton i { animation: none; } }

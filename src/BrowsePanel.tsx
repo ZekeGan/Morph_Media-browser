@@ -7,6 +7,7 @@ import { lazy, Suspense } from 'react'
 import { ActionIcon, Alert, Button, Group, Text, Tooltip } from '@mantine/core'
 import { pathKey } from '../shared/browse'
 import { effectiveKind } from '../shared/kind'
+import { PanelSkeleton } from './PanelSkeleton'
 import { type FolderRow, type Project, type Request, type Response } from '../shared/model'
 import type { BrowseState, ExplorerRequest, ExplorerResponse } from '../shared/explorer'
 const FolderContent = lazy(() =>
@@ -272,7 +273,7 @@ export function BrowsePanel(props: Props) {
               {settingsBody}
             </div>
           ) : (
-            <Suspense fallback={<p>{tr('載入內容…')}</p>}>
+            <Suspense fallback={<PanelSkeleton />}>
               {panelOpen && (folderMode || filePreview) ? (
                 <FolderContent
                   key={detail.rowId + '/' + (filePreview?.id ?? 'folder')}
