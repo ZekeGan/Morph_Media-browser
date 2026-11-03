@@ -136,12 +136,12 @@ export function FileOverview({
       for (const [label, group] of groups) {
         rows.push({
           top,
-          height: 38,
+          height: 50,
           label: label + ' · ' + tr('{0} 個檔案', group.length),
           rowId: group[0].rowId,
           entries: [],
         })
-        top += 38
+        top += 50
         append(group)
       }
     } else append(visibleEntries)

@@ -14,7 +14,7 @@ import {
   syncPresetDraft,
 } from '../shared/layouts'
 import { fieldValue, validateProject } from '../shared/model'
-import { WorkspaceStore } from '../electron/workspace'
+import { WorkspaceStore, pruneSettingBackups } from '../electron/workspace'
 import { Library } from '../electron/library'
 import { Explorer } from '../electron/explorer'
 import { readFolder } from '../electron/files'
@@ -247,5 +247,30 @@ test('failed settings backup prevents import and leaves the previous disk and me
   assert.equal(
     await fs.readFile(path.join(root, 'workspace-backups'), 'utf8'),
     'CONTROLLED BLOCKER'
+  )
+})
+
+test('settings backups keep only the newest ones and never touch other files', async (t) => {
+  const root = await directory(t),
+    dir = path.join(root, 'workspace-backups')
+  await fs.mkdir(dir, { recursive: true })
+  const ids = Array.from(
+    { length: 35 },
+    (_, i) => `00000000-0000-4000-8000-${String(i).padStart(12, '0')}`
+  )
+  for (const [i, id] of ids.entries()) {
+    const file = path.join(dir, id + '.json')
+    await fs.writeFile(file, '{}')
+    const time = new Date(Date.now() - (ids.length - i) * 60_000)
+    await fs.utimes(file, time, time)
+  }
+  await fs.writeFile(path.join(dir, 'notes.txt'), 'keep me')
+  await pruneSettingBackups(root, 30)
+  const left = (await fs.readdir(dir)).sort()
+  assert.equal(left.filter((name) => name.endsWith('.json')).length, 30)
+  assert.ok(left.includes('notes.txt'), 'unrelated files stay')
+  assert.ok(
+    !left.includes(ids[0] + '.json') && left.includes(ids[34] + '.json'),
+    'the oldest go first'
   )
 })

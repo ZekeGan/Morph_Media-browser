@@ -228,6 +228,23 @@ export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
   )
     throw new Error('表格欄位順序不合法')
 }
+// Settings backups are restore points made before an import or a restore; only the newest ones stay (the list shows
+// 30 anyway). Only files named like a backup are ever touched.
+export async function pruneSettingBackups(root: string, keep = 30) {
+  const dir = path.join(root, 'workspace-backups')
+  await safePath(root, dir)
+  const names = (await fs.readdir(dir).catch(() => [] as string[])).filter((name) =>
+      /^[0-9a-f-]{36}\.json$/i.test(name)
+    ),
+    dated = []
+  for (const name of names) {
+    const file = path.join(dir, name)
+    await safePath(root, file)
+    dated.push({ file, time: (await fs.stat(file)).mtimeMs })
+  }
+  dated.sort((a, b) => b.time - a.time)
+  for (const old of dated.slice(keep)) await fs.unlink(old.file).catch(() => {})
+}
 export class WorkspaceStore {
   readonly file: string
   private prefs = defaultWorkspace()
@@ -292,6 +309,7 @@ export class WorkspaceStore {
       createdAt: new Date().toISOString(),
       prefs: this.prefs,
     })
+    await pruneSettingBackups(this.root).catch(() => {})
     return id
   }
   read(ids: string[]): Promise<WorkspaceState> {

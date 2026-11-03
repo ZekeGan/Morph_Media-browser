@@ -6670,5 +6670,11 @@
     "en": "Older data",
     "ja": "旧バージョンのデータ",
     "es": "Datos antiguos"
+  },
+  "隱藏此欄": {
+    "zh-CN": "隐藏此列",
+    "en": "Hide this column",
+    "ja": "この列を隠す",
+    "es": "Ocultar esta columna"
   }
 }

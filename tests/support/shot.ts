@@ -193,11 +193,25 @@ try {
     )
   }
   const text = option('text')
-  if (text) await page.getByText(text, { exact: true }).first().click()
+  if (text)
+    for (const part of text.split('|')) await page.getByText(part, { exact: true }).first().click()
   const click = option('click')
   if (click) await page.getByRole('button', { name: click, exact: true }).first().click()
+  const evaluate = option('eval')
+  if (evaluate) console.log('eval:', await page.evaluate(evaluate))
   const press = option('press')
   if (press) await page.keyboard.press(press)
+  if (press && (option('card') || option('enter'))) {
+    await page.waitForTimeout(500)
+    console.log(
+      'after press:',
+      await page
+        .locator('.folder-panel-header strong')
+        .first()
+        .innerText()
+        .catch(() => '(none)')
+    )
+  }
   await page.waitForTimeout(900)
   const out = path.resolve(
     option('out') ??

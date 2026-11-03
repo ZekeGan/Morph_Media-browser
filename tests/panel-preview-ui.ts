@@ -51,6 +51,20 @@ try {
   )
   assert.doesNotMatch(await crumb(), /Game A/)
 
+  // Clicking the selected folder again clears the selection: the panel returns to the folder the path bar is on.
+  await card('Game A').click()
+  await page.waitForFunction(
+    () => document.querySelector('.folder-panel-header strong')?.textContent === 'Games'
+  )
+  await card('Game A').click()
+  await page.waitForFunction(
+    () => document.querySelector('.folder-panel-header strong')?.textContent === 'Game A'
+  )
+  await page.keyboard.press('Escape')
+  await page.waitForFunction(
+    () => document.querySelector('.folder-panel-header strong')?.textContent === 'Games'
+  )
+
   await card('Game B').dblclick()
   await page.waitForFunction(
     () => document.querySelector('.breadcrumb-current')?.textContent?.trim() === 'Game B'

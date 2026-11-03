@@ -343,9 +343,14 @@ export function BrowseToolbar(props: Props) {
           {folderMode && browse.mode === 'TABLE' && (
             <Menu closeOnItemClick={false}>
               <Menu.Target>
-                <ActionIcon variant="subtle" aria-label={tr('選擇表格欄位')}>
-                  <Icon name="list" />
-                </ActionIcon>
+                <Button
+                  size="xs"
+                  variant="default"
+                  aria-label={tr('選擇表格欄位')}
+                  leftSection={<Icon name="list" size={14} />}
+                >
+                  {tr('欄位')}
+                </Button>
               </Menu.Target>
               <Menu.Dropdown>
                 <TextInput

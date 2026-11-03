@@ -17,6 +17,10 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Clicking the selected folder again (or pressing Esc) clears the selection and the right panel goes back to the folder the path bar is on; a double click still enters the folder.
+- Files view: air between list rows and above each group heading (which now has a divider line).
+- Folders table: the dragged column dims, the drop line is thicker and fades in, the moved column flashes once, a hover button hides a column, and the column picker is a labelled "Columns" button.
+- Settings backups: only the newest 30 restore points are kept (older ones are deleted when a new one is made).
 - Project settings: "Remove project" and "Remove all project data" are one section with a choice (this project's data only, or also clear shared data, which lists the other projects it may affect); "Export project data" moved here from the sidebar menu (Data tab).
 - New project dialog: a third choice, "Link an existing project" (replaces the separate re-link buttons on the home page and in Application settings). Application settings, Data and backup: only settings backup (export, import, collapsed restore points), older data (when found) and Dangerous actions are left.
 - Housekeeping: the test output folder is pruned automatically (anything older than a day is removed when `pnpm test`, `pnpm shot` or the UI runner starts; `pnpm clean:test` removes all of it). It had grown to 5 GB.

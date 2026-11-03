@@ -95,6 +95,8 @@ export function BrowseWorkspace({
     [expanded, setExpanded] = useState(false)
   const [filePreview, setFilePreview] = useState<OverviewEntry>()
   const markAnchor = useRef<string>(undefined)
+  const unselectTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const [droppedColumn, setDroppedColumn] = useState('')
   const panelSlot = useRef<HTMLDivElement>(null),
     panelToggle = useRef<HTMLButtonElement>(null)
   const panelBody = useRef<HTMLDivElement>(null),
@@ -397,6 +399,36 @@ export function BrowseWorkspace({
     setSwitching(undefined)
     if (configId) setHighlight(configId)
   }
+  // With nothing selected the panel shows the folder the path bar is on.
+  const clearSelection = () => {
+    clearTimeout(unselectTimer.current)
+    setHighlight(undefined)
+    if (currentFolder && currentFolder.rowId !== state.current.detailId)
+      previewDetail(currentFolder.rowId)
+  }
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || expanded || !(highlight || marked.length)) return
+      // Closed selects keep an invisible dropdown in the page, so only visible overlays count.
+      const overlayOpen = Array.from(
+        document.querySelectorAll(
+          '.reader,.mantine-Drawer-content,.mantine-Modal-content,[role="dialog"],.mantine-Menu-dropdown,.mantine-Popover-dropdown'
+        )
+      ).some(
+        (node) => node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden'
+      )
+      if (
+        overlayOpen ||
+        (e.target as HTMLElement)?.closest('input,textarea,select,[contenteditable="true"]')
+      )
+        return
+      e.preventDefault()
+      if (marked.length) setMarked([])
+      else clearSelection()
+    }
+    window.addEventListener('keydown', key)
+    return () => window.removeEventListener('keydown', key)
+  })
   const previewFile = async (entry: OverviewEntry) => {
     if (busy) return
     const operation = ++navigation.current,
@@ -503,8 +535,11 @@ export function BrowseWorkspace({
       index = ids.indexOf(target)
     if (index < 0) return
     ids.splice(index + (after ? 1 : 0), 0, source)
-    if (ids.some((id, i) => orderedColumns[i].id !== id))
+    if (ids.some((id, i) => orderedColumns[i].id !== id)) {
       persist({ ...state.current, columnOrder: ids })
+      setDroppedColumn(source)
+      setTimeout(() => setDroppedColumn(''), 700)
+    }
   }
   const endColumnDrag = () => {
     setDragColumn('')
@@ -619,10 +654,20 @@ export function BrowseWorkspace({
         return
       }
       markAnchor.current = id
+      // Clicking the selected folder again clears the selection; a double click (which also clicks) must not.
+      if (e.detail === 1 && highlight === id && !marked.length) {
+        clearTimeout(unselectTimer.current)
+        unselectTimer.current = setTimeout(clearSelection, 260)
+        return
+      }
+      clearTimeout(unselectTimer.current)
       if (marked.length) setMarked([])
       setHighlight(id)
     },
-    onDoubleClick: () => void open(id),
+    onDoubleClick: () => {
+      clearTimeout(unselectTimer.current)
+      void open(id)
+    },
     onContextMenu: (e: React.MouseEvent) => {
       e.preventDefault()
       e.stopPropagation()
@@ -872,13 +917,17 @@ export function BrowseWorkspace({
                       <th
                         key={c.id}
                         data-column-id={c.id}
-                        className={
+                        className={[
                           columnDrop?.id === c.id
                             ? columnDrop.after
                               ? 'column-insert-after'
                               : 'column-insert-before'
-                            : ''
-                        }
+                            : '',
+                          dragColumn === c.id ? 'column-dragging' : '',
+                          droppedColumn === c.id ? 'column-dropped' : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
                         aria-sort={
                           sort.field === c.id ? (sort.asc ? 'ascending' : 'descending') : 'none'
                         }
@@ -935,6 +984,25 @@ export function BrowseWorkspace({
                           {c.label}
                           {sort.field === c.id ? (sort.asc ? ' ↑' : ' ↓') : ''}
                         </button>
+                        {c.id !== 'name' && (
+                          <button
+                            type="button"
+                            className="column-hide"
+                            disabled={busy}
+                            aria-label={tr('隱藏此欄')}
+                            title={tr('隱藏此欄')}
+                            onClick={() =>
+                              persist({
+                                ...state.current,
+                                hiddenColumns: [
+                                  ...new Set([...(state.current.hiddenColumns ?? []), c.id]),
+                                ],
+                              })
+                            }
+                          >
+                            <Icon name="eye-off" size={13} />
+                          </button>
+                        )}
                         <span
                           className="column-resizer"
                           role="separator"
