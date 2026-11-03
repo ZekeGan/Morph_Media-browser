@@ -6130,5 +6130,53 @@
     "en": "Only the copy saved in this folder is deleted; original files are untouched.",
     "ja": "このフォルダー内に保存したコピーのみ削除され、元のファイルには影響しません。",
     "es": "Solo se elimina la copia guardada en esta carpeta; los archivos originales no se tocan."
+  },
+  "先保存或放棄下方未保存的變更，才能套用網站資料。": {
+    "ja": "下の未保存の変更を保存または破棄すると、サイトのデータを適用できます。",
+    "zh-CN": "先保存或放弃下方未保存的更改，才能应用网站数据。",
+    "en": "Save or discard the unsaved changes below before applying website data.",
+    "es": "Guarda o descarta los cambios sin guardar de abajo antes de aplicar datos del sitio."
+  },
+  "未保存的變更": {
+    "ja": "未保存の変更",
+    "zh-CN": "未保存的更改",
+    "en": "Unsaved changes",
+    "es": "Cambios sin guardar"
+  },
+  "有 {0} 項未保存": {
+    "ja": "未保存の項目が {0} 件あります",
+    "zh-CN": "有 {0} 项未保存",
+    "en": "{0} unsaved",
+    "es": "{0} sin guardar"
+  },
+  "放棄": {
+    "ja": "破棄",
+    "zh-CN": "放弃",
+    "en": "Discard",
+    "es": "Descartar"
+  },
+  "未保存": {
+    "ja": "未保存",
+    "zh-CN": "未保存",
+    "en": "Unsaved",
+    "es": "Sin guardar"
+  },
+  "選擇圖片": {
+    "ja": "画像を選択",
+    "zh-CN": "选择图片",
+    "en": "Choose image",
+    "es": "Elegir imagen"
+  },
+  "匯入新圖片…": {
+    "ja": "新しい画像をインポート…",
+    "zh-CN": "导入新图片…",
+    "en": "Import new image…",
+    "es": "Importar imagen nueva…"
+  },
+  "清除指定": {
+    "ja": "指定を解除",
+    "zh-CN": "清除指定",
+    "en": "Clear choice",
+    "es": "Quitar selección"
   }
 }

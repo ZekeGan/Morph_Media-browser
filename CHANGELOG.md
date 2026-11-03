@@ -16,6 +16,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Folder settings redesign (fewer steps): website import now sits at the top of the Data tab instead of its own tab; a sticky Save / Discard bar with an unsaved count appears at the bottom (plus a dot on the Data tab); image and game-cover choices are a thumbnail that opens a menu to pick a saved image, import a new one or clear it.
 - Fixed 161 Simplified Chinese interface strings that ended in garbled characters; a data test now rejects corrupted characters in any language.
 - Folder settings: saved images can now be deleted (Images tab → Saved images → Delete image). A confirmation lists the components/cover that use it; the image entry, its cover/component references and its managed file are removed in one safe write, and your original media files are never touched.
 - One refresh button: the folder toolbar's "Rescan" and the right panel's "Refresh" buttons are merged into a single "Refresh" button in the top bar next to the application settings; it rescans the current project and reloads the right-hand content.

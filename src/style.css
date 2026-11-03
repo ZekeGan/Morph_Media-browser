@@ -276,3 +276,12 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .palette-drag-ghost { position:fixed; margin:0; pointer-events:none; z-index:10000; opacity:.9; box-shadow:0 6px 18px rgba(0,0,0,.35); overflow:hidden; }
 .game-fields { table-layout: fixed; }
 .game-fields th { position: relative; }
+.settings-savebar { position:sticky; bottom:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding:10px 12px; margin:0 -4px; border:1px solid var(--accent); border-radius:8px; background:var(--panel); box-shadow:0 -6px 14px rgba(0,0,0,.25); }
+.tab-dirty-dot { display:inline-block; width:7px; height:7px; margin-left:6px; border-radius:50%; background:var(--accent); vertical-align:middle; }
+.image-thumb { display:flex; align-items:center; justify-content:center; width:100%; max-width:220px; aspect-ratio:16/9; padding:0; border:1px dashed var(--line); border-radius:8px; background:var(--inset); color:var(--muted); cursor:pointer; overflow:hidden; font:inherit; }
+.image-thumb:hover:not(:disabled), .image-thumb:focus-visible { border-color:var(--accent); outline:none; }
+.image-thumb:disabled { cursor:not-allowed; opacity:.6; }
+.image-thumb img { width:100%; height:100%; object-fit:contain; }
+.image-thumb-empty { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:12px; }
+.image-thumb-mini { width:28px; height:20px; object-fit:contain; border-radius:2px; background:var(--inset); }
+.folder-source { padding-bottom:2px; }

@@ -175,7 +175,6 @@ try {
     )
   })
   await choose('此資料夾的版面方案', '預設版面')
-  await drawer.getByRole('tab', { name: '來源匯入', exact: true }).click()
   // The source is recognised from the address; the preview button is enabled only for a known site.
   const address = drawer.getByRole('textbox', { name: '作品網址或 ID', exact: true }),
     preview = drawer.getByRole('button', { name: '取得預覽', exact: true })

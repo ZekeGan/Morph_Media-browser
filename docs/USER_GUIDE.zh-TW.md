@@ -51,9 +51,9 @@ M:orph 有兩種執行檔（從專案的發行檔或自行建置的 `release/` �
 
 打開某個資料夾的「**資料夾設定**」：
 
-- **資料**：填寫這個資料夾的欄位，保存後立即顯示。
-- **來源匯入**：貼上作品網址，程式依網域自動辨識來源（支援 E-Hentai／ExHentai、Steam、DLsite、VNDB、Bangumi、AniList、Hitomi、Pixiv、MusicBrainz、Open Library、Wikimedia Commons；Steam 可直接輸入 App ID），辨識成功才能按「**取得預覽**」，確認後再選要匯入哪些欄位。你不要求就不會連網。部分來源含成人內容，要不要使用由你決定。
-- **圖片**：為圖片組件各自選圖；組件也能設成「沒有手動選圖時顯示第 N 張圖片」。
+- **資料**：填寫這個資料夾的欄位；有未保存的內容時，底部會出現固定的「保存／放棄」列，分頁標籤也會顯示小圓點。
+- **從網站補充資訊**（在「資料」分頁最上方）：貼上作品網址，程式依網域自動辨識來源（支援 E-Hentai／ExHentai、Steam、DLsite、VNDB、Bangumi、AniList、Hitomi、Pixiv、MusicBrainz、Open Library、Wikimedia Commons；Steam 可直接輸入 App ID），辨識成功才能按「**取得預覽**」，確認後再選要匯入哪些欄位。你不要求就不會連網。部分來源含成人內容，要不要使用由你決定。
+- **圖片**：點縮圖，從已保存的圖片選一張、匯入新圖片或清除；組件也能設成「沒有手動選圖時顯示第 N 張圖片」。
 
 ## 7. 遊戲
 

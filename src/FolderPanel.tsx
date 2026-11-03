@@ -13,6 +13,7 @@ import {
   Checkbox,
   Divider,
   Group,
+  Menu,
   Modal,
   NumberInput,
   Select,
@@ -111,11 +112,15 @@ export function FolderPanel({
     [privateValues, setPrivate] = useState(false),
     [values, setValues] = useState<Record<string, unknown>>({}),
     [newOptions, setNewOptions] = useState<Record<string, string>>({})
-  const [tab, setTab] = useState<string | null>(initialTab),
+  const [tab, setTab] = useState<string | null>(initialTab === 'source' ? 'fields' : initialTab),
     [tasks, setTasks] = useState<ActionTemplate[]>(),
     [targetDirty, setTargetDirty] = useState(false)
   useEffect(() => {
-    setTab(initialTab === 'game' && project.mediaCategory !== 'game' ? 'fields' : initialTab)
+    setTab(
+      initialTab === 'source' || (initialTab === 'game' && project.mediaCategory !== 'game')
+        ? 'fields'
+        : initialTab
+    )
     setTasks(undefined)
   }, [row.rowId, initialTab, project.mediaCategory])
   const [source, setSource] = useState(''),
@@ -198,11 +203,12 @@ export function FolderPanel({
       ),
     [fields, row.record, privateValues]
   )
-  const fieldDirty = fields.some(
+  const changedCount = fields.filter(
     (f) =>
       Object.hasOwn(values, f.attributeId) &&
       JSON.stringify(values[f.attributeId]) !== JSON.stringify(original[f.attributeId])
-  )
+  ).length
+  const fieldDirty = changedCount > 0
   const taskDirty =
     tasks !== undefined && JSON.stringify(tasks) !== JSON.stringify(gameActionTemplates(project))
   useLayoutEffect(() => {
@@ -392,6 +398,71 @@ export function FolderPanel({
       </Text>
     )
   }
+  // One thumbnail that opens a menu: pick a saved image, import a new one, or clear the choice.
+  const imageChooser = ({
+    label,
+    current,
+    onPick,
+    onImport,
+    onClear,
+  }: {
+    label: string
+    current?: string
+    onPick: (assetId: string) => void
+    onImport: () => void
+    onClear?: () => void
+  }) => {
+    const asset = assets.find((a) => a.assetId === current)
+    return (
+      <Menu position="bottom-start" withinPortal>
+        <Menu.Target>
+          <button
+            type="button"
+            className="image-thumb"
+            aria-label={label}
+            disabled={disabled || fieldDirty}
+          >
+            {asset ? (
+              <img
+                src={'media://asset/' + row.rowId + '/' + asset.assetId}
+                alt={asset.originalName}
+              />
+            ) : (
+              <span className="image-thumb-empty">
+                <Icon name="plus" size={18} />
+                {tr('選擇圖片')}
+              </span>
+            )}
+          </button>
+        </Menu.Target>
+        <Menu.Dropdown>
+          {assets.map((a) => (
+            <Menu.Item
+              key={a.assetId}
+              leftSection={
+                <img
+                  className="image-thumb-mini"
+                  src={'media://asset/' + row.rowId + '/' + a.assetId}
+                  alt=""
+                />
+              }
+              rightSection={a.assetId === current ? <Icon name="check" size={14} /> : undefined}
+              onClick={() => onPick(a.assetId)}
+            >
+              {a.originalName}
+            </Menu.Item>
+          ))}
+          {!!assets.length && <Menu.Divider />}
+          <Menu.Item onClick={onImport}>{tr('匯入新圖片…')}</Menu.Item>
+          {asset && onClear && (
+            <Menu.Item color="red" onClick={onClear}>
+              {tr('清除指定')}
+            </Menu.Item>
+          )}
+        </Menu.Dropdown>
+      </Menu>
+    )
+  }
   const boundary = (state: 'root' | 'not-game' | 'candidate', traverse = false) => {
     if (!row.record || (fieldDirty && !window.confirm(tr('套用邊界前放棄欄位草稿？')))) return
     void run({
@@ -464,6 +535,7 @@ export function FolderPanel({
         <Tabs.List>
           <Tabs.Tab value="fields">
             {tr('資料')}
+            {fieldDirty && <span className="tab-dirty-dot" role="img" aria-label={tr('未保存')} />}
             {privateValues && (
               <Badge ml={5} size="xs" color="orange">
                 {tr('私有')}
@@ -474,7 +546,6 @@ export function FolderPanel({
             <Tabs.Tab value="images">{tr('圖片')}</Tabs.Tab>
           )}
           {project.mediaCategory === 'game' && <Tabs.Tab value="game">{tr('遊戲操作')}</Tabs.Tab>}
-          <Tabs.Tab value="source">{tr('來源匯入')}</Tabs.Tab>
           <Tabs.Tab value="advanced">{tr('進階')}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="fields" pt="md">
@@ -490,6 +561,182 @@ export function FolderPanel({
                 {privateValues ? tr('僅目前專案') : tr('共用資料')}
               </Badge>
             </Group>
+            <Stack gap="sm" className="folder-source">
+              <div>
+                <Group gap={4} wrap="nowrap">
+                  <Text fw={600}>{tr('從網站補充資訊')}</Text>
+                  <HelpTip text={tr('選來源、貼連結、預覽後再決定要匯入的欄位。')} />
+                </Group>
+              </div>
+              <section className="settings-section">
+                <Stack gap="sm">
+                  <TextInput
+                    disabled={busy}
+                    label={
+                      <HelpLabel
+                        label={tr('作品網址或 ID')}
+                        help={
+                          tr('直接貼上網址，自動辨識來源。支援：') +
+                          metadataSources.map((item) => item.name).join('、')
+                        }
+                      />
+                    }
+                    placeholder={tr('貼上作品網址（Steam 可直接輸入 App ID）')}
+                    error={source.trim() && !detected ? tr('無法辨識這個網址的來源') : undefined}
+                    rightSectionWidth={detectedName ? 96 : undefined}
+                    rightSection={
+                      detectedName ? (
+                        <Badge
+                          color="teal"
+                          variant="light"
+                          leftSection={<Icon name="check" size={10} />}
+                        >
+                          {detectedName}
+                        </Badge>
+                      ) : undefined
+                    }
+                    value={source}
+                    onChange={(event) => {
+                      setSource(event.currentTarget.value)
+                      setPreview(undefined)
+                    }}
+                  />
+                  <Group justify="flex-end">
+                    <Button
+                      disabled={disabled || fieldDirty || !detected}
+                      loading={busy}
+                      onClick={() => void loadPreview()}
+                    >
+                      {tr('取得預覽')}
+                    </Button>
+                  </Group>
+                </Stack>
+              </section>
+
+              {sourceResult && <Alert color="teal">{sourceResult}</Alert>}
+              {preview && (
+                <Checkbox
+                  label={
+                    <HelpLabel
+                      label={tr('覆寫已填來源欄位')}
+                      help={tr('預設只填空值；人工欄位保持原樣。')}
+                    />
+                  }
+                  checked={replaceSource}
+                  onChange={(event) => setReplaceSource(event.currentTarget.checked)}
+                />
+              )}
+              {preview && (
+                <section className="settings-section source-preview">
+                  <Group align="start">
+                    {preview.image && (
+                      <img className="metadata-cover" src={preview.image} alt={tr('候選封面')} />
+                    )}
+                    <div>
+                      <Text fw={600}>{preview.title}</Text>
+                      <Text size="xs" c="dimmed" className="path">
+                        {preview.source}
+                      </Text>
+                    </div>
+                  </Group>
+                  <Text size="sm" c="dimmed" my="sm">
+                    {preview.provider === 'steam'
+                      ? tr('發售日保留 Steam 商店顯示的日期，不推定為作品首次發行日。')
+                      : tr('日期依來源保留，不推定為作品首次發行日。')}
+                    {tr('預設只填空值；人工欄位保持原樣。')}
+                  </Text>
+                  <Stack gap="sm">
+                    {preview.values
+                      .filter((v) => v.key !== 'COVER_STATUS')
+                      .map((v) => (
+                        <Checkbox
+                          key={v.key}
+                          label={
+                            <span className="source-field">
+                              <strong>{sourceLabels[v.key] ?? v.key}</strong>
+                              <span>
+                                {Array.isArray(v.value) ? v.value.join('、') : String(v.value)}
+                              </span>
+                              {row.record?.attributes.find(
+                                (attribute) =>
+                                  attribute.attributeId ===
+                                  (preview.provider ?? 'eh') + '-' + v.key.toLowerCase()
+                              ) && (
+                                <small>
+                                  {tr(
+                                    '目前值：{0}',
+                                    String(
+                                      row.record.attributes.find(
+                                        (attribute) =>
+                                          attribute.attributeId ===
+                                          (preview.provider ?? 'eh') + '-' + v.key.toLowerCase()
+                                      )!.value
+                                    )
+                                  )}
+                                </small>
+                              )}
+                            </span>
+                          }
+                          checked={keys.includes(v.key)}
+                          onChange={(e) =>
+                            setKeys((current) =>
+                              e.currentTarget.checked
+                                ? [...current, v.key]
+                                : current.filter((k) => k !== v.key)
+                            )
+                          }
+                        />
+                      ))}
+                  </Stack>
+                  {preview.values.find((v) => v.key === 'COVER_STATUS') && (
+                    <Alert color="orange" mt="sm">
+                      {String(preview.values.find((v) => v.key === 'COVER_STATUS')!.value)}
+                    </Alert>
+                  )}
+                  {preview.image && (
+                    <Checkbox
+                      mt="md"
+                      label={tr('同時保存封面圖片')}
+                      checked={cover}
+                      onChange={(e) => setCover(e.currentTarget.checked)}
+                    />
+                  )}
+                  <Group justify="flex-end" mt="md">
+                    <Button variant="default" disabled={busy} onClick={() => setPreview(undefined)}>
+                      {tr('取消預覽')}
+                    </Button>
+                    <Button
+                      disabled={
+                        disabled || fieldDirty || (!keys.length && !(preview.image && cover))
+                      }
+                      onClick={async () => {
+                        if (
+                          await run({
+                            action: 'metadataApply',
+                            rowId: row.rowId,
+                            revision: row.record!.revision,
+                            token: preview.token,
+                            keys,
+                            image: !!preview.image && cover,
+                            mode: replaceSource ? 'replace' : 'fill',
+                          })
+                        ) {
+                          setSourceResult(tr('已匯入選定資料，可至「資料」查看。'))
+                          setPreview(undefined)
+                        }
+                      }}
+                    >
+                      {tr('匯入選定資料')}
+                    </Button>
+                  </Group>
+                </section>
+              )}
+            </Stack>
+            {fieldDirty && (
+              <Text size="xs" c="dimmed">
+                {tr('先保存或放棄下方未保存的變更，才能套用網站資料。')}
+              </Text>
+            )}
             {row.record && (
               <>
                 <Select
@@ -536,12 +783,20 @@ export function FolderPanel({
                 </Accordion.Item>
               </Accordion>
             )}
-            <Group justify="flex-end">
-              <Button disabled={disabled || !fieldDirty} loading={busy} onClick={() => void save()}>
-                {tr('保存')}
-                {privateValues ? tr('此專案資料') : tr('欄位資料')}
-              </Button>
-            </Group>
+            {fieldDirty && (
+              <div className="settings-savebar" role="region" aria-label={tr('未保存的變更')}>
+                <Text size="sm">{tr('有 {0} 項未保存', changedCount)}</Text>
+                <Group gap="xs" wrap="nowrap">
+                  <Button variant="default" disabled={busy} onClick={() => setValues({})}>
+                    {tr('放棄')}
+                  </Button>
+                  <Button disabled={disabled} loading={busy} onClick={() => void save()}>
+                    {tr('保存')}
+                    {privateValues ? tr('此專案資料') : tr('欄位資料')}
+                  </Button>
+                </Group>
+              </div>
+            )}
           </Stack>
         </Tabs.Panel>
         <Tabs.Panel value="images" pt="md">
@@ -554,59 +809,44 @@ export function FolderPanel({
             </div>
             {imageCells.map((cell, index) => {
               const assigned = row.record?.details?.cellImages?.[cell.attributeId ?? cell.cellId],
-                asset = assets.find((a) => a.assetId === assigned)
+                label = tr('圖片 ') + (index + 1) + tr(' 的來源')
               return (
                 <section
                   className="settings-section image-slot"
                   key={cell.cellId}
                   data-cell-id={cell.cellId}
                 >
-                  <Group justify="space-between">
-                    <Text fw={600}>
-                      {tr('圖片')}
-                      {index + 1}
-                    </Text>
-                    {asset && (
-                      <img
-                        src={'media://asset/' + row.rowId + '/' + asset.assetId}
-                        alt={asset.originalName}
-                      />
-                    )}
-                  </Group>
-                  <Select
-                    label={tr('圖片 ') + (index + 1) + tr(' 的來源')}
-                    placeholder={tr('未設定（可留空）')}
-                    clearable
-                    value={assigned ?? null}
-                    data={assets.map((a) => ({ value: a.assetId, label: a.originalName }))}
-                    disabled={disabled || fieldDirty}
-                    onChange={(assetId) =>
+                  <Text fw={600} mb="xs">
+                    {tr('圖片')}
+                    {index + 1}
+                  </Text>
+                  {imageChooser({
+                    label,
+                    current: assigned,
+                    onPick: (assetId) =>
                       void run({
                         action: 'cellImage',
                         rowId: row.rowId,
                         revision: row.record!.revision,
                         cellId: cell.cellId,
                         assetId,
-                      })
-                    }
-                  />
-                  <Button
-                    variant="default"
-                    size="xs"
-                    mt="sm"
-                    disabled={disabled || fieldDirty}
-                    onClick={() =>
+                      }),
+                    onImport: () =>
                       void act({
                         action: 'image',
                         rowId: row.rowId,
                         revision: row.record!.revision,
                         cellId: cell.cellId,
-                      })
-                    }
-                  >
-                    {tr('匯入至圖片')}
-                    {index + 1}
-                  </Button>
+                      }),
+                    onClear: () =>
+                      void run({
+                        action: 'cellImage',
+                        rowId: row.rowId,
+                        revision: row.record!.revision,
+                        cellId: cell.cellId,
+                        assetId: null,
+                      }),
+                  })}
                 </section>
               )
             })}
@@ -620,33 +860,19 @@ export function FolderPanel({
                 <Text fw={600} mb="sm">
                   {tr('遊戲封面')}
                 </Text>
-                <Select
-                  label={tr('封面圖片')}
-                  clearable={false}
-                  value={row.record?.details?.bannerAssetId ?? assets[0]?.assetId ?? null}
-                  data={assets.map((a) => ({ value: a.assetId, label: a.originalName }))}
-                  disabled={disabled || fieldDirty}
-                  onChange={(assetId) =>
-                    assetId &&
+                {imageChooser({
+                  label: tr('封面圖片'),
+                  current: row.record?.details?.bannerAssetId ?? assets[0]?.assetId,
+                  onPick: (assetId) =>
                     void run({
                       action: 'banner',
                       rowId: row.rowId,
                       revision: row.record!.revision,
                       assetId,
-                    })
-                  }
-                />
-                <Button
-                  variant="default"
-                  size="xs"
-                  mt="sm"
-                  disabled={disabled || fieldDirty}
-                  onClick={() =>
-                    void act({ action: 'image', rowId: row.rowId, revision: row.record!.revision })
-                  }
-                >
-                  {tr('匯入封面')}
-                </Button>
+                    }),
+                  onImport: () =>
+                    void act({ action: 'image', rowId: row.rowId, revision: row.record!.revision }),
+                })}
                 <ImageUrlImport row={row} run={run} disabled={disabled || fieldDirty} />
               </section>
             )}
@@ -678,177 +904,6 @@ export function FolderPanel({
                   ))}
                 </div>
               </details>
-            )}
-          </Stack>
-        </Tabs.Panel>
-        <Tabs.Panel value="source" pt="md">
-          <Stack>
-            <div>
-              <Group gap={4} wrap="nowrap">
-                <Text fw={600}>{tr('從網站補充資訊')}</Text>
-                <HelpTip text={tr('選來源、貼連結、預覽後再決定要匯入的欄位。')} />
-              </Group>
-            </div>
-            <section className="settings-section">
-              <Stack gap="sm">
-                <TextInput
-                  disabled={busy}
-                  label={
-                    <HelpLabel
-                      label={tr('作品網址或 ID')}
-                      help={
-                        tr('直接貼上網址，自動辨識來源。支援：') +
-                        metadataSources.map((item) => item.name).join('、')
-                      }
-                    />
-                  }
-                  placeholder={tr('貼上作品網址（Steam 可直接輸入 App ID）')}
-                  error={source.trim() && !detected ? tr('無法辨識這個網址的來源') : undefined}
-                  rightSectionWidth={detectedName ? 96 : undefined}
-                  rightSection={
-                    detectedName ? (
-                      <Badge
-                        color="teal"
-                        variant="light"
-                        leftSection={<Icon name="check" size={10} />}
-                      >
-                        {detectedName}
-                      </Badge>
-                    ) : undefined
-                  }
-                  value={source}
-                  onChange={(event) => {
-                    setSource(event.currentTarget.value)
-                    setPreview(undefined)
-                  }}
-                />
-                <Group justify="flex-end">
-                  <Button
-                    disabled={disabled || fieldDirty || !detected}
-                    loading={busy}
-                    onClick={() => void loadPreview()}
-                  >
-                    {tr('取得預覽')}
-                  </Button>
-                </Group>
-              </Stack>
-            </section>
-
-            {sourceResult && <Alert color="teal">{sourceResult}</Alert>}
-            {preview && (
-              <Checkbox
-                label={
-                  <HelpLabel
-                    label={tr('覆寫已填來源欄位')}
-                    help={tr('預設只填空值；人工欄位保持原樣。')}
-                  />
-                }
-                checked={replaceSource}
-                onChange={(event) => setReplaceSource(event.currentTarget.checked)}
-              />
-            )}
-            {preview && (
-              <section className="settings-section source-preview">
-                <Group align="start">
-                  {preview.image && (
-                    <img className="metadata-cover" src={preview.image} alt={tr('候選封面')} />
-                  )}
-                  <div>
-                    <Text fw={600}>{preview.title}</Text>
-                    <Text size="xs" c="dimmed" className="path">
-                      {preview.source}
-                    </Text>
-                  </div>
-                </Group>
-                <Text size="sm" c="dimmed" my="sm">
-                  {preview.provider === 'steam'
-                    ? tr('發售日保留 Steam 商店顯示的日期，不推定為作品首次發行日。')
-                    : tr('日期依來源保留，不推定為作品首次發行日。')}
-                  {tr('預設只填空值；人工欄位保持原樣。')}
-                </Text>
-                <Stack gap="sm">
-                  {preview.values
-                    .filter((v) => v.key !== 'COVER_STATUS')
-                    .map((v) => (
-                      <Checkbox
-                        key={v.key}
-                        label={
-                          <span className="source-field">
-                            <strong>{sourceLabels[v.key] ?? v.key}</strong>
-                            <span>
-                              {Array.isArray(v.value) ? v.value.join('、') : String(v.value)}
-                            </span>
-                            {row.record?.attributes.find(
-                              (attribute) =>
-                                attribute.attributeId ===
-                                (preview.provider ?? 'eh') + '-' + v.key.toLowerCase()
-                            ) && (
-                              <small>
-                                {tr(
-                                  '目前值：{0}',
-                                  String(
-                                    row.record.attributes.find(
-                                      (attribute) =>
-                                        attribute.attributeId ===
-                                        (preview.provider ?? 'eh') + '-' + v.key.toLowerCase()
-                                    )!.value
-                                  )
-                                )}
-                              </small>
-                            )}
-                          </span>
-                        }
-                        checked={keys.includes(v.key)}
-                        onChange={(e) =>
-                          setKeys((current) =>
-                            e.currentTarget.checked
-                              ? [...current, v.key]
-                              : current.filter((k) => k !== v.key)
-                          )
-                        }
-                      />
-                    ))}
-                </Stack>
-                {preview.values.find((v) => v.key === 'COVER_STATUS') && (
-                  <Alert color="orange" mt="sm">
-                    {String(preview.values.find((v) => v.key === 'COVER_STATUS')!.value)}
-                  </Alert>
-                )}
-                {preview.image && (
-                  <Checkbox
-                    mt="md"
-                    label={tr('同時保存封面圖片')}
-                    checked={cover}
-                    onChange={(e) => setCover(e.currentTarget.checked)}
-                  />
-                )}
-                <Group justify="flex-end" mt="md">
-                  <Button variant="default" disabled={busy} onClick={() => setPreview(undefined)}>
-                    {tr('取消預覽')}
-                  </Button>
-                  <Button
-                    disabled={disabled || fieldDirty || (!keys.length && !(preview.image && cover))}
-                    onClick={async () => {
-                      if (
-                        await run({
-                          action: 'metadataApply',
-                          rowId: row.rowId,
-                          revision: row.record!.revision,
-                          token: preview.token,
-                          keys,
-                          image: !!preview.image && cover,
-                          mode: replaceSource ? 'replace' : 'fill',
-                        })
-                      ) {
-                        setSourceResult(tr('已匯入選定資料，可至「資料」查看。'))
-                        setPreview(undefined)
-                      }
-                    }}
-                  >
-                    {tr('匯入選定資料')}
-                  </Button>
-                </Group>
-              </section>
             )}
           </Stack>
         </Tabs.Panel>

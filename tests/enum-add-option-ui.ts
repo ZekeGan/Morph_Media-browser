@@ -47,6 +47,15 @@ try {
   await page.getByRole('textbox', { name: '狀態', exact: true }).click()
   const options = await page.getByRole('option').allInnerTexts()
   assert.deepEqual(options, ['進行中', '已完成', '暫停'])
+  await page.keyboard.press('Escape')
+  // The unsaved value shows a sticky save bar and a dot on the tab; discarding clears both.
+  const savebar = page.getByRole('region', { name: '未保存的變更', exact: true })
+  await savebar.waitFor()
+  await savebar.getByText('有 1 項未保存').waitFor()
+  assert.equal(await page.getByRole('img', { name: '未保存', exact: true }).count(), 1)
+  await savebar.getByRole('button', { name: '放棄', exact: true }).click()
+  await savebar.waitFor({ state: 'hidden' })
+  assert.equal(await page.getByRole('textbox', { name: '狀態', exact: true }).inputValue(), '')
   assert.deepEqual(errors, [])
   passed = true
   console.log('PASS add choice option from folder settings. ' + root)
