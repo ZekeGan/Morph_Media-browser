@@ -57,6 +57,8 @@ export interface SubtitlePrefs {
   encoding: 'utf-8' | 'big5' | 'shift_jis'
 }
 export interface FolderDetails {
+  // Set by hand; without it the kind is detected (see shared/kind.ts).
+  kind?: import('./kind').FolderKind
   cellImages?: Record<string, string>
   // Game actions whose button is not shown in this folder's action row.
   hiddenActions?: string[]
@@ -208,6 +210,12 @@ export type ExplorerRequest =
       mode: 'replace' | 'add' | 'remove'
     }
   | { action: 'reading'; rowId: string; revision: number; prefs: ReadingPrefs }
+  | {
+      action: 'folderKind'
+      rowId: string
+      revision: number
+      kind: import('./kind').FolderKind | null
+    }
   | {
       action: 'playback'
       rowId: string

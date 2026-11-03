@@ -60,6 +60,15 @@ try {
   await page.getByText('修改會同步到使用這個資料夾的其他專案。').waitFor()
   await page.locator('label').filter({ hasText: '僅目前專案' }).click()
   await page.getByText('修改只用於目前專案；其他專案仍用共用資料。').waitFor()
+  // The folder type is detected and can be set by hand.
+  const kind = page.getByRole('textbox', { name: '資料夾類型', exact: true })
+  await kind.waitFor()
+  assert.match(await kind.inputValue(), /^自動（偵測為 /)
+  await kind.click()
+  await page.getByRole('option', { name: '一般', exact: true }).click()
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll('input')].some((input) => input.value === '一般')
+  )
   // Scan boundaries belong to games: a manga project with no detected game does not show them.
   await page.getByRole('tab', { name: '進階', exact: true }).click()
   await page.getByText('全部已存屬性與來源').waitFor()

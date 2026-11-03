@@ -1,3 +1,4 @@
+import { isFolderKind } from '../shared/kind'
 import { archiveIndex, type ArchiveIndex } from './archive'
 import { httpUrl, validFieldValue } from '../shared/fields'
 import { type MetadataSourceId } from '../shared/sources'
@@ -395,6 +396,15 @@ export class Explorer {
             d.reading = req.prefs
           })
         )
+      case 'folderKind': {
+        if (req.kind !== null && !isFolderKind(req.kind)) throw new Error('資料夾類型不合法')
+        return this.after(
+          await this.details(req.rowId, req.revision, (d) => {
+            if (req.kind === null) delete d.kind
+            else d.kind = req.kind
+          })
+        )
+      }
       case 'playback': {
         const f = await this.file(req.rowId, req.fileId)
         if (!f.mime.startsWith('video/')) throw new Error('不是影片')

@@ -562,6 +562,8 @@ export function validateDetails(v: unknown): asserts v is FolderDetails {
       new Set(v.hiddenActions).size !== v.hiddenActions.length)
   )
     throw new Error('遊戲操作顯示設定不合法')
+  if (v.kind !== undefined && !['game', 'book', 'media', 'general'].includes(v.kind))
+    throw new Error('資料夾類型不合法')
   if (v.bannerAssetId !== undefined && !id(v.bannerAssetId)) throw new Error('封面身分不合法')
   if (
     v.cellImages !== undefined &&

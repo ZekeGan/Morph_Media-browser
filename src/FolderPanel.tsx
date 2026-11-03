@@ -1,4 +1,5 @@
 import { metadataSources, sourceForUrl } from '../shared/sources'
+import { detectFolderKind, folderKinds, sampleOf, type KindSample } from '../shared/kind'
 import { GameActionEditor, GameActionTargets } from './GameActions'
 import { cardPresets, rowCells } from '../shared/layouts'
 import { t as tr, useLocale } from './i18n'
@@ -143,6 +144,35 @@ export function FolderPanel({
   useEffect(() => {
     if (tab) lastTab = tab
   }, [tab])
+  // A short look at the folder's files tells what it probably is; it is listed once per folder.
+  const [sample, setSample] = useState<KindSample>()
+  useEffect(() => {
+    let alive = true
+    setSample(undefined)
+    void window.explorer
+      .request({ action: 'content', rowId: row.rowId, limit: 60 })
+      .then((result) => {
+        if (alive && result.content) setSample(sampleOf(result.content.entries))
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [row.rowId])
+  const detectedKind = detectFolderKind(row, sample)
+  const kindLabel: Record<string, string> = {
+    game: tr('遊戲'),
+    book: tr('書籍／漫畫'),
+    media: tr('影音'),
+    general: tr('一般'),
+  }
+  const kindReason: Record<string, string> = {
+    game: tr('偵測到遊戲引擎'),
+    reading: tr('已用漫畫模式閱讀'),
+    content: tr('依檔案內容判斷'),
+    default: tr('無法判斷，視為一般'),
+    manual: '',
+  }
   const [cleanup, setCleanup] = useState<CleanupPreview>(),
     [cleanupResult, setCleanupResult] = useState<CleanupResult>(),
     [restart, setRestart] = useState(false)
@@ -683,6 +713,37 @@ export function FolderPanel({
                 ? tr('修改只用於目前專案；其他專案仍用共用資料。')
                 : tr('修改會同步到使用這個資料夾的其他專案。')}
             </Text>
+            {row.record && (
+              <Select
+                label={tr('資料夾類型')}
+                description={
+                  row.record.details?.kind
+                    ? undefined
+                    : sample || detectedKind.source !== 'default'
+                      ? kindReason[detectedKind.source]
+                      : tr('偵測中…')
+                }
+                allowDeselect={false}
+                value={row.record.details?.kind ?? 'auto'}
+                data={[
+                  {
+                    value: 'auto',
+                    label: tr('自動（偵測為 {0}）', kindLabel[detectedKind.kind]),
+                  },
+                  ...folderKinds.map((kind) => ({ value: kind, label: kindLabel[kind] })),
+                ]}
+                disabled={disabled || fieldDirty}
+                onChange={(value) =>
+                  value &&
+                  void run({
+                    action: 'folderKind',
+                    rowId: row.rowId,
+                    revision: row.record!.revision,
+                    kind: value === 'auto' ? null : (value as (typeof folderKinds)[number]),
+                  })
+                }
+              />
+            )}
             <Stack gap="sm" className="folder-source">
               <div>
                 <Group gap={4} wrap="nowrap">
