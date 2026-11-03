@@ -311,6 +311,9 @@ try {
   await page.getByRole('heading', { name: '你的資料夾，你的瀏覽方式' }).waitFor()
   await button('應用程式設定').click()
   await settings().getByRole('tab', { name: '資料與備份', exact: true }).click()
+  await settings()
+    .getByRole('button', { name: /^可復原的設定備份/ })
+    .click()
   await settings().getByRole('button', { name: '復原此備份', exact: true }).first().waitFor()
   await page.screenshot({ path: path.join(screens, 'settings-backup.png') })
   await page.evaluate(() => {

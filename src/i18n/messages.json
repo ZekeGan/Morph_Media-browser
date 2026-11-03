@@ -329,12 +329,6 @@
     "en": "Create project",
     "es": "Crear proyecto"
   },
-  "重新連結專案": {
-    "ja": "プロジェクトを再連携",
-    "zh-CN": "重新连结项目\u0001",
-    "en": "Relink project",
-    "es": "Volver a vincular proyecto"
-  },
   "放棄尚未保存的專案設定？": {
     "ja": "未保存のプロジェクト設定を破棄しますか？",
     "zh-CN": "放弃尚未保存的项目设定？",
@@ -1072,12 +1066,6 @@
     "zh-CN": "从一个文件夹开始，把收藏整理成适合自己的画面。",
     "en": "Start with a folder. Make your collection feel like yours.",
     "es": "Empieza con una carpeta y organiza tu colección a tu manera."
-  },
-  "重新連結既有專案": {
-    "ja": "既存のプロジェクトを再連携",
-    "zh-CN": "重新连结既有项目\u0001",
-    "en": "Relink existing project",
-    "es": "Volver a vincular un proyecto existente"
   },
   "我的最愛": {
     "ja": "マイお気に入り",
@@ -2237,12 +2225,6 @@
     "en": "General",
     "es": "General"
   },
-  "連結與資料": {
-    "ja": "連携とデータ",
-    "zh-CN": "连结与数据",
-    "en": "Links and data",
-    "es": "Vínculos y datos"
-  },
   "決定右側內容的呈現方式，不更改原始資料夾。": {
     "ja": "右側の表示方法を設定します。元のフォルダーは変更しません。",
     "zh-CN": "决定右侧内容的呈现方式，不更改原始文件夹。",
@@ -2297,23 +2279,11 @@
     "en": "Unlink project (keep data)",
     "es": "Desvincular proyecto (conservar datos)"
   },
-  "移除專案（刪除資料）": {
-    "ja": "プロジェクトを削除（データ削除）",
-    "zh-CN": "移除项目（删除数据）",
-    "en": "Remove project (delete app data)",
-    "es": "Eliminar proyecto (borrar datos de la aplicación)"
-  },
   "移除此專案設定與私有覆寫。空白且無其他專案使用的根記錄會先備份到本機復原區，再清除根目錄的 .media-viewer。共用值、圖片、其他專案及原始媒體保留。": {
     "ja": "このプロジェクトの設定と非共有値を削除します。他で未使用の空のルート記録はローカルにバックアップ後、.media-viewerを消去します。共有値、画像、他のプロジェクト、元のメディアは保持します。",
     "zh-CN": "移除此项目设定与私有覆写。空白且无其他项目使用的根记录会先备份到本机复原区，再清除根目录的 .media-viewer。共用值、图片、其他项目及原始媒体保留。",
     "en": "Removes this project's settings and private overrides. Unused empty root metadata is backed up locally before cleanup. Shared values, images, other projects and original media are preserved.",
     "es": "Elimina los ajustes y valores privados de este proyecto. Los metadatos vacíos y sin uso de la raíz se respaldan antes de limpiarlos. Se conservan valores compartidos, imágenes, otros proyectos y originales."
-  },
-  "預覽移除專案": {
-    "ja": "プロジェクト削除をプレビュー",
-    "zh-CN": "预览移除项目\u0001",
-    "en": "Preview project removal",
-    "es": "Previsualizar eliminación del proyecto"
   },
   "即將移除「": {
     "ja": "削除対象「",
@@ -3935,23 +3905,11 @@
     "zh-CN": "确认删除字段及数据",
     "es": "Confirmar eliminación del campo y sus datos"
   },
-  "完全移除專案資料": {
-    "en": "Remove all project data",
-    "ja": "プロジェクトデータを完全削除",
-    "zh-CN": "完全移除项目数据",
-    "es": "Eliminar todos los datos del proyecto"
-  },
   "清除根目錄與所有子資料夾內的本工具資料、共用值、設定及原位置備份。原始媒體保留；可能影響其他綁定專案。": {
     "en": "Remove this app’s data, shared values, settings and local backups from the root and all subfolders. Original media is kept. Other linked projects may be affected.",
     "ja": "ルートと全サブフォルダーの本アプリのデータ、共有値、設定、元の場所のバックアップを削除します。元のメディアは保持します。他のリンク済みプロジェクトにも影響する場合があります。",
     "zh-CN": "清除根目录和所有子文件夹内的本工具数据、共享值、设置和原位置备份。保留原始媒体；可能影响其他绑定项目。",
     "es": "Elimina los datos de esta aplicación, valores compartidos, ajustes y copias locales de la raíz y sus subcarpetas. Se conservan los medios originales. Puede afectar a otros proyectos vinculados."
-  },
-  "預覽完全移除": {
-    "en": "Preview full removal",
-    "ja": "完全削除をプレビュー",
-    "zh-CN": "预览完全移除",
-    "es": "Vista previa de eliminación completa"
   },
   "可能受影響的其他專案（{0}）": {
     "en": "Other projects possibly affected ({0})",
@@ -5146,12 +5104,6 @@
     "en": "Card display settings",
     "ja": "カード表示設定",
     "es": "Ajustes de visualización de tarjetas"
-  },
-  "每列 {0}": {
-    "zh-CN": "每行 {0}",
-    "en": "{0} per row",
-    "ja": "1行に {0} 件",
-    "es": "{0} por fila"
   },
   "此資料夾沒有子資料夾": {
     "zh-CN": "此文件夹没有子文件夹",
@@ -6539,30 +6491,6 @@
     "ja": "データとバックアップ",
     "es": "Datos y copias"
   },
-  "專案資料": {
-    "zh-CN": "项目数据",
-    "en": "Project data",
-    "ja": "プロジェクトデータ",
-    "es": "Datos del proyecto"
-  },
-  "匯出請用側欄專案選單的「匯出專案資料」。": {
-    "zh-CN": "导出请用侧栏项目菜单的“导出项目数据”。",
-    "en": "To export, use “Export project data” in the sidebar project menu.",
-    "ja": "エクスポートはサイドバーのプロジェクトメニューの「プロジェクトデータをエクスポート」から行います。",
-    "es": "Para exportar, usa «Exportar datos del proyecto» en el menú del proyecto."
-  },
-  "把先前匯出的專案資料放回一個根資料夾；匯入前會先預覽。": {
-    "zh-CN": "把先前导出的项目数据放回一个根文件夹；导入前会先预览。",
-    "en": "Put previously exported project data back into a root folder; you see a preview first.",
-    "ja": "以前エクスポートしたプロジェクトデータをルートフォルダーに戻します。先にプレビューを表示します。",
-    "es": "Devuelve datos exportados a una carpeta raíz; verás una vista previa antes."
-  },
-  "資料夾搬了位置之後，重新指到新位置。": {
-    "zh-CN": "文件夹移动位置之后，重新指到新位置。",
-    "en": "After a folder has moved, point the project at its new location.",
-    "ja": "フォルダーを移動したあと、新しい場所を指定し直します。",
-    "es": "Si una carpeta se movió, indica su nueva ubicación."
-  },
   "偵測到舊版資料，可預覽後匯入。": {
     "zh-CN": "检测到旧版数据，可预览后导入。",
     "en": "Older data was found; preview it before importing.",
@@ -6682,5 +6610,65 @@
     "en": "Files view scope",
     "ja": "ファイル一覧の範囲",
     "es": "Alcance de la vista de archivos"
+  },
+  "把這個專案的記錄、圖片與字幕（不含媒體）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。": {
+    "zh-CN": "把这个项目的记录、图片与字幕（不含媒体）存成一个文件夹；之后可在“新增项目”导入，放到另一台电脑或另一个位置。",
+    "en": "Saves this project's records, images and subtitles (no media) as a folder. Import it later from “New project” on another computer or in another place.",
+    "ja": "このプロジェクトの記録・画像・字幕（メディアを除く）をフォルダーに保存します。別のPCや別の場所に「新規プロジェクト」からインポートできます。",
+    "es": "Guarda los registros, imágenes y subtítulos del proyecto (sin medios) en una carpeta. Impórtala después desde «Nuevo proyecto» en otro equipo o ubicación."
+  },
+  "移除專案": {
+    "zh-CN": "移除项目",
+    "en": "Remove project",
+    "ja": "プロジェクトを削除",
+    "es": "Quitar proyecto"
+  },
+  "移除範圍": {
+    "zh-CN": "移除范围",
+    "en": "What to remove",
+    "ja": "削除の範囲",
+    "es": "Qué quitar"
+  },
+  "只移除此專案的資料": {
+    "zh-CN": "只移除此项目的数据",
+    "en": "This project's data only",
+    "ja": "このプロジェクトのデータのみ",
+    "es": "Solo los datos de este proyecto"
+  },
+  "連同共用資料一併清除": {
+    "zh-CN": "连同共用数据一并清除",
+    "en": "Also clear shared data",
+    "ja": "共有データも一緒に消去",
+    "es": "Borrar también los datos compartidos"
+  },
+  "預覽移除": {
+    "zh-CN": "预览移除",
+    "en": "Preview removal",
+    "ja": "削除をプレビュー",
+    "es": "Vista previa de la eliminación"
+  },
+  "連結既有專案": {
+    "zh-CN": "链接现有项目",
+    "en": "Link an existing project",
+    "ja": "既存のプロジェクトをリンク",
+    "es": "Vincular un proyecto existente"
+  },
+  "資料夾搬了位置，或換了電腦時，指回原本的專案資料夾；原有的設定與資料都會保留。": {
+    "zh-CN": "文件夹移动了位置，或换了电脑时，指回原本的项目文件夹；原有的设置与数据都会保留。",
+    "en": "If a folder moved or you changed computers, point back at the original project folder; its settings and data are kept.",
+    "ja": "フォルダーを移動したときやPCを替えたときに、元のプロジェクトフォルダーを指定し直します。設定とデータは保持されます。",
+    "es": "Si una carpeta se movió o cambiaste de equipo, indica la carpeta original del proyecto; se conservan sus ajustes y datos."
+  },
+  "選擇專案資料夾並連結": {
+    "zh-CN": "选择项目文件夹并链接",
+    "en": "Choose project folder and link",
+    "ja": "プロジェクトフォルダーを選んでリンク",
+    "es": "Elegir carpeta del proyecto y vincular"
+  },
+  "舊版資料": {
+    "zh-CN": "旧版数据",
+    "en": "Older data",
+    "ja": "旧バージョンのデータ",
+    "es": "Datos antiguos"
   }
 }

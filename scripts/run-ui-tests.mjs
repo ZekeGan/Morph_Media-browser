@@ -7,6 +7,11 @@ import { existsSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
+// Leftovers older than a day (failure artifacts, old screenshots) are pruned on every start.
+spawnSync(process.execPath, ['scripts/clean-test-output.mjs', '--older-than', '24'], {
+  stdio: 'inherit',
+})
+
 // Fast set that exercises navigation, the right panel, settings, the editor and the media browser.
 const smoke = [
   'folder-navigation-ui',

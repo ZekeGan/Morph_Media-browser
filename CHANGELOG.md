@@ -17,6 +17,9 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Project settings: "Remove project" and "Remove all project data" are one section with a choice (this project's data only, or also clear shared data, which lists the other projects it may affect); "Export project data" moved here from the sidebar menu (Data tab).
+- New project dialog: a third choice, "Link an existing project" (replaces the separate re-link buttons on the home page and in Application settings). Application settings, Data and backup: only settings backup (export, import, collapsed restore points), older data (when found) and Dangerous actions are left.
+- Housekeeping: the test output folder is pruned automatically (anything older than a day is removed when `pnpm test`, `pnpm shot` or the UI runner starts; `pnpm clean:test` removes all of it). It had grown to 5 GB.
 - Fixed: the folder settings Advanced tab showed nothing because the record details and the collapsed Dangerous actions section had been placed inside the "record recovery" block that only appears for broken folders.
 - Narrow windows: the layout editor button stays visible (icon only) and only the layout dropdown folds away; the card display button no longer shows the per-row count.
 - Toolbar: the controls keep the same places in every view (folders | files, view mode, the view's own tools on the left; scope, columns, folder settings on the right), so switching card / table / tree no longer makes anything jump. Controls share one height and type size, wrap instead of overlapping in narrow windows, and the card / table / tree, thumbnails / groups / list and edit-layout buttons are icon-only with a tooltip. The two scope settings now share one "Scope" button.

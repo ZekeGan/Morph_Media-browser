@@ -17,6 +17,8 @@
     "build": "tsc --noEmit && electron-vite build",
     "start": "electron-vite preview",
     "typecheck": "tsc --noEmit",
+    "pretest": "node scripts/clean-test-output.mjs --older-than 24 || exit 0",
+    "preshot": "node scripts/clean-test-output.mjs --older-than 24 || exit 0",
     "test": "tsx --test tests/*.test.ts",
     "test:ui": "tsx tests/workspace-ui.ts",
     "test:ui:all": "node scripts/run-ui-tests.mjs",

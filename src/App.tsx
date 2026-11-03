@@ -368,14 +368,12 @@ export function App() {
             setRefreshNonce((value) => value + 1)
             void act({ action: 'scan' })
           }}
-          onExportProject={(projectId) => void act({ action: 'exportProject', projectId })}
           onProjectSettings={(id) => {
             if (confirmLeave()) {
               const p = snapshot.projects.find((p) => p.projectId === id)?.project
               if (p) setSettings(structuredClone(p))
             }
           }}
-          onLink={() => void beginLink()}
           onProblems={() => setProblems(true)}
           onOverlay={setShellOverlay}
           onDirty={setShellDirty}
@@ -528,6 +526,10 @@ export function App() {
         rootChoice={rootChoice}
         setRootChoice={setRootChoice}
         act={act}
+        link={async () => {
+          setCreateOpen(false)
+          await beginLink()
+        }}
         close={() => {
           if (
             !busy &&
@@ -567,11 +569,6 @@ export function App() {
         actions={{
           busy,
           legacyAvailable: !!snapshot.legacyAvailable,
-          relink: () => void beginLink(),
-          importProject: () => {
-            setSettingsOpen(false)
-            beginCreate('import')
-          },
           legacy: () => {
             setSettingsOpen(false)
             void act({ action: 'legacyPreview' })

@@ -14,7 +14,7 @@ import type { ProjectInput, Request, Response } from '../shared/model'
 import type { WorkspacePrefs } from '../shared/workspace'
 
 type Choice = { token: string; path: string }
-export type CreateMode = 'create' | 'import'
+export type CreateMode = 'create' | 'import' | 'link'
 
 // One door for bringing a project in: build one from a folder, or import project data exported earlier.
 export function CreateProjectDialog({
@@ -31,6 +31,7 @@ export function CreateProjectDialog({
   act,
   create,
   preview,
+  link,
   close,
 }: {
   opened: boolean
@@ -46,6 +47,7 @@ export function CreateProjectDialog({
   act: (request: Request) => Promise<Response | undefined>
   create: () => Promise<void>
   preview: (bundleToken: string, rootToken: string) => Promise<void>
+  link: () => Promise<void>
   close: () => void
 }) {
   const [mode, setMode] = useState<CreateMode>(initialMode),
@@ -95,6 +97,7 @@ export function CreateProjectDialog({
           data={[
             { value: 'create', label: tr('從資料夾建立') },
             { value: 'import', label: tr('匯入匯出的專案資料') },
+            { value: 'link', label: tr('連結既有專案') },
           ]}
         />
         {mode === 'create' ? (
@@ -159,6 +162,20 @@ export function CreateProjectDialog({
                   {tr('完成建立')}
                 </Button>
               </Group>
+            </Group>
+          </>
+        ) : mode === 'link' ? (
+          <>
+            <Text size="sm" c="dimmed">
+              {tr('資料夾搬了位置，或換了電腦時，指回原本的專案資料夾；原有的設定與資料都會保留。')}
+            </Text>
+            <Group justify="flex-end" mt="xs">
+              <Button variant="default" disabled={busy} onClick={close}>
+                {tr('取消')}
+              </Button>
+              <Button loading={busy} onClick={() => void link()}>
+                {tr('選擇專案資料夾並連結')}
+              </Button>
             </Group>
           </>
         ) : (

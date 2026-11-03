@@ -8,6 +8,7 @@ import {
   Alert,
   Button,
   Group,
+  SegmentedControl,
   Select,
   Stack,
   Tabs,
@@ -42,6 +43,7 @@ export function ProjectSettings({
 }) {
   useLocale()
 
+  const [removeScope, setRemoveScope] = useState<'private' | 'full'>('private')
   const [preview, setPreview] = useState<ProjectRemovalPreview>(),
     [result, setResult] = useState<CleanupResult>()
   const [fullPreview, setFullPreview] = useState<FullRemovalPreview>()
@@ -49,7 +51,7 @@ export function ProjectSettings({
     <Tabs defaultValue="general">
       <Tabs.List>
         <Tabs.Tab value="general">{tr('一般')}</Tabs.Tab>
-        <Tabs.Tab value="connection">{tr('連結與資料')}</Tabs.Tab>
+        <Tabs.Tab value="connection">{tr('資料')}</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="general" pt="lg">
         <Stack gap="lg">
@@ -154,6 +156,21 @@ export function ProjectSettings({
       <Tabs.Panel value="connection" pt="lg">
         <Stack gap="lg">
           <section className="settings-section">
+            <Text fw={600}>{tr('匯出專案資料')}</Text>
+            <Text size="sm" c="dimmed" my="sm">
+              {tr(
+                '把這個專案的記錄、圖片與字幕（不含媒體）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。'
+              )}
+            </Text>
+            <Button
+              variant="default"
+              disabled={busy || dirty}
+              onClick={() => void act({ action: 'exportProject', projectId: project.projectId })}
+            >
+              {tr('匯出專案資料')}
+            </Button>
+          </section>
+          <section className="settings-section">
             <Text fw={600}>{tr('取消專案連結')}</Text>
             <Text size="sm" c="dimmed" my="sm">
               {tr('只從本機清單移除。專案設定與資料保留，之後可重新連結。')}
@@ -173,197 +190,224 @@ export function ProjectSettings({
               <Accordion.Control c="red">{tr('危險操作')}</Accordion.Control>
               <Accordion.Panel>
                 <Stack gap="lg">
-                  <section className="settings-section cleanup-section">
-                    <Text fw={600}>{tr('移除專案（刪除資料）')}</Text>
-                    <Text size="sm" c="dimmed" my="sm">
-                      {tr(
-                        '移除此專案設定與私有覆寫。空白且無其他專案使用的根記錄會先備份到本機復原區，再清除根目錄的 .media-viewer。共用值、圖片、其他專案及原始媒體保留。'
+                  <div>
+                    <Text fw={600}>{tr('移除專案')}</Text>
+                    <SegmentedControl
+                      mt="xs"
+                      size="xs"
+                      fullWidth
+                      aria-label={tr('移除範圍')}
+                      value={removeScope}
+                      disabled={busy}
+                      data={[
+                        { value: 'private', label: tr('只移除此專案的資料') },
+                        { value: 'full', label: tr('連同共用資料一併清除') },
+                      ]}
+                      onChange={(value) => {
+                        setRemoveScope(value as 'private' | 'full')
+                        setPreview(undefined)
+                        setFullPreview(undefined)
+                        setResult(undefined)
+                      }}
+                    />
+                  </div>
+                  {removeScope === 'private' && (
+                    <section className="settings-section cleanup-section">
+                      <Text fw={600}>{tr('只移除此專案的資料')}</Text>
+                      <Text size="sm" c="dimmed" my="sm">
+                        {tr(
+                          '移除此專案設定與私有覆寫。空白且無其他專案使用的根記錄會先備份到本機復原區，再清除根目錄的 .media-viewer。共用值、圖片、其他專案及原始媒體保留。'
+                        )}
+                      </Text>
+                      {!preview && (
+                        <Button
+                          variant="light"
+                          color="red"
+                          disabled={busy || dirty}
+                          onClick={async () => {
+                            setFullPreview(undefined)
+                            setResult(undefined)
+                            const response = await act({
+                              action: 'removeProjectPreview',
+                              projectId: project.projectId,
+                            })
+                            if (response?.removalPreview) setPreview(response.removalPreview)
+                          }}
+                        >
+                          {tr('預覽移除')}
+                        </Button>
                       )}
-                    </Text>
-                    {!preview && (
-                      <Button
-                        variant="light"
-                        color="red"
-                        disabled={busy || dirty}
-                        onClick={async () => {
-                          setFullPreview(undefined)
-                          setResult(undefined)
-                          const response = await act({
-                            action: 'removeProjectPreview',
-                            projectId: project.projectId,
-                          })
-                          if (response?.removalPreview) setPreview(response.removalPreview)
-                        }}
-                      >
-                        {tr('預覽移除專案')}
-                      </Button>
-                    )}
-                    {preview && (
-                      <Stack gap="sm" mt="md">
-                        <Alert color="orange" title={tr('即將移除「') + preview.name + '」'}>
-                          {tr('從')}
-                          {preview.privateCount}{' '}
-                          {tr('筆現用資料夾記錄移除此專案私有值，並封存此專案設定及備份。')}
-                          {preview.rootCleanup && (
-                            <>
-                              <Text size="sm" mt="xs">
-                                {tr(
-                                  '根目錄 .media-viewer 將移至本機復原區，重新新增時可建立新的根記錄。'
-                                )}
-                              </Text>
-                              <Text size="xs" className="path">
-                                {tr('復原位置：')}
-                                {preview.recoveryPath}
-                              </Text>
-                            </>
-                          )}
-                        </Alert>
-                        <details>
-                          <summary>
-                            {tr('查看影響範圍（')}
-                            {preview.paths.length} {tr('個檔案）')}
-                          </summary>
-                          <div className="file-list">
-                            {preview.paths.map((file) => (
-                              <div key={file}>{file}</div>
-                            ))}
-                          </div>
-                        </details>
-                        {preview.skipped.length > 0 && (
+                      {preview && (
+                        <Stack gap="sm" mt="md">
+                          <Alert color="orange" title={tr('即將移除「') + preview.name + '」'}>
+                            {tr('從')}
+                            {preview.privateCount}{' '}
+                            {tr('筆現用資料夾記錄移除此專案私有值，並封存此專案設定及備份。')}
+                            {preview.rootCleanup && (
+                              <>
+                                <Text size="sm" mt="xs">
+                                  {tr(
+                                    '根目錄 .media-viewer 將移至本機復原區，重新新增時可建立新的根記錄。'
+                                  )}
+                                </Text>
+                                <Text size="xs" className="path">
+                                  {tr('復原位置：')}
+                                  {preview.recoveryPath}
+                                </Text>
+                              </>
+                            )}
+                          </Alert>
                           <details>
                             <summary>
-                              {tr('保留／略過項目（')}
-                              {preview.skipped.length}）
+                              {tr('查看影響範圍（')}
+                              {preview.paths.length} {tr('個檔案）')}
                             </summary>
-                            {preview.skipped.map((text, index) => (
-                              <Text size="xs" key={index}>
-                                {text}
+                            <div className="file-list">
+                              {preview.paths.map((file) => (
+                                <div key={file}>{file}</div>
+                              ))}
+                            </div>
+                          </details>
+                          {preview.skipped.length > 0 && (
+                            <details>
+                              <summary>
+                                {tr('保留／略過項目（')}
+                                {preview.skipped.length}）
+                              </summary>
+                              {preview.skipped.map((text, index) => (
+                                <Text size="xs" key={index}>
+                                  {text}
+                                </Text>
+                              ))}
+                            </details>
+                          )}
+                          <Group justify="flex-end">
+                            <Button
+                              variant="default"
+                              disabled={busy}
+                              onClick={() => setPreview(undefined)}
+                            >
+                              {tr('取消移除')}
+                            </Button>
+                            <Button
+                              color="red"
+                              loading={busy}
+                              onClick={async () => {
+                                const response = await act({
+                                  action: 'removeProject',
+                                  token: preview.token,
+                                })
+                                setPreview(undefined)
+                                if (response?.removal) {
+                                  setResult(response.removal)
+                                  if (!response.removal.failed.length) close()
+                                }
+                              }}
+                            >
+                              {tr('確認移除專案及私有資料')}
+                            </Button>
+                          </Group>
+                        </Stack>
+                      )}
+                    </section>
+                  )}
+                  {removeScope === 'full' && (
+                    <section className="settings-section">
+                      <Text fw={600}>{tr('連同共用資料一併清除')}</Text>
+                      <Text size="sm" c="dimmed" my="sm">
+                        {tr(
+                          '清除根目錄與所有子資料夾內的本工具資料、共用值、設定及原位置備份。原始媒體保留；可能影響其他綁定專案。'
+                        )}
+                      </Text>
+                      <Button
+                        color="red"
+                        variant="default"
+                        disabled={busy || dirty}
+                        onClick={async () => {
+                          setPreview(undefined)
+                          setResult(undefined)
+                          const result = await act({
+                            action: 'fullRemovalPreview',
+                            projectId: project.projectId,
+                          })
+                          if (result?.fullRemovalPreview) setFullPreview(result.fullRemovalPreview)
+                        }}
+                      >
+                        {tr('預覽移除')}
+                      </Button>
+                      {fullPreview && (
+                        <Stack mt="md">
+                          <Alert
+                            color="red"
+                            title={tr(
+                              '可能受影響的其他專案（{0}）',
+                              fullPreview.affectedProjects.length
+                            )}
+                          >
+                            {tr('此範圍內的綁定或共用資料會被清除，可能影響其他專案。')}
+                            {fullPreview.affectedProjects.map((ref) => (
+                              <Text key={ref.projectId} size="sm">
+                                {ref.name}
+                                <small className="path"> · {ref.root}</small>
                               </Text>
                             ))}
+                            {!fullPreview.affectedProjects.length && (
+                              <Text size="sm">
+                                {tr('已檢查目前已連結的同根、巢狀及重疊專案。')}
+                              </Text>
+                            )}
+                          </Alert>
+                          <details>
+                            <summary>
+                              {tr('查看影響範圍（')}
+                              {fullPreview.paths.length}
+                              {tr('個檔案）')}
+                            </summary>
+                            <div className="file-list">
+                              {fullPreview.paths.map((file) => (
+                                <div key={file}>{file}</div>
+                              ))}
+                            </div>
                           </details>
-                        )}
-                        <Group justify="flex-end">
-                          <Button
-                            variant="default"
-                            disabled={busy}
-                            onClick={() => setPreview(undefined)}
-                          >
-                            {tr('取消移除')}
-                          </Button>
-                          <Button
-                            color="red"
-                            loading={busy}
-                            onClick={async () => {
-                              const response = await act({
-                                action: 'removeProject',
-                                token: preview.token,
-                              })
-                              setPreview(undefined)
-                              if (response?.removal) {
-                                setResult(response.removal)
-                                if (!response.removal.failed.length) close()
-                              }
-                            }}
-                          >
-                            {tr('確認移除專案及私有資料')}
-                          </Button>
-                        </Group>
-                      </Stack>
-                    )}
-                  </section>
-                  <section className="settings-section">
-                    <Text fw={600}>{tr('完全移除專案資料')}</Text>
-                    <Text size="sm" c="dimmed" my="sm">
-                      {tr(
-                        '清除根目錄與所有子資料夾內的本工具資料、共用值、設定及原位置備份。原始媒體保留；可能影響其他綁定專案。'
-                      )}
-                    </Text>
-                    <Button
-                      color="red"
-                      variant="default"
-                      disabled={busy || dirty}
-                      onClick={async () => {
-                        setPreview(undefined)
-                        setResult(undefined)
-                        const result = await act({
-                          action: 'fullRemovalPreview',
-                          projectId: project.projectId,
-                        })
-                        if (result?.fullRemovalPreview) setFullPreview(result.fullRemovalPreview)
-                      }}
-                    >
-                      {tr('預覽完全移除')}
-                    </Button>
-                    {fullPreview && (
-                      <Stack mt="md">
-                        <Alert
-                          color="red"
-                          title={tr(
-                            '可能受影響的其他專案（{0}）',
-                            fullPreview.affectedProjects.length
-                          )}
-                        >
-                          {tr('此範圍內的綁定或共用資料會被清除，可能影響其他專案。')}
-                          {fullPreview.affectedProjects.map((ref) => (
-                            <Text key={ref.projectId} size="sm">
-                              {ref.name}
-                              <small className="path"> · {ref.root}</small>
+                          {fullPreview.skipped.map((text) => (
+                            <Text size="xs" key={text}>
+                              {text}
                             </Text>
                           ))}
-                          {!fullPreview.affectedProjects.length && (
-                            <Text size="sm">{tr('已檢查目前已連結的同根、巢狀及重疊專案。')}</Text>
-                          )}
-                        </Alert>
-                        <details>
-                          <summary>
-                            {tr('查看影響範圍（')}
-                            {fullPreview.paths.length}
-                            {tr('個檔案）')}
-                          </summary>
-                          <div className="file-list">
-                            {fullPreview.paths.map((file) => (
-                              <div key={file}>{file}</div>
-                            ))}
-                          </div>
-                        </details>
-                        {fullPreview.skipped.map((text) => (
-                          <Text size="xs" key={text}>
-                            {text}
+                          <Text size="xs" className="path">
+                            {tr('復原位置：')}
+                            {fullPreview.recoveryPath}
                           </Text>
-                        ))}
-                        <Text size="xs" className="path">
-                          {tr('復原位置：')}
-                          {fullPreview.recoveryPath}
-                        </Text>
-                        <Group justify="flex-end">
-                          <Button
-                            variant="default"
-                            disabled={busy}
-                            onClick={() => setFullPreview(undefined)}
-                          >
-                            {tr('取消')}
-                          </Button>
-                          <Button
-                            color="red"
-                            loading={busy}
-                            onClick={async () => {
-                              const result = await act({
-                                action: 'fullRemoval',
-                                token: fullPreview.token,
-                              })
-                              setFullPreview(undefined)
-                              if (result?.removal) {
-                                setResult(result.removal)
-                                if (!result.removal.failed.length) close()
-                              }
-                            }}
-                          >
-                            {tr('確認完全移除列出的程式資料')}
-                          </Button>
-                        </Group>
-                      </Stack>
-                    )}
-                  </section>
+                          <Group justify="flex-end">
+                            <Button
+                              variant="default"
+                              disabled={busy}
+                              onClick={() => setFullPreview(undefined)}
+                            >
+                              {tr('取消')}
+                            </Button>
+                            <Button
+                              color="red"
+                              loading={busy}
+                              onClick={async () => {
+                                const result = await act({
+                                  action: 'fullRemoval',
+                                  token: fullPreview.token,
+                                })
+                                setFullPreview(undefined)
+                                if (result?.removal) {
+                                  setResult(result.removal)
+                                  if (!result.removal.failed.length) close()
+                                }
+                              }}
+                            >
+                              {tr('確認完全移除列出的程式資料')}
+                            </Button>
+                          </Group>
+                        </Stack>
+                      )}
+                    </section>
+                  )}
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>

@@ -21,8 +21,6 @@ export function ApplicationSettings({
   actions: {
     busy: boolean
     legacyAvailable: boolean
-    relink: () => void
-    importProject: () => void
     legacy: () => void
     cleanAll: () => void
   }
@@ -251,40 +249,17 @@ export function ApplicationSettings({
         </Tabs.Panel>
         <Tabs.Panel value="data" pt="lg">
           <Stack gap="lg">
-            <section className="settings-section">
-              <Text fw={600}>{tr('專案資料')}</Text>
-              <Text size="xs" c="dimmed" mb="xs">
-                {tr('匯出請用側欄專案選單的「匯出專案資料」。')}
-              </Text>
-              <Stack gap="sm">
-                <div>
-                  <Button variant="default" disabled={actions.busy} onClick={actions.importProject}>
-                    {tr('匯入專案資料')}
-                  </Button>
-                  <Text size="xs" c="dimmed" mt={4}>
-                    {tr('把先前匯出的專案資料放回一個根資料夾；匯入前會先預覽。')}
-                  </Text>
-                </div>
-                <div>
-                  <Button variant="default" disabled={actions.busy} onClick={actions.relink}>
-                    {tr('重新連結專案')}
-                  </Button>
-                  <Text size="xs" c="dimmed" mt={4}>
-                    {tr('資料夾搬了位置之後，重新指到新位置。')}
-                  </Text>
-                </div>
-                {actions.legacyAvailable && (
-                  <div>
-                    <Button variant="default" disabled={actions.busy} onClick={actions.legacy}>
-                      {tr('檢視舊資料匯入')}
-                    </Button>
-                    <Text size="xs" c="dimmed" mt={4}>
-                      {tr('偵測到舊版資料，可預覽後匯入。')}
-                    </Text>
-                  </div>
-                )}
-              </Stack>
-            </section>
+            {actions.legacyAvailable && (
+              <section className="settings-section">
+                <Text fw={600}>{tr('舊版資料')}</Text>
+                <Text size="xs" c="dimmed" mb="xs">
+                  {tr('偵測到舊版資料，可預覽後匯入。')}
+                </Text>
+                <Button variant="default" disabled={actions.busy} onClick={actions.legacy}>
+                  {tr('檢視舊資料匯入')}
+                </Button>
+              </section>
+            )}
             <section className="settings-section">
               <Text fw={600}>{tr('設定備份')}</Text>
               <Text size="xs" c="dimmed" mb="xs">
@@ -339,27 +314,38 @@ export function ApplicationSettings({
                 )}
                 {transferResult && <Alert color="teal">{tr(transferResult)}</Alert>}
                 {error && <Alert color="red">{error}</Alert>}
-                <Text fw={600}>{tr('可復原的設定備份')}</Text>
-                {!backups.length && (
+                {backups.length ? (
+                  <Accordion variant="separated">
+                    <Accordion.Item value="restore-points">
+                      <Accordion.Control>
+                        {tr('可復原的設定備份')} ({backups.length})
+                      </Accordion.Control>
+                      <Accordion.Panel>
+                        <Stack gap="xs">
+                          {backups.map((backup) => (
+                            <Group key={backup.id} justify="space-between">
+                              <Text size="xs">
+                                {new Date(backup.createdAt).toLocaleString(appearance.locale)}
+                              </Text>
+                              <Button
+                                size="xs"
+                                variant="default"
+                                disabled={saving}
+                                onClick={() => void restore(backup.id)}
+                              >
+                                {tr('復原此備份')}
+                              </Button>
+                            </Group>
+                          ))}
+                        </Stack>
+                      </Accordion.Panel>
+                    </Accordion.Item>
+                  </Accordion>
+                ) : (
                   <Text size="xs" c="dimmed">
                     {tr('尚無設定備份')}
                   </Text>
                 )}
-                {backups.map((backup) => (
-                  <Group key={backup.id} justify="space-between">
-                    <Text size="xs">
-                      {new Date(backup.createdAt).toLocaleString(appearance.locale)}
-                    </Text>
-                    <Button
-                      size="xs"
-                      variant="default"
-                      disabled={saving}
-                      onClick={() => void restore(backup.id)}
-                    >
-                      {tr('復原此備份')}
-                    </Button>
-                  </Group>
-                ))}
               </Stack>
             </section>
             <Accordion variant="separated" className="danger-accordion">
