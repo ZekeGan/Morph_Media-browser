@@ -46,7 +46,7 @@ export function Toasts({
             role={notice.level === 'success' ? 'status' : 'alert'}
             data-level={notice.level}
           >
-            <div className="message">{notice.message}</div>
+            <div className="message">{tr(notice.message)}</div>
             {notice.hint && <div className="notice-hint">{notice.hint}</div>}
             {notice.detail && (
               <details className="notice-detail">

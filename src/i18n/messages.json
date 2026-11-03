@@ -6520,5 +6520,17 @@
     "en": "Have exported project data? Import it instead",
     "ja": "エクスポート済みのプロジェクトデータがある場合はインポート",
     "es": "¿Tienes datos exportados? Impórtalos"
+  },
+  "目前設定已保存": {
+    "zh-CN": "当前设置已保存",
+    "en": "Settings saved",
+    "ja": "現在の設定は保存済みです",
+    "es": "Ajustes guardados"
+  },
+  "已更新資料夾類型": {
+    "zh-CN": "已更新文件夹类型",
+    "en": "Folder type updated",
+    "ja": "フォルダーの種類を更新しました",
+    "es": "Tipo de carpeta actualizado"
   }
 }

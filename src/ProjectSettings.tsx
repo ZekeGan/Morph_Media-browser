@@ -120,19 +120,24 @@ export function ProjectSettings({
               {tr('舊專案：擴大掃描範圍')}
             </Button>
           )}
-          <Group justify="flex-end">
-            <Button variant="default" disabled={busy} onClick={close}>
-              {tr('取消')}
-            </Button>
-            <Button
-              loading={busy}
-              disabled={!project.name.trim() || !dirty}
-              onClick={async () => {
-                if (await act({ action: 'saveProject', project })) close()
-              }}
-            >
-              {tr('保存專案設定')}
-            </Button>
+          <Group justify="space-between">
+            <Text size="xs" c="dimmed" role="status">
+              {dirty ? tr('尚未保存') : tr('目前設定已保存')}
+            </Text>
+            <Group gap="xs">
+              <Button variant="default" disabled={busy} onClick={close}>
+                {tr('取消')}
+              </Button>
+              <Button
+                loading={busy}
+                disabled={!project.name.trim() || !dirty}
+                onClick={async () => {
+                  if (await act({ action: 'saveProject', project })) close()
+                }}
+              >
+                {tr('保存專案設定')}
+              </Button>
+            </Group>
           </Group>
         </Stack>
       </Tabs.Panel>

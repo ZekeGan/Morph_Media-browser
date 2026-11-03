@@ -398,12 +398,14 @@ export class Explorer {
         )
       case 'folderKind': {
         if (req.kind !== null && !isFolderKind(req.kind)) throw new Error('資料夾類型不合法')
-        return this.after(
-          await this.details(req.rowId, req.revision, (d) => {
-            if (req.kind === null) delete d.kind
-            else d.kind = req.kind
-          })
-        )
+        const snapshot = await this.details(req.rowId, req.revision, (d) => {
+          if (req.kind === null) delete d.kind
+          else d.kind = req.kind
+        })
+        return {
+          ...this.after(snapshot),
+          notice: { level: 'success' as const, message: '已更新資料夾類型' },
+        }
       }
       case 'folderKinds': {
         if (req.kind !== null && !isFolderKind(req.kind)) throw new Error('資料夾類型不合法')
