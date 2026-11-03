@@ -17,6 +17,7 @@ import {
 import { commonFieldNames } from './commonFields'
 import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
+import { importedFieldLabels } from './importedFieldLabels'
 import { Icon } from './icons'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import {
@@ -81,50 +82,7 @@ export function FolderPanel({
   onEditLayout?: () => void
   initialTab?: string
 }) {
-  const sourceLabels: Record<string, string> = {
-    TITLE: tr('名稱'),
-    TITLE_ORIGINAL: tr('原文名稱'),
-    TAGS: tr('標籤'),
-    PARODY: tr('原作'),
-    CHARACTER: tr('角色'),
-    ARTIST: tr('作者'),
-    GROUP: tr('社團'),
-    COSPLAYER: tr('Cosplayer'),
-    FEMALE: tr('女性標籤'),
-    MALE: tr('男性標籤'),
-    MIXED: tr('混合標籤'),
-    OTHER: tr('其他標籤'),
-    RECLASS: tr('重新分類'),
-    DESCRIPTION: tr('簡介'),
-    DEVELOPERS: tr('開發商'),
-    PUBLISHERS: tr('發行商'),
-    GENRES: tr('類型'),
-    STORE_RELEASE_DATE: tr('Steam 商店發售日期'),
-    STORE_URL: tr('商店網址'),
-    APP_ID: 'Steam App ID',
-    PRODUCT_TYPE: tr('商品類型'),
-    RELEASE_STATUS: tr('發售狀態'),
-    GALLERY_CATEGORY: tr('圖庫分類'),
-    GALLERY_URL: tr('圖庫網址'),
-    UPLOADER: tr('上傳者'),
-    PAGE_COUNT: tr('頁數'),
-    GALLERY_POSTED_UTC: tr('圖庫公開時間'),
-    SOURCE_URL: tr('來源網址'),
-    AUTHORS: tr('作者'),
-    ARTISTS: tr('演出者'),
-    FORMAT: tr('格式'),
-    RELEASE_DATE: tr('來源日期'),
-    LANGUAGE: tr('語言'),
-    LANGUAGES: tr('語言'),
-    PLATFORMS: tr('平台'),
-    LICENSE: tr('授權'),
-    COUNTRY: tr('國家'),
-    BARCODE: tr('條碼'),
-    TRACKS: tr('曲目'),
-    CHAPTER_COUNT: tr('章節數'),
-    EPISODE_COUNT: tr('集數'),
-    ISBN: tr('ISBN'),
-  }
+  const sourceLabels = importedFieldLabels()
 
   useLocale()
 

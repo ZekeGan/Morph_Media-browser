@@ -5,6 +5,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Library } from '../../electron/library'
+import { readFolder, saveFolder } from '../../electron/files'
 import { closeApp, launchApp, removeTestRoot } from './app'
 
 const args = process.argv.slice(2)
@@ -55,6 +56,27 @@ const created = await library.create(media, {
   depth: { mode: 'through', level: 2 },
 })
 
+if (args.includes('--import-source')) {
+  // Fields that came from a website, to see how the game field table shows their source.
+  const dir = path.join(media, folders[kind][0].split('/')[0])
+  const record = await readFolder(dir)
+  const url = 'https://www.dlsite.com/maniax/work/=/product_id/RJ01117836.html'
+  const field = (key: string, value: string, source: string) => ({
+    attributeId: key.toLowerCase(),
+    key,
+    type: 'string' as const,
+    value,
+    source,
+  })
+  record.attributes = [
+    field('SOURCE_URL', url, url),
+    field('MAKER_ID', 'RG47502', url),
+    field('PRODUCT_ID', 'RJ01117836', url),
+    field('note', 'typed by hand', 'manual'),
+  ]
+  await saveFolder(dir, record, record.revision)
+  await created.projects.length
+}
 if (args.includes('--fields')) {
   // Sample fields and bound components so the editor's field settings can be inspected.
   const project = created.projects[0].project!

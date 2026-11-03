@@ -2,6 +2,8 @@ import { MediaBrowser } from './MediaBrowser'
 import { MediaViewer } from './MediaViewer'
 import { isGameFolder, visibleFile } from '../shared/media'
 import { effectiveKind, sampleOf } from '../shared/kind'
+import { importedFieldLabels } from './importedFieldLabels'
+import { metadataSources, sourceForUrl } from '../shared/sources'
 import { useFileVisibility } from './useFileVisibility'
 import { DocumentViewer } from './DocumentViewer'
 import './game-actions.css'
@@ -10,7 +12,7 @@ import { t as tr, useLocale } from './i18n'
 import { Icon } from './icons'
 import { useRefreshNonce } from './refresh'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { ActionIcon, Button, Group, Menu, Tooltip } from '@mantine/core'
+import { ActionIcon, Button, Group, Menu, Text, Tooltip } from '@mantine/core'
 import { Card } from './Card'
 import { FolderDetails, FolderHeader } from './FolderParts'
 import { Gallery } from './Gallery'
@@ -31,6 +33,28 @@ import {
 } from '../shared/model'
 const Reader = lazy(() => import('./Reader').then((module) => ({ default: module.Reader })))
 const VideoViewer = lazy(() => import('./VideoViewer').then((m) => ({ default: m.VideoViewer })))
+const isUrl = (value?: string): value is string => !!value && /^https?:\/\//i.test(value)
+const siteName = (url: string) => {
+  const id = sourceForUrl(url)
+  if (id) return metadataSources.find((item) => item.id === id)?.name ?? id
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
+// Rows whose data came from the summarised website show nothing here; other rows say where they come from.
+const describeSource = (source: string | undefined, summary?: { url: string; name: string }) =>
+  !source
+    ? tr('未設定')
+    : isUrl(source)
+      ? siteName(source) === summary?.name
+        ? ''
+        : siteName(source)
+      : source === 'manual'
+        ? tr('手動')
+        : source
+
 export function FolderContent({
   row,
   project,
@@ -299,6 +323,21 @@ export function FolderContent({
         ].map((a) => [a.attributeId, a])
       ).values(),
     ]
+    const importedLabels = importedFieldLabels()
+    // Fields imported from one website all carry that site's address; show the site once instead of on every row.
+    const importSource = (() => {
+      const url = fields
+        .map(
+          (f) =>
+            (
+              row.record?.projectOverrides[row.projectId]?.find(
+                (a) => a.attributeId === f.attributeId
+              ) ?? row.record?.attributes.find((a) => a.attributeId === f.attributeId)
+            )?.source
+        )
+        .find(isUrl)
+      return url ? { url, name: siteName(url) } : undefined
+    })()
     return (
       <div className="game-content">
         <FolderDetails
@@ -454,6 +493,14 @@ export function FolderContent({
               </Button>
             </small>
           )}
+        {importSource && (
+          <Text size="xs" c="dimmed" className="import-source">
+            {tr('資料來源：')}
+            <Tooltip label={importSource.url} multiline maw={320} withArrow>
+              <span>{importSource.name}</span>
+            </Tooltip>
+          </Text>
+        )}
         <table className="attribute-table game-fields">
           <colgroup>
             <col style={{ width: gameWidths[0] }} />
@@ -490,12 +537,13 @@ export function FolderContent({
                   row.record?.projectOverrides[row.projectId]?.find(
                     (a) => a.attributeId === f.attributeId
                   ) ?? row.record?.attributes.find((a) => a.attributeId === f.attributeId)
+              const alias = project.fieldBindings.find(
+                  (b) => b.attributeId === f.attributeId
+                )?.alias,
+                plain = importedLabels[f.key]
               return (
                 <tr key={f.attributeId}>
-                  <td>
-                    {project.fieldBindings.find((b) => b.attributeId === f.attributeId)?.alias ??
-                      f.key}
-                  </td>
+                  <td title={!alias && plain ? f.key : undefined}>{alias ?? plain ?? f.key}</td>
                   <td>
                     {value == null
                       ? '—'
@@ -505,7 +553,9 @@ export function FolderContent({
                           ? JSON.stringify(value)
                           : String(value)}
                   </td>
-                  <td>{attribute?.source ?? tr('未設定')}</td>
+                  <td title={isUrl(attribute?.source) ? attribute?.source : undefined}>
+                    {describeSource(attribute?.source, importSource)}
+                  </td>
                 </tr>
               )
             })}

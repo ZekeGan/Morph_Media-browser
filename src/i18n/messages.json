@@ -6718,5 +6718,65 @@
     "en": "Why it was detected",
     "ja": "判定の根拠",
     "es": "Por qué se detectó"
+  },
+  "資料來源：": {
+    "zh-CN": "数据来源：",
+    "en": "Data from: ",
+    "ja": "データの出典：",
+    "es": "Datos de: "
+  },
+  "手動": {
+    "zh-CN": "手动",
+    "en": "Manual",
+    "ja": "手動",
+    "es": "Manual"
+  },
+  "系列": {
+    "zh-CN": "系列",
+    "en": "Series",
+    "ja": "シリーズ",
+    "es": "Serie"
+  },
+  "社團／品牌 ID": {
+    "zh-CN": "社团／品牌 ID",
+    "en": "Circle / brand ID",
+    "ja": "サークル／ブランドID",
+    "es": "ID de círculo / marca"
+  },
+  "作品 ID": {
+    "zh-CN": "作品 ID",
+    "en": "Work ID",
+    "ja": "作品ID",
+    "es": "ID de la obra"
+  },
+  "作品類型": {
+    "zh-CN": "作品类型",
+    "en": "Work type",
+    "ja": "作品タイプ",
+    "es": "Tipo de obra"
+  },
+  "年齡分級": {
+    "zh-CN": "年龄分级",
+    "en": "Age rating",
+    "ja": "年齢区分",
+    "es": "Clasificación por edad"
+  },
+  "價格（日圓）": {
+    "zh-CN": "价格（日元）",
+    "en": "Price (JPY)",
+    "ja": "価格（円）",
+    "es": "Precio (JPY)"
+  },
+  "下載數": {
+    "zh-CN": "下载数",
+    "en": "Downloads",
+    "ja": "ダウンロード数",
+    "es": "Descargas"
+  },
+  "封面狀態": {
+    "zh-CN": "封面状态",
+    "en": "Cover status",
+    "ja": "カバーの状態",
+    "es": "Estado de la portada"
   }
 }

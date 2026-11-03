@@ -1218,3 +1218,6 @@
 .boundary-evidence { margin-top: 10px; font-size: 12px; color: var(--muted); }
 .boundary-evidence summary { cursor: pointer; }
 .boundary-evidence ul { margin: 6px 0 0; padding-left: 18px; }
+
+.import-source { margin: 2px 2px 6px; }
+.import-source span { color: var(--text); border-bottom: 1px dotted var(--muted); cursor: help; }
