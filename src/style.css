@@ -293,6 +293,9 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .pick-path[data-empty="true"] { color:var(--muted); }
 .desktop-body { position: relative; }
 .sidebar-edge { position: absolute; left: 0; top: 0; bottom: 0; width: 8px; z-index: 29; }
-.sidebar-slot[data-open='false'][data-peek='true'] { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--sidebar-width) + 6px); z-index: 30; pointer-events: auto; background: var(--sidebar); box-shadow: 10px 0 28px rgba(0, 0, 0, 0.38); transition: none; animation: sidebar-peek 0.14s ease-out; }
+/* The slot keeps its zero-width place in the layout while peeking; only the sidebar inside floats over the page, so
+   showing and hiding it never moves (or animates the width of) what lies beneath. */
+.sidebar-slot[data-open='false'][data-peek='true'] { position: relative; z-index: 30; overflow: visible; }
+.sidebar-slot[data-open='false'][data-peek='true'] > .project-sidebar { position: absolute; left: 0; top: 0; bottom: 0; pointer-events: auto; background: var(--sidebar); box-shadow: 10px 0 28px rgba(0, 0, 0, 0.38); animation: sidebar-peek 0.14s ease-out; }
 @keyframes sidebar-peek { from { transform: translateX(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .sidebar-slot[data-peek='true'] { animation: none; } }

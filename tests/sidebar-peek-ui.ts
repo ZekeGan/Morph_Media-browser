@@ -36,7 +36,7 @@ try {
   await page.waitForFunction(
     () => document.querySelector('.sidebar-slot')?.getAttribute('data-peek') === 'true'
   )
-  assert.ok((await slot.boundingBox())!.width > 150)
+  assert.ok((await page.locator('.project-sidebar').boundingBox())!.width > 150)
   const after = await page
     .locator('.desktop-body > .center-pane, .project-workspace, .home-page')
     .first()
@@ -46,6 +46,16 @@ try {
   await page.keyboard.press('Escape')
   await page.waitForFunction(
     () => document.querySelector('.sidebar-slot')?.getAttribute('data-peek') === 'false'
+  )
+  // Putting it away does not push the page either (the slot used to animate its width back to zero in the flow).
+  const closed = await page
+    .locator('.desktop-body > .center-pane, .project-workspace, .home-page')
+    .first()
+    .boundingBox()
+  assert.equal(
+    Math.round(closed!.x),
+    Math.round(before!.x),
+    'the page does not move when it closes'
   )
   await page.mouse.move(900, 500)
   await page.locator('.sidebar-edge').hover()
