@@ -54,7 +54,7 @@ export function ProjectSettings({
           <section className="settings-section">
             <Text fw={600}>{tr('各類型的預設版面')}</Text>
             <Text size="xs" c="dimmed">
-              {tr('每個資料夾依其類型套用；資料夾設定中另選的版面優先。')}
+              {tr('版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。')}
             </Text>
             {folderKinds.map((kind) => (
               <Select

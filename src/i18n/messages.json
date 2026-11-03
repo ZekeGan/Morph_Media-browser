@@ -6532,5 +6532,29 @@
     "en": "Folder type updated",
     "ja": "フォルダーの種類を更新しました",
     "es": "Tipo de carpeta actualizado"
+  },
+  "版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。": {
+    "zh-CN": "版面套用优先级：文件夹自选 › 类型默认 › 项目当前版面。",
+    "en": "Layout priority: the folder's own choice › type default › the project's current layout.",
+    "ja": "レイアウトの優先順位：フォルダー指定 › 種類の既定 › プロジェクトの現在のレイアウト。",
+    "es": "Prioridad del diseño: el propio de la carpeta › el del tipo › el actual del proyecto."
+  },
+  "使用此資料夾自選的版面": {
+    "zh-CN": "使用此文件夹自选的版面",
+    "en": "Using this folder's own layout",
+    "ja": "このフォルダー専用のレイアウトを使用中",
+    "es": "Usando el diseño propio de esta carpeta"
+  },
+  "依「{0}」類型的預設版面：{1}": {
+    "zh-CN": "按“{0}”类型的默认版面：{1}",
+    "en": "Default layout for type “{0}”: {1}",
+    "ja": "種類「{0}」の既定レイアウト：{1}",
+    "es": "Diseño predeterminado del tipo «{0}»: {1}"
+  },
+  "依專案目前版面：{0}": {
+    "zh-CN": "按项目当前版面：{0}",
+    "en": "Following the project's current layout: {0}",
+    "ja": "プロジェクトの現在のレイアウト：{0}",
+    "es": "Siguiendo el diseño actual del proyecto: {0}"
   }
 }

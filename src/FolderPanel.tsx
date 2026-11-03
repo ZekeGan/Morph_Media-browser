@@ -180,6 +180,21 @@ export function FolderPanel({
     media: tr('影音'),
     general: tr('一般'),
   }
+  const layoutName = (id?: string) => {
+    const preset = cardPresets(project).find((p) => p.id === id) ?? cardPresets(project)[0]
+    return preset.id === 'default' && preset.name === '預設版面' ? tr('預設版面') : preset.name
+  }
+  const folderLayoutId = row.record && project.folderLayouts?.[row.record.folderId]
+  const kindLayoutId = project.kindLayouts?.[effectiveKind(row, sample)]
+  const layoutSource = folderLayoutId
+    ? tr('使用此資料夾自選的版面')
+    : kindLayoutId
+      ? tr(
+          '依「{0}」類型的預設版面：{1}',
+          kindLabel[effectiveKind(row, sample)],
+          layoutName(kindLayoutId)
+        )
+      : tr('依專案目前版面：{0}', layoutName(project.activeLayoutId))
   const kindReason: Record<string, string> = {
     game: tr('偵測到遊戲引擎'),
     reading: tr('已用漫畫模式閱讀'),
@@ -757,6 +772,31 @@ export function FolderPanel({
                 }
               />
             )}
+            {row.record && (
+              <Select
+                label={tr('此資料夾的版面方案')}
+                description={layoutSource}
+                allowDeselect={false}
+                value={project.folderLayouts?.[row.record.folderId] ?? ''}
+                data={[
+                  { value: '', label: tr('遵循類型與專案設定') },
+                  ...cardPresets(project).map((preset) => ({
+                    value: preset.id,
+                    label:
+                      preset.id === 'default' && preset.name === '預設版面'
+                        ? tr('預設版面')
+                        : preset.name,
+                  })),
+                ]}
+                disabled={busy || fieldDirty}
+                onChange={(id) => {
+                  const folderLayouts = { ...project.folderLayouts }
+                  if (id) folderLayouts[row.record!.folderId] = id
+                  else delete folderLayouts[row.record!.folderId]
+                  void act({ action: 'saveProject', project: { ...project, folderLayouts } })
+                }}
+              />
+            )}
             <Stack gap="sm" className="folder-source">
               <div>
                 <Group gap={4} wrap="nowrap">
@@ -943,28 +983,6 @@ export function FolderPanel({
             )}
             {row.record && (
               <>
-                <Select
-                  label={tr('此資料夾的版面方案')}
-                  allowDeselect={false}
-                  value={project.folderLayouts?.[row.record.folderId] ?? ''}
-                  data={[
-                    { value: '', label: tr('遵循類型與專案設定') },
-                    ...cardPresets(project).map((preset) => ({
-                      value: preset.id,
-                      label:
-                        preset.id === 'default' && preset.name === '預設版面'
-                          ? tr('預設版面')
-                          : preset.name,
-                    })),
-                  ]}
-                  disabled={busy || fieldDirty}
-                  onChange={(id) => {
-                    const folderLayouts = { ...project.folderLayouts }
-                    if (id) folderLayouts[row.record!.folderId] = id
-                    else delete folderLayouts[row.record!.folderId]
-                    void act({ action: 'saveProject', project: { ...project, folderLayouts } })
-                  }}
-                />
                 <Divider />
               </>
             )}
