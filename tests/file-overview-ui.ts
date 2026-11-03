@@ -87,6 +87,17 @@ const app = await electron.launch({ args: ['.'], env, timeout: 30000 }),
 page.on('pageerror', (error) => errors.push(error.message))
 page.setDefaultTimeout(20000)
 await page.setViewportSize({ width: 1440, height: 900 })
+const presentationChoice = async (name: string) => {
+  const short: Record<string, string> = {
+    平鋪縮圖: '縮圖',
+    依來源分組: '分組',
+    完整路徑清單: '清單',
+  }
+  await page
+    .getByRole('radiogroup', { name: '檔案總覽展示方式', exact: true })
+    .getByText(short[name], { exact: true })
+    .click()
+}
 const choose = async (label: string, option: string) => {
   await page.getByRole('textbox', { name: label, exact: true }).click()
   await page.getByRole('option', { name: option, exact: true }).click()
@@ -148,7 +159,7 @@ try {
       count
     )
     for (const presentation of ['平鋪縮圖', '依來源分組', '完整路徑清單']) {
-      await choose('檔案展示方式', presentation)
+      await presentationChoice(presentation)
       await burst()
       for (const fraction of [1, 0.5, 0]) {
         await page.locator('.file-overview-scroll').evaluate((element, fraction) => {
@@ -167,7 +178,7 @@ try {
       await page.locator('.file-overview-item').first().waitFor()
       await healthy()
     }
-    await choose('檔案展示方式', '平鋪縮圖')
+    await presentationChoice('平鋪縮圖')
     for (const size of [
       { width: 800, height: 650 },
       { width: 1440, height: 900 },

@@ -3647,23 +3647,11 @@
     "en": "File presentation",
     "es": "Presentación de archivos"
   },
-  "平鋪縮圖": {
-    "ja": "サムネイル",
-    "zh-CN": "平铺缩略图",
-    "en": "Thumbnail tiles",
-    "es": "Miniaturas"
-  },
   "依來源分組": {
     "ja": "保存元でグループ化",
     "zh-CN": "按来源分组",
     "en": "Group by source",
     "es": "Agrupar por origen"
-  },
-  "完整路徑清單": {
-    "ja": "フルパス一覧",
-    "zh-CN": "完整路径列表",
-    "en": "Full path list",
-    "es": "Lista de rutas completas"
   },
   "檔案類型": {
     "ja": "ファイルの種類",
@@ -4356,10 +4344,10 @@
     "zh-CN": "移除 {0}"
   },
   "縮圖": {
+    "zh-CN": "缩略图",
     "en": "Thumbnails",
     "ja": "サムネイル",
-    "es": "Miniaturas",
-    "zh-CN": "缩略图"
+    "es": "Miniaturas"
   },
   "更多檔案選項": {
     "en": "More file options",
@@ -6658,5 +6646,41 @@
     "en": "No settings backups yet",
     "ja": "設定のバックアップはまだありません",
     "es": "Aún no hay copias de ajustes"
+  },
+  "分組": {
+    "zh-CN": "分组",
+    "en": "Groups",
+    "ja": "グループ",
+    "es": "Grupos"
+  },
+  "清單": {
+    "zh-CN": "清单",
+    "en": "List",
+    "ja": "リスト",
+    "es": "Lista"
+  },
+  "含子資料夾": {
+    "zh-CN": "含子文件夹",
+    "en": "With subfolders",
+    "ja": "サブフォルダー含む",
+    "es": "Con subcarpetas"
+  },
+  "列出哪些資料夾的檔案": {
+    "zh-CN": "列出哪些文件夹的文件",
+    "en": "Whose files to list",
+    "ja": "どのフォルダーのファイルを表示するか",
+    "es": "Archivos de qué carpetas listar"
+  },
+  "檔案總覽展示方式": {
+    "zh-CN": "文件总览展示方式",
+    "en": "Files view layout",
+    "ja": "ファイル一覧の表示方法",
+    "es": "Diseño de la vista de archivos"
+  },
+  "檔案總覽範圍設定": {
+    "zh-CN": "文件总览范围设置",
+    "en": "Files view scope",
+    "ja": "ファイル一覧の範囲",
+    "es": "Alcance de la vista de archivos"
   }
 }

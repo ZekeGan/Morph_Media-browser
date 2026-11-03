@@ -66,7 +66,7 @@ try {
   await page.locator('.folder-panel-dock-settings').waitFor()
   await button('關閉資料夾設定').click()
   await page.locator('.workspace-toolbar').getByText('檔案', { exact: true }).click()
-  await page.locator('.workspace-file-tools [aria-label="檔案總覽範圍"]').waitFor()
+  await page.locator('.workspace-file-scope [aria-label="檔案總覽範圍設定"]').waitFor()
   assert.equal(await page.locator('.file-overview .file-overview-toolbar').count(), 0)
   assert.equal(await button('卡片顯示設定').count(), 0)
   await app.evaluate(({ BrowserWindow }) =>

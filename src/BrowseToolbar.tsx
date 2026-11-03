@@ -46,6 +46,7 @@ type Props = {
   setDensity: (value: { itemsPerRow: number | string; pageSize: number | string }) => void
   setDisplay: (value: ReturnType<typeof cardDisplay>) => void
   setOverviewTools: (element: HTMLDivElement | null) => void
+  setOverviewScope: (element: HTMLDivElement | null) => void
   setPage: (page: number) => void
   state: { current: BrowseState }
   switchMode: (mode: BrowseMode) => Promise<void>
@@ -80,6 +81,7 @@ export function BrowseToolbar(props: Props) {
     setDensity,
     setDisplay,
     setOverviewTools,
+    setOverviewScope,
     setPage,
     state,
     switchMode,
@@ -91,7 +93,7 @@ export function BrowseToolbar(props: Props) {
           <SegmentedControl
             className="content-switch"
             aria-label={tr('展示內容')}
-            size="sm"
+            size="xs"
             value={browse.contentMode ?? 'folders'}
             disabled={busy || !ready}
             data={[
@@ -115,6 +117,33 @@ export function BrowseToolbar(props: Props) {
               },
             ]}
             onChange={(value) => switchContent(value as 'folders' | 'files')}
+          />
+          {folderMode && (
+            <SegmentedControl
+              className="center-mode"
+              aria-label={tr('瀏覽模式')}
+              size="xs"
+              value={browse.mode}
+              data={(['CARD', 'TABLE', 'TREE'] as const).map((mode) => ({
+                value: mode,
+                label: (
+                  <>
+                    <Icon
+                      name={mode === 'CARD' ? 'grid' : mode === 'TABLE' ? 'list' : 'tree'}
+                      size={14}
+                    />
+                    {mode === 'CARD' ? tr('卡片') : mode === 'TABLE' ? tr('表格') : tr('樹狀圖')}
+                  </>
+                ),
+              }))}
+              disabled={busy || !ready}
+              onChange={(mode) => void switchMode(mode as BrowseMode)}
+            />
+          )}
+          <div
+            ref={setOverviewTools}
+            className="workspace-file-tools"
+            style={{ display: folderMode ? 'none' : undefined }}
           />
           {folderMode && browse.mode === 'CARD' && (
             <>
@@ -214,39 +243,18 @@ export function BrowseToolbar(props: Props) {
             </>
           )}
         </div>
-        <SegmentedControl
-          style={{ display: folderMode ? undefined : 'none' }}
-          className="center-mode"
-          aria-label={tr('瀏覽模式')}
-          size="xs"
-          value={browse.mode}
-          data={(['CARD', 'TABLE', 'TREE'] as const).map((mode) => ({
-            value: mode,
-            label: (
-              <>
-                <Icon
-                  name={mode === 'CARD' ? 'grid' : mode === 'TABLE' ? 'list' : 'tree'}
-                  size={14}
-                />
-                {mode === 'CARD' ? tr('卡片') : mode === 'TABLE' ? tr('表格') : tr('樹狀圖')}
-              </>
-            ),
-          }))}
-          disabled={busy || !ready}
-          onChange={(mode) => void switchMode(mode as BrowseMode)}
-        />
-        <div
-          ref={setOverviewTools}
-          className="workspace-file-tools"
-          style={{ display: folderMode ? 'none' : undefined }}
-        />
         <div className="toolbar-right">
+          <div
+            ref={setOverviewScope}
+            className="workspace-file-scope"
+            style={{ display: folderMode ? 'none' : undefined }}
+          />
           {folderMode && browse.mode === 'CARD' && (
             <Popover position="bottom-end" withArrow shadow="md" width={260}>
               <Popover.Target>
                 <Button
-                  className="card-display-button"
-                  size="compact-sm"
+                  className="card-display-button scope-button"
+                  size="xs"
                   variant="default"
                   aria-label={tr('卡片顯示設定')}
                   leftSection={<Icon name="sliders" size={14} />}

@@ -111,7 +111,8 @@ export function BrowseWorkspace({
       navigation.current++
     }
   }, [])
-  const [overviewTools, setOverviewTools] = useState<HTMLDivElement | null>(null),
+  const [overviewScope, setOverviewScope] = useState<HTMLDivElement | null>(null),
+    [overviewTools, setOverviewTools] = useState<HTMLDivElement | null>(null),
     [columnQuery, setColumnQuery] = useState(''),
     [configTab, setConfigTab] = useState('fields')
   const [display, setDisplay] = useState(cardDisplay(project)),
@@ -735,6 +736,7 @@ export function BrowseWorkspace({
           setDensity={setDensity}
           setDisplay={setDisplay}
           setOverviewTools={setOverviewTools}
+          setOverviewScope={setOverviewScope}
           setPage={setPage}
           state={state}
           switchMode={switchMode}
@@ -834,6 +836,7 @@ export function BrowseWorkspace({
           {!folderMode && overviewRoot ? (
             <FileOverview
               toolbarTarget={overviewTools}
+              scopeTarget={overviewScope}
               root={overviewRoot}
               scope={browse.fileScope ?? 'descendants'}
               presentation={browse.filePresentation ?? 'tiles'}

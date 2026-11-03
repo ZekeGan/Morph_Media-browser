@@ -563,20 +563,6 @@
     max-width: 124px;
 }
 
-.workspace-file-tools .file-overview-toolbar {
-    gap: 6px;
-}
-
-.workspace-file-tools .mantine-Input-input {
-    font-size: 12px;
-    height: 30px;
-    min-height: 30px;
-}
-
-.workspace-file-tools .file-overview-toolbar>.mantine-Select-root {
-    max-width: 220px;
-}
-
 @media(max-width:800px) {
     .reader-embedded .reader-info>span:last-child {
         display: none;
@@ -1181,3 +1167,17 @@
 .file-overview-group { grid-column: 1 / -1; text-align: left; border: 0; background: transparent; color: var(--text); font-size: 12px; font-weight: 600; padding: 4px 0; cursor: pointer; }
 .file-overview-group:disabled { cursor: default; color: var(--muted); }
 .file-overview-group:not(:disabled):hover { text-decoration: underline; }
+
+/* One toolbar for both views, so the same controls stay in the same places.
+   Left: content switch, view mode, tools of the current view. Right: scope, extras, folder settings. */
+.workspace-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 8px 10px; min-height: 52px; }
+.workspace-toolbar .toolbar-left { flex: 1 1 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-width: 0; }
+.workspace-toolbar .toolbar-right { margin-left: auto; display: flex; flex-wrap: nowrap; justify-content: flex-end; align-items: center; gap: 6px; min-width: 0; }
+.workspace-file-tools, .workspace-file-scope { display: flex; align-items: center; gap: 6px 8px; min-width: 0; }
+.workspace-toolbar .mantine-Input-input { height: 30px; min-height: 30px; font-size: 12px; }
+.workspace-toolbar .mantine-SegmentedControl-label { font-size: 12px; font-weight: 500; }
+.workspace-toolbar .mantine-Button-root { height: 30px; font-size: 12px; font-weight: 500; }
+.workspace-toolbar .mantine-ActionIcon-root { width: 30px; height: 30px; }
+.workspace-toolbar .mantine-Select-root { min-width: 96px; }
+.workspace-toolbar .scope-button { max-width: 260px; }
+.workspace-toolbar .workspace-file-tools, .workspace-toolbar .workspace-file-scope { padding: 0; border: 0; }

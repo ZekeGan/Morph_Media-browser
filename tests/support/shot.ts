@@ -195,10 +195,10 @@ try {
       await page.getByRole('navigation', { name: '資料夾路徑' }).innerText()
     )
   }
-  const click = option('click')
-  if (click) await page.getByRole('button', { name: click, exact: true }).first().click()
   const text = option('text')
   if (text) await page.getByText(text, { exact: true }).first().click()
+  const click = option('click')
+  if (click) await page.getByRole('button', { name: click, exact: true }).first().click()
   const press = option('press')
   if (press) await page.keyboard.press(press)
   await page.waitForTimeout(900)
@@ -207,7 +207,13 @@ try {
       path.join(base, 'shot', `${kind}-${width}x${height}${mode ? '-' + mode : ''}.png`)
   )
   await fs.mkdir(path.dirname(out), { recursive: true })
-  await page.screenshot({ path: out })
+  const crop = option('crop')?.split(',').map(Number)
+  await page.screenshot({
+    path: out,
+    ...(crop?.length === 4
+      ? { clip: { x: crop[0], y: crop[1], width: crop[2], height: crop[3] } }
+      : {}),
+  })
   console.log(out)
   if (errors.length) console.log('Renderer errors:', errors.join(' | '))
 } finally {

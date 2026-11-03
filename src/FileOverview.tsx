@@ -2,7 +2,16 @@ import { visibleFile } from '../shared/media'
 import { useFileVisibility } from './useFileVisibility'
 import { createPortal } from 'react-dom'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Alert, Group, Loader, SegmentedControl, Select, Text } from '@mantine/core'
+import {
+  Alert,
+  Button,
+  Group,
+  Loader,
+  Popover,
+  SegmentedControl,
+  Select,
+  Text,
+} from '@mantine/core'
 import type { FolderRow } from '../shared/model'
 import type { OverviewEntry } from '../shared/explorer'
 import { Icon } from './icons'
@@ -10,8 +19,14 @@ import { useRefreshNonce } from './refresh'
 import { t as tr, useLocale } from './i18n'
 
 type Presentation = 'tiles' | 'groups' | 'list'
+const presentations = [
+  { value: 'tiles', icon: 'grid', label: '縮圖' },
+  { value: 'groups', icon: 'folder', label: '分組' },
+  { value: 'list', icon: 'list', label: '清單' },
+] as const
 export function FileOverview({
   toolbarTarget,
+  scopeTarget,
   root,
   scope,
   presentation,
@@ -21,6 +36,7 @@ export function FileOverview({
   chooseRoot,
 }: {
   toolbarTarget: HTMLDivElement | null
+  scopeTarget: HTMLDivElement | null
   root: FolderRow
   scope: 'current' | 'descendants'
   presentation: Presentation
@@ -137,30 +153,25 @@ export function FileOverview({
     <div className="file-overview">
       {toolbarTarget &&
         createPortal(
-          <Group className="file-overview-toolbar" gap="sm">
+          <>
             <SegmentedControl
-              aria-label={tr('檔案總覽範圍')}
-              value={scope}
-              disabled={busy}
-              onChange={(value) => change(value as typeof scope, presentation)}
-              data={[
-                { value: 'current', label: tr('目前資料夾') },
-                { value: 'descendants', label: tr('包含子資料夾') },
-              ]}
-            />
-            <Select
-              aria-label={tr('檔案展示方式')}
-              allowDeselect={false}
+              size="xs"
+              aria-label={tr('檔案總覽展示方式')}
               value={presentation}
               disabled={busy}
-              data={[
-                { value: 'tiles', label: tr('平鋪縮圖') },
-                { value: 'groups', label: tr('依來源分組') },
-                { value: 'list', label: tr('完整路徑清單') },
-              ]}
               onChange={(value) => change(scope, value as Presentation)}
+              data={presentations.map(({ value, icon, label }) => ({
+                value,
+                label: (
+                  <span className="content-switch-label">
+                    <Icon name={icon} size={14} />
+                    {tr(label)}
+                  </span>
+                ),
+              }))}
             />
             <Select
+              size="xs"
               aria-label={tr('檔案類型')}
               value={filter}
               allowDeselect={false}
@@ -172,8 +183,42 @@ export function FileOverview({
                 { value: 'other', label: tr('其他') },
               ]}
             />
-          </Group>,
+          </>,
           toolbarTarget
+        )}
+      {scopeTarget &&
+        createPortal(
+          <Popover position="bottom-end" withArrow shadow="md" width={240}>
+            <Popover.Target>
+              <Button
+                className="scope-button"
+                size="xs"
+                variant="default"
+                aria-label={tr('檔案總覽範圍設定')}
+                leftSection={<Icon name="sliders" size={14} />}
+              >
+                {scope === 'current' ? tr('目前資料夾') : tr('含子資料夾')}
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Text size="xs" c="dimmed" mb={4}>
+                {tr('列出哪些資料夾的檔案')}
+              </Text>
+              <SegmentedControl
+                size="xs"
+                fullWidth
+                aria-label={tr('檔案總覽範圍')}
+                value={scope}
+                disabled={busy}
+                onChange={(value) => change(value as typeof scope, presentation)}
+                data={[
+                  { value: 'current', label: tr('目前資料夾') },
+                  { value: 'descendants', label: tr('包含子資料夾') },
+                ]}
+              />
+            </Popover.Dropdown>
+          </Popover>,
+          scopeTarget
         )}
       <Group gap="xs" px="sm" py={4}>
         <Text size="xs" c="dimmed">

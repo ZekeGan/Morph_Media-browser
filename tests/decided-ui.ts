@@ -90,6 +90,17 @@ await page.setViewportSize({ width: 1600, height: 950 })
 const button = (name: string) => page.getByRole('button', { name, exact: true }),
   open = () => button('開啟專案 Decided QA').first().click(),
   settings = () => page.getByRole('dialog', { name: '應用程式設定', exact: true })
+const presentation = async (name: string) => {
+  const short: Record<string, string> = {
+    平鋪縮圖: '縮圖',
+    依來源分組: '分組',
+    完整路徑清單: '清單',
+  }
+  await page
+    .getByRole('radiogroup', { name: '檔案總覽展示方式', exact: true })
+    .getByText(short[name], { exact: true })
+    .click()
+}
 const choose = async (label: string, option: string) => {
   await page.getByRole('textbox', { name: label, exact: true }).click()
   await page.getByRole('option', { name: option, exact: true }).click()
@@ -194,7 +205,7 @@ try {
     .evaluate((element) => (element.scrollTop = element.scrollHeight))
   await page.waitForTimeout(100)
   assert.ok((await page.locator('.file-overview-item').count()) < 60)
-  await choose('檔案展示方式', '完整路徑清單')
+  await presentation('完整路徑清單')
   await page.locator('.file-overview-scroll').evaluate((element) => (element.scrollTop = 0))
   await page.locator('.file-overview-item').filter({ hasText: 'book.cbz' }).click()
   await button('開啟檢視器').click()
@@ -227,6 +238,7 @@ try {
   await fs.unlink(folderFile(media))
   try {
     // The top-bar refresh also rescans (which would recreate the record), so reload the overview by changing its scope.
+    await page.getByRole('button', { name: '檔案總覽範圍設定', exact: true }).click()
     const scope = page.getByRole('radiogroup', { name: '檔案總覽範圍' })
     await scope.getByText('目前資料夾', { exact: true }).click()
     await scope.getByText('包含子資料夾', { exact: true }).click()
@@ -238,7 +250,7 @@ try {
   }
   await button('重新整理').click()
   await page.locator('.file-overview-item').first().waitFor()
-  await choose('檔案展示方式', '依來源分組')
+  await presentation('依來源分組')
   await button('應用程式設定').click()
   await settings().getByRole('textbox', { name: '介面語言', exact: true }).click()
   await page.getByRole('option', { name: 'English', exact: true }).click()
