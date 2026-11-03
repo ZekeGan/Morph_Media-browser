@@ -6238,5 +6238,83 @@
     "zh-CN": "测试启动 {0}",
     "en": "Test launch {0}",
     "es": "Probar inicio de {0}"
+  },
+  "來自 {0}": {
+    "ja": "{0} から取得",
+    "zh-CN": "来自 {0}",
+    "en": "From {0}",
+    "es": "De {0}"
+  },
+  "來自網站匯入": {
+    "ja": "サイトからインポート",
+    "zh-CN": "来自网站导入",
+    "en": "Imported from a website",
+    "es": "Importado de un sitio web"
+  },
+  "危險區": {
+    "ja": "危険ゾーン",
+    "zh-CN": "危险区",
+    "en": "Danger zone",
+    "es": "Zona de peligro"
+  },
+  "修改會同步到使用這個資料夾的其他專案。": {
+    "ja": "変更は、このフォルダーを使う他のプロジェクトにも反映されます。",
+    "zh-CN": "修改会同步到使用这个文件夹的其他项目。",
+    "en": "Changes also apply to other projects that use this folder.",
+    "es": "Los cambios también se aplican a otros proyectos que usan esta carpeta."
+  },
+  "修改只用於目前專案；其他專案仍用共用資料。": {
+    "ja": "変更はこのプロジェクトだけに使われ、他のプロジェクトは共有データのままです。",
+    "zh-CN": "修改只用于当前项目；其他项目仍用共用数据。",
+    "en": "Changes apply to this project only; other projects keep the shared data.",
+    "es": "Los cambios solo valen para este proyecto; los demás siguen con los datos compartidos."
+  },
+  "圖片庫": {
+    "ja": "画像ライブラリ",
+    "zh-CN": "图片库",
+    "en": "Image library",
+    "es": "Biblioteca de imágenes"
+  },
+  "用於：{0}": {
+    "ja": "使用先：{0}",
+    "zh-CN": "用于：{0}",
+    "en": "Used by: {0}",
+    "es": "Usada en: {0}"
+  },
+  "未使用": {
+    "ja": "未使用",
+    "zh-CN": "未使用",
+    "en": "Not used",
+    "es": "Sin usar"
+  },
+  "封面": {
+    "ja": "カバー",
+    "zh-CN": "封面",
+    "en": "Cover",
+    "es": "Portada"
+  },
+  "匯入": {
+    "ja": "インポート",
+    "zh-CN": "导入",
+    "en": "Import",
+    "es": "Importar"
+  },
+  "現值": {
+    "ja": "現在の値",
+    "zh-CN": "现值",
+    "en": "Current",
+    "es": "Actual"
+  },
+  "新值": {
+    "ja": "新しい値",
+    "zh-CN": "新值",
+    "en": "New",
+    "es": "Nuevo"
+  },
+  "相同": {
+    "ja": "同じ",
+    "zh-CN": "相同",
+    "en": "Same",
+    "es": "Igual"
   }
 }

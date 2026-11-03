@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Folder settings, round three: the panel remembers the tab you were on when you switch folders; the Shared / This project switch moved from Advanced into the Data tab with a line explaining its effect; the website-import preview is now a current-vs-new table with a sticky action bar; the saved-images list became an always-open image library that shows where each image is used; game actions that are not bound yet get an accent border. (Source notes under fields, Ctrl+S to save and the danger-zone divider arrived in the same batch.)
 ## 0.39.0 — 2026-11-03
 
 - Folder settings, round two: a "Still to add" card lists what a folder lacks (launch file, cover, work data) with a button that jumps to the right place; the path is one slim line and the duplicate "open in Explorer" button is gone (the panel header icon remains); an empty project shows an "Add field" button; each game action has a "test launch" icon and its target path sits on one line.

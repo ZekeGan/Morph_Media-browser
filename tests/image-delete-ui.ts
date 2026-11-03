@@ -46,7 +46,6 @@ try {
   await page.getByRole('button', { name: '資料夾設定', exact: true }).click()
   await page.locator('.folder-panel-dock-settings').waitFor()
   await page.getByRole('tab', { name: '圖片', exact: true }).click()
-  await page.locator('details > summary').filter({ hasText: '已保存的圖片' }).click()
   assert.equal(await page.locator('.images figure').count(), 2)
   const del = page.getByRole('button', { name: '刪除圖片 pic1.png', exact: true })
   // Declining the confirmation changes nothing.

@@ -51,7 +51,7 @@ If you already created a project and only moved to another computer or folder, u
 
 Open a folder's **Folder settings**. The "Still to add" card at the top lists what this folder lacks (launch file, cover, work data); its buttons take you straight to the right place:
 
-- **Data**: fill in this folder's fields. While something is unsaved, a Save / Discard bar stays at the bottom and the tab shows a dot.
+- **Data**: fill in this folder's fields; the Shared / This project switch at the top right says which projects a change affects. While something is unsaved, a Save / Discard bar stays at the bottom and the tab shows a dot.
 - **Import from source** (at the top of the Data tab): paste the address of the work and the source is recognised from it (E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library, Wikimedia Commons; for Steam the App ID works too). **Get preview** is enabled only for a known site, and you choose which fields to import afterwards. Nothing is fetched unless you ask. Some sources carry adult content; using them is up to you.
 - **Image**: click the thumbnail to pick a saved image, import a new one or clear it; a component can also show "the Nth image of the folder" when none is picked.
 

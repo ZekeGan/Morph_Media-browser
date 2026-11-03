@@ -137,7 +137,10 @@ export function GameActionTargets({
           bound = target?.kind === template.kind,
           hiddenHere = !!row.record?.details?.hiddenActions?.includes(template.id)
         return (
-          <section className="settings-section game-target" key={template.id}>
+          <section
+            className={'settings-section game-target' + (bound ? '' : ' unbound')}
+            key={template.id}
+          >
             <Group justify="space-between" wrap="nowrap">
               <Text fw={600}>
                 {template.id === 'default-launch-game' ? tr(template.label) : template.label}

@@ -16,6 +16,7 @@ import {
   Menu,
   Modal,
   NumberInput,
+  SegmentedControl,
   Select,
   Stack,
   Tabs,
@@ -44,6 +45,8 @@ import type {
 } from '../shared/model'
 type Act = (request: Request) => Promise<Response | undefined>
 type Run = (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
+// The tab you were on stays when you move to another folder.
+let lastTab: string | null = null
 export function FolderPanel({
   row,
   project,
@@ -114,7 +117,13 @@ export function FolderPanel({
     [privateValues, setPrivate] = useState(false),
     [values, setValues] = useState<Record<string, unknown>>({}),
     [newOptions, setNewOptions] = useState<Record<string, string>>({})
-  const [tab, setTab] = useState<string | null>(initialTab === 'source' ? 'fields' : initialTab),
+  const [tab, setTab] = useState<string | null>(
+      initialTab === 'source'
+        ? 'fields'
+        : initialTab === 'fields'
+          ? (lastTab ?? 'fields')
+          : initialTab
+    ),
     [tasks, setTasks] = useState<ActionTemplate[]>(),
     [targetDirty, setTargetDirty] = useState(false)
   useEffect(() => {
@@ -131,6 +140,9 @@ export function FolderPanel({
     [cover, setCover] = useState(true),
     [sourceResult, setSourceResult] = useState(''),
     [replaceSource, setReplaceSource] = useState(false)
+  useEffect(() => {
+    if (tab) lastTab = tab
+  }, [tab])
   const [cleanup, setCleanup] = useState<CleanupPreview>(),
     [cleanupResult, setCleanupResult] = useState<CleanupResult>(),
     [restart, setRestart] = useState(false)
@@ -161,6 +173,11 @@ export function FolderPanel({
     ).values(),
   ]
   const assets = row.record?.assets ?? []
+  const showImages = imageCells.length > 0 || assets.length > 0 || project.mediaCategory === 'game'
+  useEffect(() => {
+    if ((tab === 'images' && !showImages) || (tab === 'game' && project.mediaCategory !== 'game'))
+      setTab('fields')
+  }, [tab, showImages, project.mediaCategory])
   // Confirm first, naming every place that shows the picture; the file and all references go in one write.
   const deleteImage = (assetId: string, name: string) => {
     const details = row.record?.details,
@@ -264,6 +281,18 @@ export function FolderPanel({
     edit(attributeId, option)
     setNewOptions((v) => ({ ...v, [attributeId]: '' }))
   }
+  // Where an imported value came from, shown under its label until the value is edited.
+  const fieldNote = (attributeId: string) => {
+    if (Object.hasOwn(values, attributeId)) return undefined
+    const attribute =
+      (privateValues
+        ? row.record?.projectOverrides[row.projectId]?.find((a) => a.attributeId === attributeId)
+        : undefined) ?? row.record?.attributes.find((a) => a.attributeId === attributeId)
+    if (!attribute || attribute.source === 'manual') return undefined
+    const provider = attribute.sourceRecord?.provider,
+      name = metadataSources.find((item) => item.id === provider)?.name
+    return name ? tr('來自 {0}', name) : tr('來自網站匯入')
+  }
   const renderField = (f: (typeof fields)[number]) => {
     const value = effective(f.attributeId),
       binding = project.fieldBindings.find((binding) => binding.attributeId === f.attributeId)
@@ -272,6 +301,7 @@ export function FolderPanel({
         <Select
           key={f.attributeId}
           label={f.key}
+          description={fieldNote(f.attributeId)}
           placeholder={tr('未填')}
           clearable
           value={value === true ? 'true' : value === false ? 'false' : null}
@@ -292,6 +322,7 @@ export function FolderPanel({
         <Stack key={f.attributeId} gap={6}>
           <Select
             label={f.key}
+            description={fieldNote(f.attributeId)}
             placeholder={tr('未填')}
             clearable
             value={typeof value === 'string' ? value : null}
@@ -343,6 +374,7 @@ export function FolderPanel({
         <TextInput
           key={f.attributeId}
           label={f.key}
+          description={fieldNote(f.attributeId)}
           type={f.type === 'url' ? 'url' : 'date'}
           value={String(value ?? '')}
           disabled={disabled}
@@ -353,6 +385,7 @@ export function FolderPanel({
       <TagsInput
         key={f.attributeId}
         label={f.key}
+        description={fieldNote(f.attributeId)}
         placeholder={tr('以逗號分隔多個標籤')}
         value={
           Array.isArray(effective(f.attributeId)) ? (effective(f.attributeId) as string[]) : []
@@ -365,6 +398,7 @@ export function FolderPanel({
       <NumberInput
         key={f.attributeId}
         label={f.key}
+        description={fieldNote(f.attributeId)}
         value={
           typeof effective(f.attributeId) === 'number' ? (effective(f.attributeId) as number) : ''
         }
@@ -375,6 +409,7 @@ export function FolderPanel({
       <TextInput
         key={f.attributeId}
         label={f.key}
+        description={fieldNote(f.attributeId)}
         type="datetime-local"
         value={String(effective(f.attributeId) ?? '')}
         disabled={disabled}
@@ -384,6 +419,7 @@ export function FolderPanel({
       <Textarea
         key={f.attributeId}
         label={f.key}
+        description={fieldNote(f.attributeId)}
         placeholder={tr('尚未填寫')}
         autosize
         minRows={1}
@@ -545,7 +581,16 @@ export function FolderPanel({
       })
   }
   return (
-    <Stack gap="md" className="folder-settings">
+    <Stack
+      gap="md"
+      className="folder-settings"
+      onKeyDown={(event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's' && fieldDirty) {
+          event.preventDefault()
+          if (!disabled) void save()
+        }
+      }}
+    >
       <div className="folder-settings-intro">
         <Text size="xs" c="dimmed" className="path-line" title={row.path}>
           {row.path}
@@ -590,9 +635,7 @@ export function FolderPanel({
               </Badge>
             )}
           </Tabs.Tab>
-          {(imageCells.length > 0 || assets.length > 0 || project.mediaCategory === 'game') && (
-            <Tabs.Tab value="images">{tr('圖片')}</Tabs.Tab>
-          )}
+          {showImages && <Tabs.Tab value="images">{tr('圖片')}</Tabs.Tab>}
           {project.mediaCategory === 'game' && <Tabs.Tab value="game">{tr('遊戲操作')}</Tabs.Tab>}
           <Tabs.Tab value="advanced">{tr('進階')}</Tabs.Tab>
         </Tabs.List>
@@ -605,10 +648,28 @@ export function FolderPanel({
                   <HelpTip text={tr('填寫與此資料夾有關的資訊，保存後立即顯示。')} />
                 </Group>
               </div>
-              <Badge color={privateValues ? 'orange' : 'gray'} variant="light">
-                {privateValues ? tr('僅目前專案') : tr('共用資料')}
-              </Badge>
+              <SegmentedControl
+                size="xs"
+                aria-label={tr('資料範圍')}
+                value={privateValues ? 'private' : 'shared'}
+                disabled={disabled}
+                data={[
+                  { value: 'shared', label: tr('共用資料') },
+                  { value: 'private', label: tr('僅目前專案') },
+                ]}
+                onChange={(value) => {
+                  if (!fieldDirty || window.confirm(tr('切換會放棄目前欄位草稿？'))) {
+                    setValues({})
+                    setPrivate(value === 'private')
+                  }
+                }}
+              />
             </Group>
+            <Text size="xs" c="dimmed">
+              {privateValues
+                ? tr('修改只用於目前專案；其他專案仍用共用資料。')
+                : tr('修改會同步到使用這個資料夾的其他專案。')}
+            </Text>
             <Stack gap="sm" className="folder-source">
               <div>
                 <Group gap={4} wrap="nowrap">
@@ -694,49 +755,56 @@ export function FolderPanel({
                       : tr('日期依來源保留，不推定為作品首次發行日。')}
                     {tr('預設只填空值；人工欄位保持原樣。')}
                   </Text>
-                  <Stack gap="sm">
-                    {preview.values
-                      .filter((v) => v.key !== 'COVER_STATUS')
-                      .map((v) => (
-                        <Checkbox
-                          key={v.key}
-                          label={
-                            <span className="source-field">
-                              <strong>{sourceLabels[v.key] ?? v.key}</strong>
-                              <span>
-                                {Array.isArray(v.value) ? v.value.join('、') : String(v.value)}
-                              </span>
-                              {row.record?.attributes.find(
-                                (attribute) =>
-                                  attribute.attributeId ===
-                                  (preview.provider ?? 'eh') + '-' + v.key.toLowerCase()
-                              ) && (
-                                <small>
-                                  {tr(
-                                    '目前值：{0}',
-                                    String(
-                                      row.record.attributes.find(
-                                        (attribute) =>
-                                          attribute.attributeId ===
-                                          (preview.provider ?? 'eh') + '-' + v.key.toLowerCase()
-                                      )!.value
+                  <table className="source-diff">
+                    <thead>
+                      <tr>
+                        <th aria-label={tr('匯入')} />
+                        <th>{tr('欄位')}</th>
+                        <th>{tr('現值')}</th>
+                        <th>{tr('新值')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {preview.values
+                        .filter((v) => v.key !== 'COVER_STATUS')
+                        .map((v) => {
+                          const next = Array.isArray(v.value)
+                              ? v.value.join('、')
+                              : String(v.value),
+                            existing = row.record?.attributes.find(
+                              (attribute) =>
+                                attribute.attributeId ===
+                                (preview.provider ?? 'eh') + '-' + v.key.toLowerCase()
+                            ),
+                            current = existing
+                              ? Array.isArray(existing.value)
+                                ? existing.value.join('、')
+                                : String(existing.value)
+                              : '',
+                            same = !!existing && current === next
+                          return (
+                            <tr key={v.key} className={same ? 'same' : undefined}>
+                              <td>
+                                <Checkbox
+                                  aria-label={sourceLabels[v.key] ?? v.key}
+                                  checked={keys.includes(v.key)}
+                                  onChange={(e) =>
+                                    setKeys((list) =>
+                                      e.currentTarget.checked
+                                        ? [...list, v.key]
+                                        : list.filter((k) => k !== v.key)
                                     )
-                                  )}
-                                </small>
-                              )}
-                            </span>
-                          }
-                          checked={keys.includes(v.key)}
-                          onChange={(e) =>
-                            setKeys((current) =>
-                              e.currentTarget.checked
-                                ? [...current, v.key]
-                                : current.filter((k) => k !== v.key)
-                            )
-                          }
-                        />
-                      ))}
-                  </Stack>
+                                  }
+                                />
+                              </td>
+                              <th scope="row">{sourceLabels[v.key] ?? v.key}</th>
+                              <td>{current || '—'}</td>
+                              <td>{same ? tr('相同') : next}</td>
+                            </tr>
+                          )
+                        })}
+                    </tbody>
+                  </table>
                   {preview.values.find((v) => v.key === 'COVER_STATUS') && (
                     <Alert color="orange" mt="sm">
                       {String(preview.values.find((v) => v.key === 'COVER_STATUS')!.value)}
@@ -750,7 +818,7 @@ export function FolderPanel({
                       onChange={(e) => setCover(e.currentTarget.checked)}
                     />
                   )}
-                  <Group justify="flex-end" mt="md">
+                  <Group justify="flex-end" mt="md" className="settings-savebar">
                     <Button variant="default" disabled={busy} onClick={() => setPreview(undefined)}>
                       {tr('取消預覽')}
                     </Button>
@@ -933,33 +1001,51 @@ export function FolderPanel({
               </section>
             )}
             {!!assets.length && (
-              <details>
-                <summary>
-                  {tr('已保存的圖片（')}
-                  {assets.length}）
-                </summary>
+              <section className="settings-section image-library">
+                <Text fw={600} mb="xs">
+                  {tr('圖片庫')}（{assets.length}）
+                </Text>
                 <div className="images">
-                  {assets.map((a) => (
-                    <figure key={a.assetId}>
-                      <img
-                        src={'media://asset/' + row.rowId + '/' + a.assetId}
-                        alt={a.originalName}
-                      />
-                      <figcaption>{a.originalName}</figcaption>
-                      <Button
-                        variant="subtle"
-                        color="red"
-                        size="compact-xs"
-                        aria-label={tr('刪除圖片 ') + a.originalName}
-                        disabled={disabled || fieldDirty}
-                        onClick={() => deleteImage(a.assetId, a.originalName)}
-                      >
-                        {tr('刪除圖片')}
-                      </Button>
-                    </figure>
-                  ))}
+                  {assets.map((a) => {
+                    const used = [
+                      ...imageCells
+                        .map((cell, index) =>
+                          row.record?.details?.cellImages?.[cell.attributeId ?? cell.cellId] ===
+                          a.assetId
+                            ? tr('圖片') + (index + 1)
+                            : ''
+                        )
+                        .filter(Boolean),
+                      ...(project.mediaCategory === 'game' &&
+                      (row.record?.details?.bannerAssetId ?? assets[0]?.assetId) === a.assetId
+                        ? [tr('封面')]
+                        : []),
+                    ]
+                    return (
+                      <figure key={a.assetId}>
+                        <img
+                          src={'media://asset/' + row.rowId + '/' + a.assetId}
+                          alt={a.originalName}
+                        />
+                        <figcaption>{a.originalName}</figcaption>
+                        <small className="muted">
+                          {used.length ? tr('用於：{0}', used.join('、')) : tr('未使用')}
+                        </small>
+                        <Button
+                          variant="subtle"
+                          color="red"
+                          size="compact-xs"
+                          aria-label={tr('刪除圖片 ') + a.originalName}
+                          disabled={disabled || fieldDirty}
+                          onClick={() => deleteImage(a.assetId, a.originalName)}
+                        >
+                          {tr('刪除圖片')}
+                        </Button>
+                      </figure>
+                    )
+                  })}
                 </div>
-              </details>
+              </section>
             )}
           </Stack>
         </Tabs.Panel>
@@ -1027,32 +1113,16 @@ export function FolderPanel({
                 </Button>
               )}
             </section>
-            <section className="settings-section">
-              <Text fw={600} mb="sm">
-                {tr('資料範圍')}
-              </Text>
-              <Checkbox
-                label={
-                  <HelpLabel
-                    label={tr('此專案使用獨立資料')}
-                    help={tr('開啟後，修改僅用於目前專案；其他專案仍使用共用資料。')}
-                  />
-                }
-                aria-label={tr('顯式編輯本專案私有覆寫')}
-                checked={privateValues}
-                disabled={disabled}
-                onChange={(e) => {
-                  if (!fieldDirty || window.confirm(tr('切換會放棄目前欄位草稿？'))) {
-                    setValues({})
-                    setPrivate(e.currentTarget.checked)
-                  }
-                }}
-              />
-            </section>
             <details className="settings-section">
               <summary>{tr('全部已存屬性與來源')}</summary>
               <pre>{JSON.stringify(row.record, null, 2) ?? tr('沒有可攜記錄')}</pre>
             </details>
+            <Divider
+              label={tr('危險區')}
+              labelPosition="left"
+              color="red"
+              styles={{ label: { color: 'var(--mantine-color-red-5)' } }}
+            />
             <section className="settings-section cleanup-section">
               <Group gap={4} wrap="nowrap">
                 <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
