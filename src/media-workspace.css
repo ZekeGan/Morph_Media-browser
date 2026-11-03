@@ -1232,3 +1232,6 @@
 .source-link { display: inline-flex; align-items: center; gap: 3px; padding: 0; border: 0; background: transparent; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .source-link:hover { filter: brightness(1.15); }
 .source-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+.statusbar .status-problems { color: var(--muted); }
+.statusbar .status-problems.has-problems { color: var(--mantine-color-orange-5, #f08c00); font-weight: 600; }

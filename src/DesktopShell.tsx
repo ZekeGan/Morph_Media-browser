@@ -34,6 +34,7 @@ interface Props {
   onSelect: (projectId: string, rowId?: string) => boolean
   onCreate: () => void
   onProblems: () => void
+  problemCount: number
   onSettings: () => void
   onRefresh: () => void
   onProjectSettings: (projectId: string) => void
@@ -143,12 +144,51 @@ export function DesktopShell(props: Props) {
     }
   }, [])
   const prefs = workspace.prefs
+  // While the sidebar is hidden, resting the pointer on the left edge (or on its button) lays it over the page
+  // without moving anything; it goes away again when the pointer leaves or a project is picked.
+  const [peek, setPeek] = useState(false),
+    peekTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const peeking = peek && !!prefs.sidebarHidden
+  const openPeek = () => {
+    clearTimeout(peekTimer.current)
+    if (prefs.sidebarHidden) setPeek(true)
+  }
+  const closePeekSoon = () => {
+    clearTimeout(peekTimer.current)
+    peekTimer.current = setTimeout(function check() {
+      // A menu or dialog opened from the sidebar keeps it in place until it is closed.
+      const open = Array.from(
+        document.querySelectorAll(
+          '.mantine-Menu-dropdown,.mantine-Modal-content,.mantine-Popover-dropdown'
+        )
+      ).some((node) => node.getClientRects().length > 0)
+      if (open) peekTimer.current = setTimeout(check, 400)
+      else setPeek(false)
+    }, 300)
+  }
+  useEffect(() => {
+    if (!peeking) return
+    const key = (e: KeyboardEvent) => {
+      if (
+        e.key === 'Escape' &&
+        !document.querySelector('.mantine-Menu-dropdown,.mantine-Modal-content')
+      )
+        setPeek(false)
+    }
+    window.addEventListener('keydown', key)
+    return () => window.removeEventListener('keydown', key)
+  }, [peeking])
+  useEffect(() => () => clearTimeout(peekTimer.current), [])
+  const selectFromSidebar = (id: string) => {
+    props.onSelect(id)
+    setPeek(false)
+  }
   useLayoutEffect(() => {
     const slot = sidebarSlot.current
     if (!slot) return
     if (prefs.sidebarHidden && slot.contains(document.activeElement)) sidebarToggle.current?.focus()
-    slot.inert = !!prefs.sidebarHidden
-  }, [prefs.sidebarHidden])
+    slot.inert = !!prefs.sidebarHidden && !peeking
+  }, [prefs.sidebarHidden, peeking])
   // A failed settings write must not hide otherwise usable projects.
   const placements = { ...prefs.projects }
   projects.forEach((p, i) => {
@@ -278,7 +318,7 @@ export function DesktopShell(props: Props) {
         disabled={props.busy}
         title={p.root}
         aria-label={tr('開啟專案 {0}', title(p))}
-        onClick={() => props.onSelect(p.projectId)}
+        onClick={() => selectFromSidebar(p.projectId)}
       >
         <span className="project-mark">{p.error ? '!' : <Icon name="folder" />}</span>
         <span className="project-name">{title(p)}</span>
@@ -495,6 +535,8 @@ export function DesktopShell(props: Props) {
             variant="subtle"
             aria-label={tr('切換專案欄')}
             disabled={locked}
+            onMouseEnter={openPeek}
+            onMouseLeave={() => peeking && closePeekSoon()}
             onClick={() => void mutate({ action: 'layout', sidebarHidden: !prefs.sidebarHidden })}
           >
             <Icon name="panel-left" />
@@ -579,12 +621,18 @@ export function DesktopShell(props: Props) {
         </div>
       </header>
       <div className="desktop-body">
+        {!!prefs.sidebarHidden && (
+          <div className="sidebar-edge" aria-hidden="true" onMouseEnter={openPeek} />
+        )}
         <div
           ref={sidebarSlot}
           className="sidebar-slot"
           data-open={!prefs.sidebarHidden}
+          data-peek={peeking}
+          onMouseEnter={() => peeking && clearTimeout(peekTimer.current)}
+          onMouseLeave={() => peeking && closePeekSoon()}
           data-resizing={liveWidth !== undefined}
-          aria-hidden={!!prefs.sidebarHidden}
+          aria-hidden={!!prefs.sidebarHidden && !peeking}
           style={
             { '--sidebar-width': (liveWidth ?? prefs.sidebarWidth) + 'px' } as React.CSSProperties
           }
@@ -597,11 +645,26 @@ export function DesktopShell(props: Props) {
                   variant="subtle"
                   color="gray"
                   disabled={props.busy}
-                  onClick={() => props.onSelect('')}
+                  onClick={() => selectFromSidebar('')}
                 >
                   <Icon name="home" />
                 </ActionIcon>
               </Tooltip>
+              {peeking && (
+                <Tooltip label={tr('固定展開專案欄')}>
+                  <ActionIcon
+                    aria-label={tr('固定展開專案欄')}
+                    variant="subtle"
+                    color="gray"
+                    onClick={() => {
+                      setPeek(false)
+                      void mutate({ action: 'layout', sidebarHidden: false })
+                    }}
+                  >
+                    <Icon name="panel-left" />
+                  </ActionIcon>
+                </Tooltip>
+              )}
             </div>
             <div className="sidebar-groups">
               <div className="groups-title">
@@ -793,7 +856,13 @@ export function DesktopShell(props: Props) {
         <span>
           {projects.length} {tr('個已連結專案')}
         </span>
-        <button onClick={props.onProblems}>{tr('查看問題')}</button>
+        <button
+          onClick={props.onProblems}
+          className={props.problemCount ? 'status-problems has-problems' : 'status-problems'}
+          aria-label={tr('查看問題')}
+        >
+          {props.problemCount ? tr('{0} 個問題', props.problemCount) : tr('沒有問題')}
+        </button>
       </footer>
       <Modal
         opened={!!form}

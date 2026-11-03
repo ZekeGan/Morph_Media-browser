@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Problems and recovery: the status bar says how many problems there are (or that there are none); the dialog groups them (project location lost, duplicate folder ID, damaged record, recording stopped) with a plain explanation and the fixing button on each item, folder names jump to the folder, and raw error text is folded under "Technical details".
+- Project sidebar: while hidden, resting the pointer on the left edge (or its button) lays it over the page without moving anything; picking a project or Esc puts it away, and a pin button opens it for good.
 - Removed the importer for data from the very first versions (the "older data" section and dialog) and the old category names for content templates; project files keep loading, old templates under those names are just no longer used.
 - Folder details: the location shows only the last two folders (the hover title and the copy button still give the whole path).
 - Packages are written to `release/morph <version>/` (one folder per version; the 0.38.0 files moved to `release/morph 0.38.0/`).

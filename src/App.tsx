@@ -14,6 +14,7 @@ import type { ProjectImportPreview } from '../shared/project-export'
 import { Editor } from './Editor'
 import { usePlayback } from './Playback'
 import { ProjectSettings } from './ProjectSettings'
+import { ProblemsDialog, problemCount } from './ProblemsDialog'
 import { CreateProjectDialog, type CreateMode } from './CreateProjectDialog'
 import { ApplicationSettings } from './ApplicationSettings'
 import { DesktopShell } from './DesktopShell'
@@ -326,6 +327,7 @@ export function App() {
             }
           }}
           onProblems={() => setProblems(true)}
+          problemCount={problemCount(snapshot)}
           onOverlay={setShellOverlay}
           onDirty={setShellDirty}
           onSnapshot={setSnapshot}
@@ -545,34 +547,21 @@ export function App() {
           />
         )}
       </Modal>
-      <Modal
+      <ProblemsDialog
         opened={problems}
-        onClose={() => setProblems(false)}
-        title={tr('問題與復原')}
-        size="xl"
-      >
-        <Stack>
-          <p>
-            {tr(
-              '唯讀／損壞項目可從列表詳情重試或恢復；重複 ID 的副本可另配新 ID。根失效時使用「重新連結專案」。'
-            )}
-          </p>
-          {[
-            ...snapshot.problems,
-            ...rows.filter((r) => r.duplicate).map((r) => `${r.path}: ${r.error}`),
-          ].map((text, i) => (
-            <Alert key={i} color="orange">
-              {text}
-            </Alert>
-          ))}
-          {!snapshot.problems.length && !rows.some((r) => r.duplicate) && (
-            <p>{tr('目前沒有已知問題。')}</p>
-          )}
-          <Button loading={busy} onClick={() => act({ action: 'scan' })}>
-            {tr('重新掃描並重建列表')}
-          </Button>
-        </Stack>
-      </Modal>
+        close={() => setProblems(false)}
+        snapshot={snapshot}
+        busy={busy}
+        act={act}
+        relink={() => {
+          setProblems(false)
+          void beginLink()
+        }}
+        openFolder={(row) => {
+          setProblems(false)
+          openProject(row.projectId, row.rowId)
+        }}
+      />
       <Modal
         opened={!!cleanup}
         onClose={() => setCleanup(undefined)}

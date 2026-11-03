@@ -1638,10 +1638,10 @@
     "es": "Introduce una URL de Steam o un App ID"
   },
   "已停止記錄": {
-    "ja": "記録停止中",
     "zh-CN": "已停止记录",
     "en": "Recording stopped",
-    "es": "Registros detenidos"
+    "ja": "記録を停止中",
+    "es": "Registro detenido"
   },
   "資料夾設定": {
     "ja": "フォルダー設定",
@@ -6772,5 +6772,89 @@
     "en": "Data source",
     "ja": "データの出典",
     "es": "Fuente de los datos"
+  },
+  "目前沒有需要處理的問題。": {
+    "zh-CN": "目前没有需要处理的问题。",
+    "en": "Nothing needs attention right now.",
+    "ja": "現在、対応が必要な問題はありません。",
+    "es": "Ahora mismo no hay nada que atender."
+  },
+  "每一項旁邊的按鈕就是處理方式；點資料夾名稱可以直接跳過去查看。": {
+    "zh-CN": "每一项旁边的按钮就是处理方式；点文件夹名称可以直接跳过去查看。",
+    "en": "The button next to each item is how to fix it; click a folder name to jump to it.",
+    "ja": "各項目の横のボタンが対処方法です。フォルダー名をクリックするとそこへ移動します。",
+    "es": "El botón de cada elemento es la solución; haz clic en un nombre de carpeta para ir a ella."
+  },
+  "專案位置失效": {
+    "zh-CN": "项目位置失效",
+    "en": "Project location lost",
+    "ja": "プロジェクトの場所が無効",
+    "es": "Ubicación del proyecto perdida"
+  },
+  "資料夾被移動或刪除，專案找不到它。指回新的位置即可，原有設定與資料都在。": {
+    "zh-CN": "文件夹被移动或删除，项目找不到它。指回新的位置即可，原有设置与数据都在。",
+    "en": "The folder was moved or deleted and the project cannot find it. Point it at the new place; its settings and data are still there.",
+    "ja": "フォルダーが移動または削除され、プロジェクトが見つけられません。新しい場所を指定すれば、設定とデータはそのまま使えます。",
+    "es": "La carpeta se movió o se borró y el proyecto no la encuentra. Indica la nueva ubicación; sus ajustes y datos siguen ahí."
+  },
+  "重新連結專案": {
+    "zh-CN": "重新链接项目",
+    "en": "Relink project",
+    "ja": "プロジェクトを再リンク",
+    "es": "Volver a vincular el proyecto"
+  },
+  "重複的資料夾 ID": {
+    "zh-CN": "重复的文件夹 ID",
+    "en": "Duplicate folder ID",
+    "ja": "フォルダーIDの重複",
+    "es": "ID de carpeta duplicado"
+  },
+  "這些資料夾像是被複製出來的，和另一個資料夾共用同一個身分。另配新 ID 後兩者各自獨立。": {
+    "zh-CN": "这些文件夹像是被复制出来的，和另一个文件夹共用同一个身份。另配新 ID 后两者各自独立。",
+    "en": "These folders look like copies and share an identity with another folder. After giving one a new ID they are independent.",
+    "ja": "これらのフォルダーはコピーのようで、別のフォルダーと同じIDを共有しています。新しいIDを割り当てると互いに独立します。",
+    "es": "Estas carpetas parecen copias y comparten identidad con otra. Con un ID nuevo serán independientes."
+  },
+  "記錄損壞": {
+    "zh-CN": "记录损坏",
+    "en": "Damaged record",
+    "ja": "記録が破損",
+    "es": "Registro dañado"
+  },
+  "資料夾的記錄檔讀不出來。可以從上一個有效的備份恢復，原檔會保留。": {
+    "zh-CN": "文件夹的记录文件读不出来。可以从上一个有效的备份恢复，原文件会保留。",
+    "en": "The folder's record cannot be read. You can restore it from the last valid backup; the original file is kept.",
+    "ja": "フォルダーの記録ファイルを読み取れません。直前の有効なバックアップから復元できます。元のファイルは残ります。",
+    "es": "No se puede leer el registro de la carpeta. Puedes restaurarlo desde la última copia válida; el original se conserva."
+  },
+  "這些資料夾的記錄已暫停，不會更新。重新啟用後恢復記錄。": {
+    "zh-CN": "这些文件夹的记录已暂停，不会更新。重新启用后恢复记录。",
+    "en": "Records for these folders are paused and are not updated. Turn them back on to resume.",
+    "ja": "これらのフォルダーの記録は一時停止中で更新されません。再有効化すると再開します。",
+    "es": "Los registros de estas carpetas están en pausa y no se actualizan. Actívalos para reanudar."
+  },
+  "其他訊息": {
+    "zh-CN": "其他信息",
+    "en": "Other messages",
+    "ja": "その他のメッセージ",
+    "es": "Otros mensajes"
+  },
+  "重新掃描只更新列表，不會改動原始檔案。": {
+    "zh-CN": "重新扫描只更新列表，不会改动原始文件。",
+    "en": "Rescanning only refreshes the list; your original files are not touched.",
+    "ja": "再スキャンは一覧を更新するだけで、元のファイルには触れません。",
+    "es": "Volver a escanear solo actualiza la lista; los archivos originales no se tocan."
+  },
+  "{0} 個問題": {
+    "zh-CN": "{0} 个问题",
+    "en": "{0} problems",
+    "ja": "{0} 件の問題",
+    "es": "{0} problemas"
+  },
+  "沒有問題": {
+    "zh-CN": "没有问题",
+    "en": "No problems",
+    "ja": "問題なし",
+    "es": "Sin problemas"
   }
 }
