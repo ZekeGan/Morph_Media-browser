@@ -222,6 +222,7 @@ const paths = {
       <path d="m8 6 6 4-6 4ZM4 3h10a4 4 0 0 1 4 4M16 1l-2 2 2 2M16 17H6a4 4 0 0 1-4-4m2 2 2 2-2 2" />
     </>
   ),
+  external: <path d="M8 4H4v12h12v-4M11 3h6v6M17 3l-8 8" />,
   layers: <path d="m10 3-7 4 7 4 7-4zM3 11l7 4 7-4M3 14.5l7 4 7-4" />,
   layout: (
     <>

@@ -155,7 +155,10 @@ try {
         .locator('.folder-details')
         .getByRole('button', { name: '在檔案總管開啟', exact: true })
         .waitFor()
-      assert.equal(await page.locator('.folder-details-path').innerText(), '專案根目錄')
+      assert.equal(
+        path.normalize(await page.locator('.folder-details-path').innerText()),
+        path.normalize(music)
+      )
       await page.locator('.folder-details summary').click()
     }
     await page.locator('.media-thumbnail').filter({ hasText: 'embedded.mp3' }).click()

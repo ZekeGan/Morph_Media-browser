@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ActionIcon, Button, Tooltip } from '@mantine/core'
 import { fieldValue, type FolderRow, type Project } from '../shared/model'
 import { Icon } from './icons'
+import { importSources } from './importSource'
 import { t as tr, useLocale } from './i18n'
 
 // Filled values only; 0 and false are real values, empty strings and arrays are not.
@@ -30,8 +31,7 @@ export function FolderDetails({
     [copyError, setCopyError] = useState(''),
     timer = useRef(0)
   useEffect(() => () => window.clearTimeout(timer.current), [])
-  const parts = row.path.split(/[\\/]+/).filter(Boolean),
-    location = row.depth > 1 ? parts.slice(-(row.depth - 1)).join('/') : tr('專案根目錄'),
+  const sources = importSources(row),
     fields = project.fieldBindings.flatMap((field) => {
       const text = shown(fieldValue(row, field.attributeId))
       return text === undefined ? [] : [{ id: field.attributeId, label: field.alias, text }]
@@ -43,11 +43,7 @@ export function FolderDetails({
         <div className="folder-details-row">
           <dt>{tr('位置')}</dt>
           <dd>
-            <Tooltip label={row.path} events={{ hover: true, focus: true, touch: false }}>
-              <span className="folder-details-path" tabIndex={0}>
-                {location}
-              </span>
-            </Tooltip>
+            <span className="folder-details-path">{row.path}</span>
             <Tooltip label={copied ? tr('已複製') : tr('複製完整路徑')}>
               <ActionIcon
                 variant="subtle"
@@ -82,6 +78,35 @@ export function FolderDetails({
             </Tooltip>
           </dd>
         </div>
+        {!!sources.length && (
+          <div className="folder-details-row">
+            <dt>{tr('資料來源')}</dt>
+            <dd>
+              <span className="folder-details-sources">
+                {sources.map((source, index) => (
+                  <span key={source.name}>
+                    {index > 0 && '、'}
+                    <button
+                      type="button"
+                      className="source-link"
+                      onClick={async () => {
+                        try {
+                          await window.explorer.request({ action: 'openExternal', url: source.url })
+                          setCopyError('')
+                        } catch (error) {
+                          setCopyError(String(error))
+                        }
+                      }}
+                    >
+                      {source.name}
+                      <Icon name="external" size={12} />
+                    </button>
+                  </span>
+                ))}
+              </span>
+            </dd>
+          </div>
+        )}
         {fields.map((field) => (
           <div className="folder-details-row" key={field.id}>
             <dt title={field.label}>{field.label}</dt>

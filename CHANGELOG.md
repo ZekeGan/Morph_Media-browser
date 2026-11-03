@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Folder details: the location now shows the folder's full path (wrapping instead of only its name), and a "Data source" row lists the website(s) the data was imported from as links that open in the browser (on every kind of folder page); the line above the game field table is gone and its rows name the site instead.
 - Game field table: imported fields show plain names (Source URL, Circle / brand ID, Work ID, …; the stored code is a hover hint), the source column shows the site's name instead of repeating the whole address on every row, and a "Data from: DLsite" line above the table names the site once (rows from other places, such as typed by hand, still say so).
 - Folder settings: explanations that only matter sometimes moved into "?" hints (folder type reason, layout priority, shared / this-project effect, settings backup scope, per-type default layouts); the layout dropdown's first option now names the layout in force. The scan-boundary block says in plain words what was found and what each button does, with the raw detection evidence tucked under "Why it was detected".
 - Selecting and un-selecting a folder is instant: a folder that can be visited as-is is shown in the panel at once while its visit runs behind it (a refused visit goes back to the previous folder), and clearing the selection no longer waits for a double-click timer.

@@ -1219,5 +1219,16 @@
 .boundary-evidence summary { cursor: pointer; }
 .boundary-evidence ul { margin: 6px 0 0; padding-left: 18px; }
 
-.import-source { margin: 2px 2px 6px; }
-.import-source span { color: var(--text); border-bottom: 1px dotted var(--muted); cursor: help; }
+/* The folder's full path wraps instead of cutting off the end, which is the folder's own name. */
+.folder-details dd > .folder-details-path { white-space: normal; overflow-wrap: anywhere; overflow: visible; text-overflow: clip; font-size: 13px; }
+.folder-details-sources { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 2px; white-space: normal !important; }
+.source-link { display: inline-flex; align-items: center; gap: 3px; padding: 0; border: 0; background: transparent; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.source-link:hover { filter: brightness(1.15); }
+.source-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* The folder's full path wraps instead of cutting off the end, which is the folder's own name. */
+.folder-details dd > .folder-details-path { white-space: normal; overflow-wrap: anywhere; overflow: visible; text-overflow: clip; font-size: 13px; }
+.folder-details-sources { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 2px; white-space: normal !important; }
+.source-link { display: inline-flex; align-items: center; gap: 3px; padding: 0; border: 0; background: transparent; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.source-link:hover { filter: brightness(1.15); }
+.source-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }

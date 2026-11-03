@@ -4511,12 +4511,6 @@
     "ja": "フルパスをコピー",
     "es": "Copiar ruta completa"
   },
-  "專案根目錄": {
-    "zh-CN": "项目根目录",
-    "en": "Project root",
-    "ja": "プロジェクトのルート",
-    "es": "Raíz del proyecto"
-  },
   "共 {0} 項": {
     "zh-CN": "共 {0} 项",
     "en": "{0} items",
@@ -6719,12 +6713,6 @@
     "ja": "判定の根拠",
     "es": "Por qué se detectó"
   },
-  "資料來源：": {
-    "zh-CN": "数据来源：",
-    "en": "Data from: ",
-    "ja": "データの出典：",
-    "es": "Datos de: "
-  },
   "手動": {
     "zh-CN": "手动",
     "en": "Manual",
@@ -6778,5 +6766,11 @@
     "en": "Cover status",
     "ja": "カバーの状態",
     "es": "Estado de la portada"
+  },
+  "資料來源": {
+    "zh-CN": "数据来源",
+    "en": "Data source",
+    "ja": "データの出典",
+    "es": "Fuente de los datos"
   }
 }
