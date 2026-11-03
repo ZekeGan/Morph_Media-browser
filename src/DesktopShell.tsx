@@ -858,6 +858,9 @@ export function DesktopShell(props: Props) {
         <span>
           {projects.length} {tr('個已連結專案')}
         </span>
+        <span className="status-version" title={tr('應用程式版本')}>
+          v{__APP_VERSION__}
+        </span>
         <button
           onClick={props.onProblems}
           className={props.problemCount ? 'status-problems has-problems' : 'status-problems'}

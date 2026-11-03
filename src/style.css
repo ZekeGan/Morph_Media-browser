@@ -316,3 +316,4 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
   .project-actions, .group-actions, .row-info, .folder-table th .column-hide, .section-chevron { transition: none; }
   .section-projects, .panel-scrim, .statusbar > span:first-child, .mantine-Tabs-panel { animation: none; }
 }
+.statusbar .status-version { color: var(--muted); }

@@ -359,6 +359,9 @@ export function ApplicationSettings({
           </Stack>
         </Tabs.Panel>
       </Tabs>
+      <Text size="xs" c="dimmed" mt="md" ta="right" className="app-version">
+        M:orph {__APP_VERSION__}
+      </Text>
     </Modal>
   )
 }

@@ -6934,5 +6934,11 @@
     "en": "These are game folders: a record is only made at the game's root and nothing is written inside. This is not an error.",
     "ja": "これらはゲームフォルダーです。記録はゲームのルートの階層にだけ作られ、内部には何も書き込まれません。エラーではありません。",
     "es": "Son carpetas de juegos: solo se crea un registro en la raíz del juego y no se escribe nada dentro. No es un error."
+  },
+  "應用程式版本": {
+    "zh-CN": "应用程序版本",
+    "en": "Application version",
+    "ja": "アプリのバージョン",
+    "es": "Versión de la aplicación"
   }
 }
