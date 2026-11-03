@@ -142,7 +142,6 @@ export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
         (b.filePresentation !== undefined &&
           !['tiles', 'groups', 'list'].includes(b.filePresentation)) ||
         (b.fileScope !== undefined && !['current', 'descendants'].includes(b.fileScope)) ||
-        (b.fileRootId !== undefined && !key(b.fileRootId)) ||
         (b.gameFilter !== undefined && !['all', 'boundaries'].includes(b.gameFilter)) ||
         (b.media !== undefined &&
           (!object(b.media) ||

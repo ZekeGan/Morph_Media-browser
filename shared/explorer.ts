@@ -30,7 +30,6 @@ export interface BrowseState {
   // Game projects: show every folder or only the ones that are game boundaries.
   gameFilter?: 'all' | 'boundaries'
   media?: MediaPrefs
-  fileRootId?: string
   scroll?: number
   scrolls?: Partial<Record<BrowseMode, number>>
   viewport?: { x: number; y: number; zoom: number }

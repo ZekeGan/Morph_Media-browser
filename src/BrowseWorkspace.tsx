@@ -326,7 +326,6 @@ export function BrowseWorkspace({
     persist({
       ...state.current,
       detailId: id,
-      ...(state.current.contentMode === 'files' ? { fileRootId: id } : {}),
     })
     if (navigable) {
       if (fromHistory !== undefined) {
@@ -512,8 +511,7 @@ export function BrowseWorkspace({
   }
   const deepest = maxBrowseDepth(all),
     crumbs = folderBreadcrumbs(all, root, currentFolder?.path ?? root)
-  const overviewRoot =
-    all.find((row) => row.rowId === browse.fileRootId) ?? currentFolder ?? rootRow
+  const overviewRoot = currentFolder ?? rootRow
   const folderMode = browse.contentMode !== 'files'
   const hasGames = all.some(isGameFolder)
   const panelOpen = !!detail && browse.panelVisible !== false
@@ -670,6 +668,18 @@ export function BrowseWorkspace({
     setHighlight(id)
     persist({ ...state.current, panelVisible: true })
   }
+  // The files view lists what is under the folder shown in the path bar. Switching to it from a selected folder
+  // goes there first, so both views always describe the same place.
+  const switchContent = async (value: 'folders' | 'files') => {
+    setFilePreview(undefined)
+    if (value === 'files' && highlight && highlight !== currentFolder?.rowId) await open(highlight)
+    persist({
+      ...state.current,
+      contentMode: value,
+      filePresentation: state.current.filePresentation ?? 'tiles',
+      fileScope: state.current.fileScope ?? 'descendants',
+    })
+  }
   const togglePanel = () => {
     if (panelSlot.current?.contains(document.activeElement)) panelToggle.current?.focus()
     setExpanded(false)
@@ -708,10 +718,10 @@ export function BrowseWorkspace({
           currentFolder={currentFolder}
           deepest={deepest}
           density={density}
-          detail={detail}
           display={display}
           edit={edit}
           folderMode={folderMode}
+          switchContent={switchContent}
           hasGames={hasGames}
           openConfig={openConfig}
           orderedColumns={orderedColumns}
@@ -724,7 +734,6 @@ export function BrowseWorkspace({
           setColumnQuery={setColumnQuery}
           setDensity={setDensity}
           setDisplay={setDisplay}
-          setFilePreview={setFilePreview}
           setOverviewTools={setOverviewTools}
           setPage={setPage}
           state={state}
@@ -783,19 +792,24 @@ export function BrowseWorkspace({
               )}
             </Breadcrumbs>
           </nav>
-          <small className="view-count" title={tr('Ctrl／Shift 點選可多選資料夾，再批次指定類型')}>
-            {filtered.length} {tr('筆')}
-            {browse.mode === 'CARD'
-              ? ' · ' +
-                (card.mode === 'multi' ? tr('多層') : tr('單層')) +
-                ' · ' +
-                (card.level === 'all'
-                  ? tr('全部（最深第 ') + deepest + tr(' 層）')
-                  : card.mode === 'multi'
-                    ? tr('第 1–') + card.level + tr(' 層')
-                    : tr('第 ') + card.level + tr(' 層'))
-              : ''}
-          </small>
+          {folderMode && (
+            <small
+              className="view-count"
+              title={tr('Ctrl／Shift 點選可多選資料夾，再批次指定類型')}
+            >
+              {filtered.length} {tr('筆')}
+              {browse.mode === 'CARD'
+                ? ' · ' +
+                  (card.mode === 'multi' ? tr('多層') : tr('單層')) +
+                  ' · ' +
+                  (card.level === 'all'
+                    ? tr('全部（最深第 ') + deepest + tr(' 層）')
+                    : card.mode === 'multi'
+                      ? tr('第 1–') + card.level + tr(' 層')
+                      : tr('第 ') + card.level + tr(' 層'))
+                : ''}
+            </small>
+          )}
         </div>
         <div
           className="browse-main"
@@ -821,7 +835,6 @@ export function BrowseWorkspace({
             <FileOverview
               toolbarTarget={overviewTools}
               root={overviewRoot}
-              folders={all}
               scope={browse.fileScope ?? 'descendants'}
               presentation={browse.filePresentation ?? 'tiles'}
               busy={busy}

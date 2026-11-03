@@ -3623,12 +3623,6 @@
     "en": "Cannot load file overview",
     "es": "No se pudo cargar la vista de archivos"
   },
-  "檔案總覽範圍資料夾": {
-    "ja": "ファイル一覧の対象フォルダー",
-    "zh-CN": "文件总览范围文件夹",
-    "en": "File overview source folder",
-    "es": "Carpeta de origen de la vista"
-  },
   "檔案總覽範圍": {
     "ja": "ファイル一覧の範囲",
     "zh-CN": "文件总览范围",

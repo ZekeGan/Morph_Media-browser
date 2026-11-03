@@ -2,19 +2,17 @@ import { visibleFile } from '../shared/media'
 import { useFileVisibility } from './useFileVisibility'
 import { createPortal } from 'react-dom'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Alert, Group, Loader, SegmentedControl, Select, Text, Tooltip } from '@mantine/core'
+import { Alert, Group, Loader, SegmentedControl, Select, Text } from '@mantine/core'
 import type { FolderRow } from '../shared/model'
 import type { OverviewEntry } from '../shared/explorer'
 import { Icon } from './icons'
 import { useRefreshNonce } from './refresh'
-import { orderedFileFolders } from '../shared/browse'
 import { t as tr, useLocale } from './i18n'
 
 type Presentation = 'tiles' | 'groups' | 'list'
 export function FileOverview({
   toolbarTarget,
   root,
-  folders,
   scope,
   presentation,
   busy,
@@ -24,7 +22,6 @@ export function FileOverview({
 }: {
   toolbarTarget: HTMLDivElement | null
   root: FolderRow
-  folders: FolderRow[]
   scope: 'current' | 'descendants'
   presentation: Presentation
   busy: boolean
@@ -34,24 +31,6 @@ export function FileOverview({
 }) {
   const locale = useLocale()
   const { visibility } = useFileVisibility()
-  const folderOptions = useMemo(() => {
-    const base =
-      folders.reduce<FolderRow | undefined>(
-        (first, folder) => (!first || folder.depth < first.depth ? folder : first),
-        undefined
-      )?.path ?? root.path
-    return orderedFileFolders(folders).map((folder) => ({
-      value: folder.rowId,
-      label: folder.name,
-      path: folder.path,
-      relative: folder.path.slice(base.length).replace(/^[/\\]+/, '') || folder.name,
-    }))
-  }, [folders, root.path])
-  const folderById = useMemo(
-    () => new Map(folderOptions.map((folder) => [folder.value, folder])),
-    [folderOptions]
-  )
-  const [keyboardPath, setKeyboardPath] = useState('')
   const [entries, setEntries] = useState<OverviewEntry[]>([]),
     [notices, setNotices] = useState<string[]>([]),
     [loading, setLoading] = useState(false),
@@ -115,7 +94,13 @@ export function FileOverview({
   )
   const columns = presentation === 'list' ? 1 : Math.max(1, Math.floor((view.width - 20) / 160))
   const layout = useMemo(() => {
-    const rows: { top: number; height: number; label?: string; entries: OverviewEntry[] }[] = []
+    const rows: {
+      top: number
+      height: number
+      label?: string
+      rowId?: string
+      entries: OverviewEntry[]
+    }[] = []
     let top = 0
     const append = (items: OverviewEntry[]) => {
       for (let index = 0; index < items.length; index += columns) {
@@ -136,6 +121,7 @@ export function FileOverview({
           top,
           height: 38,
           label: label + ' · ' + tr('{0} 個檔案', group.length),
+          rowId: group[0].rowId,
           entries: [],
         })
         top += 38
@@ -152,67 +138,6 @@ export function FileOverview({
       {toolbarTarget &&
         createPortal(
           <Group className="file-overview-toolbar" gap="sm">
-            <Tooltip
-              label={keyboardPath}
-              opened={!!keyboardPath}
-              position="top-start"
-              multiline
-              maw={420}
-            >
-              <Select
-                className="overview-folder-select"
-                classNames={{ dropdown: 'overview-folder-dropdown' }}
-                aria-label={tr('檔案總覽範圍資料夾')}
-                title={root.path}
-                searchable
-                limit={100}
-                maxDropdownHeight={300}
-                nothingFoundMessage={tr('找不到符合的資料夾')}
-                allowDeselect={false}
-                value={root.rowId}
-                data={folderOptions}
-                onKeyUp={(event) => {
-                  const id = event.currentTarget.getAttribute('aria-activedescendant')
-                  setKeyboardPath(
-                    id
-                      ? (document
-                          .getElementById(id)
-                          ?.querySelector<HTMLElement>('.overview-folder-option')?.title ?? '')
-                      : ''
-                  )
-                }}
-                onDropdownClose={() => setKeyboardPath('')}
-                onBlur={() => setKeyboardPath('')}
-                onPointerMove={() => setKeyboardPath('')}
-                filter={({ options, search, limit }) => {
-                  const query = search.toLocaleLowerCase().trim()
-                  return options
-                    .filter((option) => {
-                      const folder = 'value' in option ? folderById.get(option.value) : undefined
-                      return (
-                        folder &&
-                        (folder.label + ' ' + folder.path).toLocaleLowerCase().includes(query)
-                      )
-                    })
-                    .slice(0, limit)
-                }}
-                renderOption={({ option }) => {
-                  const folder = folderById.get(option.value)!
-                  return (
-                    <span
-                      className="overview-folder-option"
-                      title={folder.path}
-                      aria-label={folder.path}
-                    >
-                      <strong>{folder.label}</strong>
-                      <small>{folder.relative}</small>
-                    </span>
-                  )
-                }}
-                onChange={(id) => id && chooseRoot(id)}
-                disabled={busy}
-              />
-            </Tooltip>
             <SegmentedControl
               aria-label={tr('檔案總覽範圍')}
               value={scope}
@@ -299,15 +224,15 @@ export function FileOverview({
               }}
             >
               {row.label ? (
-                <Text
-                  size="xs"
-                  fw={600}
-                  className="path"
-                  style={{ gridColumn: '1/-1' }}
-                  title={row.label}
+                <button
+                  type="button"
+                  className="file-overview-group path"
+                  title={tr('進入此資料夾')}
+                  disabled={busy || !row.rowId || row.rowId === root.rowId}
+                  onClick={() => row.rowId && chooseRoot(row.rowId)}
                 >
                   {row.label}
-                </Text>
+                </button>
               ) : (
                 row.entries.map((entry) => (
                   <button

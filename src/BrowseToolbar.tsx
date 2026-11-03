@@ -29,10 +29,10 @@ type Props = {
   currentFolder?: FolderRow
   deepest: number
   density: { itemsPerRow: number | string; pageSize: number | string }
-  detail?: FolderRow
   display: ReturnType<typeof cardDisplay>
   edit: (category?: string) => void
   folderMode: boolean
+  switchContent: (value: 'folders' | 'files') => void
   hasGames: boolean
   openConfig: (id: string, tab?: string) => void
   orderedColumns: { id: string; label: string }[]
@@ -45,7 +45,6 @@ type Props = {
   setColumnQuery: (value: string) => void
   setDensity: (value: { itemsPerRow: number | string; pageSize: number | string }) => void
   setDisplay: (value: ReturnType<typeof cardDisplay>) => void
-  setFilePreview: (value: undefined) => void
   setOverviewTools: (element: HTMLDivElement | null) => void
   setPage: (page: number) => void
   state: { current: BrowseState }
@@ -64,10 +63,10 @@ export function BrowseToolbar(props: Props) {
     currentFolder,
     deepest,
     density,
-    detail,
     display,
     edit,
     folderMode,
+    switchContent,
     hasGames,
     openConfig,
     orderedColumns,
@@ -80,7 +79,6 @@ export function BrowseToolbar(props: Props) {
     setColumnQuery,
     setDensity,
     setDisplay,
-    setFilePreview,
     setOverviewTools,
     setPage,
     state,
@@ -91,24 +89,32 @@ export function BrowseToolbar(props: Props) {
       <div className={'workspace-toolbar' + (folderMode ? '' : ' file-mode-toolbar')}>
         <div className="toolbar-left">
           <SegmentedControl
+            className="content-switch"
             aria-label={tr('展示內容')}
-            size="xs"
+            size="sm"
             value={browse.contentMode ?? 'folders'}
             disabled={busy || !ready}
             data={[
-              { value: 'folders', label: tr('資料夾') },
-              { value: 'files', label: tr('檔案') },
+              {
+                value: 'folders',
+                label: (
+                  <span className="content-switch-label">
+                    <Icon name="folder" size={15} />
+                    {tr('資料夾')}
+                  </span>
+                ),
+              },
+              {
+                value: 'files',
+                label: (
+                  <span className="content-switch-label">
+                    <Icon name="file" size={15} />
+                    {tr('檔案')}
+                  </span>
+                ),
+              },
             ]}
-            onChange={(value) => {
-              setFilePreview(undefined)
-              persist({
-                ...state.current,
-                contentMode: value as 'folders' | 'files',
-                fileRootId: detail?.rowId ?? currentFolder?.rowId,
-                filePresentation: state.current.filePresentation ?? 'tiles',
-                fileScope: state.current.fileScope ?? 'descendants',
-              })
-            }}
+            onChange={(value) => switchContent(value as 'folders' | 'files')}
           />
           {folderMode && browse.mode === 'CARD' && (
             <>

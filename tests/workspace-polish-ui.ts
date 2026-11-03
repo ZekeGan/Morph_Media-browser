@@ -330,51 +330,11 @@ try {
       )
       await page.emulateMedia({ reducedMotion: 'no-preference' })
     }
-    // Long paths and duplicate names remain compact, searchable and keyboard operable.
+    // The files view follows the path bar and stays usable in a narrow window.
     await page.locator('[aria-label="展示內容"]').getByText('檔案', { exact: true }).click()
-    const picker = page.getByRole('textbox', { name: '檔案總覽範圍資料夾', exact: true })
-    await picker.click()
-    await picker.fill('no-such-folder-__')
-    await page.getByText('找不到符合的資料夾', { exact: true }).waitFor()
-    await picker.click()
-    await picker.fill('Same-name')
-    await page.getByRole('option').first().waitFor()
-    assert.equal(await page.getByRole('option').count(), 100)
-    assert.ok((await page.getByRole('option').first().boundingBox())!.height < 65)
-    assert.ok(
-      await page.locator('.overview-folder-dropdown').evaluate((element) => {
-        const dropdown = element.getBoundingClientRect()
-        return [...element.querySelectorAll('.overview-folder-option')].every(
-          (option) => option.getBoundingClientRect().right <= dropdown.right
-        )
-      }),
-      'long paths must ellipsize within the dropdown, not extend its internal table'
-    )
-    await picker.fill('Folder-139')
-    await page.waitForFunction(
-      () =>
-        [...document.querySelectorAll('[role=option]')].filter(
-          (element) => element.getBoundingClientRect().height > 0
-        ).length === 2
-    )
-    await picker.press('ArrowDown')
-    await page.getByRole('tooltip').filter({ hasText: 'Folder-139' }).waitFor()
-    await picker.press('Enter')
-    await page.getByRole('listbox').waitFor({ state: 'hidden' })
-    await page.waitForFunction(() =>
-      document
-        .querySelector<HTMLInputElement>('[aria-label="檔案總覽範圍資料夾"]')
-        ?.title.includes('Folder-139')
-    )
     await resize(800, 700)
-    // At this width the open right panel becomes an overlay with a scrim over the toolbar.
     if (await button('關閉資料夾內容').isVisible()) await button('關閉資料夾內容').click()
-    await picker.click()
-    await picker.fill('Same-name')
-    await page.getByRole('option').first().waitFor()
-    assert.ok((await page.getByRole('listbox').boundingBox())!.height <= 310)
-    await page.screenshot({ path: path.join(screens, 'folder-picker.png') })
-    await picker.press('Escape')
+    await page.screenshot({ path: path.join(screens, 'file-view-narrow.png') })
     await resize(1440)
     await page.locator('[aria-label="展示內容"]').getByText('資料夾', { exact: true }).click()
   }
@@ -495,32 +455,6 @@ try {
 } catch (error) {
   await page.screenshot({ path: path.join(screens, 'failure.png') }).catch(() => {})
   console.error('ARTIFACTS ' + root)
-  console.error(
-    await page.locator('.overview-folder-dropdown').evaluateAll((elements) =>
-      elements.flatMap((element) =>
-        [element, ...element.querySelectorAll('div,span,strong,small')]
-          .slice(0, 12)
-          .map((item) => ({
-            tag: item.tagName,
-            cls: item.className,
-            style: item.getAttribute('style'),
-            display: getComputedStyle(item).display,
-            width: getComputedStyle(item).width,
-            left: item.getBoundingClientRect().left,
-            right: item.getBoundingClientRect().right,
-          }))
-      )
-    )
-  )
-  console.error(
-    await page.locator('[role=option]').evaluateAll((elements) =>
-      elements.map((element) => ({
-        text: element.textContent,
-        role: element.getAttribute('role'),
-        height: element.getBoundingClientRect().height,
-      }))
-    )
-  )
   throw error
 } finally {
   await app

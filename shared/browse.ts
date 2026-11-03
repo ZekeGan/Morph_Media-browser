@@ -15,17 +15,6 @@ export const maxBrowseDepth = (rows: FolderRow[]) =>
         : depth,
     1
   )
-export function orderedFileFolders(rows: FolderRow[]) {
-  const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0)
-  return rows
-    .filter((row) => row.record && !row.readonly && !row.error && !row.stopped)
-    .sort(
-      (a, b) =>
-        a.depth - b.depth ||
-        compare(a.name, b.name) ||
-        compare(a.path.replaceAll('\\', '/'), b.path.replaceAll('\\', '/'))
-    )
-}
 export function folderBreadcrumbs(rows: FolderRow[], root: string, target: string) {
   const rootKey = pathKey(root),
     targetKey = pathKey(target)

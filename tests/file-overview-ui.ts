@@ -65,7 +65,6 @@ for (const category of ['album', 'video'] as const) {
         contentMode: 'files',
         filePresentation: 'tiles',
         fileScope: 'descendants',
-        fileRootId: row.rowId,
         detailId: row.rowId,
       },
     },

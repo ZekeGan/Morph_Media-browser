@@ -1176,3 +1176,8 @@
 .row-info:hover { color: var(--text); background: var(--soft); }
 .panel-switch-alert { margin-bottom: 10px; }
 @media (hover: none) { .card-info, .row-info { opacity: 1; } }
+
+.content-switch-label { display: inline-flex; align-items: center; gap: 5px; }
+.file-overview-group { grid-column: 1 / -1; text-align: left; border: 0; background: transparent; color: var(--text); font-size: 12px; font-weight: 600; padding: 4px 0; cursor: pointer; }
+.file-overview-group:disabled { cursor: default; color: var(--muted); }
+.file-overview-group:not(:disabled):hover { text-decoration: underline; }

@@ -5,13 +5,8 @@ import path from 'node:path'
 import { Library } from '../electron/library'
 import { WorkspaceStore } from '../electron/workspace'
 import { ensureFolder, exists, folderFile, projectFile } from '../electron/files'
-import { DATA_DIR, validateProject, type FolderRow } from '../shared/model'
-import {
-  browserRows,
-  folderBreadcrumbs,
-  maxBrowseDepth,
-  orderedFileFolders,
-} from '../shared/browse'
+import { DATA_DIR, validateProject } from '../shared/model'
+import { browserRows, folderBreadcrumbs, maxBrowseDepth } from '../shared/browse'
 import { editorFields, saveCardPreset } from '../shared/layouts'
 async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
   const base = path.resolve('.test-output')
@@ -28,25 +23,6 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
   await lib.init()
   return { root, media, lib }
 }
-test('file folder picker sorts valid folders by depth then code units, before limiting results', () => {
-  const row = (name: string, depth: number, path: string, extra = {}) =>
-    ({ rowId: path, name, depth, path, record: {}, ...extra }) as FolderRow
-  const rows = [
-    row('a', 3, 'R/z/a'),
-    row('a', 2, 'R/a'),
-    row('10', 2, 'R/10'),
-    row('2', 2, 'R/2'),
-    row('A', 2, 'R/A'),
-    row('a', 2, 'R/Z/a'),
-    row('R', 1, 'R'),
-    row('hidden', 1, 'R/hidden', { readonly: true }),
-  ]
-  assert.deepEqual(
-    orderedFileFolders(rows).map((r) => r.path),
-    ['R', 'R/10', 'R/2', 'R/A', 'R/Z/a', 'R/a', 'R/z/a']
-  )
-  assert.equal(rows[0].path, 'R/z/a')
-})
 test('all-depth inventory and independent CARD/TREE/TABLE display; presets keep density', async (t) => {
   const { media, lib } = await fixture(t)
   await fs.mkdir(path.join(media, 'A', 'B', 'C'), { recursive: true })

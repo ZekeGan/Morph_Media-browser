@@ -237,12 +237,6 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .document-viewer{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:12px;box-shadow:0 16px 64px #0005}.document-viewer iframe{flex:1;width:100%;border:0;min-height:0}
 
 /* Keep long folder paths from consuming the searchable list's viewport. */
-.overview-folder-select { min-width:160px; flex:1 1 240px; max-width:420px; }
-.overview-folder-dropdown .mantine-ScrollArea-content { width:100%; min-width:0; }
-.overview-folder-option { display:flex; flex:1; flex-direction:column; min-width:0; overflow:hidden; width:100%; gap:2px; }
-.overview-folder-option strong,.overview-folder-option small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.overview-folder-option strong { font-size:13px; font-weight:500; }
-.overview-folder-option small { font-size:11px; color:var(--muted); }
 .scheme-toolbar > .mantine-Select-root { flex:0 1 300px; min-width:140px; max-width:100%; }
 .scheme-toolbar > .mantine-Button-root,.scheme-toolbar > .mantine-ActionIcon-root { flex-shrink:0; height:36px; }
 
