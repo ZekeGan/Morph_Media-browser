@@ -384,8 +384,7 @@ try {
     )) {
       await button('應用程式設定').click()
       await page.locator('.theme-option').nth(index).click()
-      if (await button('保存外觀設定').isEnabled()) await button('保存外觀設定').click()
-      else await button('取消').click()
+      await page.keyboard.press('Escape')
       await page.locator('[role=dialog]').waitFor({ state: 'hidden' })
       await edit()
       await page.locator('.scheme-toolbar').waitFor()
@@ -403,7 +402,7 @@ try {
           )
       )
       await page.screenshot({ path: path.join(screens, `scheme-${theme}.png`) })
-      await button('取消').click()
+      await page.keyboard.press('Escape')
       await page.keyboard.press('Control+k')
       await page.locator('.folder-search-dialog').waitFor()
       await page.locator('.search-footer button').first().focus()
@@ -433,8 +432,7 @@ try {
         })
         .click()
       locale = next
-      if (await button('保存外觀設定').isEnabled()) await button('保存外觀設定').click()
-      else await button('取消').click()
+      await page.keyboard.press('Escape')
       await resize(800, 700)
       if (await button('關閉資料夾內容').isVisible()) await button('關閉資料夾內容').click()
       await edit()
@@ -453,7 +451,7 @@ try {
           })
       )
       assert.ok(visible)
-      await button('取消').click()
+      await page.keyboard.press('Escape')
       await page.keyboard.press('Control+k')
       await page.locator('.folder-search-dialog').waitFor()
       assert.ok(

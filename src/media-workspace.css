@@ -1166,3 +1166,13 @@
 .kind-batch-bar .mantine-Select-root { width: 150px; }
 .folder-card.marked, .folder-table tr.marked { outline: 2px solid var(--accent); outline-offset: -2px; background: var(--selected); }
 .folder-card, .folder-table tr { user-select: none; }
+
+/* Opens the right panel for one folder when the panel is hidden. */
+.folder-card { position: relative; }
+.card-info { position: absolute; top: 6px; right: 6px; z-index: 1; opacity: 0; transition: opacity .12s; }
+.folder-card:hover .card-info, .folder-card:focus-within .card-info, .card-info:focus-visible { opacity: 1; }
+.row-info { margin-left: 8px; padding: 2px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; vertical-align: middle; opacity: 0; }
+.folder-table tr:hover .row-info, .folder-table tr:focus-within .row-info, .row-info:focus-visible { opacity: 1; }
+.row-info:hover { color: var(--text); background: var(--soft); }
+.panel-switch-alert { margin-bottom: 10px; }
+@media (hover: none) { .card-info, .row-info { opacity: 1; } }

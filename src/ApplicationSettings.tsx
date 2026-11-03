@@ -1,10 +1,11 @@
 import type { SettingsImportPreview } from '../shared/workspace'
 import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
-import { useEffect, useState, type ReactNode } from 'react'
-import { Alert, Button, Group, Modal, Select, Stack, Switch, Tabs, Text } from '@mantine/core'
+import { useEffect, useState } from 'react'
+import { Accordion, Alert, Button, Group, Modal, Select, Stack, Tabs, Text } from '@mantine/core'
 import { localeOptions, type LocaleId } from '../shared/locales'
 import { themes, useAppTheme } from './themes/ThemeProvider'
+import type { ThemeId } from '../shared/themes'
 import { flushSync } from 'react-dom'
 import { Icon } from './icons'
 
@@ -12,29 +13,34 @@ export function ApplicationSettings({
   opened,
   close,
   onDirty,
-  maintenance,
+  actions,
 }: {
   opened: boolean
   close: () => void
   onDirty: (value: boolean) => void
-  maintenance: ReactNode
+  actions: {
+    busy: boolean
+    legacyAvailable: boolean
+    relink: () => void
+    importProject: () => void
+    legacy: () => void
+    cleanAll: () => void
+  }
 }) {
   useLocale()
 
   const appearance = useAppTheme(),
     [saving, setSaving] = useState(false),
     [error, setError] = useState('')
-  const [autoOpenContent, setAutoOpenContent] = useState(false),
-    [importPreview, setImportPreview] = useState<SettingsImportPreview>(),
+  const [importPreview, setImportPreview] = useState<SettingsImportPreview>(),
     [importMode, setImportMode] = useState<'merge' | 'replace'>('merge'),
     [backups, setBackups] = useState<{ id: string; createdAt: string }[]>([]),
     [transferResult, setTransferResult] = useState('')
-  const dirty =
-    appearance.theme !== appearance.saved || appearance.locale !== appearance.savedLocale
+  const [applied, setApplied] = useState(false)
   useEffect(() => {
-    onDirty(opened && (dirty || !!importPreview))
+    onDirty(opened && !!importPreview)
     return () => onDirty(false)
-  }, [opened, dirty, importPreview, onDirty])
+  }, [opened, importPreview, onDirty])
   useEffect(() => {
     if (opened) {
       setError('')
@@ -44,20 +50,29 @@ export function ApplicationSettings({
         .updateWorkspace({ action: 'listBackups' })
         .then((state) => setBackups(state.backups ?? []))
         .catch((reason) => setError(String(reason)))
-      void window.desktop
-        .workspace()
-        .then((state) => setAutoOpenContent(state.prefs.autoOpenContent === true))
-        .catch((reason) => setError(String(reason)))
+      setApplied(false)
     }
   }, [opened])
-  const cancel = () => {
-    appearance.preview(appearance.saved)
-    appearance.previewLocale(appearance.savedLocale)
-    close()
-  }
   const requestClose = () => {
-    if (!saving && ((!dirty && !importPreview) || window.confirm(tr('放棄尚未保存的外觀變更？'))))
-      cancel()
+    if (!saving && (!importPreview || window.confirm(tr('放棄尚未套用的設定匯入？')))) close()
+  }
+  // Language and theme apply as soon as they are chosen; a failed save puts the saved choice back.
+  const apply = async (theme: ThemeId, locale: LocaleId) => {
+    setSaving(true)
+    setError('')
+    setApplied(false)
+    appearance.preview(theme)
+    appearance.previewLocale(locale)
+    try {
+      await appearance.save(theme, locale)
+      setApplied(true)
+    } catch (reason) {
+      appearance.preview(appearance.saved)
+      appearance.previewLocale(appearance.savedLocale)
+      setError(String(reason))
+    } finally {
+      setSaving(false)
+    }
   }
   const transferLabels: Record<string, string> = {
     groups: tr('群組'),
@@ -70,7 +85,6 @@ export function ApplicationSettings({
     sections: tr('群組順序'),
     projectOrder: tr('專案順序'),
     videoAudio: tr('影片音量'),
-    autoOpenContent: tr('自動開啟資料夾內容'),
   }
   const formatPreference = (value: unknown, field: string): string => {
     if (value === undefined) return tr('未設定')
@@ -141,18 +155,6 @@ export function ApplicationSettings({
       setSaving(false)
     }
   }
-  const save = async () => {
-    setSaving(true)
-    setError('')
-    try {
-      await appearance.save(appearance.theme, appearance.locale)
-      close()
-    } catch (e) {
-      setError(String(e))
-    } finally {
-      setSaving(false)
-    }
-  }
   return (
     <Modal
       opened={opened}
@@ -164,41 +166,33 @@ export function ApplicationSettings({
       closeOnClickOutside={!saving}
       closeOnEscape={!saving}
     >
-      <Tabs defaultValue="appearance" keepMounted>
+      <Tabs defaultValue="general" keepMounted>
         <Tabs.List>
-          <Tabs.Tab value="appearance" leftSection={<Icon name="sliders" />}>
-            {tr('外觀')}
+          <Tabs.Tab value="general" leftSection={<Icon name="sliders" />}>
+            {tr('一般')}
           </Tabs.Tab>
-          <Tabs.Tab value="browse" disabled={dirty || saving}>
-            {tr('瀏覽')}
-          </Tabs.Tab>
-          <Tabs.Tab value="transfer" disabled={dirty || saving}>
-            {tr('設定移轉')}
-          </Tabs.Tab>
-          <Tabs.Tab value="maintenance" disabled={dirty || saving}>
-            {tr('連結與維護')}
-          </Tabs.Tab>
+          <Tabs.Tab value="data">{tr('資料與備份')}</Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel value="appearance" pt="lg">
+        <Tabs.Panel value="general" pt="lg">
           <Select
             label={
               <HelpLabel
                 label={tr('介面語言')}
-                help={tr('立即預覽；專案名稱與資料內容保持原樣。')}
+                help={tr('選了就套用；專案名稱與資料內容保持原樣。')}
               />
             }
             data={localeOptions}
             value={appearance.locale}
             allowDeselect={false}
             disabled={!appearance.ready || saving || !!appearance.error}
-            onChange={(value) => value && appearance.previewLocale(value as LocaleId)}
+            onChange={(value) => value && void apply(appearance.theme, value as LocaleId)}
             mb="xl"
           />
           <Group gap={4} mb="lg" wrap="nowrap">
             <Text fw={600} size="sm">
               {tr('選擇你的介面風格')}
             </Text>
-            <HelpTip text={tr('套用到整個應用程式。點選預覽，保存後下次開啟仍會使用。')} />
+            <HelpTip text={tr('套用到整個應用程式，下次開啟仍會使用。')} />
           </Group>
           <div className="theme-options" role="group" aria-label={tr('介面主題')}>
             {themes.map((theme) => (
@@ -209,7 +203,7 @@ export function ApplicationSettings({
                 aria-label={tr(theme.name) + ' ' + tr('主題')}
                 aria-pressed={appearance.theme === theme.id}
                 disabled={!appearance.ready || saving || !!appearance.error}
-                onClick={() => appearance.preview(theme.id)}
+                onClick={() => void apply(theme.id, appearance.locale)}
               >
                 <span className="theme-sample" data-preview={theme.id} aria-hidden="true">
                   <span className="sample-title">
@@ -247,130 +241,148 @@ export function ApplicationSettings({
             ))}
           </div>
           {(error || appearance.error) && (
-            <Alert color="red" mt="md" title={tr('外觀尚未保存')}>
+            <Alert color="red" mt="md" title={tr('無法套用')}>
               {error || appearance.error}
             </Alert>
           )}
-          <Group justify="space-between" mt="xl">
-            <Text size="xs" c="dimmed" role="status">
-              {dirty ? tr('預覽中 · 尚未保存') : tr('目前外觀已保存')}
-            </Text>
-            <Group gap="xs">
-              <Button variant="default" disabled={saving} onClick={cancel}>
-                {tr('取消')}
-              </Button>
-              <Button
-                disabled={!dirty || !appearance.ready || !!appearance.error}
-                loading={saving}
-                onClick={() => void save()}
-              >
-                {tr('保存外觀設定')}
-              </Button>
-            </Group>
-          </Group>
+          <Text size="xs" c="dimmed" mt="md" role="status">
+            {applied ? tr('已套用') : ''}
+          </Text>
         </Tabs.Panel>
-        <Tabs.Panel value="transfer" pt="lg">
-          <Stack>
-            <Text size="sm">
-              {tr('匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。')}
-            </Text>
-            <Group>
-              <Button disabled={saving} onClick={() => void transfer('export')}>
-                {tr('匯出設定包')}
-              </Button>
-              <Button variant="default" disabled={saving} onClick={() => void transfer('import')}>
-                {tr('匯入設定包')}
-              </Button>
-            </Group>
-            {importPreview && (
-              <Stack>
-                <Text fw={600}>{tr('設定匯入預覽')}</Text>
-                {importPreview.changes.map((change) => (
-                  <Text key={change.field} size="sm">
-                    {transferLabels[change.field] ?? change.field}:{' '}
-                    {formatPreference(change.current, change.field)} →{' '}
-                    {formatPreference(change.incoming, change.field)}
+        <Tabs.Panel value="data" pt="lg">
+          <Stack gap="lg">
+            <section className="settings-section">
+              <Text fw={600}>{tr('專案資料')}</Text>
+              <Text size="xs" c="dimmed" mb="xs">
+                {tr('匯出請用側欄專案選單的「匯出專案資料」。')}
+              </Text>
+              <Stack gap="sm">
+                <div>
+                  <Button variant="default" disabled={actions.busy} onClick={actions.importProject}>
+                    {tr('匯入專案資料')}
+                  </Button>
+                  <Text size="xs" c="dimmed" mt={4}>
+                    {tr('把先前匯出的專案資料放回一個根資料夾；匯入前會先預覽。')}
                   </Text>
-                ))}
-                <Select
-                  label={tr('匯入方式')}
-                  allowDeselect={false}
-                  value={importMode}
-                  onChange={(value) => setImportMode(value as 'merge' | 'replace')}
-                  data={[
-                    { value: 'merge', label: tr('合併：保留目前設定') },
-                    { value: 'replace', label: tr('以匯入設定取代') },
-                  ]}
-                />
+                </div>
+                <div>
+                  <Button variant="default" disabled={actions.busy} onClick={actions.relink}>
+                    {tr('重新連結專案')}
+                  </Button>
+                  <Text size="xs" c="dimmed" mt={4}>
+                    {tr('資料夾搬了位置之後，重新指到新位置。')}
+                  </Text>
+                </div>
+                {actions.legacyAvailable && (
+                  <div>
+                    <Button variant="default" disabled={actions.busy} onClick={actions.legacy}>
+                      {tr('檢視舊資料匯入')}
+                    </Button>
+                    <Text size="xs" c="dimmed" mt={4}>
+                      {tr('偵測到舊版資料，可預覽後匯入。')}
+                    </Text>
+                  </div>
+                )}
+              </Stack>
+            </section>
+            <section className="settings-section">
+              <Text fw={600}>{tr('設定備份')}</Text>
+              <Text size="xs" c="dimmed" mb="xs">
+                {tr('匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。')}
+              </Text>
+              <Stack>
                 <Group>
+                  <Button disabled={saving} onClick={() => void transfer('export')}>
+                    {tr('匯出設定包')}
+                  </Button>
                   <Button
                     variant="default"
                     disabled={saving}
-                    onClick={() => setImportPreview(undefined)}
+                    onClick={() => void transfer('import')}
                   >
-                    {tr('取消匯入')}
-                  </Button>
-                  <Button loading={saving} onClick={() => void applyImport()}>
-                    {tr('備份並匯入')}
+                    {tr('匯入設定包')}
                   </Button>
                 </Group>
+                {importPreview && (
+                  <Stack>
+                    <Text fw={600}>{tr('設定匯入預覽')}</Text>
+                    {importPreview.changes.map((change) => (
+                      <Text key={change.field} size="sm">
+                        {transferLabels[change.field] ?? change.field}:{' '}
+                        {formatPreference(change.current, change.field)} →{' '}
+                        {formatPreference(change.incoming, change.field)}
+                      </Text>
+                    ))}
+                    <Select
+                      label={tr('匯入方式')}
+                      allowDeselect={false}
+                      value={importMode}
+                      onChange={(value) => setImportMode(value as 'merge' | 'replace')}
+                      data={[
+                        { value: 'merge', label: tr('合併：保留目前設定') },
+                        { value: 'replace', label: tr('以匯入設定取代') },
+                      ]}
+                    />
+                    <Group>
+                      <Button
+                        variant="default"
+                        disabled={saving}
+                        onClick={() => setImportPreview(undefined)}
+                      >
+                        {tr('取消匯入')}
+                      </Button>
+                      <Button loading={saving} onClick={() => void applyImport()}>
+                        {tr('備份並匯入')}
+                      </Button>
+                    </Group>
+                  </Stack>
+                )}
+                {transferResult && <Alert color="teal">{tr(transferResult)}</Alert>}
+                {error && <Alert color="red">{error}</Alert>}
+                <Text fw={600}>{tr('可復原的設定備份')}</Text>
+                {!backups.length && (
+                  <Text size="xs" c="dimmed">
+                    {tr('尚無設定備份')}
+                  </Text>
+                )}
+                {backups.map((backup) => (
+                  <Group key={backup.id} justify="space-between">
+                    <Text size="xs">
+                      {new Date(backup.createdAt).toLocaleString(appearance.locale)}
+                    </Text>
+                    <Button
+                      size="xs"
+                      variant="default"
+                      disabled={saving}
+                      onClick={() => void restore(backup.id)}
+                    >
+                      {tr('復原此備份')}
+                    </Button>
+                  </Group>
+                ))}
               </Stack>
-            )}
-            {transferResult && <Alert color="teal">{tr(transferResult)}</Alert>}
-            {error && <Alert color="red">{error}</Alert>}
-            <Text fw={600}>{tr('可復原的設定備份')}</Text>
-            {backups.map((backup) => (
-              <Group key={backup.id} justify="space-between">
-                <Text size="xs">
-                  {new Date(backup.createdAt).toLocaleString(appearance.locale)}
-                </Text>
-                <Button
-                  size="xs"
-                  variant="default"
-                  disabled={saving}
-                  onClick={() => void restore(backup.id)}
-                >
-                  {tr('復原此備份')}
-                </Button>
-              </Group>
-            ))}
-          </Stack>
-        </Tabs.Panel>
-        <Tabs.Panel value="maintenance" pt="lg">
-          <Stack>{maintenance}</Stack>
-        </Tabs.Panel>
-        <Tabs.Panel value="browse" pt="lg">
-          <Stack>
-            <Switch
-              aria-label={tr('自動開啟資料夾內容')}
-              label={
-                <HelpLabel
-                  label={tr('自動開啟資料夾內容')}
-                  help={tr('進入其他資料夾時，自動展開右側內容面板')}
-                />
-              }
-              checked={autoOpenContent}
-              disabled={saving}
-              onChange={(event) => {
-                const value = event.currentTarget.checked,
-                  previous = autoOpenContent
-                setAutoOpenContent(value)
-                setSaving(true)
-                setError('')
-                void window.desktop
-                  .updateWorkspace({ action: 'browseBehavior', autoOpenContent: value })
-                  .then((state) => setAutoOpenContent(state.prefs.autoOpenContent === true))
-                  .catch((reason) => {
-                    setAutoOpenContent(previous)
-                    setError(String(reason))
-                  })
-                  .finally(() => setSaving(false))
-              }}
-            />
-            <Text size="xs" c="dimmed">
-              {tr('立即保存；手動顯隱面板不會改變此偏好。')}
-            </Text>
-            {error && <Alert color="red">{error}</Alert>}
+            </section>
+            <Accordion variant="separated" className="danger-accordion">
+              <Accordion.Item value="danger">
+                <Accordion.Control c="red">{tr('危險操作')}</Accordion.Control>
+                <Accordion.Panel>
+                  <Text size="sm" fw={600}>
+                    {tr('清理全部已連結資料')}
+                  </Text>
+                  <Text size="xs" c="dimmed" my="xs">
+                    {tr('預覽範圍後才會清理；原始資料夾與媒體保留。')}
+                  </Text>
+                  <Button
+                    variant="default"
+                    color="red"
+                    disabled={actions.busy}
+                    onClick={actions.cleanAll}
+                  >
+                    {tr('清理全部已連結資料')}
+                  </Button>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
           </Stack>
         </Tabs.Panel>
       </Tabs>

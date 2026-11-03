@@ -339,7 +339,7 @@ try {
   )
   await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
   const settings = page.getByRole('dialog', { name: '應用程式設定', exact: true })
-  await settings.getByRole('tab', { name: '連結與維護', exact: true }).click()
+  await settings.getByRole('tab', { name: '資料與備份', exact: true }).click()
   await settings.getByRole('button', { name: '重新連結專案', exact: true }).waitFor()
   assert.equal(await settings.getByLabel('專案名稱', { exact: true }).count(), 0)
   await page.keyboard.press('Escape')

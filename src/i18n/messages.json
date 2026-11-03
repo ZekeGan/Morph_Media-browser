@@ -449,12 +449,6 @@
     "en": "Back up old files and import selected projects",
     "es": "Respaldar los archivos anteriores e importar los proyectos seleccionados"
   },
-  "放棄尚未保存的外觀變更？": {
-    "ja": "未保存の外観設定を破棄しますか？",
-    "zh-CN": "放弃尚未保存的外观变更？",
-    "en": "Discard unsaved appearance changes?",
-    "es": "¿Descartar los cambios de apariencia sin guardar?"
-  },
   "應用程式設定": {
     "ja": "アプリ設定",
     "zh-CN": "应用程式设定\u0001",
@@ -467,41 +461,17 @@
     "en": "Close application settings",
     "es": "Cerrar ajustes de la aplicación"
   },
-  "外觀": {
-    "ja": "外観",
-    "zh-CN": "外观",
-    "en": "Appearance",
-    "es": "Apariencia"
-  },
-  "連結與維護": {
-    "ja": "連携とメンテナンス",
-    "zh-CN": "连结与维护",
-    "en": "Connections and maintenance",
-    "es": "Conexiones y mantenimiento"
-  },
   "介面語言": {
     "ja": "表示言語",
     "zh-CN": "介面语言",
     "en": "Interface language",
     "es": "Idioma de la interfaz"
   },
-  "立即預覽；專案名稱與資料內容保持原樣。": {
-    "ja": "すぐにプレビューできます。プロジェクト名やデータの内容は変わりません。",
-    "zh-CN": "立即预览；项目名称与数据内容保持原样。",
-    "en": "Preview instantly. Project names and your data stay unchanged.",
-    "es": "Vista previa inmediata. Los nombres de proyectos y tus datos no cambian."
-  },
   "選擇你的介面風格": {
     "ja": "インターフェースのスタイルを選択",
     "zh-CN": "选择你的介面风格\u0001",
     "en": "Choose your interface style",
     "es": "Elige el estilo de la interfaz"
-  },
-  "套用到整個應用程式。點選預覽，保存後下次開啟仍會使用。": {
-    "ja": "アプリ全体に適用します。選択でプレビュー、保存すると次回も使用します。",
-    "zh-CN": "套用到整个应用程式。点选预览，保存後下次开启仍会使用。",
-    "en": "Applies across the app. Select to preview; save to use it next time.",
-    "es": "Se aplica a toda la aplicación. Selecciona para previsualizar y guarda para conservarlo."
   },
   "介面主題": {
     "ja": "インターフェースのテーマ",
@@ -515,35 +485,11 @@
     "en": "theme",
     "es": "tema"
   },
-  "外觀尚未保存": {
-    "ja": "外観は保存されていません",
-    "zh-CN": "外观尚未保存\u0001",
-    "en": "Appearance not saved",
-    "es": "Apariencia sin guardar"
-  },
-  "預覽中 · 尚未保存": {
-    "ja": "プレビュー中 · 未保存",
-    "zh-CN": "预览中 · 尚未保存",
-    "en": "Previewing · Unsaved",
-    "es": "Vista previa · Sin guardar"
-  },
-  "目前外觀已保存": {
-    "ja": "外観は保存済みです",
-    "zh-CN": "目前外观已保存",
-    "en": "Appearance saved",
-    "es": "Apariencia guardada"
-  },
   "取消": {
     "ja": "キャンセル",
     "zh-CN": "取消",
     "en": "Cancel",
     "es": "Cancelar"
-  },
-  "保存外觀設定": {
-    "ja": "外観設定を保存",
-    "zh-CN": "保存外观设定\u0001",
-    "en": "Save appearance",
-    "es": "Guardar apariencia"
   },
   "放棄尚未保存的資料夾設定？": {
     "ja": "未保存のフォルダー設定を破棄しますか？",
@@ -3305,30 +3251,6 @@
     "en": "Tree",
     "es": "Árbol"
   },
-  "瀏覽": {
-    "ja": "表示",
-    "zh-CN": "浏览",
-    "en": "Browsing",
-    "es": "Navegación"
-  },
-  "自動開啟資料夾內容": {
-    "ja": "フォルダーの内容を自動で開く",
-    "zh-CN": "自动打开文件夹内容",
-    "en": "Automatically open folder contents",
-    "es": "Abrir el contenido de carpetas automáticamente"
-  },
-  "進入其他資料夾時，自動展開右側內容面板": {
-    "ja": "フォルダー移動時に右側の内容パネルを開きます",
-    "zh-CN": "进入其他文件夹时，自动展开右侧内容面板",
-    "en": "Expand the content panel when navigating to another folder",
-    "es": "Expandir el panel de contenido al entrar en otra carpeta"
-  },
-  "立即保存；手動顯隱面板不會改變此偏好。": {
-    "ja": "すぐに保存されます。パネルの手動切替はこの設定を変更しません。",
-    "zh-CN": "立即保存；手动显示或隐藏面板不会改变此偏好。",
-    "en": "Saved immediately. Manually toggling the panel does not change this preference.",
-    "es": "Se guarda al instante. Mostrar u ocultar el panel manualmente no cambia esta preferencia."
-  },
   "群組": {
     "ja": "グループ",
     "zh-CN": "分组",
@@ -3418,12 +3340,6 @@
     "zh-CN": "恢复此设置备份？当前设置会先备份，媒体与项目链接保持原样。",
     "en": "Restore this settings backup? Current settings will be backed up first. Media and project links will be preserved.",
     "es": "¿Restaurar esta copia de ajustes? Se guardará una copia de los ajustes actuales. Se conservarán los medios y enlaces de proyectos."
-  },
-  "設定移轉": {
-    "ja": "設定の移行",
-    "zh-CN": "设置迁移",
-    "en": "Transfer settings",
-    "es": "Transferir ajustes"
   },
   "匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。": {
     "ja": "グループ、お気に入り、操作設定をエクスポートします。メディア、パスのリンク、認証情報は含まれません。",
@@ -6634,5 +6550,119 @@
     "en": "Preview import",
     "ja": "インポートをプレビュー",
     "es": "Vista previa de importación"
+  },
+  "資料與備份": {
+    "zh-CN": "数据与备份",
+    "en": "Data and backup",
+    "ja": "データとバックアップ",
+    "es": "Datos y copias"
+  },
+  "專案資料": {
+    "zh-CN": "项目数据",
+    "en": "Project data",
+    "ja": "プロジェクトデータ",
+    "es": "Datos del proyecto"
+  },
+  "匯出請用側欄專案選單的「匯出專案資料」。": {
+    "zh-CN": "导出请用侧栏项目菜单的“导出项目数据”。",
+    "en": "To export, use “Export project data” in the sidebar project menu.",
+    "ja": "エクスポートはサイドバーのプロジェクトメニューの「プロジェクトデータをエクスポート」から行います。",
+    "es": "Para exportar, usa «Exportar datos del proyecto» en el menú del proyecto."
+  },
+  "把先前匯出的專案資料放回一個根資料夾；匯入前會先預覽。": {
+    "zh-CN": "把先前导出的项目数据放回一个根文件夹；导入前会先预览。",
+    "en": "Put previously exported project data back into a root folder; you see a preview first.",
+    "ja": "以前エクスポートしたプロジェクトデータをルートフォルダーに戻します。先にプレビューを表示します。",
+    "es": "Devuelve datos exportados a una carpeta raíz; verás una vista previa antes."
+  },
+  "資料夾搬了位置之後，重新指到新位置。": {
+    "zh-CN": "文件夹移动位置之后，重新指到新位置。",
+    "en": "After a folder has moved, point the project at its new location.",
+    "ja": "フォルダーを移動したあと、新しい場所を指定し直します。",
+    "es": "Si una carpeta se movió, indica su nueva ubicación."
+  },
+  "偵測到舊版資料，可預覽後匯入。": {
+    "zh-CN": "检测到旧版数据，可预览后导入。",
+    "en": "Older data was found; preview it before importing.",
+    "ja": "旧バージョンのデータが見つかりました。プレビューしてからインポートできます。",
+    "es": "Se encontraron datos antiguos; puedes verlos antes de importar."
+  },
+  "設定備份": {
+    "zh-CN": "设置备份",
+    "en": "Settings backup",
+    "ja": "設定のバックアップ",
+    "es": "Copia de ajustes"
+  },
+  "預覽範圍後才會清理；原始資料夾與媒體保留。": {
+    "zh-CN": "先预览范围才会清理；原始文件夹与媒体保留。",
+    "en": "Cleanup runs only after you preview its scope; original folders and media stay.",
+    "ja": "範囲をプレビューしてから整理します。元のフォルダーとメディアは残ります。",
+    "es": "La limpieza solo se hace tras previsualizar su alcance; las carpetas y medios originales se conservan."
+  },
+  "無法套用": {
+    "zh-CN": "无法套用",
+    "en": "Could not apply",
+    "ja": "適用できません",
+    "es": "No se pudo aplicar"
+  },
+  "已套用": {
+    "zh-CN": "已套用",
+    "en": "Applied",
+    "ja": "適用しました",
+    "es": "Aplicado"
+  },
+  "放棄尚未套用的設定匯入？": {
+    "zh-CN": "放弃尚未套用的设置导入？",
+    "en": "Discard the settings import that has not been applied?",
+    "ja": "適用していない設定のインポートを破棄しますか？",
+    "es": "¿Descartar la importación de ajustes sin aplicar?"
+  },
+  "顯示資料夾內容": {
+    "zh-CN": "显示文件夹内容",
+    "en": "Show folder content",
+    "ja": "フォルダーの内容を表示",
+    "es": "Mostrar contenido de la carpeta"
+  },
+  "進入此資料夾": {
+    "zh-CN": "进入此文件夹",
+    "en": "Open this folder",
+    "ja": "このフォルダーを開く",
+    "es": "Abrir esta carpeta"
+  },
+  "「{0}」的設定有未保存的變更。要切換到「{1}」嗎？": {
+    "zh-CN": "“{0}”的设置有未保存的更改。要切换到“{1}”吗？",
+    "en": "“{0}” has unsaved settings changes. Switch to “{1}”?",
+    "ja": "「{0}」の設定に未保存の変更があります。「{1}」に切り替えますか？",
+    "es": "«{0}» tiene cambios sin guardar. ¿Cambiar a «{1}»?"
+  },
+  "放棄變更並切換": {
+    "zh-CN": "放弃更改并切换",
+    "en": "Discard changes and switch",
+    "ja": "変更を破棄して切り替え",
+    "es": "Descartar cambios y cambiar"
+  },
+  "留在此處": {
+    "zh-CN": "留在此处",
+    "en": "Stay here",
+    "ja": "このまま残る",
+    "es": "Quedarse aquí"
+  },
+  "套用到整個應用程式，下次開啟仍會使用。": {
+    "zh-CN": "套用到整个应用程序，下次打开仍会使用。",
+    "en": "Applies to the whole app and is kept next time.",
+    "ja": "アプリ全体に適用され、次回も使われます。",
+    "es": "Se aplica a toda la aplicación y se conserva."
+  },
+  "選了就套用；專案名稱與資料內容保持原樣。": {
+    "zh-CN": "选了就套用；项目名称与数据内容保持原样。",
+    "en": "Applies when chosen; project names and data stay as they are.",
+    "ja": "選ぶとすぐ適用されます。プロジェクト名とデータはそのままです。",
+    "es": "Se aplica al elegir; los nombres y datos no cambian."
+  },
+  "尚無設定備份": {
+    "zh-CN": "尚无设置备份",
+    "en": "No settings backups yet",
+    "ja": "設定のバックアップはまだありません",
+    "es": "Aún no hay copias de ajustes"
   }
 }

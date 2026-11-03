@@ -48,7 +48,7 @@ const toast = page.locator('.app-toasts [data-level]')
 const importProject = async (name: string) => {
   await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
   const settings = page.getByRole('dialog', { name: '應用程式設定', exact: true })
-  await settings.getByRole('tab', { name: '連結與維護', exact: true }).click()
+  await settings.getByRole('tab', { name: '資料與備份', exact: true }).click()
   await settings.getByRole('button', { name: '檢視舊資料匯入', exact: true }).click()
   const preview = page.getByRole('dialog', { name: '舊資料匯入預覽', exact: true })
   await preview.getByRole('checkbox', { name: new RegExp('^' + name) }).check()

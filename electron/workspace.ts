@@ -54,8 +54,6 @@ export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
     throw new Error('側欄設定格式不合法')
   if (v.theme !== undefined && !isThemeId(v.theme)) throw new Error('主題設定不合法')
   if (v.locale !== undefined && !isLocaleId(v.locale)) throw new Error('語言設定不合法')
-  if (v.autoOpenContent !== undefined && typeof v.autoOpenContent !== 'boolean')
-    throw new Error('瀏覽設定不合法')
   if (
     v.fileVisibility !== undefined &&
     (!object(v.fileVisibility) ||
@@ -437,9 +435,6 @@ export class WorkspaceStore {
             hidden: bool(command.value?.hidden),
             dotfiles: bool(command.value?.dotfiles),
           }
-          break
-        case 'browseBehavior':
-          next.autoOpenContent = bool(command.autoOpenContent)
           break
         case 'videoAudio':
           if (!object(command.value)) throw new Error('影片音量設定不合法')

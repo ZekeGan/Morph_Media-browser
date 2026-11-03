@@ -18,7 +18,6 @@ export interface WorkspacePrefs {
   browse?: Record<string, BrowseState>
   theme?: ThemeId
   locale?: LocaleId
-  autoOpenContent?: boolean
   videoAudio?: { volume: number; muted: boolean }
   fileVisibility?: { hidden: boolean; dotfiles: boolean }
   groups: { id: string; name: string; collapsed: boolean }[]
@@ -49,7 +48,6 @@ export type WorkspaceCommand =
   | { action: 'applyPackage'; token: string; mode: 'merge' | 'replace' }
   | { action: 'restorePackage'; backupId: string }
   | { action: 'listBackups' }
-  | { action: 'browseBehavior'; autoOpenContent: boolean }
   | { action: 'videoAudio'; value: { volume: number; muted: boolean } }
   | { action: 'fileVisibility'; value: { hidden: boolean; dotfiles: boolean } }
   | { action: 'appearance'; theme: ThemeId; locale: LocaleId }

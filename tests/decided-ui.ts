@@ -72,7 +72,6 @@ await fs.writeFile(
       ...defaultWorkspace(),
       theme: 'paper',
       locale: 'zh-TW',
-      autoOpenContent: true,
     })
   )
 )
@@ -114,18 +113,9 @@ try {
   assert.equal(
     await page.locator('.folder-panel').count(),
     0,
-    'disabled auto-open must preserve hidden pane'
+    'entering a folder must not open a hidden pane'
   )
-  await button('應用程式設定').click()
-  await settings().getByRole('tab', { name: '瀏覽', exact: true }).click()
-  await settings().getByRole('switch', { name: '自動開啟資料夾內容', exact: true }).click()
-  await page.waitForFunction(
-    () =>
-      document.querySelector<HTMLInputElement>('[aria-label="自動開啟資料夾內容"]')?.checked &&
-      !document.querySelector<HTMLInputElement>('[aria-label="自動開啟資料夾內容"]')?.disabled
-  )
-  await page.keyboard.press('Escape')
-  await settings().waitFor({ state: 'hidden' })
+  await button('切換右側內容').click()
   await button('返回').click()
   await page.locator('.folder-panel').waitFor()
   await page.locator('.folder-panel-header strong').getByText('Library', { exact: true }).waitFor()
@@ -258,7 +248,7 @@ try {
   await page.keyboard.press('Escape')
   await page.waitForFunction(() => document.documentElement.lang === 'zh-TW')
   await button('應用程式設定').click()
-  await settings().getByRole('tab', { name: '設定移轉', exact: true }).click()
+  await settings().getByRole('tab', { name: '資料與備份', exact: true }).click()
   const exported = path.join(root, 'exported.json')
   await app.evaluate(({ dialog }, file) => {
     dialog.showSaveDialog = (async () => ({
@@ -297,7 +287,7 @@ try {
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'paper')
   await page.getByRole('heading', { name: '你的資料夾，你的瀏覽方式' }).waitFor()
   await button('應用程式設定').click()
-  await settings().getByRole('tab', { name: '設定移轉', exact: true }).click()
+  await settings().getByRole('tab', { name: '資料與備份', exact: true }).click()
   await settings().getByRole('button', { name: '復原此備份', exact: true }).first().waitFor()
   await page.screenshot({ path: path.join(screens, 'settings-backup.png') })
   await page.evaluate(() => {

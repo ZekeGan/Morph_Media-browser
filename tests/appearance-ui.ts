@@ -98,22 +98,11 @@ try {
       .count(),
     1
   )
-  // Cancel restores both previews and leaves the settings file untouched.
-  const initial = await fs.readFile(path.join(local, 'workspace-ui.json'))
-  await button('應用程式設定').click()
-  await button('霧白玻璃 主題').click()
-  await setLanguage('es')
-  assert.equal(await page.locator('html').getAttribute('data-theme'), 'glass')
-  await button('取消').click()
-  locale = 'zh-TW'
-  assert.equal(await page.locator('html').getAttribute('data-theme'), 'dark')
-  assert.equal(await page.locator('html').getAttribute('lang'), 'zh-TW')
-  assert.deepEqual(await fs.readFile(path.join(local, 'workspace-ui.json')), initial)
-  // Save and reload every language, checking labels and unchanged user names.
+  // Choosing a language applies and saves at once; reload every language, checking labels and unchanged user names.
   for (const next of ['ja', 'zh-CN', 'en', 'es', 'zh-TW'] as const) {
     await button('應用程式設定').click()
     await setLanguage(next)
-    await button('保存外觀設定').click()
+    await page.keyboard.press('Escape')
     await settings().waitFor({ state: 'hidden' })
     await page.waitForFunction(() => !document.querySelector('.dirty-indicator'))
     await page.reload()
@@ -167,7 +156,7 @@ try {
   ] as const) {
     await button('應用程式設定').click()
     await button(name + ' 主題').click()
-    await button('保存外觀設定').click()
+    await page.keyboard.press('Escape')
     await settings().waitFor({ state: 'hidden' })
     await page.waitForFunction(() => !document.querySelector('.dirty-indicator'))
     assert.equal(await page.locator('html').getAttribute('data-theme'), theme)
@@ -246,7 +235,7 @@ try {
       animations: 'disabled',
       path: path.join(screens, `${theme}-settings.png`),
     })
-    await button('取消').click()
+    await page.keyboard.press('Escape')
     await button('切換專案欄').click()
     await page.setViewportSize({ width: 800, height: 650 })
     await button('應用程式設定').click()
@@ -259,7 +248,7 @@ try {
       animations: 'disabled',
       path: path.join(screens, `${theme}-narrow.png`),
     })
-    await button('取消').click()
+    await page.keyboard.press('Escape')
     await page.setViewportSize({ width: 1440, height: 900 })
   }
   for (const [file, bytes] of [...originals, ...records])

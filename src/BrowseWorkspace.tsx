@@ -310,19 +310,14 @@ export function BrowseWorkspace({
       locations: undefined,
     })
   }
+  // Entering a folder: the center moves there and the panel follows. Whether the panel is open stays the user's call.
   const open = async (id: string, fromHistory?: number) => {
-    clearTimeout(previewTimer.current)
+    // A single click already started showing this folder in the panel; let that finish instead of dropping the double click.
+    const pending = previewing.current
+    if (pending) await pending
     const row = all.find((r) => r.rowId === id)
-    if (!row || busy) return
+    if (!row || (busy && !pending) || draftBlocks(id, true)) return
     const operation = ++navigation.current
-    let prefs
-    try {
-      prefs = await window.desktop.workspace()
-    } catch (error) {
-      notify(String(error))
-      return
-    }
-    if (!mounted.current || operation !== navigation.current) return
     const result = await run({ action: 'visit', rowId: id })
     if (!mounted.current || operation !== navigation.current || !result?.snapshot || !onSelect(id))
       return
@@ -332,7 +327,6 @@ export function BrowseWorkspace({
       ...state.current,
       detailId: id,
       ...(state.current.contentMode === 'files' ? { fileRootId: id } : {}),
-      panelVisible: prefs.prefs.autoOpenContent === true || state.current.panelVisible !== false,
     })
     if (navigable) {
       if (fromHistory !== undefined) {
@@ -347,24 +341,62 @@ export function BrowseWorkspace({
       } else moveTo(row.path)
     }
   }
-  // A single click shows that folder in the right panel without entering it: the center stays where it is.
-  const previewDetail = async (id: string) => {
+  // A single click shows that folder in the right panel at once, without entering it: the center stays where it is.
+  const previewing = useRef<Promise<void> | undefined>(undefined)
+  const previewDetail = (id: string) => {
     if (busy || !ready || id === state.current.detailId || !all.some((r) => r.rowId === id)) return
-    const operation = ++navigation.current
-    const result = await run({ action: 'visit', rowId: id })
-    if (!mounted.current || operation !== navigation.current || !result?.snapshot || !onSelect(id))
-      return
-    setFilePreview(undefined)
-    persist({ ...state.current, detailId: id })
+    if (draftBlocks(id, false)) return
+    const task = (async () => {
+      const operation = ++navigation.current
+      const result = await run({ action: 'visit', rowId: id })
+      if (
+        !mounted.current ||
+        operation !== navigation.current ||
+        !result?.snapshot ||
+        !onSelect(id)
+      )
+        return
+      setFilePreview(undefined)
+      persist({ ...state.current, detailId: id })
+    })()
+    previewing.current = task
+    void task.finally(() => {
+      if (previewing.current === task) previewing.current = undefined
+    })
   }
-  // Wait out a possible double click first: entering a folder must not race with a preview of it.
-  const previewTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  // The panel always shows what is selected; when it is hidden nothing loads until it is opened.
   useEffect(() => {
-    clearTimeout(previewTimer.current)
-    if (highlight && browse.panelVisible !== false)
-      previewTimer.current = setTimeout(() => void previewDetail(highlight), 280)
-    return () => clearTimeout(previewTimer.current)
-  }, [highlight])
+    if (highlight && browse.panelVisible !== false) previewDetail(highlight)
+  }, [highlight, browse.panelVisible])
+  // Unsaved folder settings are never dropped silently: switching waits for an answer shown in the panel.
+  const [switching, setSwitching] = useState<{ id: string; enter: boolean }>()
+  const draftBlocks = (id: string, enter: boolean) => {
+    if (discardOnce.current) {
+      discardOnce.current = false
+      return false
+    }
+    if (!configDirty || !configId || id === configId) return false
+    setSwitching({ id, enter })
+    return true
+  }
+  useEffect(() => {
+    if (!configDirty) setSwitching(undefined)
+  }, [configDirty])
+  const discardOnce = useRef(false)
+  const switchDiscard = () => {
+    const target = switching
+    if (!target) return
+    setSwitching(undefined)
+    discardOnce.current = true
+    setConfigDirty(false)
+    onDirty(false)
+    if (target.enter) void open(target.id)
+    else previewDetail(target.id)
+  }
+  const switchStay = () => {
+    setSwitching(undefined)
+    if (configId) setHighlight(configId)
+  }
   const previewFile = async (entry: OverviewEntry) => {
     if (busy) return
     const operation = ++navigation.current,
@@ -412,15 +444,14 @@ export function BrowseWorkspace({
     setHighlight(id)
     setConfigTab(tab)
     setConfigId(id)
+    if (state.current.panelVisible === false) persist({ ...state.current, panelVisible: true })
   }
   const closeConfig = () => {
     if (!configDirty || window.confirm(tr('放棄尚未保存的資料夾設定？'))) setConfigId(undefined)
   }
   // The settings tab belongs to the folder shown in the panel: follow it when another folder is opened.
   useEffect(() => {
-    if (!configId || !detail || detail.rowId === configId) return
-    if (configDirty && !window.confirm(tr('放棄尚未保存的資料夾設定？'))) return
-    setConfigDirty(false)
+    if (!configId || !detail || detail.rowId === configId || configDirty) return
     setConfigId(detail.rowId)
   }, [detail?.rowId])
   useEffect(() => {
@@ -630,10 +661,14 @@ export function BrowseWorkspace({
         result = await run({ action: 'visit', rowId: highlight })
       if (!row || !result?.snapshot || !onSelect(highlight)) return
       moveTo(row.path)
-      persist({ ...state.current, detailId: highlight, panelVisible: true })
+      persist({ ...state.current, detailId: highlight })
     }
     persist({ ...state.current, mode, locations: undefined })
     renderHistory((v) => v + 1)
+  }
+  const showPanelFor = (id: string) => {
+    setHighlight(id)
+    persist({ ...state.current, panelVisible: true })
   }
   const togglePanel = () => {
     if (panelSlot.current?.contains(document.activeElement)) panelToggle.current?.focus()
@@ -929,6 +964,20 @@ export function BrowseWorkspace({
                             <>
                               {r.name}
                               {!r.record ? ' ⚠' : r.boundary ? <BoundaryFlag /> : null}
+                              {!panelOpen && (
+                                <button
+                                  type="button"
+                                  className="row-info"
+                                  aria-label={tr('顯示資料夾內容')}
+                                  title={tr('顯示資料夾內容')}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    showPanelFor(r.rowId)
+                                  }}
+                                >
+                                  <Icon name="panel-right" size={14} />
+                                </button>
+                              )}
                             </>
                           ) : c.id === 'path' ? (
                             r.path
@@ -969,6 +1018,22 @@ export function BrowseWorkspace({
                   tabIndex={0}
                   {...gestures(row.rowId)}
                 >
+                  {!panelOpen && (
+                    <Tooltip label={tr('顯示資料夾內容')}>
+                      <ActionIcon
+                        className="card-info"
+                        variant="default"
+                        size="sm"
+                        aria-label={tr('顯示資料夾內容')}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          showPanelFor(row.rowId)
+                        }}
+                      >
+                        <Icon name="panel-right" size={14} />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
                   <Card
                     project={project}
                     row={row}
@@ -1024,6 +1089,10 @@ export function BrowseWorkspace({
         expanded={expanded}
         filePreview={filePreview}
         folderMode={folderMode}
+        canEnter={!!detail && pathKey(detail.path) !== pathKey(location || root)}
+        switchTo={switching ? all.find((r) => r.rowId === switching.id) : undefined}
+        switchDiscard={switchDiscard}
+        switchStay={switchStay}
         moveWidth={moveWidth}
         navHistory={navHistory}
         open={open}

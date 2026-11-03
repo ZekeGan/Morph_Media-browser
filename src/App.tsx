@@ -564,46 +564,23 @@ export function App() {
         opened={settingsOpen}
         close={() => setSettingsOpen(false)}
         onDirty={setAppearanceDirty}
-        maintenance={
-          <>
-            <Button variant="default" disabled={busy} onClick={() => void beginLink()}>
-              {tr('重新連結專案')}
-            </Button>
-            <Button
-              variant="default"
-              disabled={busy}
-              onClick={() => {
-                setSettingsOpen(false)
-                beginCreate('import')
-              }}
-            >
-              {tr('匯入專案資料')}
-            </Button>
-            {snapshot.legacyAvailable && (
-              <Button
-                variant="default"
-                disabled={busy}
-                onClick={() => {
-                  setSettingsOpen(false)
-                  void act({ action: 'legacyPreview' })
-                }}
-              >
-                {tr('檢視舊資料匯入')}
-              </Button>
-            )}
-            <Button
-              variant="subtle"
-              color="red"
-              disabled={busy}
-              onClick={() => {
-                setSettingsOpen(false)
-                void act({ action: 'cleanupAllPreview' })
-              }}
-            >
-              {tr('清理全部已連結資料')}
-            </Button>
-          </>
-        }
+        actions={{
+          busy,
+          legacyAvailable: !!snapshot.legacyAvailable,
+          relink: () => void beginLink(),
+          importProject: () => {
+            setSettingsOpen(false)
+            beginCreate('import')
+          },
+          legacy: () => {
+            setSettingsOpen(false)
+            void act({ action: 'legacyPreview' })
+          },
+          cleanAll: () => {
+            setSettingsOpen(false)
+            void act({ action: 'cleanupAllPreview' })
+          },
+        }}
       />
       <Modal
         opened={!!settings}

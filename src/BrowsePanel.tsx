@@ -4,7 +4,7 @@ import { t as tr } from './i18n'
 import { Icon } from './icons'
 import { RightPanel } from './RightPanel'
 import { lazy, Suspense } from 'react'
-import { ActionIcon, Button, Tooltip } from '@mantine/core'
+import { ActionIcon, Alert, Button, Group, Text, Tooltip } from '@mantine/core'
 import { pathKey } from '../shared/browse'
 import { effectiveKind } from '../shared/kind'
 import { type FolderRow, type Project, type Request, type Response } from '../shared/model'
@@ -45,6 +45,10 @@ type Props = {
   stopWidth: () => void
   togglePanel: () => void
   history: { items: string[]; index: number }
+  canEnter: boolean
+  switchTo?: FolderRow
+  switchDiscard: () => void
+  switchStay: () => void
 }
 
 // The right-hand content panel: folder content or settings tabs, with its resizer and footer.
@@ -81,6 +85,7 @@ export function BrowsePanel(props: Props) {
     togglePanel,
     history,
   } = props
+  const { canEnter, switchTo, switchDiscard, switchStay } = props
   const kind = detail ? effectiveKind(detail) : 'general'
   return (
     <div
@@ -140,6 +145,17 @@ export function BrowsePanel(props: Props) {
                   <Icon name="folder-go" />
                 </ActionIcon>
               </Tooltip>
+              {canEnter && (
+                <Button
+                  size="compact-xs"
+                  variant="light"
+                  disabled={busy}
+                  leftSection={<Icon name="arrow-right" size={14} />}
+                  onClick={() => void open(detail.rowId)}
+                >
+                  {tr('進入此資料夾')}
+                </Button>
+              )}
               <Tooltip label={tr('資料夾設定')}>
                 <ActionIcon
                   aria-label={tr('資料夾設定')}
@@ -242,6 +258,21 @@ export function BrowsePanel(props: Props) {
             </>
           }
         >
+          {switchTo && config && (
+            <Alert color="orange" className="panel-switch-alert" role="alert">
+              <Text size="sm">
+                {tr('「{0}」的設定有未保存的變更。要切換到「{1}」嗎？', config.name, switchTo.name)}
+              </Text>
+              <Group gap="xs" mt="xs">
+                <Button size="compact-xs" color="orange" onClick={switchDiscard}>
+                  {tr('放棄變更並切換')}
+                </Button>
+                <Button size="compact-xs" variant="default" onClick={switchStay}>
+                  {tr('留在此處')}
+                </Button>
+              </Group>
+            </Alert>
+          )}
           {config ? (
             <div
               className="folder-panel-dock-settings"

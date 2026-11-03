@@ -142,7 +142,7 @@ try {
     const name = { glass: '霧白玻璃', paper: '暖紙墨橘', dark: '深色經典' }[theme as 'dark']
     await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
     await page.getByRole('button', { name: name + ' 主題', exact: true }).click()
-    await page.getByRole('button', { name: '保存外觀設定', exact: true }).click()
+    await page.keyboard.press('Escape')
     await page.getByRole('dialog').waitFor({ state: 'hidden' })
   }
   if (!args.includes('--home')) {
@@ -175,6 +175,25 @@ try {
     const items = page.locator('.folder-card, .folder-table tbody tr')
     await items.nth(0).click({ modifiers: ['Control'] })
     await items.nth(1).click({ modifiers: ['Control'] })
+  }
+  // --card NAME selects a folder card (single click), --enter NAME opens it (double click); the panel title and the
+  // center path are printed so panel/center behaviour can be checked without a throwaway script.
+  const card = option('card') ?? option('enter')
+  if (card) {
+    const target = page.locator('.folder-card').filter({ hasText: card }).first()
+    if (option('enter')) await target.dblclick()
+    else await target.click()
+    await page.waitForTimeout(500)
+    console.log(
+      'panel:',
+      await page
+        .locator('.folder-panel-header strong')
+        .first()
+        .innerText()
+        .catch(() => '(none)'),
+      '| center:',
+      await page.getByRole('navigation', { name: '資料夾路徑' }).innerText()
+    )
   }
   const click = option('click')
   if (click) await page.getByRole('button', { name: click, exact: true }).first().click()

@@ -54,15 +54,6 @@ test('first-use language follows supported system preferences and remains saved'
   const reopened = new WorkspaceStore(root, ['es'])
   await reopened.init()
   assert.equal((await reopened.read([])).prefs.locale, 'ja')
-  await reopened.update({ action: 'browseBehavior', autoOpenContent: true }, [])
-  const again = new WorkspaceStore(root, ['en'])
-  await again.init()
-  assert.equal((await again.read([])).prefs.autoOpenContent, true)
-  const before = await fs.readFile(store.file, 'utf8')
-  await assert.rejects(
-    again.update({ action: 'browseBehavior', autoOpenContent: 'yes' } as never, [])
-  )
-  assert.equal(await fs.readFile(store.file, 'utf8'), before)
 })
 test('new field values preserve unknown and false and reject unsafe URLs and invalid calendar dates', () => {
   assert.equal(validFieldValue('boolean', false), true)
@@ -216,7 +207,7 @@ test('settings packages omit machine paths and credentials, preview without writ
   assert.equal(restored.prefs.locale, 'ja')
   assert.ok((await store.update({ action: 'listBackups' }, ['p1'])).backups!.length >= 2)
   preview = await store.update({ action: 'previewPackage', value: transferable }, ['p1'])
-  await store.update({ action: 'browseBehavior', autoOpenContent: true }, ['p1'])
+  await store.update({ action: 'appearance', theme: 'paper', locale: 'ja' }, ['p1'])
   const before = await fs.readFile(store.file, 'utf8')
   await assert.rejects(
     store.update({ action: 'applyPackage', token: preview.importPreview!.token, mode: 'replace' }, [
