@@ -69,6 +69,8 @@ export type EditorPaletteProps = {
   availableFields: Source[]
   // The folder shown in the editor preview: each field lists its current value so the real data is visible.
   preview?: FolderRow
+  // Game components stay folded away unless a game is in the project or already used on the card.
+  hasGames: boolean
   dragImage: (event: React.DragEvent<HTMLDivElement>) => void
   act: (request: Request) => Promise<Response | undefined>
   add: (kind: CellKind, grid?: Cell['grid'], layout?: Layout, source?: Binding) => void
@@ -91,6 +93,7 @@ export function EditorPalette(props: EditorPaletteProps) {
     sources,
     availableFields,
     preview,
+    hasGames,
     dragImage,
     act,
     add,
@@ -185,45 +188,53 @@ export function EditorPalette(props: EditorPaletteProps) {
       </div>
     )
   }
+  const paletteItem = (kind: CellKind) => (
+    <div
+      key={kind}
+      className="palette-item"
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData('text/plain', kind)
+        e.dataTransfer.effectAllowed = 'copy'
+        dragImage(e)
+      }}
+    >
+      <Tooltip label={hints[kind]} openDelay={300} multiline maw={220}>
+        <Button fullWidth size="xs" variant="default" onClick={() => add(kind)}>
+          {labels[kind]}
+        </Button>
+      </Tooltip>
+    </div>
+  )
   return (
     <aside className="editor-palette" aria-label={tr('拖入組件')}>
       <h3>{tr('組件')}</h3>
       <section className="palette-section">
-        <h4>{tr('基礎組件')}</h4>
+        <h4>{tr('要顯示的資訊')}</h4>
         <div className="basic-palette">
-          {(
-            [
-              'name',
-              'path',
-              'static-text',
-              'spacer',
-              'system-info',
-              'image',
-              'game-cover' as const,
-              'game-launch' as const,
-              'divider',
-              'open-folder',
-            ] as CellKind[]
-          ).map((kind) => (
-            <div
-              key={kind}
-              className="palette-item"
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', kind)
-                e.dataTransfer.effectAllowed = 'copy'
-                dragImage(e)
-              }}
-            >
-              <Tooltip label={hints[kind]} openDelay={300} multiline maw={220}>
-                <Button fullWidth size="xs" variant="default" onClick={() => add(kind)}>
-                  {labels[kind]}
-                </Button>
-              </Tooltip>
-            </div>
-          ))}
+          {(['name', 'path', 'system-info', 'image', 'open-folder'] as CellKind[]).map(paletteItem)}
         </div>
       </section>
+      <section className="palette-section">
+        <h4>{tr('排版輔助')}</h4>
+        <div className="basic-palette">
+          {(['static-text', 'spacer', 'divider'] as CellKind[]).map(paletteItem)}
+        </div>
+      </section>
+      <Accordion
+        variant="separated"
+        defaultValue={hasGames ? 'game' : null}
+        className="game-palette"
+      >
+        <Accordion.Item value="game">
+          <Accordion.Control>{tr('遊戲專用')}</Accordion.Control>
+          <Accordion.Panel>
+            <div className="basic-palette">
+              {(['game-cover', 'game-launch'] as CellKind[]).map(paletteItem)}
+            </div>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
       <section className="project-field-palette">
         <Group justify="space-between" align="center" mb={6}>
           <h4 style={{ margin: 0 }}>{tr('專案欄位')}</h4>

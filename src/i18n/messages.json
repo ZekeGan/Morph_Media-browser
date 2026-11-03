@@ -1265,12 +1265,6 @@
     "en": "Drag components",
     "es": "Arrastrar componentes"
   },
-  "基礎組件": {
-    "ja": "基本コンポーネント",
-    "zh-CN": "基础组件",
-    "en": "Basic components",
-    "es": "Componentes básicos"
-  },
   "尚無資料": {
     "ja": "データなし",
     "zh-CN": "尚无数据",
@@ -5207,12 +5201,6 @@
     "ja": "項目がまだありません。「＋ 項目を追加」で作成し、キャンバスへドラッグします。",
     "es": "Aún no hay campos. Crea uno con \"+ Nuevo campo\" y arrástralo al lienzo."
   },
-  "積木編輯器": {
-    "zh-CN": "积木编辑器",
-    "en": "Block editor",
-    "ja": "ブロックエディター",
-    "es": "Editor de bloques"
-  },
   "專案尚未配置欄位，可在積木編輯器新增。": {
     "zh-CN": "项目尚未配置字段，可在积木编辑器中添加。",
     "en": "No fields are set up yet; add them in the block editor.",
@@ -6862,5 +6850,77 @@
     "en": "Pin the project sidebar open",
     "ja": "プロジェクトバーを固定して開く",
     "es": "Fijar la barra de proyectos abierta"
+  },
+  "版面編輯": {
+    "zh-CN": "版面编辑",
+    "en": "Layout editor",
+    "ja": "レイアウト編集",
+    "es": "Editor de diseño"
+  },
+  "放棄變更": {
+    "zh-CN": "放弃更改",
+    "en": "Discard changes",
+    "ja": "変更を破棄",
+    "es": "Descartar cambios"
+  },
+  "從範本開始": {
+    "zh-CN": "从模板开始",
+    "en": "Start from a template",
+    "ja": "テンプレートから始める",
+    "es": "Empezar con una plantilla"
+  },
+  "簡潔": {
+    "zh-CN": "简洁",
+    "en": "Simple",
+    "ja": "シンプル",
+    "es": "Sencilla"
+  },
+  "名稱、路徑、開啟資料夾": {
+    "zh-CN": "名称、路径、打开文件夹",
+    "en": "Name, path, open folder",
+    "ja": "名前、パス、フォルダーを開く",
+    "es": "Nombre, ruta, abrir carpeta"
+  },
+  "加入評分與標籤": {
+    "zh-CN": "加入评分与标签",
+    "en": "With rating and tags",
+    "ja": "評価とタグ付き",
+    "es": "Con valoración y etiquetas"
+  },
+  "名稱、路徑，再加評分、標籤、狀態、備註": {
+    "zh-CN": "名称、路径，再加评分、标签、状态、备注",
+    "en": "Name, path, plus rating, tags, status and notes",
+    "ja": "名前とパスに、評価・タグ・状態・メモを追加",
+    "es": "Nombre, ruta, más valoración, etiquetas, estado y notas"
+  },
+  "遊戲卡片": {
+    "zh-CN": "游戏卡片",
+    "en": "Game card",
+    "ja": "ゲームカード",
+    "es": "Tarjeta de juego"
+  },
+  "封面、名稱、啟動遊戲": {
+    "zh-CN": "封面、名称、启动游戏",
+    "en": "Cover, name, launch game",
+    "ja": "カバー、名前、ゲーム起動",
+    "es": "Portada, nombre, iniciar juego"
+  },
+  "要顯示的資訊": {
+    "zh-CN": "要显示的信息",
+    "en": "Information to show",
+    "ja": "表示する情報",
+    "es": "Información que mostrar"
+  },
+  "排版輔助": {
+    "zh-CN": "排版辅助",
+    "en": "Layout helpers",
+    "ja": "レイアウト補助",
+    "es": "Ayudas de diseño"
+  },
+  "遊戲專用": {
+    "zh-CN": "游戏专用",
+    "en": "Game only",
+    "ja": "ゲーム専用",
+    "es": "Solo juegos"
   }
 }

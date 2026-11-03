@@ -172,7 +172,7 @@ try {
     undoBox = (await button('復原').boundingBox())!
   assert.ok(Math.abs(saveBox.y - undoBox.y) < 12)
   await page.screenshot({ path: path.join(root, 'editor.png') })
-  await button('取消').click()
+  await page.getByRole('button', { name: /^(放棄變更|關閉)$/ }).click()
   await button('編輯版面').click()
   await button('刪除欄位 Flag').click()
   const deletion = page.getByRole('dialog', { name: '刪除自訂欄位', exact: true })
@@ -184,7 +184,7 @@ try {
   await button('確認刪除欄位及資料').click()
   await deletion.waitFor({ state: 'hidden' })
   assert.equal(await button('刪除欄位 Flag').count(), 0)
-  await button('取消').click()
+  await page.getByRole('button', { name: /^(放棄變更|關閉)$/ }).click()
   await button('開啟專案 Pending Manga').first().click()
   await page.locator('.media-subfolders').getByRole('button', { name: 'a', exact: true }).click()
   await page.locator('.media-thumbnail').filter({ hasText: 'page.png' }).click()

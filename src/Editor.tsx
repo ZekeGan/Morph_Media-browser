@@ -41,7 +41,10 @@ import {
   addPreset,
   renamePreset,
   removePreset,
+  addCommonFields,
 } from '../shared/layouts'
+import { commonFieldNames } from './commonFields'
+import { isGameFolder } from '../shared/media'
 
 export function Editor({
   project,
@@ -137,7 +140,7 @@ export function Editor({
   const [selected, setSelected] = useState(''),
     [previewId, setPreviewId] = useState<string | undefined>(rows[0]?.rowId)
   const [error, setError] = useState('')
-  const [openSections, setOpenSections] = useState<string[]>(['content', 'position']),
+  const [openSections, setOpenSections] = useState<string[]>(['content']),
     [optionError, setOptionError] = useState(''),
     [renaming, setRenaming] = useState<{ id: string; name: string }>()
   const [schemeAction, setSchemeAction] = useState<'new' | 'copy' | 'rename'>(),
@@ -331,6 +334,27 @@ export function Editor({
       },
     ]
   }
+  // Starting points for an empty card: the cells are ordinary ones and can be changed freely afterwards.
+  const startFrom = (template: 'simple' | 'fields' | 'game') => {
+    const style = { textColor: '#e4e6e8', backgroundColor: 'transparent' },
+      cell = (kind: CellKind, y: number, h = 1): Cell => ({
+        cellId: crypto.randomUUID(),
+        kind,
+        grid: { x: 0, y, w: 12, h },
+        style,
+      })
+    const base =
+      template === 'game'
+        ? [cell('game-cover', 0, 3), cell('name', 3), cell('game-launch', 4)]
+        : [
+            cell('name', 0),
+            cell('path', 1),
+            ...(template === 'simple' ? [cell('open-folder', 2)] : []),
+          ]
+    const next = { ...draft, cells: base }
+    change(template === 'fields' ? addCommonFields(next, commonFieldNames()) : next)
+    setSelected('')
+  }
   const add = (
     kind: CellKind,
     grid?: Cell['grid'],
@@ -438,7 +462,8 @@ export function Editor({
     <section className="editor-page">
       <header className="editor-toolbar">
         <strong title={project.name}>
-          {tr('積木編輯器')} · {targetLabel}
+          {tr('版面編輯')} · {targetLabel}
+          {dirty && <span className="tab-dirty-dot" role="img" aria-label={tr('未保存')} />}
         </strong>
         {presets && (
           <Group className="scheme-toolbar" align="end" gap="xs">
@@ -535,7 +560,7 @@ export function Editor({
         </Group>
         <Group className="editor-save" gap="xs">
           <Button variant="default" onClick={leave}>
-            {tr('取消')}
+            {dirty ? tr('放棄變更') : tr('關閉')}
           </Button>
           <Button
             loading={busy}
@@ -760,6 +785,10 @@ export function Editor({
           sources={sources}
           availableFields={availableFields}
           preview={preview}
+          hasGames={
+            rows.some(isGameFolder) ||
+            draft.cells.some((c) => c.kind === 'game-cover' || c.kind === 'game-launch')
+          }
           dragImage={dragImage}
           act={act}
           add={add}
@@ -780,8 +809,32 @@ export function Editor({
           />
           <div ref={containerRef as React.RefObject<HTMLDivElement>} className="canvas">
             {!level.length && (
-              <Stack gap={6} align="center" className="canvas-empty">
-                <Button variant="light" onClick={() => add('static-text')}>
+              <Stack gap={10} align="center" className="canvas-empty">
+                <Text fw={600}>{tr('從範本開始')}</Text>
+                <Group gap="sm" justify="center">
+                  {(
+                    [
+                      ['simple', tr('簡潔'), tr('名稱、路徑、開啟資料夾')],
+                      [
+                        'fields',
+                        tr('加入評分與標籤'),
+                        tr('名稱、路徑，再加評分、標籤、狀態、備註'),
+                      ],
+                      ['game', tr('遊戲卡片'), tr('封面、名稱、啟動遊戲')],
+                    ] as const
+                  ).map(([id, title, hint]) => (
+                    <button
+                      type="button"
+                      key={id}
+                      className="template-card"
+                      onClick={() => startFrom(id)}
+                    >
+                      <strong>{title}</strong>
+                      <small>{hint}</small>
+                    </button>
+                  ))}
+                </Group>
+                <Button variant="subtle" size="compact-sm" onClick={() => add('static-text')}>
                   {tr('加入第一個組件')}
                 </Button>
                 <Text size="xs" c="dimmed">

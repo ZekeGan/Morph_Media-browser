@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Layout editor (formerly "block editor"): the title now says "Layout editor" like the toolbar button; an empty card offers three starting templates (simple, with rating and tags, game card); the component list is grouped (information to show, layout helpers) with the game-only components folded away unless the project has a game; the title shows an unsaved dot and the cancel button reads "Discard changes" ("Close" when nothing changed); only the Content section of the settings starts open.
 - Right panel opening: its code is fetched while the app is idle, recently seen folder listings are kept so reopening shows at once, and an outline of the page replaces the empty "loading" line.
 - Game detection: CRYENGINE, Adventure Game Studio, MonoGame／FNA／XNA, Source, Source 2, Adobe AIR, DOSBox bundles and PC-98 emulator collections (candidates until checked against real folders).
 - Problems and recovery: the status bar says how many problems there are (or that there are none); the dialog groups them (project location lost, duplicate folder ID, damaged record, recording stopped) with a plain explanation and the fixing button on each item, folder names jump to the folder, and raw error text is folded under "Technical details".

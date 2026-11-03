@@ -232,7 +232,7 @@ try {
     '進度'
   )
   await page.screenshot({ path: path.join(root, 'editor.png') })
-  await button('取消').click()
+  await page.getByRole('button', { name: /^(放棄變更|關閉)$/ }).click()
   assert.deepEqual(await fs.readFile(folderFile(media)), originalRecord)
   assert.equal(await fs.readFile(path.join(media, 'original.txt'), 'utf8'), 'PRESERVE ORIGINAL')
   assert.deepEqual(errors, [])

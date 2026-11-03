@@ -371,7 +371,9 @@ try {
           )
       )
       await page.screenshot({ path: path.join(screens, `scheme-${theme}.png`) })
-      await button('取消').click()
+      await page
+        .getByRole('button', { name: new RegExp('^(' + tr('放棄變更') + '|' + tr('關閉') + ')$') })
+        .click()
       await page.keyboard.press('Control+k')
       await page.locator('.folder-search-dialog').waitFor()
       await page.locator('.search-footer button').first().focus()
@@ -423,7 +425,9 @@ try {
           })
       )
       assert.ok(visible)
-      await button('取消').click()
+      await page
+        .getByRole('button', { name: new RegExp('^(' + tr('放棄變更') + '|' + tr('關閉') + ')$') })
+        .click()
       await page.keyboard.press('Control+k')
       await page.locator('.folder-search-dialog').waitFor()
       assert.ok(
