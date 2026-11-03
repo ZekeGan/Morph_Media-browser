@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Selecting and un-selecting a folder is instant: a folder that can be visited as-is is shown in the panel at once while its visit runs behind it (a refused visit goes back to the previous folder), and clearing the selection no longer waits for a double-click timer.
+- Files view groups: space between the heading line and its files, and between tile rows.
 - Clicking the selected folder again (or pressing Esc) clears the selection and the right panel goes back to the folder the path bar is on; a double click still enters the folder.
 - Files view: air between list rows and above each group heading (which now has a divider line).
 - Folders table: the dragged column dims, the drop line is thicker and fades in, the moved column flashes once, a hover button hides a column, and the column picker is a labelled "Columns" button.

@@ -1212,5 +1212,5 @@
 @media (prefers-reduced-motion: reduce) { .folder-table th.column-dropped, .folder-table th.column-insert-before::before, .folder-table th.column-insert-after::after { animation: none; } }
 
 /* Files view: air between list rows and between groups. */
-.file-overview-row.file-overview-list { padding-bottom: 6px; box-sizing: border-box; }
-.file-overview-group { align-self: end; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.file-overview-row { padding-bottom: 8px; box-sizing: border-box; }
+.file-overview-group { align-self: end; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }

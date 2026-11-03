@@ -95,7 +95,6 @@ export function BrowseWorkspace({
     [expanded, setExpanded] = useState(false)
   const [filePreview, setFilePreview] = useState<OverviewEntry>()
   const markAnchor = useRef<string>(undefined)
-  const unselectTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const [droppedColumn, setDroppedColumn] = useState('')
   const panelSlot = useRef<HTMLDivElement>(null),
     panelToggle = useRef<HTMLButtonElement>(null)
@@ -346,10 +345,37 @@ export function BrowseWorkspace({
   // A single click shows that folder in the right panel at once, without entering it: the center stays where it is.
   const previewing = useRef<Promise<void> | undefined>(undefined)
   const previewDetail = (id: string) => {
-    if (busy || !ready || id === state.current.detailId || !all.some((r) => r.rowId === id)) return
+    const target = all.find((r) => r.rowId === id)
+    if (!ready || !target || id === state.current.detailId) return
+    // A folder that can be visited as-is is shown at once; the visit (which refreshes its record) runs behind it.
+    // Anything that might be refused (no record, protected, broken) still waits for the answer.
+    const healthy = !!target.record && !target.error && !target.stopped && !target.readonly
+    if (!healthy && busy) return
     if (draftBlocks(id, false)) return
+    const operation = ++navigation.current
     const task = (async () => {
-      const operation = ++navigation.current
+      if (healthy) {
+        const previous = state.current.detailId
+        if (!onSelect(id)) return
+        setFilePreview(undefined)
+        persist({ ...state.current, detailId: id })
+        // Another request in flight means the visit is skipped (not refused), so only an idle refusal is undone.
+        const idle = !busy
+        const result = await run({ action: 'visit', rowId: id })
+        if (
+          idle &&
+          !result?.snapshot &&
+          mounted.current &&
+          operation === navigation.current &&
+          previous &&
+          state.current.detailId === id
+        ) {
+          // The visit was refused (for example the record is gone on disk): go back to what was shown.
+          onSelect(previous)
+          persist({ ...state.current, detailId: previous })
+        }
+        return
+      }
       const result = await run({ action: 'visit', rowId: id })
       if (
         !mounted.current ||
@@ -401,7 +427,6 @@ export function BrowseWorkspace({
   }
   // With nothing selected the panel shows the folder the path bar is on.
   const clearSelection = () => {
-    clearTimeout(unselectTimer.current)
     setHighlight(undefined)
     if (currentFolder && currentFolder.rowId !== state.current.detailId)
       previewDetail(currentFolder.rowId)
@@ -654,20 +679,16 @@ export function BrowseWorkspace({
         return
       }
       markAnchor.current = id
-      // Clicking the selected folder again clears the selection; a double click (which also clicks) must not.
+      // Clicking the selected folder again clears the selection at once; the second click of a double click
+      // (detail 2) selects it again before the folder is entered.
       if (e.detail === 1 && highlight === id && !marked.length) {
-        clearTimeout(unselectTimer.current)
-        unselectTimer.current = setTimeout(clearSelection, 260)
+        clearSelection()
         return
       }
-      clearTimeout(unselectTimer.current)
       if (marked.length) setMarked([])
       setHighlight(id)
     },
-    onDoubleClick: () => {
-      clearTimeout(unselectTimer.current)
-      void open(id)
-    },
+    onDoubleClick: () => void open(id),
     onContextMenu: (e: React.MouseEvent) => {
       e.preventDefault()
       e.stopPropagation()

@@ -177,10 +177,26 @@ try {
   // center path are printed so panel/center behaviour can be checked without a throwaway script.
   const card = option('card') ?? option('enter')
   if (card) {
-    const target = page.locator('.folder-card').filter({ hasText: card }).first()
-    if (option('enter')) await target.dblclick()
-    else await target.click()
-    await page.waitForTimeout(500)
+    if (option('enter'))
+      await page.locator('.folder-card').filter({ hasText: card }).first().dblclick()
+    // Time from the click to the panel title changing, measured inside the page.
+    const elapsed = await page.evaluate(async (name) => {
+      const element = [...document.querySelectorAll<HTMLElement>('.folder-card')].find((c) =>
+        c.textContent?.includes(name)
+      )!
+      const start = performance.now()
+      element.click()
+      await new Promise<void>((resolve) => {
+        const tick = () =>
+          document.querySelector('.folder-panel-header strong')?.textContent === name
+            ? resolve()
+            : requestAnimationFrame(tick)
+        tick()
+      })
+      return Math.round(performance.now() - start)
+    }, card)
+    console.log('panel update after', elapsed, 'ms')
+    await page.waitForTimeout(300)
     console.log(
       'panel:',
       await page
