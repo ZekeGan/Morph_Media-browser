@@ -33,7 +33,11 @@ export const uiTestsOf = (files) => [
   ...new Set(files.flatMap((file) => areasOf(file).flatMap((area) => expand(area.ui)))),
 ]
 export const sourceFiles = () =>
-  spawnSync('git', ['ls-files', 'src', 'electron', 'shared'], { cwd: root, encoding: 'utf8' })
+  spawnSync(
+    'git',
+    ['ls-files', '--cached', '--others', '--exclude-standard', 'src', 'electron', 'shared'],
+    { cwd: root, encoding: 'utf8' }
+  )
     .stdout.split('\n')
     .filter(Boolean)
 

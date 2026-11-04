@@ -21,6 +21,7 @@ export function FolderTable({
   browse,
   busy,
   dragColumn,
+  draggingColumn,
   setDragColumn,
   columnDrop,
   setColumnDrop,
@@ -45,6 +46,8 @@ export function FolderTable({
   browse: BrowseState
   busy: boolean
   dragColumn: string
+  // The column being dragged, read at once (state may lag one render behind dragover).
+  draggingColumn: () => string
   setDragColumn: (id: string) => void
   columnDrop?: { id: string; after: boolean }
   setColumnDrop: Dispatch<SetStateAction<{ id: string; after: boolean } | undefined>>
@@ -118,7 +121,7 @@ export function FolderTable({
                   minWidth: browse.widths[c.id] ?? 180,
                 }}
                 onDragOver={(e) => {
-                  if (!busy && dragColumn && dragColumn !== c.id) {
+                  if (!busy && draggingColumn() && draggingColumn() !== c.id) {
                     e.preventDefault()
                     e.dataTransfer.dropEffect = 'move'
                     const rect = e.currentTarget.getBoundingClientRect()

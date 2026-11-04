@@ -64,6 +64,13 @@ export function DesktopShell(props: Props) {
     [name, setName] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const [dragging, setDragging] = useState<{ kind: 'project' | 'group'; id: string }>()
+  // dragover can arrive before React re-renders with the new state; the ref is set at once, so a quick drag is
+  // never refused (which would silently cancel the drop).
+  const dragNow = useRef<{ kind: 'project' | 'group'; id: string }>(undefined)
+  const startDrag = (value: { kind: 'project' | 'group'; id: string }) => {
+    dragNow.current = value
+    setDragging(value)
+  }
   const [dropTarget, setDropTarget] = useState('')
   const [groupDrop, setGroupDrop] = useState<{ id: string; after: boolean }>()
   const [openMenu, setOpenMenu] = useState('')
@@ -150,9 +157,23 @@ export function DesktopShell(props: Props) {
   const [peek, setPeek] = useState(false),
     peekTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const peeking = peek && !!prefs.sidebarHidden
+  // Closing on purpose (Esc, picking a project) while the pointer rests on the edge must not reopen it: the browser
+  // sends a mouse move after the layout change, which the edge would take as a fresh hover.
+  // So it stays closed until the pointer has moved away from the left edge once.
+  const peekBlocked = useRef(false)
+  const closePeekNow = () => {
+    setPeek(false)
+    peekBlocked.current = true
+    const away = (event: MouseEvent) => {
+      if (event.clientX < 48) return
+      peekBlocked.current = false
+      window.removeEventListener('mousemove', away)
+    }
+    window.addEventListener('mousemove', away)
+  }
   const openPeek = () => {
     clearTimeout(peekTimer.current)
-    if (prefs.sidebarHidden) setPeek(true)
+    if (prefs.sidebarHidden && !peekBlocked.current) setPeek(true)
   }
   const closePeekSoon = () => {
     clearTimeout(peekTimer.current)
@@ -174,7 +195,7 @@ export function DesktopShell(props: Props) {
         e.key === 'Escape' &&
         !document.querySelector('.mantine-Menu-dropdown,.mantine-Modal-content')
       )
-        setPeek(false)
+        closePeekNow()
     }
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
@@ -182,7 +203,7 @@ export function DesktopShell(props: Props) {
   useEffect(() => () => clearTimeout(peekTimer.current), [])
   const selectFromSidebar = (id: string) => {
     props.onSelect(id)
-    setPeek(false)
+    closePeekNow()
   }
   useLayoutEffect(() => {
     const slot = sidebarSlot.current
@@ -243,6 +264,7 @@ export function DesktopShell(props: Props) {
   const move = (projectId: string, groupId: string | null) =>
     mutate({ action: 'moveProject', projectId, groupId })
   const endDrag = () => {
+    dragNow.current = undefined
     setDragging(undefined)
     setDropTarget('')
     setGroupDrop(undefined)
@@ -296,7 +318,7 @@ export function DesktopShell(props: Props) {
       className={`sidebar-project ${selected === p.projectId ? 'selected' : ''} ${dropTarget === sectionId + ':' + p.projectId ? 'insert-before' : ''}`}
       draggable={!locked}
       onDragOver={(e) => {
-        if (!locked && dragging?.kind === 'project') {
+        if (!locked && dragNow.current?.kind === 'project') {
           e.preventDefault()
           e.stopPropagation()
           e.dataTransfer.dropEffect = 'move'
@@ -304,13 +326,13 @@ export function DesktopShell(props: Props) {
         }
       }}
       onDrop={(e) => {
-        if (dragging?.kind === 'project') drop(e, sectionId, p.projectId)
+        if (dragNow.current?.kind === 'project') drop(e, sectionId, p.projectId)
       }}
       onDragStart={(e) => {
         e.stopPropagation()
         e.dataTransfer.setData('application/x-media-viewer-project', p.projectId)
         e.dataTransfer.effectAllowed = 'move'
-        setDragging({ kind: 'project', id: p.projectId })
+        startDrag({ kind: 'project', id: p.projectId })
       }}
       onDragEnd={endDrag}
     >
@@ -395,6 +417,7 @@ export function DesktopShell(props: Props) {
       className={`sidebar-section ${dragging?.kind === 'project' ? 'drop-ready' : ''} ${dropTarget === id + ':end' ? 'insert-end' : ''} ${groupDrop?.id === id ? (groupDrop.after ? 'group-insert-after' : 'group-insert-before') : ''}`}
       data-group-id={id}
       onDragOver={(e) => {
+        const dragging = dragNow.current
         if (locked || !dragging) return
         e.preventDefault()
         e.dataTransfer.dropEffect = 'move'
@@ -415,7 +438,7 @@ export function DesktopShell(props: Props) {
             e.stopPropagation()
             e.dataTransfer.setData('application/x-media-viewer-group', id)
             e.dataTransfer.effectAllowed = 'move'
-            setDragging({ kind: 'group', id })
+            startDrag({ kind: 'group', id })
             setOpenMenu('')
           }}
           onDragEnd={endDrag}

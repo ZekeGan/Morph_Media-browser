@@ -74,7 +74,15 @@ for (const file of docs.filter((f) => f !== 'docs/DECISIONS.md')) {
 }
 
 // 4. Translations no source text uses any more.
-const source = git('ls-files', 'src', 'shared', 'electron')
+const source = git(
+  'ls-files',
+  '--cached',
+  '--others',
+  '--exclude-standard',
+  'src',
+  'shared',
+  'electron'
+)
   .filter((file) => /\.(ts|tsx)$/.test(file))
   .map((file) => read(file).replace(/\s+/g, ' '))
   .join('\n')

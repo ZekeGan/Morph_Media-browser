@@ -371,15 +371,18 @@ export function GameActionEditor({
               e.dataTransfer.effectAllowed = 'move'
             }}
             onDragEnd={() => setDragged(undefined)}
+            // Decide from the drag data, not from state: a quick drag reaches dragover before React has re-rendered
+            // with the dragged id, and refusing that dragover silently cancels the drop.
             onDragOver={(e) => {
-              if (dragged) {
+              if (e.dataTransfer.types.includes('application/x-game-action')) {
                 e.preventDefault()
                 e.dataTransfer.dropEffect = 'move'
               }
             }}
             onDrop={(e) => {
               e.preventDefault()
-              if (dragged) move(dragged, i)
+              const id = e.dataTransfer.getData('application/x-game-action') || dragged
+              if (id) move(id, i)
               setDragged(undefined)
             }}
           >

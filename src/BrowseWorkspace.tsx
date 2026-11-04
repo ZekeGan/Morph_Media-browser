@@ -5,7 +5,6 @@ import type { OverviewEntry } from '../shared/explorer'
 import type { FolderNavigation } from '../shared/workspace'
 import { t as tr, useLocale, currentLocale } from './i18n'
 import { Icon } from './icons'
-import { BoundaryFlag } from './BoundaryFlag'
 import { BrowseToolbar } from './BrowseToolbar'
 import { BrowsePanel } from './BrowsePanel'
 import {
@@ -19,25 +18,16 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { ActionIcon, Breadcrumbs, Pagination, Tooltip } from '@mantine/core'
-import { Card } from './Card'
+import { ActionIcon, Pagination, Tooltip } from '@mantine/core'
+import { BrowseNav } from './BrowseNav'
+import { FolderCards } from './FolderCards'
+import { useCardSettings } from './useCardSettings'
+import { useTableColumns } from './useTableColumns'
 import { FolderTable } from './FolderTable'
 import { KindBatchBar } from './KindBatchBar'
 import { cardPresets } from '../shared/layouts'
-import {
-  browserRows,
-  cardDisplay,
-  folderBreadcrumbs,
-  maxBrowseDepth,
-  pathKey,
-} from '../shared/browse'
-import {
-  fieldValue,
-  type FolderRow,
-  type Project,
-  type Request,
-  type Response,
-} from '../shared/model'
+import { browserRows, folderBreadcrumbs, maxBrowseDepth, pathKey, sortRows } from '../shared/browse'
+import type { FolderRow, Project, Request, Response } from '../shared/model'
 import type { BrowseMode, BrowseState, ExplorerRequest, ExplorerResponse } from '../shared/explorer'
 const FolderPanel = lazy(() => import('./FolderPanel').then((m) => ({ default: m.FolderPanel })))
 const Tree = lazy(() => import('./TreeView'))
@@ -98,7 +88,6 @@ export function BrowseWorkspace({
     [expanded, setExpanded] = useState(false)
   const [filePreview, setFilePreview] = useState<OverviewEntry>()
   const markAnchor = useRef<string>(undefined)
-  const [droppedColumn, setDroppedColumn] = useState('')
   const panelSlot = useRef<HTMLDivElement>(null),
     panelToggle = useRef<HTMLButtonElement>(null)
   const panelBody = useRef<HTMLDivElement>(null),
@@ -119,35 +108,6 @@ export function BrowseWorkspace({
     [overviewTools, setOverviewTools] = useState<HTMLDivElement | null>(null),
     [columnQuery, setColumnQuery] = useState(''),
     [configTab, setConfigTab] = useState('fields')
-  const [display, setDisplay] = useState(cardDisplay(project)),
-    [density, setDensity] = useState<{ itemsPerRow: number | string; pageSize: number | string }>(
-      project.list
-    )
-  const [cardPending, setCardPending] = useState(false),
-    [cardSaveError, setCardSaveError] = useState('')
-  const cardEdit = useRef(0),
-    cardSaving = useRef(false),
-    projectLive = useRef(project)
-  projectLive.current = project
-  const validDensity =
-    typeof density.itemsPerRow === 'number' &&
-    Number.isInteger(density.itemsPerRow) &&
-    density.itemsPerRow >= 1 &&
-    density.itemsPerRow <= 6 &&
-    typeof density.pageSize === 'number' &&
-    Number.isInteger(density.pageSize) &&
-    density.pageSize >= 1 &&
-    density.pageSize <= 500
-  const liveList = validDensity
-    ? { itemsPerRow: Number(density.itemsPerRow), pageSize: Number(density.pageSize) }
-    : project.list
-  const changedCard = () => {
-    cardEdit.current++
-    setCardPending(true)
-    setCardSaveError('')
-  }
-  const [dragColumn, setDragColumn] = useState(''),
-    [columnDrop, setColumnDrop] = useState<{ id: string; after: boolean }>()
   const histories = useRef<Partial<Record<BrowseMode, { items: string[]; index: number }>>>({}),
     [, renderHistory] = useState(0)
   const scroll = useRef<HTMLDivElement>(null),
@@ -158,7 +118,10 @@ export function BrowseWorkspace({
     rootRow = all.find((r) => pathKey(r.path) === pathKey(root)),
     detail = all.find((r) => r.rowId === selected),
     config = all.find((r) => r.rowId === configId),
-    card = display
+    deepest = maxBrowseDepth(all)
+  const { display, setDisplay, density, setDensity, liveList, cardSaveError, changedCard } =
+    useCardSettings({ project, deepest, busy, act, mounted })
+  const card = display
   state.current = browse
   useEffect(() => {
     let alive = true
@@ -267,30 +230,7 @@ export function BrowseWorkspace({
       ).filter((row) => !boundariesOnly || browse.mode === 'TREE' || isGameFolder(row)),
     [all, project, root, browse.mode, location, display, density, boundariesOnly]
   )
-  const filtered = useMemo(
-    () =>
-      [...base].sort((a, b) => {
-        const get = (r: FolderRow) =>
-          sort.field === 'name'
-            ? r.name
-            : sort.field === 'path'
-              ? r.path
-              : sort.field === 'depth'
-                ? r.depth
-                : fieldValue(r, sort.field)
-        const av = get(a),
-          bv = get(b)
-        if (av == null || bv == null)
-          return av == null ? (bv == null ? a.rowId.localeCompare(b.rowId) : 1) : -1
-        return (
-          (typeof av === 'number' && typeof bv === 'number'
-            ? av - bv
-            : String(av).localeCompare(String(bv), currentLocale(), { numeric: true })) *
-            (sort.asc ? 1 : -1) || a.rowId.localeCompare(b.rowId)
-        )
-      }),
-    [base, sort, locale]
-  )
+  const filtered = useMemo(() => sortRows(base, sort, currentLocale()), [base, sort, locale])
   const pageSize = browse.mode === 'CARD' ? liveList.pageSize : 100,
     pages = Math.max(1, Math.ceil(filtered.length / pageSize)),
     current = filtered.slice(
@@ -309,8 +249,7 @@ export function BrowseWorkspace({
     )
     return () => cancelAnimationFrame(frame)
   }, [browse.mode, browse.location, ready, selected, filtered, pageSize, card.mode])
-  const navigable = true,
-    history = histories.current[browse.mode] ?? { items: [location], index: 0 }
+  const history = histories.current[browse.mode] ?? { items: [location], index: 0 }
   const moveTo = (target: string) => {
     const mode = state.current.mode,
       h = histories.current[mode] ?? { items: [state.current.location], index: 0 }
@@ -343,7 +282,7 @@ export function BrowseWorkspace({
       ...state.current,
       detailId: id,
     })
-    if (navigable) {
+    {
       if (fromHistory !== undefined) {
         const next = { ...history, index: fromHistory }
         histories.current = { CARD: next, TABLE: next, TREE: next }
@@ -555,37 +494,24 @@ export function BrowseWorkspace({
           : tr('此資料夾尚未建立資料，請先明確重新掃描')
       )
   }
-  const availableColumns = [
-    { id: 'name', label: tr('資料夾名稱') },
-    { id: 'path', label: tr('目前路徑') },
-    { id: 'depth', label: tr('層級') },
-    ...project.fieldBindings.map((f) => ({ id: f.attributeId, label: f.alias })),
-  ]
-  const orderedColumns = [
-    ...(browse.columnOrder ?? []).flatMap((id) => availableColumns.find((c) => c.id === id) ?? []),
-    ...availableColumns.filter((c) => !browse.columnOrder?.includes(c.id)),
-  ]
-  const columns = orderedColumns.filter(
-    (column) => column.id === 'name' || !browse.hiddenColumns?.includes(column.id)
-  )
-  const reorderColumn = (source: string, target: string, after: boolean) => {
-    if (busy || source === target || !columns.some((c) => c.id === source)) return
-    const ids = orderedColumns.map((c) => c.id).filter((id) => id !== source),
-      index = ids.indexOf(target)
-    if (index < 0) return
-    ids.splice(index + (after ? 1 : 0), 0, source)
-    if (ids.some((id, i) => orderedColumns[i].id !== id)) {
-      persist({ ...state.current, columnOrder: ids })
-      setDroppedColumn(source)
-      setTimeout(() => setDroppedColumn(''), 700)
-    }
-  }
-  const endColumnDrag = () => {
-    setDragColumn('')
-    setColumnDrop(undefined)
-  }
-  const deepest = maxBrowseDepth(all),
-    crumbs = folderBreadcrumbs(all, root, currentFolder?.path ?? root)
+  const {
+    orderedColumns,
+    columns,
+    dragColumn,
+    setDragColumn,
+    draggingColumn,
+    columnDrop,
+    setColumnDrop,
+    droppedColumn,
+    reorderColumn,
+    endColumnDrag,
+  } = useTableColumns({
+    project,
+    browse,
+    busy,
+    saveOrder: (columnOrder) => persist({ ...state.current, columnOrder }),
+  })
+  const crumbs = folderBreadcrumbs(all, root, currentFolder?.path ?? root)
   const overviewRoot = currentFolder ?? rootRow
   const folderMode = browse.contentMode !== 'files'
   const hasGames = all.some(isGameFolder)
@@ -629,35 +555,6 @@ export function BrowseWorkspace({
     if (!panelOpen && slot.contains(document.activeElement)) panelToggle.current?.focus()
     slot.inert = !panelOpen
   }, [panelOpen])
-  useEffect(() => {
-    if (cardPending) return
-    const next = cardDisplay(project)
-    setDisplay({ ...next, level: next.level === 'all' ? 'all' : Math.min(next.level, deepest) })
-    setDensity(project.list)
-  }, [project.revision, deepest])
-  useEffect(() => {
-    if (!cardPending || !validDensity || busy || cardSaving.current) return
-    const edit = cardEdit.current,
-      projectId = project.projectId
-    const timeout = setTimeout(() => {
-      cardSaving.current = true
-      void act({
-        action: 'saveProject',
-        project: { ...projectLive.current, cardView: display, list: liveList },
-      })
-        .then((result) => {
-          if (!mounted.current || projectLive.current.projectId !== projectId) return
-          if (edit === cardEdit.current) {
-            setCardPending(false)
-            if (!result) setCardSaveError(tr('顯示設定未保存，請重試'))
-          }
-        })
-        .finally(() => {
-          cardSaving.current = false
-        })
-    }, 300)
-    return () => clearTimeout(timeout)
-  }, [cardPending, display, density, busy, project.revision])
   const moveWidth = (e: React.PointerEvent) => {
     if (!resize.current) return
     const r = resize.current
@@ -833,78 +730,33 @@ export function BrowseWorkspace({
           state={state}
           switchMode={switchMode}
         />
-        <div className="workspace-breadcrumb">
-          <Tooltip label={tr('返回上一個瀏覽位置')}>
-            <ActionIcon
-              aria-label={tr('返回')}
-              disabled={!ready || !navigable || !history.index || busy}
-              variant="subtle"
-              color="gray"
-              onClick={() => navHistory(-1)}
-            >
-              <Icon name="arrow-left" />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label={tr('前進至下一個瀏覽位置')}>
-            <ActionIcon
-              aria-label={tr('前進')}
-              disabled={!ready || !navigable || history.index >= history.items.length - 1 || busy}
-              variant="subtle"
-              color="gray"
-              onClick={() => navHistory(1)}
-            >
-              <Icon name="arrow-right" />
-            </ActionIcon>
-          </Tooltip>
-          <nav className="breadcrumb-path" aria-label={tr('資料夾路徑')} title={location || root}>
-            <Breadcrumbs separator={String.fromCharCode(92)}>
-              {crumbs.map((r, i) =>
-                i === crumbs.length - 1 ? (
-                  <span
-                    key={r.rowId}
-                    aria-current="page"
-                    className="breadcrumb-current"
-                    title={r.path}
-                  >
-                    {r.name}
-                  </span>
-                ) : (
-                  <button
-                    key={r.rowId}
-                    className="breadcrumb-link"
-                    title={r.path}
-                    disabled={busy}
-                    onClick={() => void open(r.rowId)}
-                    onContextMenu={(e) => {
-                      e.preventDefault()
-                      openConfig(r.rowId)
-                    }}
-                  >
-                    {r.name}
-                  </button>
-                )
-              )}
-            </Breadcrumbs>
-          </nav>
-          {folderMode && (
-            <small
-              className="view-count"
-              title={tr('Ctrl／Shift 點選可多選資料夾，再批次指定類型')}
-            >
-              {filtered.length} {tr('筆')}
-              {browse.mode === 'CARD'
-                ? ' · ' +
-                  (card.mode === 'multi' ? tr('多層') : tr('單層')) +
-                  ' · ' +
-                  (card.level === 'all'
-                    ? tr('全部（最深第 ') + deepest + tr(' 層）')
-                    : card.mode === 'multi'
-                      ? tr('第 1–') + card.level + tr(' 層')
-                      : tr('第 ') + card.level + tr(' 層'))
-                : ''}
-            </small>
-          )}
-        </div>
+        <BrowseNav
+          ready={ready}
+          busy={busy}
+          history={history}
+          navHistory={navHistory}
+          crumbs={crumbs}
+          title={location || root}
+          open={(id) => void open(id)}
+          openConfig={openConfig}
+          summary={
+            folderMode
+              ? filtered.length +
+                ' ' +
+                tr('筆') +
+                (browse.mode === 'CARD'
+                  ? ' · ' +
+                    (card.mode === 'multi' ? tr('多層') : tr('單層')) +
+                    ' · ' +
+                    (card.level === 'all'
+                      ? tr('全部（最深第 ') + deepest + tr(' 層）')
+                      : card.mode === 'multi'
+                        ? tr('第 1–') + card.level + tr(' 層')
+                        : tr('第 ') + card.level + tr(' 層'))
+                  : '')
+              : undefined
+          }
+        />
         <div
           className="browse-main"
           ref={scroll}
@@ -964,6 +816,7 @@ export function BrowseWorkspace({
               browse={browse}
               busy={busy}
               dragColumn={dragColumn}
+              draggingColumn={draggingColumn}
               setDragColumn={setDragColumn}
               columnDrop={columnDrop}
               setColumnDrop={setColumnDrop}
@@ -982,59 +835,17 @@ export function BrowseWorkspace({
               showPanelFor={showPanelFor}
             />
           ) : (
-            <div
-              className="cards"
-              style={{ '--columns': liveList.itemsPerRow } as React.CSSProperties}
-            >
-              {current.map((row) => (
-                <article
-                  key={row.rowId}
-                  data-row-id={row.rowId}
-                  className={
-                    'folder-card ' +
-                    (highlight === row.rowId ? 'selected ' : '') +
-                    (marked.includes(row.rowId) ? 'marked' : '')
-                  }
-                  tabIndex={0}
-                  {...gestures(row.rowId)}
-                >
-                  {!panelOpen && (
-                    <Tooltip label={tr('顯示資料夾內容')}>
-                      <ActionIcon
-                        className="card-info"
-                        variant="default"
-                        size="sm"
-                        aria-label={tr('顯示資料夾內容')}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          showPanelFor(row.rowId)
-                        }}
-                      >
-                        <Icon name="panel-right" size={14} />
-                      </ActionIcon>
-                    </Tooltip>
-                  )}
-                  <Card
-                    project={project}
-                    row={row}
-                    open={() => void act({ action: 'open', rowId: row.rowId })}
-                  />
-                  {(row.error || !row.record || row.readonly || row.boundary) && (
-                    <small className="folder-state">
-                      {row.error ? (
-                        tr('需要處理')
-                      ) : row.readonly ? (
-                        tr('受保護')
-                      ) : !row.record ? (
-                        tr('尚未建立資料')
-                      ) : (
-                        <BoundaryFlag />
-                      )}
-                    </small>
-                  )}
-                </article>
-              ))}
-            </div>
+            <FolderCards
+              rows={current}
+              project={project}
+              itemsPerRow={liveList.itemsPerRow}
+              highlight={highlight}
+              marked={marked}
+              gestures={gestures}
+              panelOpen={panelOpen}
+              showPanelFor={showPanelFor}
+              act={act}
+            />
           )}
           {!current.length && browse.mode !== 'TREE' && (
             <div className="empty-folder">

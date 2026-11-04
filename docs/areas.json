@@ -34,6 +34,10 @@
         "src/BrowseWorkspace*",
         "src/BrowseToolbar*",
         "src/BrowsePanel*",
+        "src/BrowseNav*",
+        "src/FolderCards*",
+        "src/useCardSettings*",
+        "src/useTableColumns*",
         "src/TreeView*",
         "src/FolderTable*",
         "src/ViewToggle*",
@@ -67,6 +71,9 @@
         "src/FolderParts*",
         "src/FolderContent*",
         "src/FolderAdvanced*",
+        "src/FolderFieldInput*",
+        "src/FolderImages*",
+        "src/FolderSourceImport*",
         "src/PanelSkeleton*"
       ],
       "ui": [
@@ -250,7 +257,13 @@
       "id": "metadata",
       "name": "外部資料預覽與套用",
       "docs": ["METADATA_ENRICHMENT.md#分類來源", "METADATA_ENRICHMENT.md#預覽套用與追溯"],
-      "code": ["electron/metadata*", "shared/sources*", "src/importSource*", "src/ImageUrlImport*"],
+      "code": [
+        "electron/metadata*",
+        "shared/sources*",
+        "src/importSource*",
+        "src/ImageUrlImport*",
+        "src/FolderSourceImport*"
+      ],
       "ui": ["media-feedback-ui"],
       "tests": ["metadata.test.ts", "decided-media.test.ts"]
     },

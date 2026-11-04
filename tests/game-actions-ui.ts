@@ -130,11 +130,22 @@ try {
   await editor.getByRole('textbox', { name: '按鈕文字', exact: true }).fill('Website')
   await editor.getByRole('textbox', { name: '任務類型', exact: true }).click()
   await page.getByRole('option', { name: '開啟網址', exact: true }).click()
+  // The drag events are sent directly with one shared DataTransfer: Playwright's native drag sometimes never starts
+  // (about 1 run in 10), while this still runs the item's own dragstart, dragover and drop handlers.
+  const transfer = await page.evaluateHandle(() => new DataTransfer())
+  const source = editor.locator('.game-action-item').last(),
+    target = editor.locator('.game-action-item').first()
+  await source.dispatchEvent('dragstart', { dataTransfer: transfer })
+  await target.dispatchEvent('dragenter', { dataTransfer: transfer })
+  await target.dispatchEvent('dragover', { dataTransfer: transfer })
+  await target.dispatchEvent('drop', { dataTransfer: transfer })
+  await source.dispatchEvent('dragend', { dataTransfer: transfer })
+  // The new order renders after the drop: wait for it instead of reading the list at once.
   await editor
-    .locator('.game-action-item')
-    .last()
-    .dragTo(editor.locator('.game-action-item').first())
-  assert.ok((await editor.locator('.game-action-select').first().innerText()).includes('Website'))
+    .locator('.game-action-select')
+    .first()
+    .filter({ hasText: 'Website' })
+    .waitFor({ timeout: 3000 })
   await page.screenshot({ path: path.join(screens, 'editor.png') })
   page.once('dialog', (dialog) => dialog.accept())
   await editor.locator('.mantine-Modal-close').click()

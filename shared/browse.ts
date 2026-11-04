@@ -1,4 +1,4 @@
-import type { FolderRow, Project } from './model'
+import { fieldValue, type FolderRow, type Project } from './model'
 import type { BrowseMode } from './explorer'
 export const pathKey = (p: string) => p.replace(/\\/g, '/').replace(/\/$/, '').toLocaleLowerCase()
 export const parentPath = (p: string) => p.replace(/[\\/][^\\/]+[\\/]?$/, '')
@@ -92,4 +92,28 @@ export function visibleTreeRows(rows: FolderRow[], collapsed: string[]) {
     if (!hidden.has(row.rowId)) for (const child of children.get(row.rowId) ?? []) queue.push(child)
   }
   return visible
+}
+
+// Sorts by name, path, depth or a field; empty values go last, ties keep a stable order by row identity.
+export function sortRows(rows: FolderRow[], sort: { field: string; asc: boolean }, locale: string) {
+  const get = (r: FolderRow) =>
+    sort.field === 'name'
+      ? r.name
+      : sort.field === 'path'
+        ? r.path
+        : sort.field === 'depth'
+          ? r.depth
+          : fieldValue(r, sort.field)
+  return [...rows].sort((a, b) => {
+    const av = get(a),
+      bv = get(b)
+    if (av == null || bv == null)
+      return av == null ? (bv == null ? a.rowId.localeCompare(b.rowId) : 1) : -1
+    return (
+      (typeof av === 'number' && typeof bv === 'number'
+        ? av - bv
+        : String(av).localeCompare(String(bv), locale, { numeric: true })) * (sort.asc ? 1 : -1) ||
+      a.rowId.localeCompare(b.rowId)
+    )
+  })
 }

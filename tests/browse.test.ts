@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import path from 'node:path'
-import { browserRows } from '../shared/browse'
+import { browserRows, sortRows } from '../shared/browse'
 import type { FolderRow } from '../shared/model'
 import { modelFolder, modelProject } from './support/model-fixtures'
 
@@ -51,4 +51,43 @@ test('a folder without subfolders shows its own card, others show their children
   assert.deepEqual(cards(path.join(root, 'B'), single), ['B'])
   const table = browserRows(rows, modelProject(), root, 'TABLE', path.join(root, 'B'))
   assert.deepEqual(table, [], 'the table stays a list of children')
+})
+
+test('rows sort by name with numbers in order, by field with empty values last, and stay stable', () => {
+  const withScore = (name: string, score?: number): FolderRow => ({
+    ...row(name, 2),
+    record: {
+      ...modelFolder(),
+      attributes:
+        score === undefined
+          ? []
+          : [
+              {
+                attributeId: 'score',
+                key: 'score',
+                type: 'number',
+                value: score,
+                source: 'manual',
+              },
+            ],
+    },
+  })
+  const list = [withScore('item 10', 1), withScore('item 2'), withScore('item 1', 5)]
+  const names = (sorted: FolderRow[]) => sorted.map((r) => r.name)
+  assert.deepEqual(names(sortRows(list, { field: 'name', asc: true }, 'en')), [
+    'item 1',
+    'item 2',
+    'item 10',
+  ])
+  assert.deepEqual(names(sortRows(list, { field: 'name', asc: false }, 'en')), [
+    'item 10',
+    'item 2',
+    'item 1',
+  ])
+  assert.deepEqual(
+    names(sortRows(list, { field: 'score', asc: false }, 'en')),
+    ['item 1', 'item 10', 'item 2'],
+    'a folder without the field goes last in either direction'
+  )
+  assert.deepEqual(names(list), ['item 10', 'item 2', 'item 1'], 'the input is not reordered')
 })
