@@ -524,6 +524,9 @@ export function App() {
             change={setSettings}
             act={act}
             close={() => setSettings(undefined)}
+            saved={
+              snapshot.projects.find((p) => p.projectId === settings.projectId)?.project ?? settings
+            }
           />
         )}
       </Modal>

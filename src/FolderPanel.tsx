@@ -1120,10 +1120,12 @@ export function FolderPanel({
         <Tabs.Panel value="game" pt="md" keepMounted>
           <Stack>
             <Group justify="space-between">
-              <Group gap={4} wrap="nowrap">
+              <div>
                 <Text fw={600}>{tr('遊戲操作')}</Text>
-                <HelpTip text={tr('版型套用全專案；目標與參數只屬於目前資料夾。')} />
-              </Group>
+                <Text size="sm" c="dimmed">
+                  {tr('版型套用全專案；目標與參數只屬於目前資料夾。')}
+                </Text>
+              </div>
               <Button
                 size="xs"
                 variant="default"

@@ -2225,12 +2225,6 @@
     "en": "Folder location",
     "es": "Ubicación de carpeta"
   },
-  "CARD 的層級、密度與每頁筆數，請由資料夾檢視區的「CARD 顯示設定」調整。": {
-    "ja": "CARDの階層、密度、ページ件数は「CARD表示設定」で変更できます。",
-    "zh-CN": "CARD 的层级、密度与每页笔数，请由文件夹检视区的「CARD 显示设定」调整。",
-    "en": "Adjust CARD levels, density and page size in CARD display settings.",
-    "es": "Ajusta niveles, densidad y tamaño de página en los ajustes de vista CARD."
-  },
   "擴大掃描全部層級？僅在允許的資料夾建立記錄，遊戲保護與清理排除仍保留。": {
     "ja": "全階層へスキャンを拡大しますか？許可されたフォルダーのみに記録を作成し、ゲーム境界と消去除外は保持します。",
     "zh-CN": "扩大扫描全部层级？仅在允许的文件夹建立记录，游戏保护与清理排除仍保留。",
@@ -2242,12 +2236,6 @@
     "zh-CN": "旧项目：扩大扫描范围",
     "en": "Legacy project: expand scan scope",
     "es": "Proyecto anterior: ampliar ámbito del escaneo"
-  },
-  "保存專案設定": {
-    "ja": "プロジェクト設定を保存",
-    "zh-CN": "保存项目设定\u0001",
-    "en": "Save project settings",
-    "es": "Guardar ajustes del proyecto"
   },
   "取消專案連結": {
     "ja": "プロジェクト連携を解除",
@@ -5597,12 +5585,6 @@
     "ja": "説明: {0}",
     "es": "Ayuda: {0}"
   },
-  "CARD 顯示": {
-    "zh-CN": "CARD 显示",
-    "en": "CARD display",
-    "ja": "CARD 表示",
-    "es": "Vista CARD"
-  },
   "還有更多標籤": {
     "zh-CN": "还有更多标签",
     "en": "More tags",
@@ -6317,12 +6299,6 @@
     "ja": "完了",
     "es": "Hecho"
   },
-  "目前設定已保存": {
-    "zh-CN": "当前设置已保存",
-    "en": "Settings saved",
-    "ja": "現在の設定は保存済みです",
-    "es": "Ajustes guardados"
-  },
   "已更新資料夾類型": {
     "zh-CN": "已更新文件夹类型",
     "en": "Folder type updated",
@@ -6976,5 +6952,11 @@
     "zh-CN": "清除范围内所有本工具数据；可能影响其他专案。原始媒体保留。",
     "en": "Clears all of the app’s data in the range. It may affect other projects. Your original media stays.",
     "es": "Borra todos los datos de la aplicación en el ámbito. Puede afectar a otros proyectos. Tus medios originales se conservan."
+  },
+  "專案設定尚未保存": {
+    "ja": "プロジェクト設定はまだ保存されていません",
+    "zh-CN": "专案设定尚未保存",
+    "en": "Project settings not saved yet",
+    "es": "Los ajustes del proyecto aún no se han guardado"
   }
 }

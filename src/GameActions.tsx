@@ -484,17 +484,6 @@ export function GameActionEditor({
               {current.id === 'default-launch-game' ? tr(current.label) : current.label}
             </Button>
           </div>
-          <Tooltip
-            events={{ hover: true, focus: true, touch: false }}
-            label={tr('保存版型後，在遊戲操作中指定此資料夾的目標。')}
-          >
-            <ActionIcon
-              aria-label={tr('保存版型後，在遊戲操作中指定此資料夾的目標。')}
-              variant="subtle"
-            >
-              <Icon name="help" size={16} />
-            </ActionIcon>
-          </Tooltip>
         </Stack>
       ) : (
         <Text c="dimmed" size="sm">

@@ -243,10 +243,10 @@ export function ApplicationSettings({
         <Tabs.Panel value="data" pt="lg">
           <Stack gap="lg">
             <section className="settings-section">
-              <Group gap={4} wrap="nowrap" mb="xs">
-                <Text fw={600}>{tr('設定備份')}</Text>
-                <HelpTip text={tr('匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。')} />
-              </Group>
+              <Text fw={600}>{tr('設定備份')}</Text>
+              <Text size="sm" c="dimmed" mb="sm">
+                {tr('匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。')}
+              </Text>
               <Stack>
                 <Group>
                   <Button disabled={saving} onClick={() => void transfer('export')}>

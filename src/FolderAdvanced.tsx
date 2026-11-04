@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@mantine/core'
 import { t as tr } from './i18n'
-import { HelpLabel, HelpTip } from './HelpTip'
+import { HelpTip } from './HelpTip'
 import type { CleanupPreview, CleanupResult, FolderRow, Request, Response } from '../shared/model'
 
 // The folder settings "Advanced" tab: scan boundary, record recovery, stored attributes and the dangerous actions.
@@ -177,10 +177,10 @@ export function FolderAdvanced({
             <Accordion.Control c="red">{tr('危險操作')}</Accordion.Control>
             <Accordion.Panel>
               <section className="settings-section cleanup-section">
-                <Group gap={4} wrap="nowrap">
-                  <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
-                  <HelpTip text={tr('原始資料夾與媒體保留。先預覽範圍，確認後才清理。')} />
-                </Group>
+                <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
+                <Text size="sm" c="dimmed">
+                  {tr('原始資料夾與媒體保留。先預覽範圍，確認後才清理。')}
+                </Text>
                 <Group>
                   <Button
                     size="xs"
@@ -224,12 +224,8 @@ export function FolderAdvanced({
                     ))}
                     {cleanup.scope === 'folder' && (
                       <Checkbox
-                        label={
-                          <HelpLabel
-                            label={tr('清除後立即重新開始記錄')}
-                            help={tr('預設停止記錄，避免下次掃描立即建立資料。')}
-                          />
-                        }
+                        label={tr('清除後立即重新開始記錄')}
+                        description={tr('預設停止記錄，避免下次掃描立即建立資料。')}
                         checked={restart}
                         onChange={(e) => setRestart(e.currentTarget.checked)}
                       />
