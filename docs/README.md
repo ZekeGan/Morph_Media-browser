@@ -31,6 +31,7 @@
 | 遊戲 ROOT／偵測／內部保護 | [判斷規則](GAME_ENGINE_DETECTION.md#漏判誤判與-root-定位規則)、[驗收](GAME_ENGINE_DETECTION.md#驗收與演進) | [game-detection](../electron/game-detection.ts)、[Library](../electron/library.ts) `scan`／`visit` | [game-detection](../tests/game-detection.test.ts)、[library](../tests/library.test.ts) |
 | 外部資料預覽／套用 | [分類來源](METADATA_ENRICHMENT.md#分類來源)、[套用與追溯](METADATA_ENRICHMENT.md#預覽套用與追溯) | [sources](../shared/sources.ts)、[metadata](../electron/metadata.ts) | [metadata](../tests/metadata.test.ts)、[來源契約](../tests/decided-media.test.ts) |
 | 主題／語言／共用互動 | [外觀與語言](UI_RULES.md#全域外觀與語言)、[焦點與保存](UI_RULES.md#保存焦點與狀態) | [ApplicationSettings](../src/ApplicationSettings.tsx)、[locales](../shared/locales.ts)、[themes](../src/themes/ThemeProvider.tsx) | [appearance](../tests/appearance.test.ts)、[appearance UI](../tests/appearance-ui.ts) |
+| 文件截圖重拍／授權與名稱 | [IMPLEMENTATION](IMPLEMENTATION.md) 指令表 `pnpm shot:docs`；[TRADEMARK](../TRADEMARK.md)、[NOTICE](../NOTICE.md) | [docs-shots](../tests/support/docs-shots.ts)、[demo-data](../tests/support/demo-data.ts) | 無（`pnpm shot:docs` 本身即產出） |
 | 設定包備份／移轉 | [設定包](WORKSPACE_REVISION.md#設定包移轉)、[儲存限制](STORAGE_OPTIONS.md#權威與寫入) | [settings-package](../electron/settings-package.ts)、[WorkspaceStore](../electron/workspace.ts) | [decided](../tests/decided.test.ts)、[decided UI](../tests/decided-ui.ts) |
 
 產品邊界見 [PRODUCT](PRODUCT.md)，找畫面可用 [畫面索引](UI_SCREEN_CATALOG.md)；兩者按需讀。音樂播放器等排程／未決細節見 [OPEN_DECISIONS](OPEN_DECISIONS.md)。

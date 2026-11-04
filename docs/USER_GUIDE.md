@@ -17,18 +17,20 @@ Your settings and the search index live in `%APPDATA%\media-viewer`; each manage
 
 ## 2. Basic ideas
 
-- **Project**: points at one **root folder** and decides how the folders below it are shown. A project has a category (media, manga, game) and the depth it shows.
+- **Project**: points at one **root folder** and decides how the folders below it are shown. A project has the depth it shows; each folder works out its own type (manga, album, game and so on).
 - **Record**: every managed folder stores its own information (name, tags, rating, where it came from) with the folder, so it stays valid when the folder moves to another place or computer.
 - **Layout**: the card look you design once in the block editor and apply to the whole project. Data and appearance are separate.
 
 ## 3. Create your first project
 
 1. Press **New project** at the bottom of the left project bar.
-2. Enter a project name, choose a media category, and press **Choose folder** to pick the root folder.
-3. Choose how much to show (the root counts as level 1): only the first level, down to level N, or everything.
-4. Confirm. M:orph scans the folder and creates the records, and the project appears in the list. Use **Add group** to group projects; a project can also be marked as a favourite.
+2. With **Create from a folder**, press **Choose folder** to pick the root folder. The project name starts as the folder name and can be changed; then pick a group.
+3. Press **Create project**. M:orph scans the folder and creates the records, and the project appears in the list. To bring back data you exported earlier, choose **Import exported project data** instead, pick the export folder and the root folder to put it in, and import after the preview.
+4. Use **Add group** to group projects; a project can also be marked as a favourite.
 
-If you already created a project and only moved to another computer or folder, use **Relink existing project**.
+![The New project dialog with three tabs: Create from a folder, Import exported project data, Link an existing project](images/05-create-project.png)
+
+If you already created a project and only moved to another computer or folder, use **Link an existing project** in the same dialog.
 
 ## 4. Browse
 
@@ -36,7 +38,10 @@ If you already created a project and only moved to another computer or folder, u
 - A **single click** on a folder previews it in the right panel (details, files, subfolders) without leaving the list; a **double click** enters it.
 - The right panel opens images, manga, video, music and PDF / ZIP / CBZ in place. When a video cannot be played, the app explains why and offers to open it with the system player.
 - Filters, file scope, type and view settings are remembered per project.
+- When the window is narrow, the right panel opens over the list; close it to get back to the cards.
 - `Ctrl+K` opens search: a space means "all of these", `~` means "any of these", `-` excludes, and quotes keep a phrase with spaces together, for example `folder_name:"my name"`. Number and date fields can be compared.
+
+![Card mode: cover, name, tags, rating and status, with the selected folder's contents on the right](images/01-main-card.png)
 
 ## 5. Design the card (block editor)
 
@@ -46,6 +51,8 @@ If you already created a project and only moved to another computer or folder, u
 4. **Fallback fields**: one component can list several fields and shows the first one that has a value, for example "Steam name → DLsite name → my own note". Search follows the same order.
 5. "Preview with actual data" at the top lets you pick a real folder and see the components filled with its data. When content is long, choose scrolling, wrapping, or the tag "+N" badge.
 6. Press **Save changes**, or **Cancel** to drop them. A project can have several named layouts.
+
+![The layout editor: components on the left, the canvas with a real-data preview in the middle, component settings on the right](images/04-editor.png)
 
 ## 6. Add information to a folder
 
