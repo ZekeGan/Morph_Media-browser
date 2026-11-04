@@ -92,7 +92,7 @@ export function VideoSubtitleSettings({
                 </Button>
                 {subtitle && !subtitle.portable && (
                   <Button size="xs" disabled={readonly} onClick={() => void importSubtitle()}>
-                    {tr('匯入字幕可攜副本')}
+                    {tr('匯入字幕（存一份在資料夾資訊裡）')}
                   </Button>
                 )}
               </Group>

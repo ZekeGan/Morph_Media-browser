@@ -233,11 +233,11 @@
     "en": "Project unavailable",
     "es": "Proyecto no disponible"
   },
-  "資料夾可能已搬移、離線，或記錄需要復原。": {
-    "ja": "フォルダーが移動済み、オフライン、または記録の復元が必要です。",
-    "zh-CN": "文件夹可能已搬移、离线，或记录需要复原。",
-    "en": "The folder may have moved, be offline, or need record recovery.",
-    "es": "La carpeta puede haberse movido, estar desconectada o necesitar recuperación."
+  "資料夾可能已搬移、離線，或資料夾資訊需要復原。": {
+    "ja": "フォルダーが移動したかオフラインか、フォルダー情報の復元が必要な可能性があります。",
+    "zh-CN": "文件夹可能已搬移、离线，或文件夹信息需要恢复。",
+    "en": "The folder may have moved or be offline, or its folder info may need recovery.",
+    "es": "La carpeta puede haberse movido o estar sin conexión, o su información puede necesitar recuperación."
   },
   "請選擇專案或重新連結。": {
     "ja": "プロジェクトを選択するか再連携してください。",
@@ -251,11 +251,11 @@
     "en": "Relink project location",
     "es": "Volver a vincular ubicación"
   },
-  "從有效備份恢復根記錄與專案設定？目前損壞檔會另外保留。": {
-    "ja": "有効なバックアップから復元しますか？破損ファイルは別途保管されます。",
-    "zh-CN": "从有效备份恢复根记录与项目设定？目前损坏档会另外保留。",
-    "en": "Restore root records and project settings from a valid backup? Damaged files will be preserved separately.",
-    "es": "¿Restaurar los registros y ajustes desde una copia válida? Los archivos dañados se conservarán por separado."
+  "從有效備份恢復主資料夾的資訊與專案設定？目前損壞的檔案會另外保留。": {
+    "ja": "有効なバックアップからメインフォルダーの情報とプロジェクト設定を復元しますか？破損したファイルは別に保存されます。",
+    "zh-CN": "从有效备份恢复主文件夹的信息与项目设定？目前损坏的文件会另外保留。",
+    "en": "Restore the main folder's info and project settings from a valid backup? The damaged files are kept separately.",
+    "es": "¿Restaurar la información de la carpeta principal y los ajustes del proyecto desde una copia válida? Los archivos dañados se guardan aparte."
   },
   "從備份復原專案": {
     "ja": "バックアップから復元",
@@ -263,11 +263,11 @@
     "en": "Restore from backup",
     "es": "Restaurar desde copia de seguridad"
   },
-  "取消失效連結（保留可攜檔）": {
-    "ja": "無効な連携を解除（ファイルを保持）",
-    "zh-CN": "取消失效连结（保留可携档）稱翿",
-    "en": "Unlink unavailable project (keep files)",
-    "es": "Desvincular proyecto no disponible (conservar archivos)"
+  "取消失效連結（保留資料夾資訊）": {
+    "ja": "無効なリンクを解除（フォルダー情報は保持）",
+    "zh-CN": "取消失效链接（保留文件夹信息）",
+    "en": "Unlink unavailable project (keep folder info)",
+    "es": "Desvincular proyecto no disponible (conservar la información)"
   },
   "專案名稱": {
     "ja": "プロジェクト名",
@@ -377,17 +377,17 @@
     "en": "All accessible linked data; unlink when finished",
     "es": "Todos los datos vinculados accesibles; desvincular al terminar"
   },
-  "本專案私有覆寫": {
-    "ja": "このプロジェクトの非共有設定",
-    "zh-CN": "本项目私有覆写",
-    "en": "Private overrides for this project",
-    "es": "Ajustes privados de este proyecto"
+  "只在這個專案的資訊": {
+    "ja": "このプロジェクトだけの情報",
+    "zh-CN": "仅此项目的信息",
+    "en": "This project's own info",
+    "es": "Información propia de este proyecto"
   },
-  "此資料夾全部程式資料": {
-    "ja": "このフォルダーのアプリデータすべて",
-    "zh-CN": "此文件夹全部程式数据",
-    "en": "All app data in this folder",
-    "es": "Todos los datos de la aplicación en esta carpeta"
+  "此資料夾所有 M:orph 建立的資訊": {
+    "ja": "このフォルダーで M:orph が作成したすべての情報",
+    "zh-CN": "此文件夹所有 M:orph 建立的信息",
+    "en": "All info M:orph created in this folder",
+    "es": "Toda la información que creó M:orph en esta carpeta"
   },
   "。找到": {
     "ja": "。検出：",
@@ -395,17 +395,17 @@
     "en": ". Found",
     "es": ". Encontrados"
   },
-  "筆記錄。": {
-    "ja": "件の記録。",
-    "zh-CN": "笔记录。",
-    "en": "records.",
-    "es": "registros."
+  "個資料夾的資訊。": {
+    "ja": "件のフォルダー情報。",
+    "zh-CN": "个文件夹的信息。",
+    "en": "folders with info.",
+    "es": "carpetas con información."
   },
-  "未連結／離線副本不在本次範圍。未知檔案與無法驗證的記錄保留。": {
-    "ja": "未連携・オフラインのコピーは対象外です。不明なファイルと検証できない記録は保持されます。",
-    "zh-CN": "未连结／离线副本不在本次范围。未知文件与无法验证的记录保留。",
-    "en": "Unlinked and offline copies are excluded. Unknown files and unverifiable records are preserved.",
-    "es": "Se excluyen las copias desconectadas o sin vincular. Se conservan los archivos desconocidos y registros no verificables."
+  "未連結或離線的副本不在這次範圍內。不認得的檔案與無法確認的資訊都會保留。": {
+    "ja": "未リンクやオフラインのコピーは対象外です。不明なファイルと確認できない情報は残ります。",
+    "zh-CN": "未链接或离线的副本不在这次范围内。不认得的文件与无法确认的信息都会保留。",
+    "en": "Unlinked and offline copies are not included. Unknown files and info that cannot be verified are kept.",
+    "es": "Las copias sin vincular o sin conexión no se incluyen. Los archivos desconocidos y la información que no se puede verificar se conservan."
   },
   "清除後立即重新開始記錄（預設為停止記錄）": {
     "ja": "消去後に記録を再開（既定は記録停止）",
@@ -413,11 +413,11 @@
     "en": "Restart recording after cleanup (default: stop)",
     "es": "Reanudar registros tras limpiar (por defecto: detener)"
   },
-  "確認清理列出的本程式資料": {
-    "ja": "表示されたアプリデータの消去を確認",
-    "zh-CN": "确认清理列出的本程式数据",
-    "en": "Confirm cleanup of listed app data",
-    "es": "Confirmar limpieza de los datos indicados"
+  "確認清除列出的 M:orph 資訊": {
+    "ja": "一覧の M:orph の情報を消去する",
+    "zh-CN": "确认清除列出的 M:orph 信息",
+    "en": "Confirm clearing the listed M:orph info",
+    "es": "Confirmar el borrado de la información de M:orph indicada"
   },
   "舊資料匯入預覽": {
     "ja": "旧データのインポートプレビュー",
@@ -544,12 +544,6 @@
     "zh-CN": "浏览模式",
     "en": "Browse mode",
     "es": "Modo de navegación"
-  },
-  "CARD 顯示設定": {
-    "ja": "CARD表示設定",
-    "zh-CN": "CARD 显示设定",
-    "en": "CARD display settings",
-    "es": "Ajustes de vista CARD"
   },
   "重新掃描": {
     "ja": "再スキャン",
@@ -707,11 +701,11 @@
     "en": "Subtitle settings",
     "es": "Ajustes de subtítulos"
   },
-  "編輯此專案所有漫畫的資訊版面；CARD 版面獨立": {
-    "ja": "プロジェクト内の漫画情報レイアウトを編集（CARDとは独立）",
-    "zh-CN": "编辑此项目所有漫画的信息版面；CARD 版面独立",
-    "en": "Edit the info layout for all manga in this project; CARD layout is separate",
-    "es": "Editar el diseño de información del manga del proyecto; CARD tiene un diseño independiente"
+  "編輯此專案所有漫畫的資訊版面；卡片外觀另外設定": {
+    "ja": "このプロジェクトのすべてのマンガの情報レイアウトを編集します。カードの見た目は別に設定します",
+    "zh-CN": "编辑此项目所有漫画的信息版面；卡片外观另外设定",
+    "en": "Edit the info layout for all manga in this project; the card look is set separately",
+    "es": "Edita el diseño de información de todos los mangas del proyecto; el aspecto de la tarjeta se ajusta aparte"
   },
   "編輯漫畫展示": {
     "ja": "漫画表示を編集",
@@ -1691,11 +1685,11 @@
     "en": "Current project only",
     "es": "Solo este proyecto"
   },
-  "共用資料": {
-    "ja": "共有データ",
-    "zh-CN": "共用数据",
-    "en": "Shared data",
-    "es": "Datos compartidos"
+  "各專案共用的資訊": {
+    "ja": "プロジェクト間で共有する情報",
+    "zh-CN": "各项目共用的信息",
+    "en": "Info shared by all projects",
+    "es": "Información compartida entre proyectos"
   },
   "匯入及其他欄位（": {
     "ja": "インポート済み・その他の項目（",
@@ -1889,17 +1883,17 @@
     "en": "and save arguments",
     "es": "y guardar argumentos"
   },
-  "掃描邊界": {
-    "ja": "スキャン境界",
-    "zh-CN": "扫描边界",
-    "en": "Scan boundary",
-    "es": "Límite del escaneo"
+  "掃描範圍": {
+    "ja": "スキャン範囲",
+    "zh-CN": "扫描范围",
+    "en": "Scan range",
+    "es": "Alcance del escaneo"
   },
-  "確認遊戲 ROOT": {
-    "ja": "確認済みゲームルート",
-    "zh-CN": "确认游戏 ROOT",
-    "en": "Confirmed game root",
-    "es": "Raíz de juego confirmada"
+  "確認為遊戲主資料夾": {
+    "ja": "ゲームのメインフォルダーとして確定",
+    "zh-CN": "确认为游戏主文件夹",
+    "en": "Confirm as the game's main folder",
+    "es": "Confirmar como carpeta principal del juego"
   },
   "唯讀查看內部": {
     "ja": "内部を読み取り専用で表示",
@@ -1913,11 +1907,11 @@
     "en": "This is not a game",
     "es": "Esto no es un juego"
   },
-  "標記為遊戲 ROOT": {
-    "ja": "ゲームルートとして指定",
-    "zh-CN": "标记为游戏 ROOT",
-    "en": "Mark as game root",
-    "es": "Marcar como raíz de juego"
+  "標記為遊戲主資料夾": {
+    "ja": "ゲームのメインフォルダーにする",
+    "zh-CN": "标记为游戏主文件夹",
+    "en": "Mark as the game's main folder",
+    "es": "Marcar como carpeta principal del juego"
   },
   "資料範圍": {
     "ja": "データ範囲",
@@ -1931,17 +1925,17 @@
     "en": "Use private data for this project",
     "es": "Usar datos privados en este proyecto"
   },
-  "開啟後，修改僅用於目前專案；其他專案仍使用共用資料。": {
-    "ja": "変更はこのプロジェクトのみに適用され、他のプロジェクトは共有データを使用します。",
-    "zh-CN": "开启後，修改仅用於目前项目；其他项目仍使用共用数据。8",
-    "en": "Changes apply only to this project. Other projects keep using shared data.",
-    "es": "Los cambios solo se aplican a este proyecto. Los demás siguen usando datos compartidos."
+  "開啟後，修改只用在目前專案；其他專案仍使用各專案共用的資訊。": {
+    "ja": "オンにすると、変更はこのプロジェクトだけに使われます。ほかのプロジェクトは共有の情報を使い続けます。",
+    "zh-CN": "开启后，修改只用在目前项目；其他项目仍使用各项目共用的信息。",
+    "en": "When on, changes apply only to this project; other projects keep using the shared info.",
+    "es": "Si se activa, los cambios solo se aplican a este proyecto; los demás siguen usando la información compartida."
   },
-  "顯式編輯本專案私有覆寫": {
-    "ja": "このプロジェクトの非共有値を編集",
-    "zh-CN": "显式编辑本项目私有覆写",
-    "en": "Edit this project's private overrides",
-    "es": "Editar los ajustes privados de este proyecto"
+  "編輯只在這個專案的資訊": {
+    "ja": "このプロジェクトだけの情報を編集",
+    "zh-CN": "编辑仅此项目的信息",
+    "en": "Edit this project's own info",
+    "es": "Editar la información propia de este proyecto"
   },
   "切換會放棄目前欄位草稿？": {
     "ja": "切り替えると現在の下書きを破棄しますか？",
@@ -1955,17 +1949,17 @@
     "en": "All saved attributes and sources",
     "es": "Todos los atributos y orígenes guardados"
   },
-  "沒有可攜記錄": {
-    "ja": "可搬記録がありません",
-    "zh-CN": "没有可携记录\u0001",
-    "en": "No portable record",
-    "es": "Sin registro portátil"
+  "沒有資料夾資訊": {
+    "ja": "フォルダー情報なし",
+    "zh-CN": "没有文件夹信息",
+    "en": "No folder info",
+    "es": "Sin información de carpeta"
   },
-  "清除此資料夾的程式資料": {
-    "ja": "このフォルダーのアプリデータを消去",
-    "zh-CN": "清除此文件夹的程式数据",
-    "en": "Clear app data from this folder",
-    "es": "Borrar los datos de la aplicación de esta carpeta"
+  "清除此資料夾的 M:orph 資訊": {
+    "ja": "このフォルダーの M:orph の情報を消去",
+    "zh-CN": "清除此文件夹的 M:orph 信息",
+    "en": "Clear M:orph's info from this folder",
+    "es": "Borrar la información de M:orph de esta carpeta"
   },
   "原始資料夾與媒體保留。先預覽範圍，確認後才清理。": {
     "ja": "元のフォルダーとメディアは保持されます。範囲を確認してから消去します。",
@@ -1979,11 +1973,11 @@
     "en": "Preview folder data cleanup",
     "es": "Previsualizar limpieza de datos de carpeta"
   },
-  "只清此專案私有覆寫": {
-    "ja": "このプロジェクトの非共有値のみ消去",
-    "zh-CN": "只清此项目私有覆写",
-    "en": "Clear only this project's private overrides",
-    "es": "Borrar solo los ajustes privados de este proyecto"
+  "只清除這個專案的資訊": {
+    "ja": "このプロジェクトだけの情報を消去",
+    "zh-CN": "只清除此项目的信息",
+    "en": "Clear only this project's own info",
+    "es": "Borrar solo la información propia de este proyecto"
   },
   "清理預覽": {
     "ja": "消去プレビュー",
@@ -1991,17 +1985,17 @@
     "en": "Cleanup preview",
     "es": "Vista previa de limpieza"
   },
-  "只移除目前專案私有覆寫": {
-    "ja": "このプロジェクトの非共有値のみ削除",
-    "zh-CN": "只移除目前项目私有覆写",
-    "en": "Remove only current-project overrides",
-    "es": "Eliminar solo los ajustes privados del proyecto actual"
+  "只移除目前專案的資訊": {
+    "ja": "現在のプロジェクトだけの情報を削除",
+    "zh-CN": "只移除目前项目的信息",
+    "en": "Remove only the current project's own info",
+    "es": "Quitar solo la información propia del proyecto actual"
   },
-  "移除此資料夾的受管記錄及資產": {
-    "ja": "管理対象の記録とアセットを削除",
-    "zh-CN": "移除此文件夹的受管记录及资产翿",
-    "en": "Remove this folder's managed records and assets",
-    "es": "Eliminar los registros y recursos administrados de esta carpeta"
+  "移除此資料夾的資訊與圖片": {
+    "ja": "このフォルダーの情報と画像を削除",
+    "zh-CN": "移除此文件夹的信息与图片",
+    "en": "Remove this folder's info and images",
+    "es": "Quitar la información y las imágenes de esta carpeta"
   },
   "；共": {
     "ja": "、合計",
@@ -2051,11 +2045,11 @@
     "en": "Original media preserved.",
     "es": "Se conservan los archivos originales."
   },
-  "記錄復原": {
-    "ja": "記録の復元",
-    "zh-CN": "记录复原",
-    "en": "Record recovery",
-    "es": "Recuperación de registros"
+  "資料夾資訊復原": {
+    "ja": "フォルダー情報の復元",
+    "zh-CN": "文件夹信息恢复",
+    "en": "Folder info recovery",
+    "es": "Recuperación de la información"
   },
   "重新啟用記錄": {
     "ja": "記録を再開",
@@ -2135,11 +2129,11 @@
     "en": "Add button",
     "es": "Añadir botón"
   },
-  "保存工具列版型": {
-    "ja": "ツールバー構成を保存",
-    "zh-CN": "保存工具列版型",
-    "en": "Save toolbar layout",
-    "es": "Guardar diseño de la barra"
+  "保存工具列": {
+    "ja": "ツールバーを保存",
+    "zh-CN": "保存工具栏",
+    "en": "Save toolbar",
+    "es": "Guardar barra de herramientas"
   },
   "圖片無法載入，點擊檢視": {
     "ja": "画像を読み込めません。クリックして確認",
@@ -2225,11 +2219,11 @@
     "en": "Folder location",
     "es": "Ubicación de carpeta"
   },
-  "擴大掃描全部層級？僅在允許的資料夾建立記錄，遊戲保護與清理排除仍保留。": {
-    "ja": "全階層へスキャンを拡大しますか？許可されたフォルダーのみに記録を作成し、ゲーム境界と消去除外は保持します。",
-    "zh-CN": "扩大扫描全部层级？仅在允许的文件夹建立记录，游戏保护与清理排除仍保留。",
-    "en": "Expand scanning to all levels? Records are created only in allowed folders; game protection and cleanup exclusions remain.",
-    "es": "¿Ampliar el escaneo a todos los niveles? Solo se crean registros en carpetas permitidas y se mantienen la protección de juegos y las exclusiones."
+  "擴大掃描全部層級？只在允許的資料夾建立資訊，遊戲保護與清除排除仍然有效。": {
+    "ja": "すべての階層をスキャンしますか？許可されたフォルダーにだけ情報を作成します。ゲームの保護と消去の除外はそのまま有効です。",
+    "zh-CN": "扩大扫描全部层级？只在允许的文件夹建立信息，游戏保护与清除排除仍然有效。",
+    "en": "Scan all levels? Info is created only in allowed folders; game protection and clean-up exclusions still apply.",
+    "es": "¿Escanear todos los niveles? Solo se crea información en las carpetas permitidas; la protección de juegos y las exclusiones siguen vigentes."
   },
   "舊專案：擴大掃描範圍": {
     "ja": "旧プロジェクト：スキャン範囲を拡大",
@@ -2255,11 +2249,11 @@
     "en": "Unlink project (keep data)",
     "es": "Desvincular proyecto (conservar datos)"
   },
-  "移除此專案設定與私有覆寫。空白且無其他專案使用的根記錄會先備份到本機復原區，再清除根目錄的 .media-viewer。共用值、圖片、其他專案及原始媒體保留。": {
-    "ja": "このプロジェクトの設定と非共有値を削除します。他で未使用の空のルート記録はローカルにバックアップ後、.media-viewerを消去します。共有値、画像、他のプロジェクト、元のメディアは保持します。",
-    "zh-CN": "移除此项目设定与私有覆写。空白且无其他项目使用的根记录会先备份到本机复原区，再清除根目录的 .media-viewer。共用值、图片、其他项目及原始媒体保留。",
-    "en": "Removes this project's settings and private overrides. Unused empty root metadata is backed up locally before cleanup. Shared values, images, other projects and original media are preserved.",
-    "es": "Elimina los ajustes y valores privados de este proyecto. Los metadatos vacíos y sin uso de la raíz se respaldan antes de limpiarlos. Se conservan valores compartidos, imágenes, otros proyectos y originales."
+  "移除此專案的設定與只在這個專案的資訊。主資料夾裡沒有其他用途的資訊，會先備份到本機再清除。各專案共用的資訊、圖片、其他專案與你的檔案（漫畫、圖片、影片）都會保留。": {
+    "ja": "このプロジェクトの設定と、このプロジェクトだけの情報を削除します。メインフォルダーでほかに使われていない情報は、このパソコンにバックアップしてから消去します。共有の情報、画像、ほかのプロジェクト、あなたのファイル（マンガ、画像、動画）は残ります。",
+    "zh-CN": "移除此项目的设定与仅此项目的信息。主文件夹里没有其他用途的信息，会先备份到本机再清除。各项目共用的信息、图片、其他项目与你的文件（漫画、图片、视频）都会保留。",
+    "en": "Removes this project's settings and its own info. Info in the main folder that nothing else uses is backed up on this computer before it is cleared. Shared info, images, other projects and your files (manga, images, videos) are kept.",
+    "es": "Quita los ajustes del proyecto y su información propia. La información de la carpeta principal que nada más usa se respalda en este equipo antes de borrarla. La información compartida, las imágenes, otros proyectos y tus archivos (mangas, imágenes, vídeos) se conservan."
   },
   "即將移除「": {
     "ja": "削除対象「",
@@ -2273,17 +2267,17 @@
     "en": "From",
     "es": "De"
   },
-  "筆現用資料夾記錄移除此專案私有值，並封存此專案設定及備份。": {
-    "ja": "件の現用記録から非共有値を削除し、設定とバックアップを保管します。",
-    "zh-CN": "笔现用文件夹记录移除此项目私有值，并封存此项目设定及备份。",
-    "en": "active records: remove private values and archive project settings and backups.",
-    "es": "registros activos: eliminar valores privados y archivar ajustes y copias de seguridad."
+  "個資料夾移除只在這個專案的資訊，並封存此專案的設定與備份。": {
+    "ja": "件のフォルダーから、このプロジェクトだけの情報を削除し、プロジェクト設定とバックアップを保管します。",
+    "zh-CN": "个文件夹移除仅此项目的信息，并封存此项目的设定与备份。",
+    "en": "folders: remove this project's own info, and archive the project settings and backups.",
+    "es": "carpetas: quitar la información propia del proyecto y archivar sus ajustes y copias."
   },
-  "根目錄 .media-viewer 將移至本機復原區，重新新增時可建立新的根記錄。": {
-    "ja": "ルートの.media-viewerはローカル復元領域に移します。新規作成時は新しいルート記録になります。",
-    "zh-CN": "根目录 .media-viewer 将移至本机复原区，重新新增时可建立新的根记录。",
-    "en": "Root .media-viewer data moves to local recovery storage. Creating again generates a new root identity.",
-    "es": "Los datos .media-viewer de la raíz pasan al área local de recuperación. Crear de nuevo genera otra identidad de raíz."
+  "主資料夾的資訊會移到本機的備份區；之後重新加入時會建立新的資訊。": {
+    "ja": "メインフォルダーの情報はこのパソコンのバックアップ領域に移ります。あとで追加し直すと新しい情報が作成されます。",
+    "zh-CN": "主文件夹的信息会移到本机的备份区；之后重新加入时会建立新的信息。",
+    "en": "The main folder's info moves to the backup area on this computer; adding it again later creates new info.",
+    "es": "La información de la carpeta principal pasa a la zona de copias de este equipo; si la vuelves a añadir, se crea información nueva."
   },
   "復原位置：": {
     "ja": "復元先：",
@@ -2327,11 +2321,11 @@
     "en": "Removal partially incomplete",
     "es": "Eliminación parcialmente incompleta"
   },
-  "已處理的記錄保有備份；剩餘資料保留，可重新預覽。": {
-    "ja": "処理済みの記録にはバックアップがあります。残りのデータは保持され、再確認できます。",
-    "zh-CN": "已处理的记录保有备份；剩余数据保留，可重新预览。",
-    "en": "Processed records retain backups. Remaining data is preserved; preview again to retry.",
-    "es": "Los registros procesados tienen copias de seguridad. Se conservan los datos pendientes; revisa otra vez para reintentar."
+  "已處理的資訊都有備份；其餘的資料保留，可以重新預覽。": {
+    "ja": "処理済みの情報にはバックアップがあります。残りはそのままなので、もう一度プレビューできます。",
+    "zh-CN": "已处理的信息都有备份；其余的数据保留，可以重新预览。",
+    "en": "The info already processed has a backup; the rest is kept and you can preview again.",
+    "es": "La información ya procesada tiene copia; el resto se conserva y puedes volver a previsualizar."
   },
   "無法退出全螢幕：": {
     "ja": "全画面を終了できません：",
@@ -2849,11 +2843,11 @@
     "en": "Save subtitle settings",
     "es": "Guardar ajustes de subtítulos"
   },
-  "匯入字幕可攜副本": {
-    "ja": "字幕の可搬コピーをインポート",
-    "zh-CN": "导入字幕可携副本\u0001",
-    "en": "Import portable subtitle copy",
-    "es": "Importar copia portátil de subtítulos"
+  "匯入字幕（存一份在資料夾資訊裡）": {
+    "ja": "字幕をインポート（フォルダー情報にコピーを保存）",
+    "zh-CN": "导入字幕（存一份在文件夹信息里）",
+    "en": "Import subtitles (keep a copy with the folder info)",
+    "es": "Importar subtítulos (guardar una copia con la información)"
   },
   "選擇拖入的字幕": {
     "ja": "ドロップした字幕を選択",
@@ -3443,11 +3437,11 @@
     "en": "Save changes",
     "es": "Guardar cambios"
   },
-  "版面方案": {
-    "ja": "レイアウト",
-    "zh-CN": "布局方案",
-    "en": "Layout scheme",
-    "es": "Diseño"
+  "卡片外觀": {
+    "ja": "カードの見た目",
+    "zh-CN": "卡片外观",
+    "en": "Card look",
+    "es": "Aspecto de la tarjeta"
   },
   "新增方案": {
     "ja": "レイアウトを追加",
@@ -3749,11 +3743,11 @@
     "en": "The URL does not match the selected source",
     "es": "La URL no coincide con la fuente seleccionada"
   },
-  "此資料夾的版面方案": {
-    "ja": "このフォルダーのレイアウト",
-    "zh-CN": "此文件夹的布局方案",
-    "en": "Layout for this folder",
-    "es": "Diseño de esta carpeta"
+  "此資料夾的卡片外觀": {
+    "ja": "このフォルダーのカードの見た目",
+    "zh-CN": "此文件夹的卡片外观",
+    "en": "Card look for this folder",
+    "es": "Aspecto de la tarjeta de esta carpeta"
   },
   "作品網址或 ID": {
     "ja": "作品URLまたはID",
@@ -3881,11 +3875,11 @@
     "zh-CN": "确认删除字段及数据",
     "es": "Confirmar eliminación del campo y sus datos"
   },
-  "清除根目錄與所有子資料夾內的本工具資料、共用值、設定及原位置備份。原始媒體保留；可能影響其他綁定專案。": {
-    "en": "Remove this app’s data, shared values, settings and local backups from the root and all subfolders. Original media is kept. Other linked projects may be affected.",
-    "ja": "ルートと全サブフォルダーの本アプリのデータ、共有値、設定、元の場所のバックアップを削除します。元のメディアは保持します。他のリンク済みプロジェクトにも影響する場合があります。",
-    "zh-CN": "清除根目录和所有子文件夹内的本工具数据、共享值、设置和原位置备份。保留原始媒体；可能影响其他绑定项目。",
-    "es": "Elimina los datos de esta aplicación, valores compartidos, ajustes y copias locales de la raíz y sus subcarpetas. Se conservan los medios originales. Puede afectar a otros proyectos vinculados."
+  "清除主資料夾與所有子資料夾裡 M:orph 建立的資訊，包含各專案共用的資訊、設定與備份。你的檔案（漫畫、圖片、影片）會保留；可能影響其他使用這些資料夾的專案。": {
+    "en": "Clears the info M:orph created in the main folder and all subfolders, including shared info, settings and backups. Your files (manga, images, videos) are kept; other projects using these folders may be affected.",
+    "ja": "メインフォルダーとすべてのサブフォルダーで M:orph が作成した情報（共有の情報、設定、バックアップを含む）を消去します。あなたのファイル（マンガ、画像、動画）は残ります。これらのフォルダーを使うほかのプロジェクトに影響することがあります。",
+    "zh-CN": "清除主文件夹与所有子文件夹里 M:orph 建立的信息，包含各项目共用的信息、设定与备份。你的文件（漫画、图片、视频）会保留；可能影响其他使用这些文件夹的项目。",
+    "es": "Borra la información que creó M:orph en la carpeta principal y todas las subcarpetas, incluida la información compartida, los ajustes y las copias. Tus archivos (mangas, imágenes, vídeos) se conservan; puede afectar a otros proyectos que usan estas carpetas."
   },
   "可能受影響的其他專案（{0}）": {
     "en": "Other projects possibly affected ({0})",
@@ -3893,23 +3887,17 @@
     "zh-CN": "可能受影响的其他项目（{0}）",
     "es": "Otros proyectos que pueden verse afectados ({0})"
   },
-  "此範圍內的綁定或共用資料會被清除，可能影響其他專案。": {
-    "en": "Linked or shared data in this scope will be removed and may affect other projects.",
-    "ja": "この範囲のリンク済み・共有データが削除され、他のプロジェクトに影響する可能性があります。",
-    "zh-CN": "此范围内的绑定或共享数据将被清除，可能影响其他项目。",
-    "es": "Se eliminarán los datos vinculados o compartidos de este ámbito, lo que puede afectar a otros proyectos."
+  "這個範圍內各專案共用的資訊會被清除，可能影響其他專案。": {
+    "en": "Shared info in this range will be cleared and may affect other projects.",
+    "ja": "この範囲の共有の情報は消去され、ほかのプロジェクトに影響することがあります。",
+    "zh-CN": "这个范围内各项目共用的信息会被清除，可能影响其他项目。",
+    "es": "La información compartida de este alcance se borrará y puede afectar a otros proyectos."
   },
   "已檢查目前已連結的同根、巢狀及重疊專案。": {
     "en": "Checked currently linked projects with the same, nested or overlapping roots.",
     "ja": "現在リンクされている同一ルート・入れ子・重複するプロジェクトを確認しました。",
     "zh-CN": "已检查当前已链接的同根、嵌套及重叠项目。",
     "es": "Se han comprobado los proyectos vinculados con raíces iguales, anidadas o superpuestas."
-  },
-  "確認完全移除列出的程式資料": {
-    "en": "Confirm full removal of the listed app data",
-    "ja": "一覧のアプリデータの完全削除を確認",
-    "zh-CN": "确认完全移除列出的程序数据",
-    "es": "Confirmar eliminación completa de los datos indicados"
   },
   "引用此欄位的組件與常用搜尋會一併移除；其他欄位值保留。": {
     "en": "Components and saved searches referencing this field will also be removed. Other field values are kept.",
@@ -4061,23 +4049,17 @@
     "zh-CN": "下移 {0}",
     "es": "Bajar {0}"
   },
-  "保存版型後，在遊戲操作中指定此資料夾的目標。": {
-    "en": "Save the template, then choose this folder's targets under Game actions.",
-    "ja": "テンプレートを保存後、ゲーム操作でこのフォルダーの対象を指定します。",
-    "zh-CN": "保存模板后，在游戏操作中指定此文件夹的目标。",
-    "es": "Guarda la plantilla y elige los destinos de esta carpeta en Acciones del juego."
-  },
   "加入按鈕以建立操作。": {
     "en": "Add a button to create an action.",
     "ja": "ボタンを追加して操作を作成します。",
     "zh-CN": "添加按钮以创建操作。",
     "es": "Añade un botón para crear una acción."
   },
-  "版型套用全專案；目標與參數只屬於目前資料夾。": {
-    "en": "The template applies to the project; targets and arguments belong to this folder.",
-    "ja": "テンプレートはプロジェクト全体、対象と引数は現在のフォルダーに適用されます。",
-    "zh-CN": "模板应用于整个项目；目标与参数仅属于当前文件夹。",
-    "es": "La plantilla se aplica al proyecto; los destinos y argumentos pertenecen a esta carpeta."
+  "工具列套用到整個專案；目標與參數只屬於目前資料夾。": {
+    "en": "The toolbar applies to the whole project; targets and arguments belong to this folder.",
+    "ja": "ツールバーはプロジェクト全体に使われます。対象と引数はこのフォルダーだけのものです。",
+    "zh-CN": "工具栏套用到整个项目；目标与参数只属于目前文件夹。",
+    "es": "La barra se aplica a todo el proyecto; los destinos y argumentos son solo de esta carpeta."
   },
   "條件未符合": {
     "en": "Condition not met",
@@ -5063,11 +5045,11 @@
     "ja": "画面で予期しないエラーが発生しました",
     "es": "Se produjo un error inesperado en la ventana"
   },
-  "你的資料夾與記錄不會因此被改動。重新載入後可以繼續使用。": {
-    "zh-CN": "你的文件夹与记录不会因此被改动。重新加载后可以继续使用。",
-    "en": "Your folders and records are not changed by this. Reload to keep working.",
-    "ja": "フォルダーや記録がこれによって変更されることはありません。再読み込みすると続けて使えます。",
-    "es": "Tus carpetas y registros no se modifican por esto. Recarga para seguir trabajando."
+  "你的資料夾與資料夾資訊不會因此被改動。重新載入後可以繼續使用。": {
+    "zh-CN": "你的文件夹与文件夹信息不会因此被改动。重新载入后可以继续使用。",
+    "en": "Your folders and their info are not changed by this. Reload to keep working.",
+    "ja": "フォルダーとその情報はこれによって変更されません。再読み込みすると続けて使えます。",
+    "es": "Esto no cambia tus carpetas ni su información. Recarga para seguir trabajando."
   },
   "卡片顯示設定": {
     "zh-CN": "卡片显示设置",
@@ -6035,11 +6017,11 @@
     "en": "Changes also apply to other projects that use this folder.",
     "es": "Los cambios también se aplican a otros proyectos que usan esta carpeta."
   },
-  "修改只用於目前專案；其他專案仍用共用資料。": {
-    "ja": "変更はこのプロジェクトだけに使われ、他のプロジェクトは共有データのままです。",
-    "zh-CN": "修改只用于当前项目；其他项目仍用共用数据。",
-    "en": "Changes apply to this project only; other projects keep the shared data.",
-    "es": "Los cambios solo valen para este proyecto; los demás siguen con los datos compartidos."
+  "修改只用在目前專案；其他專案仍用各專案共用的資訊。": {
+    "ja": "変更はこのプロジェクトだけに使われます。ほかのプロジェクトは共有の情報を使い続けます。",
+    "zh-CN": "修改只用在目前项目；其他项目仍用各项目共用的信息。",
+    "en": "Changes apply to this project only; other projects keep the shared info.",
+    "es": "Los cambios solo se aplican a este proyecto; los demás conservan la información compartida."
   },
   "圖片庫": {
     "ja": "画像ライブラリ",
@@ -6089,11 +6071,11 @@
     "en": "Same",
     "es": "Igual"
   },
-  "偵測到遊戲，為了保護內部檔案，不會在裡面建立記錄。": {
-    "ja": "ゲームを検出しました。内部ファイルを守るため、中には記録を作成しません。",
-    "zh-CN": "检测到游戏，为了保护内部文件，不会在里面创建记录。",
-    "en": "A game was detected. To protect its files, no records are created inside it.",
-    "es": "Se detectó un juego. Para proteger sus archivos, no se crean registros dentro."
+  "偵測到遊戲，為了保護內部檔案，不會在裡面建立資訊。": {
+    "ja": "ゲームを検出しました。中のファイルを守るため、内部には情報を作成しません。",
+    "zh-CN": "检测到游戏，为了保护内部文件，不会在里面建立信息。",
+    "en": "A game was detected. To protect its files, no info is created inside it.",
+    "es": "Se detectó un juego. Para proteger sus archivos, no se crea información dentro."
   },
   "邊界設定": {
     "ja": "境界の設定",
@@ -6119,11 +6101,11 @@
     "en": "Into: {0}",
     "es": "En: {0}"
   },
-  "資料夾記錄 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。": {
-    "ja": "フォルダー記録 {0} 件。新規 {1} ファイル、同一 {2}、内容が異なるもの {3}。",
-    "zh-CN": "文件夹记录 {0} 个；新增 {1} 个文件，内容相同 {2} 个，内容不同 {3} 个。",
-    "en": "{0} folder records; {1} new files, {2} identical, {3} different.",
-    "es": "{0} registros de carpeta; {1} archivos nuevos, {2} idénticos, {3} distintos."
+  "資料夾資訊 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。": {
+    "ja": "フォルダー情報 {0} 件。新しいファイル {1} 件、同じ内容 {2} 件、異なる内容 {3} 件。",
+    "zh-CN": "文件夹信息 {0} 个；新增 {1} 个文件，内容相同 {2} 个，内容不同 {3} 个。",
+    "en": "Folder info for {0} folders; {1} new files, {2} identical, {3} different.",
+    "es": "Información de {0} carpetas; {1} archivos nuevos, {2} idénticos, {3} distintos."
   },
   "覆寫目標位置內容不同的檔案（覆寫前會先備份）": {
     "ja": "内容が異なるファイルを上書き（上書き前にバックアップ）",
@@ -6257,11 +6239,11 @@
     "ja": "レイアウトを編集",
     "es": "Editar diseño"
   },
-  "版面方案選單": {
-    "zh-CN": "版面方案菜单",
-    "en": "Layout preset menu",
-    "ja": "レイアウトプリセットメニュー",
-    "es": "Menú de diseños"
+  "卡片外觀選單": {
+    "zh-CN": "卡片外观菜单",
+    "en": "Card look menu",
+    "ja": "カードの見た目メニュー",
+    "es": "Menú de aspecto de la tarjeta"
   },
   "加入常用欄位": {
     "zh-CN": "加入常用字段",
@@ -6533,11 +6515,11 @@
     "ja": "ファイル一覧の範囲",
     "es": "Alcance de la vista de archivos"
   },
-  "把這個專案的記錄、圖片與字幕（不含媒體）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。": {
-    "zh-CN": "把这个项目的记录、图片与字幕（不含媒体）存成一个文件夹；之后可在“新增项目”导入，放到另一台电脑或另一个位置。",
-    "en": "Saves this project's records, images and subtitles (no media) as a folder. Import it later from “New project” on another computer or in another place.",
-    "ja": "このプロジェクトの記録・画像・字幕（メディアを除く）をフォルダーに保存します。別のPCや別の場所に「新規プロジェクト」からインポートできます。",
-    "es": "Guarda los registros, imágenes y subtítulos del proyecto (sin medios) en una carpeta. Impórtala después desde «Nuevo proyecto» en otro equipo o ubicación."
+  "把這個專案的資料夾資訊、圖片與字幕（不含你的檔案）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。": {
+    "zh-CN": "把这个项目的文件夹信息、图片与字幕（不含你的文件）存成一个文件夹；之后可在「新增项目」导入，放到另一台电脑或另一个位置。",
+    "en": "Saves this project's folder info, images and subtitles (not your files) as a folder. Import it later from “New project” on another computer or in another place.",
+    "ja": "このプロジェクトのフォルダー情報、画像、字幕（あなたのファイルは含みません）を一つのフォルダーに保存します。あとで「新規プロジェクト」から、別のパソコンや別の場所にインポートできます。",
+    "es": "Guarda la información de las carpetas, las imágenes y los subtítulos del proyecto (no tus archivos) en una carpeta. Impórtala después desde «Nuevo proyecto» en otro equipo o en otro lugar."
   },
   "移除專案": {
     "zh-CN": "移除项目",
@@ -6557,11 +6539,11 @@
     "ja": "このプロジェクトのデータのみ",
     "es": "Solo los datos de este proyecto"
   },
-  "連同共用資料一併清除": {
-    "zh-CN": "连同共用数据一并清除",
-    "en": "Also clear shared data",
-    "ja": "共有データも一緒に消去",
-    "es": "Borrar también los datos compartidos"
+  "連同各專案共用的資訊一併清除": {
+    "zh-CN": "连同各项目共用的信息一并清除",
+    "en": "Also clear shared info",
+    "ja": "共有の情報もまとめて消去",
+    "es": "Borrar también la información compartida"
   },
   "預覽移除": {
     "zh-CN": "预览移除",
@@ -6617,11 +6599,11 @@
     "ja": "種類とプロジェクト設定に従う（現在：{0}）",
     "es": "Seguir tipo y proyecto (ahora: {0})"
   },
-  "遊戲資料夾裡的檔案很多，也不該被改動。所以只把「遊戲根目錄（ROOT）」這一層當成一筆資料夾記錄，裡面的子資料夾受保護，不會被掃描或寫入。": {
-    "zh-CN": "游戏文件夹里的文件很多，也不该被改动。所以只把“游戏根目录（ROOT）”这一层当成一条文件夹记录，里面的子文件夹受保护，不会被扫描或写入。",
-    "en": "A game folder holds many files that must not be touched, so only the game's root folder (ROOT) becomes a folder record; the subfolders inside are protected and never scanned or written.",
-    "ja": "ゲームフォルダーには多数のファイルがあり、変更すべきではありません。そのため「ゲームのルート（ROOT）」の階層だけをフォルダー記録とし、内側のサブフォルダーは保護されてスキャンも書き込みもされません。",
-    "es": "Una carpeta de juego contiene muchos archivos que no deben tocarse, así que solo la carpeta raíz del juego (ROOT) se convierte en registro; las subcarpetas están protegidas y no se escanean ni se escriben."
+  "遊戲資料夾裡的檔案很多，也不該被改動。所以只把「遊戲主資料夾」這一層當成一筆資料夾資訊，裡面的子資料夾受保護，不會被掃描或寫入。": {
+    "zh-CN": "游戏文件夹里的文件很多，也不该被改动。所以只把「游戏主文件夹」这一层当成一笔文件夹信息，里面的子文件夹受保护，不会被扫描或写入。",
+    "en": "A game folder holds many files that must not be touched, so only the game's main folder gets folder info; the subfolders inside are protected and never scanned or written.",
+    "ja": "ゲームのフォルダーには多くのファイルがあり、変更してはいけません。そのため「ゲームのメインフォルダー」だけにフォルダー情報を作り、中のサブフォルダーは保護され、スキャンも書き込みもされません。",
+    "es": "Una carpeta de juego tiene muchos archivos que no deben tocarse, así que solo la carpeta principal del juego recibe información; las subcarpetas están protegidas y nunca se escanean ni se escriben."
   },
   "這個資料夾看起來是 {0} 遊戲。": {
     "zh-CN": "这个文件夹看起来是 {0} 游戏。",
@@ -6641,11 +6623,11 @@
     "ja": "ゲームかどうかを確認してください：",
     "es": "Indica si es un juego:"
   },
-  "把這個資料夾當成遊戲的根目錄：記錄放在這一層，裡面的檔案受保護。": {
-    "zh-CN": "把这个文件夹当成游戏的根目录：记录放在这一层，里面的文件受保护。",
-    "en": "Treat this folder as the game's root: its record lives here and the files inside are protected.",
-    "ja": "このフォルダーをゲームのルートとして扱います。記録はこの階層に置かれ、内側のファイルは保護されます。",
-    "es": "Trata esta carpeta como la raíz del juego: su registro está aquí y los archivos de dentro quedan protegidos."
+  "把這個資料夾當成遊戲主資料夾：資訊放在這一層，裡面的檔案受保護。": {
+    "zh-CN": "把这个文件夹当成游戏主文件夹：信息放在这一层，里面的文件受保护。",
+    "en": "Treat this folder as the game's main folder: its info lives here and the files inside are protected.",
+    "ja": "このフォルダーをゲームのメインフォルダーとして扱います。情報はこの階層に置かれ、中のファイルは保護されます。",
+    "es": "Tratar esta carpeta como la carpeta principal del juego: su información queda aquí y los archivos de dentro están protegidos."
   },
   "只查看裡面的檔案，不會在內部寫入任何東西。": {
     "zh-CN": "只查看里面的文件，不会在内部写入任何东西。",
@@ -6767,17 +6749,17 @@
     "ja": "これらのフォルダーはコピーのようで、別のフォルダーと同じIDを共有しています。新しいIDを割り当てると互いに独立します。",
     "es": "Estas carpetas parecen copias y comparten identidad con otra. Con un ID nuevo serán independientes."
   },
-  "記錄損壞": {
-    "zh-CN": "记录损坏",
-    "en": "Damaged record",
-    "ja": "記録が破損",
-    "es": "Registro dañado"
+  "資料夾資訊損壞": {
+    "zh-CN": "文件夹信息损坏",
+    "en": "Damaged folder info",
+    "ja": "フォルダー情報が破損",
+    "es": "Información dañada"
   },
-  "資料夾的記錄檔讀不出來。可以從上一個有效的備份恢復，原檔會保留。": {
-    "zh-CN": "文件夹的记录文件读不出来。可以从上一个有效的备份恢复，原文件会保留。",
-    "en": "The folder's record cannot be read. You can restore it from the last valid backup; the original file is kept.",
-    "ja": "フォルダーの記録ファイルを読み取れません。直前の有効なバックアップから復元できます。元のファイルは残ります。",
-    "es": "No se puede leer el registro de la carpeta. Puedes restaurarlo desde la última copia válida; el original se conserva."
+  "資料夾資訊讀不出來。可以從上一個有效的備份恢復，原檔會保留。": {
+    "zh-CN": "文件夹信息读不出来。可以从上一个有效的备份恢复，原文件会保留。",
+    "en": "The folder's info cannot be read. You can restore it from the last valid backup; the original file is kept.",
+    "ja": "フォルダー情報を読み込めません。最後の有効なバックアップから復元でき、元のファイルは残ります。",
+    "es": "No se puede leer la información de la carpeta. Puedes restaurarla desde la última copia válida; el archivo original se conserva."
   },
   "這些資料夾的記錄已暫停，不會更新。重新啟用後恢復記錄。": {
     "zh-CN": "这些文件夹的记录已暂停，不会更新。重新启用后恢复记录。",
@@ -6893,11 +6875,11 @@
     "ja": "ゲームフォルダーの保護に関する通知",
     "es": "Avisos de protección de carpetas de juegos"
   },
-  "這些是遊戲資料夾，工具只在遊戲根目錄這一層建立記錄，內部不會寫入。這不是錯誤。": {
-    "zh-CN": "这些是游戏文件夹，工具只在游戏根目录这一层建立记录，内部不会写入。这不是错误。",
-    "en": "These are game folders: a record is only made at the game's root and nothing is written inside. This is not an error.",
-    "ja": "これらはゲームフォルダーです。記録はゲームのルートの階層にだけ作られ、内部には何も書き込まれません。エラーではありません。",
-    "es": "Son carpetas de juegos: solo se crea un registro en la raíz del juego y no se escribe nada dentro. No es un error."
+  "這些是遊戲資料夾，M:orph 只在遊戲主資料夾這一層建立資訊，內部不會寫入。這不是錯誤。": {
+    "zh-CN": "这些是游戏文件夹，M:orph 只在游戏主文件夹这一层建立信息，内部不会写入。这不是错误。",
+    "en": "These are game folders: M:orph only makes info at the game's main folder and writes nothing inside. This is not an error.",
+    "ja": "これらはゲームのフォルダーです。M:orph はゲームのメインフォルダーにだけ情報を作り、内部には書き込みません。エラーではありません。",
+    "es": "Son carpetas de juego: M:orph solo crea información en la carpeta principal del juego y no escribe nada dentro. No es un error."
   },
   "應用程式版本": {
     "zh-CN": "应用程序版本",
@@ -6941,22 +6923,28 @@
     "en": "Only unlink",
     "es": "Solo desvincular"
   },
-  "移除此專案設定與私有覆寫；共用值與原始媒體保留。": {
-    "ja": "このプロジェクトの設定と非共有の上書きを削除します。共有値と元のメディアは残ります。",
-    "zh-CN": "移除此专案设定与私有覆写；共用值与原始媒体保留。",
-    "en": "Removes this project's settings and private overrides. Shared values and your original media stay.",
-    "es": "Elimina los ajustes del proyecto y sus valores privados. Los valores compartidos y tus medios originales se conservan."
+  "移除此專案的設定與只在這個專案的資訊；各專案共用的資訊與你的檔案都會保留。": {
+    "ja": "このプロジェクトの設定と、このプロジェクトだけの情報を削除します。共有の情報とあなたのファイルは残ります。",
+    "zh-CN": "移除此项目的设定与仅此项目的信息；各项目共用的信息与你的文件都会保留。",
+    "en": "Removes this project's settings and its own info. Shared info and your files stay.",
+    "es": "Quita los ajustes del proyecto y su información propia. La información compartida y tus archivos se conservan."
   },
-  "清除範圍內所有本工具資料；可能影響其他專案。原始媒體保留。": {
-    "ja": "範囲内のこのアプリのデータをすべて削除します。他のプロジェクトに影響する場合があります。元のメディアは残ります。",
-    "zh-CN": "清除范围内所有本工具数据；可能影响其他专案。原始媒体保留。",
-    "en": "Clears all of the app’s data in the range. It may affect other projects. Your original media stays.",
-    "es": "Borra todos los datos de la aplicación en el ámbito. Puede afectar a otros proyectos. Tus medios originales se conservan."
+  "清除範圍內所有 M:orph 建立的資訊；可能影響其他專案。你的檔案（漫畫、圖片、影片）會保留。": {
+    "ja": "範囲内で M:orph が作成したすべての情報を消去します。ほかのプロジェクトに影響することがあります。あなたのファイル（マンガ、画像、動画）は残ります。",
+    "zh-CN": "清除范围内所有 M:orph 建立的信息；可能影响其他项目。你的文件（漫画、图片、视频）会保留。",
+    "en": "Clears all the info M:orph created in the range. It may affect other projects. Your files (manga, images, videos) stay.",
+    "es": "Borra toda la información que creó M:orph en el alcance. Puede afectar a otros proyectos. Tus archivos (mangas, imágenes, vídeos) se conservan."
   },
   "專案設定尚未保存": {
     "ja": "プロジェクト設定はまだ保存されていません",
-    "zh-CN": "专案设定尚未保存",
+    "zh-CN": "项目设定尚未保存",
     "en": "Project settings not saved yet",
     "es": "Los ajustes del proyecto aún no se han guardado"
+  },
+  "備份與移除": {
+    "ja": "バックアップと削除",
+    "zh-CN": "备份与移除",
+    "en": "Backup and removal",
+    "es": "Copia y eliminación"
   }
 }

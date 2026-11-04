@@ -604,7 +604,7 @@ export function FolderPanel({
       {!isGame && row.boundary && (
         <Alert color="blue" className="folder-boundary-note">
           <Group justify="space-between" wrap="nowrap" gap="xs">
-            <Text size="sm">{tr('偵測到遊戲，為了保護內部檔案，不會在裡面建立記錄。')}</Text>
+            <Text size="sm">{tr('偵測到遊戲，為了保護內部檔案，不會在裡面建立資訊。')}</Text>
             <Button size="compact-sm" variant="light" onClick={() => setTab('advanced')}>
               {tr('邊界設定')}
             </Button>
@@ -654,7 +654,7 @@ export function FolderPanel({
                       tr('填寫與此資料夾有關的資訊，保存後立即顯示。') +
                       ' ' +
                       (privateValues
-                        ? tr('修改只用於目前專案；其他專案仍用共用資料。')
+                        ? tr('修改只用在目前專案；其他專案仍用各專案共用的資訊。')
                         : tr('修改會同步到使用這個資料夾的其他專案。'))
                     }
                   />
@@ -666,7 +666,7 @@ export function FolderPanel({
                 value={privateValues ? 'private' : 'shared'}
                 disabled={disabled}
                 data={[
-                  { value: 'shared', label: tr('共用資料') },
+                  { value: 'shared', label: tr('各專案共用的資訊') },
                   { value: 'private', label: tr('僅目前專案') },
                 ]}
                 onChange={(value) => {
@@ -718,7 +718,7 @@ export function FolderPanel({
               <Select
                 label={
                   <HelpLabel
-                    label={tr('此資料夾的版面方案')}
+                    label={tr('此資料夾的卡片外觀')}
                     help={tr('版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。')}
                   />
                 }
@@ -1123,7 +1123,7 @@ export function FolderPanel({
               <div>
                 <Text fw={600}>{tr('遊戲操作')}</Text>
                 <Text size="sm" c="dimmed">
-                  {tr('版型套用全專案；目標與參數只屬於目前資料夾。')}
+                  {tr('工具列套用到整個專案；目標與參數只屬於目前資料夾。')}
                 </Text>
               </div>
               <Button
@@ -1180,7 +1180,7 @@ export function FolderPanel({
                 setTasks(undefined)
             }}
           >
-            {tr('保存工具列版型')}
+            {tr('保存工具列')}
           </Button>
         </Stack>
       </Modal>

@@ -160,8 +160,8 @@ export function ProblemsDialog({
           )
         )}
         {group(
-          tr('記錄損壞'),
-          tr('資料夾的記錄檔讀不出來。可以從上一個有效的備份恢復，原檔會保留。'),
+          tr('資料夾資訊損壞'),
+          tr('資料夾資訊讀不出來。可以從上一個有效的備份恢復，原檔會保留。'),
           broken.map((row) =>
             rowEntry(
               row,
@@ -218,7 +218,7 @@ export function ProblemsDialog({
                     })
                   }
                 >
-                  {tr('確認遊戲 ROOT')}
+                  {tr('確認為遊戲主資料夾')}
                 </Button>
                 <Button
                   size="compact-sm"
@@ -267,7 +267,7 @@ export function ProblemsDialog({
               <Accordion.Panel>
                 <Text size="xs" c="dimmed" mb="xs">
                   {tr(
-                    '這些是遊戲資料夾，工具只在遊戲根目錄這一層建立記錄，內部不會寫入。這不是錯誤。'
+                    '這些是遊戲資料夾，M:orph 只在遊戲主資料夾這一層建立資訊，內部不會寫入。這不是錯誤。'
                   )}
                 </Text>
                 <Stack gap={6}>

@@ -39,7 +39,7 @@ try {
   await page.getByRole('button', { name: '專案選單 Portable', exact: true }).click({ force: true })
   await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
   const projectSettings = page.getByRole('dialog', { name: '專案設定 · Portable', exact: true })
-  await projectSettings.getByRole('tab', { name: '資料', exact: true }).click()
+  await projectSettings.getByRole('tab', { name: '備份與移除', exact: true }).click()
   await projectSettings.getByRole('button', { name: '匯出專案資料', exact: true }).click()
   await page.waitForFunction(async () => !!document.body.innerText.includes('已匯出到'))
   await page.keyboard.press('Escape')

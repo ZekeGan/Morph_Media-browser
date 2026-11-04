@@ -30,7 +30,7 @@ try {
   const dialog = page.getByRole('dialog', { name: '問題與復原', exact: true })
   await dialog.getByText('待確認的遊戲', { exact: true }).waitFor()
   await dialog
-    .getByRole('button', { name: /^確認遊戲/ })
+    .getByRole('button', { name: /^確認為遊戲主資料夾/ })
     .first()
     .click()
   await dialog.getByText('待確認的遊戲', { exact: true }).waitFor({ state: 'detached' })

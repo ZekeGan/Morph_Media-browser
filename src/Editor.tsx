@@ -494,7 +494,7 @@ export function Editor({
               title={
                 draft.layoutPresets!.find((preset) => preset.id === draft.activeLayoutId)?.name
               }
-              label={tr('版面方案')}
+              label={tr('卡片外觀')}
               allowDeselect={false}
               value={draft.activeLayoutId}
               data={draft.layoutPresets!.map((preset) => ({

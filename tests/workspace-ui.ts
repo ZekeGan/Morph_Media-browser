@@ -269,7 +269,7 @@ try {
     ),
     nodes
   )
-  assert.equal(await page.getByLabel('組件 版面方案').count(), 0)
+  assert.equal(await page.getByLabel('組件 卡片外觀').count(), 0)
   assert.equal(await page.getByRole('button', { name: '卡片 顯示設定', exact: true }).count(), 0)
   await mode('TABLE')
   await page.locator('.folder-table').waitFor()

@@ -17,7 +17,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error?: 
     return (
       <div className="error-boundary" role="alert">
         <h2>{tr('畫面發生未預期的錯誤')}</h2>
-        <p>{tr('你的資料夾與記錄不會因此被改動。重新載入後可以繼續使用。')}</p>
+        <p>{tr('你的資料夾與資料夾資訊不會因此被改動。重新載入後可以繼續使用。')}</p>
         <button type="button" onClick={() => window.location.reload()}>
           {tr('重新載入')}
         </button>

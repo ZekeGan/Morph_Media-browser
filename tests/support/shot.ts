@@ -196,12 +196,12 @@ try {
   if (args.includes('--settings'))
     await page.getByRole('tab', { name: '設定', exact: true }).click()
   if (args.includes('--project-settings')) {
-    // The project's Data tab; the value picks the removal level to show (unlink, private or full).
+    // The project's Backup and removal tab; the value picks the removal level to show (unlink, private or full).
     await page.getByRole('button', { name: '開啟專案 Shot', exact: true }).first().hover()
     await page.getByRole('button', { name: '專案選單 Shot', exact: true }).click()
     await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
-    await page.getByRole('tab', { name: '資料', exact: true }).click()
-    const level = { private: '只移除此專案的資料', full: '連同共用資料一併清除' }[
+    await page.getByRole('tab', { name: '備份與移除', exact: true }).click()
+    const level = { private: '只移除此專案的資料', full: '連同各專案共用的資訊一併清除' }[
       option('project-settings') as 'private'
     ]
     if (level) await page.getByRole('radio', { name: level, exact: true }).check()

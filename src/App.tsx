@@ -413,7 +413,7 @@ export function App() {
             <div className="empty">
               <h1>{tr('專案暫不可用')}</h1>
               <p className="path">{linked?.root}</p>
-              <p>{tr('資料夾可能已搬移、離線，或記錄需要復原。')}</p>
+              <p>{tr('資料夾可能已搬移、離線，或資料夾資訊需要復原。')}</p>
               <Alert color="orange" mt="lg">
                 {linked?.error ?? tr('請選擇專案或重新連結。')}
               </Alert>
@@ -429,7 +429,7 @@ export function App() {
                       disabled={busy}
                       onClick={() =>
                         window.confirm(
-                          tr('從有效備份恢復根記錄與專案設定？目前損壞檔會另外保留。')
+                          tr('從有效備份恢復主資料夾的資訊與專案設定？目前損壞的檔案會另外保留。')
                         ) && act({ action: 'restoreProject', projectId: linked.projectId })
                       }
                     >
@@ -440,7 +440,7 @@ export function App() {
                       disabled={busy}
                       onClick={() => act({ action: 'unlink', projectId: linked.projectId })}
                     >
-                      {tr('取消失效連結（保留可攜檔）')}
+                      {tr('取消失效連結（保留資料夾資訊）')}
                     </Button>
                   </>
                 )}
@@ -559,10 +559,10 @@ export function App() {
               {cleanup.scope === 'all'
                 ? tr('全部已連結可存取資料；完成後退出連結')
                 : cleanup.scope === 'private'
-                  ? tr('本專案私有覆寫')
-                  : tr('此資料夾全部程式資料')}
+                  ? tr('只在這個專案的資訊')
+                  : tr('此資料夾所有 M:orph 建立的資訊')}
               {tr('。找到')}
-              {cleanup.count} {tr('筆記錄。')}
+              {cleanup.count} {tr('個資料夾的資訊。')}
             </p>
             <div className="file-list">
               {cleanup.paths.map((p) => (
@@ -570,7 +570,7 @@ export function App() {
               ))}
             </div>
             <Alert color="orange">
-              {tr('未連結／離線副本不在本次範圍。未知檔案與無法驗證的記錄保留。')}
+              {tr('未連結或離線的副本不在這次範圍內。不認得的檔案與無法確認的資訊都會保留。')}
               {cleanup.skipped.map((s, i) => (
                 <div key={i}>{s}</div>
               ))}
@@ -592,7 +592,7 @@ export function App() {
                 }
               }}
             >
-              {tr('確認清理列出的本程式資料')}
+              {tr('確認清除列出的 M:orph 資訊')}
             </Button>
           </Stack>
         )}
@@ -617,7 +617,7 @@ export function App() {
             ))}
             <Text size="sm">
               {tr(
-                '資料夾記錄 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。',
+                '資料夾資訊 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。',
                 projectImport.folders,
                 projectImport.added,
                 projectImport.same,

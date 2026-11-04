@@ -58,13 +58,13 @@ If you already created a project and only moved to another computer or folder, u
 
 Open a folder's **Folder settings**. The "Still to add" card at the top lists what this folder lacks (launch file, cover, work data); its buttons take you straight to the right place:
 
-- **Data**: fill in this folder's fields; the Shared / This project switch at the top right says which projects a change affects. While something is unsaved, a Save / Discard bar stays at the bottom and the tab shows a dot.
+- **Data**: fill in this folder's fields; the "Info shared by all projects / Current project only" switch at the top right says which projects a change affects. While something is unsaved, a Save / Discard bar stays at the bottom and the tab shows a dot.
 - **Import from source** (at the top of the Data tab): paste the address of the work and the source is recognised from it (E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library, Wikimedia Commons; for Steam the App ID works too). **Get preview** is enabled only for a known site, and you choose which fields to import afterwards. Nothing is fetched unless you ask. Some sources carry adult content; using them is up to you.
 - **Image**: click the thumbnail to pick a saved image, import a new one or clear it; a component can also show "the Nth image of the folder" when none is picked.
 
 ## 7. Games
 
-- Game folders are detected and protected: M:orph never creates records inside a game. If one is missed, mark it as a game root by hand.
+- Game folders are detected and protected: M:orph never creates records inside a game. If one is missed, mark it as the game's main folder by hand.
 - In Folder settings → **Game actions**, bind actions to this game: an EXE (with arguments), a folder, a file, a web address, or a **shortcut** inside the game folder (for example a Locale Emulator `.lnk`, which keeps its own settings). Use "Customize toolbar" to add actions, and the play icon next to an action to test-launch it.
 - Only bound actions appear in the button row, and the eye icon next to each action hides it for this game. A "Launch game" component can list fallback actions and starts whichever one this game has.
 
@@ -75,7 +75,7 @@ The gear at the top right opens **Application settings**:
 - **Appearance**: three themes (Classic dark, Frosted glass, Paper and ink) and five languages, previewed before you save.
 - **Project data**: the project menu's "Export project data" saves the project's records, images and subtitles (no media) to a folder; Links and maintenance → "Import project data" puts them back into a root folder after a preview.
 - **Transfer settings**: export or import a settings package (groups, favourites, preferences; no media and no paths). Import shows a preview and backs up the current settings first, so it can be undone.
-- **Remove a project** (project settings › Data): three levels, starting on the safest one, "Only unlink" (all data stays). "This project's data only" and "Also clear shared data" preview their scope first, and your original media is never deleted. To clear every trace, run "Also clear shared data" once for each project.
+- **Remove a project** (project settings › Backup and removal): three levels, starting on the safest one, "Only unlink" (all data stays). "This project's data only" and "Also clear shared info" preview their scope first, and your original media is never deleted. To clear every trace, run "Also clear shared info" once for each project.
 
 ## 9. FAQ
 

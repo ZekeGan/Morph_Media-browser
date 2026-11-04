@@ -24,12 +24,12 @@ const removeLevels: { value: RemoveLevel; label: string; hint: string; danger?: 
   {
     value: 'private',
     label: '只移除此專案的資料',
-    hint: '移除此專案設定與私有覆寫；共用值與原始媒體保留。',
+    hint: '移除此專案的設定與只在這個專案的資訊；各專案共用的資訊與你的檔案都會保留。',
   },
   {
     value: 'full',
-    label: '連同共用資料一併清除',
-    hint: '清除範圍內所有本工具資料；可能影響其他專案。原始媒體保留。',
+    label: '連同各專案共用的資訊一併清除',
+    hint: '清除範圍內所有 M:orph 建立的資訊；可能影響其他專案。你的檔案（漫畫、圖片、影片）會保留。',
     danger: true,
   },
 ]
@@ -70,7 +70,7 @@ export function ProjectSettings({
       <Tabs defaultValue="general">
         <Tabs.List>
           <Tabs.Tab value="general">{tr('一般')}</Tabs.Tab>
-          <Tabs.Tab value="connection">{tr('資料')}</Tabs.Tab>
+          <Tabs.Tab value="connection">{tr('備份與移除')}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="general" pt="lg">
           <Stack gap="lg">
@@ -136,7 +136,7 @@ export function ProjectSettings({
                 onClick={() => {
                   if (
                     window.confirm(
-                      tr('擴大掃描全部層級？僅在允許的資料夾建立記錄，遊戲保護與清理排除仍保留。')
+                      tr('擴大掃描全部層級？只在允許的資料夾建立資訊，遊戲保護與清除排除仍然有效。')
                     )
                   )
                     change({ ...project, scanAll: true })
@@ -153,7 +153,7 @@ export function ProjectSettings({
               <Text fw={600}>{tr('匯出專案資料')}</Text>
               <Text size="sm" c="dimmed" my="sm">
                 {tr(
-                  '把這個專案的記錄、圖片與字幕（不含媒體）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。'
+                  '把這個專案的資料夾資訊、圖片與字幕（不含你的檔案）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。'
                 )}
               </Text>
               <Button
@@ -235,7 +235,7 @@ export function ProjectSettings({
                   <section className="settings-section cleanup-section">
                     <Text size="sm" c="dimmed" mb="sm">
                       {tr(
-                        '移除此專案設定與私有覆寫。空白且無其他專案使用的根記錄會先備份到本機復原區，再清除根目錄的 .media-viewer。共用值、圖片、其他專案及原始媒體保留。'
+                        '移除此專案的設定與只在這個專案的資訊。主資料夾裡沒有其他用途的資訊，會先備份到本機再清除。各專案共用的資訊、圖片、其他專案與你的檔案（漫畫、圖片、影片）都會保留。'
                       )}
                     </Text>
                     {!preview && (
@@ -261,12 +261,12 @@ export function ProjectSettings({
                         <Alert color="orange" title={tr('即將移除「') + preview.name + '」'}>
                           {tr('從')}
                           {preview.privateCount}{' '}
-                          {tr('筆現用資料夾記錄移除此專案私有值，並封存此專案設定及備份。')}
+                          {tr('個資料夾移除只在這個專案的資訊，並封存此專案的設定與備份。')}
                           {preview.rootCleanup && (
                             <>
                               <Text size="sm" mt="xs">
                                 {tr(
-                                  '根目錄 .media-viewer 將移至本機復原區，重新新增時可建立新的根記錄。'
+                                  '主資料夾的資訊會移到本機的備份區；之後重新加入時會建立新的資訊。'
                                 )}
                               </Text>
                               <Text size="xs" className="path">
@@ -334,7 +334,7 @@ export function ProjectSettings({
                   <section className="settings-section">
                     <Text size="sm" c="dimmed" mb="sm">
                       {tr(
-                        '清除根目錄與所有子資料夾內的本工具資料、共用值、設定及原位置備份。原始媒體保留；可能影響其他綁定專案。'
+                        '清除主資料夾與所有子資料夾裡 M:orph 建立的資訊，包含各專案共用的資訊、設定與備份。你的檔案（漫畫、圖片、影片）會保留；可能影響其他使用這些資料夾的專案。'
                       )}
                     </Text>
                     <Button
@@ -362,7 +362,7 @@ export function ProjectSettings({
                             fullPreview.affectedProjects.length
                           )}
                         >
-                          {tr('此範圍內的綁定或共用資料會被清除，可能影響其他專案。')}
+                          {tr('這個範圍內各專案共用的資訊會被清除，可能影響其他專案。')}
                           {fullPreview.affectedProjects.map((ref) => (
                             <Text key={ref.projectId} size="sm">
                               {ref.name}
@@ -417,7 +417,7 @@ export function ProjectSettings({
                               }
                             }}
                           >
-                            {tr('確認完全移除列出的程式資料')}
+                            {tr('確認清除列出的 M:orph 資訊')}
                           </Button>
                         </Group>
                       </Stack>
@@ -433,7 +433,7 @@ export function ProjectSettings({
                     {text}
                   </Text>
                 ))}
-                <Text size="xs">{tr('已處理的記錄保有備份；剩餘資料保留，可重新預覽。')}</Text>
+                <Text size="xs">{tr('已處理的資訊都有備份；其餘的資料保留，可以重新預覽。')}</Text>
               </Alert>
             )}
           </Stack>

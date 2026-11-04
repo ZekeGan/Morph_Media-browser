@@ -48,7 +48,7 @@ const exportProject = async () => {
     .click({ force: true })
   await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
   const settings = page.getByRole('dialog', { name: /^專案設定/ })
-  await settings.getByRole('tab', { name: '資料', exact: true }).click()
+  await settings.getByRole('tab', { name: '備份與移除', exact: true }).click()
   await settings.getByRole('button', { name: '匯出專案資料', exact: true }).click()
   await toast.waitFor()
   await page.keyboard.press('Escape')

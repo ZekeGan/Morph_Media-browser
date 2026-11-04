@@ -145,7 +145,7 @@ export function BrowseToolbar(props: Props) {
             <>
               <div className="preset-controls">
                 <Select
-                  aria-label={tr('版面方案')}
+                  aria-label={tr('卡片外觀')}
                   size="xs"
                   value={project.activeLayoutId ?? presets[0].id}
                   allowDeselect={false}
@@ -171,7 +171,7 @@ export function BrowseToolbar(props: Props) {
                 <Menu.Target>
                   <ActionIcon
                     className="compact-presets"
-                    aria-label={tr('版面方案選單')}
+                    aria-label={tr('卡片外觀選單')}
                     variant="subtle"
                   >
                     <Icon name="grid" />

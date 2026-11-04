@@ -146,7 +146,7 @@ try {
   await editor.getByRole('textbox', { name: '按鈕文字', exact: true }).fill('Website')
   await editor.getByRole('textbox', { name: '任務類型', exact: true }).click()
   await page.getByRole('option', { name: '開啟網址', exact: true }).click()
-  await editor.getByRole('button', { name: '保存工具列版型', exact: true }).click()
+  await editor.getByRole('button', { name: '保存工具列', exact: true }).click()
   await editor.waitFor({ state: 'hidden' })
   await idle()
   await drawer.getByRole('textbox', { name: '網址', exact: true }).fill('https://example.test/game')

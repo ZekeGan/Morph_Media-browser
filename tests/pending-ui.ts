@@ -110,7 +110,7 @@ try {
   await button('開啟專案 Pending Album').first().click()
   await button('目前資料夾設定').click()
   const drawer = page.locator('.folder-panel-dock-settings'),
-    scheme = drawer.getByRole('textbox', { name: '此資料夾的版面方案', exact: true })
+    scheme = drawer.getByRole('textbox', { name: '此資料夾的卡片外觀', exact: true })
   assert.match(await scheme.inputValue(), /^遵循類型與專案設定（目前：/)
   assert.equal(await drawer.locator('.mantine-Divider-root').count(), 1)
   await scheme.click()
@@ -140,14 +140,14 @@ try {
   await body.evaluate((element) => element.querySelector('#controlled-scroll-content')?.remove())
   const toolbar = page.locator('.workspace-toolbar'),
     mode = toolbar.locator('.center-mode'),
-    preset = toolbar.getByRole('textbox', { name: '版面方案', exact: true })
+    preset = toolbar.getByRole('textbox', { name: '卡片外觀', exact: true })
   const modeBox = (await mode.boundingBox())!,
     presetBox = (await preset.boundingBox())!
   assert.ok(Math.abs(modeBox.y - presetBox.y) < 12)
   const toggle = toolbar.locator('[aria-label="展示內容"]')
   const before = await toggle.boundingBox()
   await toolbar.getByText('檔案', { exact: true }).click()
-  assert.equal(await button('CARD 顯示設定').count(), 0)
+  assert.equal(await button('卡片顯示設定').count(), 0)
   assert.equal(await preset.count(), 0)
   if (before)
     assert.equal(Math.round((await toggle.boundingBox())!.width), Math.round(before.width))
@@ -203,13 +203,13 @@ try {
   await savebar.getByRole('button', { name: '放棄', exact: true }).click()
   await savebar.waitFor({ state: 'hidden' })
   assert.equal(await nameInput.inputValue(), 'Pending Manga')
-  await page.getByRole('tab', { name: '資料', exact: true }).click()
+  await page.getByRole('tab', { name: '備份與移除', exact: true }).click()
   const beforeRemoval = await fs.readFile(folderFile(media), 'utf8')
   const settings = page.getByRole('dialog', { name: '專案設定 · Pending Manga', exact: true })
   // Removal starts on the safest level: unlink only, with the data kept.
   assert.ok(await settings.getByRole('radio', { name: '只取消連結', exact: true }).isChecked())
   await settings.getByRole('button', { name: '取消專案連結（保留資料）', exact: true }).waitFor()
-  await settings.getByRole('radio', { name: '連同共用資料一併清除', exact: true }).check()
+  await settings.getByRole('radio', { name: '連同各專案共用的資訊一併清除', exact: true }).check()
   await button('預覽移除').click()
   await settings.getByText('Pending Album', { exact: false }).first().waitFor()
   assert.ok((await settings.textContent())!.includes('可能受影響的其他專案（1）'))

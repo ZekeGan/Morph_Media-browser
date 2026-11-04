@@ -51,10 +51,10 @@ export function FolderAdvanced({
         {showBoundary && (
           <section className="settings-section">
             <Group gap={4} wrap="nowrap">
-              <Text fw={600}>{tr('掃描邊界')}</Text>
+              <Text fw={600}>{tr('掃描範圍')}</Text>
               <HelpTip
                 text={tr(
-                  '遊戲資料夾裡的檔案很多，也不該被改動。所以只把「遊戲根目錄（ROOT）」這一層當成一筆資料夾記錄，裡面的子資料夾受保護，不會被掃描或寫入。'
+                  '遊戲資料夾裡的檔案很多，也不該被改動。所以只把「遊戲主資料夾」這一層當成一筆資料夾資訊，裡面的子資料夾受保護，不會被掃描或寫入。'
                 )}
               />
             </Group>
@@ -73,10 +73,10 @@ export function FolderAdvanced({
                     multiline
                     maw={240}
                     withArrow
-                    label={tr('把這個資料夾當成遊戲的根目錄：記錄放在這一層，裡面的檔案受保護。')}
+                    label={tr('把這個資料夾當成遊戲主資料夾：資訊放在這一層，裡面的檔案受保護。')}
                   >
                     <Button size="xs" disabled={disabled} onClick={() => boundary('root')}>
-                      {tr('確認遊戲 ROOT')}
+                      {tr('確認為遊戲主資料夾')}
                     </Button>
                   </Tooltip>
                   <Tooltip
@@ -123,7 +123,7 @@ export function FolderAdvanced({
               </>
             ) : (
               <Button size="xs" mt="sm" disabled={disabled} onClick={() => boundary('root')}>
-                {tr('標記為遊戲 ROOT')}
+                {tr('標記為遊戲主資料夾')}
               </Button>
             )}
           </section>
@@ -131,7 +131,7 @@ export function FolderAdvanced({
         {(row.stopped || row.duplicate || row.error) && (
           <section className="settings-section">
             <Text fw={600} mb="sm">
-              {tr('記錄復原')}
+              {tr('資料夾資訊復原')}
             </Text>
             <Stack gap="xs">
               {row.stopped && (
@@ -170,14 +170,14 @@ export function FolderAdvanced({
         )}
         <details className="settings-section">
           <summary>{tr('全部已存屬性與來源')}</summary>
-          <pre>{JSON.stringify(row.record, null, 2) ?? tr('沒有可攜記錄')}</pre>
+          <pre>{JSON.stringify(row.record, null, 2) ?? tr('沒有資料夾資訊')}</pre>
         </details>
         <Accordion variant="separated" className="danger-accordion">
           <Accordion.Item value="danger">
             <Accordion.Control c="red">{tr('危險操作')}</Accordion.Control>
             <Accordion.Panel>
               <section className="settings-section cleanup-section">
-                <Text fw={600}>{tr('清除此資料夾的程式資料')}</Text>
+                <Text fw={600}>{tr('清除此資料夾的 M:orph 資訊')}</Text>
                 <Text size="sm" c="dimmed">
                   {tr('原始資料夾與媒體保留。先預覽範圍，確認後才清理。')}
                 </Text>
@@ -199,7 +199,7 @@ export function FolderAdvanced({
                       disabled={busy || fieldDirty}
                       onClick={() => void previewCleanup('private')}
                     >
-                      {tr('只清此專案私有覆寫')}
+                      {tr('只清除這個專案的資訊')}
                     </Button>
                   )}
                 </Group>
@@ -207,8 +207,8 @@ export function FolderAdvanced({
                   <Stack mt="md">
                     <Alert color="orange" title={tr('清理預覽')}>
                       {cleanup.scope === 'private'
-                        ? tr('只移除目前專案私有覆寫')
-                        : tr('移除此資料夾的受管記錄及資產')}
+                        ? tr('只移除目前專案的資訊')
+                        : tr('移除此資料夾的資訊與圖片')}
                       {tr('；共')}
                       {cleanup.count} {tr('筆。未知檔案、離線與未連結副本不在範圍。')}
                     </Alert>
@@ -257,7 +257,7 @@ export function FolderAdvanced({
                           }
                         }}
                       >
-                        {tr('確認清理列出的本程式資料')}
+                        {tr('確認清除列出的 M:orph 資訊')}
                       </Button>
                     </Group>
                   </Stack>

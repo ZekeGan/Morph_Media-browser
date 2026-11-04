@@ -158,7 +158,7 @@ export function BrowsePanel(props: Props) {
                 </Button>
               )}
               {kind === 'book' && (
-                <Tooltip label={tr('編輯此專案所有漫畫的資訊版面；CARD 版面獨立')}>
+                <Tooltip label={tr('編輯此專案所有漫畫的資訊版面；卡片外觀另外設定')}>
                   <ActionIcon
                     aria-label={tr('編輯漫畫展示')}
                     variant="subtle"
