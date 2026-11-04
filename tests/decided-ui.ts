@@ -317,14 +317,17 @@ try {
   // The restore left an automatic backup of the state before it; restoring that one undoes it.
   await button('應用程式設定').click()
   await settings().getByRole('tab', { name: '備份', exact: true }).click()
-  const auto = settings().getByRole('listitem').filter({ hasText: '還原前自動備份' })
-  await auto.waitFor()
+  // The settings restore offers its way back right there; it makes no backup entry of its own.
+  const back = settings().getByRole('button', { name: '回到還原之前', exact: true })
+  await back.waitFor()
+  assert.equal(await settings().getByRole('listitem').count(), 1)
   await page.screenshot({ path: path.join(screens, 'settings-backup.png') })
-  await auto.getByRole('button', { name: /^還原 / }).click()
-  await restore.waitFor()
-  for (let index = 1; index < (await boxes.count()); index++) await boxes.nth(index).uncheck()
-  await restore.getByRole('button', { name: '還原勾選的項目', exact: true }).click()
+  await back.click()
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark')
+  await button('應用程式設定').click()
+  await settings().getByRole('tab', { name: '備份', exact: true }).click()
+  assert.equal(await back.count(), 0)
+  await page.keyboard.press('Escape')
   for (const [file, bytes] of originals) assert.deepEqual(await fs.readFile(file), bytes)
   const snapshot = (await page.evaluate(() => window.media.request({ action: 'snapshot' })))
     .snapshot

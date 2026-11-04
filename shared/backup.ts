@@ -22,7 +22,6 @@ export interface BackupEntry {
   projects: number
 }
 export const BACKUP_ID = /^M-orph-backup-[0-9T]{15}(-\d{1,3})?$/
-export const AUTO_BACKUPS_KEPT = 5
 export interface BackupProjectPreview {
   projectId: string
   name: string

@@ -265,7 +265,7 @@ export interface Response {
   recoveryPath?: string
   backup?: import('./backup').BackupPreview
   backups?: import('./backup').BackupEntry[]
-  restored?: { projects: string[]; failed: string[]; settings: boolean; source: string }
+  restored?: { projects: string[]; failed: string[]; settings: boolean; settingsUndo?: string }
   notice?: Notice
   cancelled?: boolean
   rootSelection?: RootSelection

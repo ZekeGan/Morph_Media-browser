@@ -1,4 +1,23 @@
-import { AUTO_BACKUPS_KEPT, type BackupEntry, type BackupPreview } from '../shared/backup'
+import type { BackupEntry, BackupPreview } from '../shared/backup'
+
+// The way back from the last settings restore survives the reload that applies it.
+const UNDO_KEY = 'morph.settingsUndo'
+const readUndo = (): { id: string; at: string } | undefined => {
+  try {
+    const value = JSON.parse(localStorage.getItem(UNDO_KEY) ?? 'null')
+    return value && typeof value.id === 'string' && typeof value.at === 'string' ? value : undefined
+  } catch {
+    return undefined
+  }
+}
+const writeUndo = (value?: { id: string; at: string }) => {
+  try {
+    if (value) localStorage.setItem(UNDO_KEY, JSON.stringify(value))
+    else localStorage.removeItem(UNDO_KEY)
+  } catch {
+    // Without storage the way back is simply not offered.
+  }
+}
 import type { Request, Response } from '../shared/model'
 import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
@@ -31,7 +50,8 @@ export function ApplicationSettings({
   const [restorePreview, setRestorePreview] = useState<BackupPreview>(),
     [restoreSettings, setRestoreSettings] = useState(true),
     [restoreProjects, setRestoreProjects] = useState<string[]>([]),
-    [backups, setBackups] = useState<BackupEntry[]>([])
+    [backups, setBackups] = useState<BackupEntry[]>([]),
+    [undo, setUndo] = useState(readUndo)
   const [applied, setApplied] = useState(false)
   useEffect(() => {
     onDirty(opened && !!restorePreview)
@@ -42,6 +62,7 @@ export function ApplicationSettings({
       setError('')
       setRestorePreview(undefined)
       void act({ action: 'listBackups' }).then((result) => setBackups(result?.backups ?? []))
+      setUndo(readUndo())
       setApplied(false)
     }
   }, [opened])
@@ -115,7 +136,24 @@ export function ApplicationSettings({
       if (result.backups) setBackups(result.backups)
       onDirty(false)
     })
-    if (result.restored.settings) window.location.reload()
+    if (result.restored.settingsUndo) {
+      writeUndo({ id: result.restored.settingsUndo, at: restorePreview.createdAt })
+      window.location.reload()
+    }
+  }
+  // Puts back the settings saved just before the last restore (the restore of projects only fills in).
+  const undoRestore = async () => {
+    if (!undo) return
+    setSaving(true)
+    setError('')
+    try {
+      await window.desktop.updateWorkspace({ action: 'restorePackage', backupId: undo.id })
+      writeUndo()
+      window.location.reload()
+    } catch (reason) {
+      setError(String(reason))
+      setSaving(false)
+    }
   }
   return (
     <Modal
@@ -215,6 +253,34 @@ export function ApplicationSettings({
           <Stack gap="lg">
             <section className="settings-section">
               <Text fw={600}>{tr('備份')}</Text>
+              {undo && !restorePreview && (
+                <Alert color="blue" my="sm" className="restore-undo">
+                  <Group justify="space-between" gap="xs">
+                    <Text size="sm">{tr('已從 {0} 的備份還原設定。', when(undo.at))}</Text>
+                    <Group gap="xs" wrap="nowrap">
+                      <Button
+                        size="compact-sm"
+                        variant="subtle"
+                        disabled={saving}
+                        onClick={() => {
+                          writeUndo()
+                          setUndo(undefined)
+                        }}
+                      >
+                        {tr('知道了')}
+                      </Button>
+                      <Button
+                        size="compact-sm"
+                        loading={saving}
+                        disabled={busy}
+                        onClick={() => void undoRestore()}
+                      >
+                        {tr('回到還原之前')}
+                      </Button>
+                    </Group>
+                  </Group>
+                </Alert>
+              )}
               <Text size="sm" c="dimmed" mb="sm">
                 {tr(
                   '把設定和所有專案的資訊（標籤、評分、封面）存一份。你的檔案（漫畫、圖片、影片）不會被複製。'
@@ -236,13 +302,12 @@ export function ApplicationSettings({
                 <Stack gap="sm" mt="md" className="restore-preview">
                   <Text fw={600}>{tr('從 {0} 的備份還原', when(restorePreview.createdAt))}</Text>
                   <Text size="sm" c="dimmed">
-                    {tr(
-                      '勾選要還原的項目。已經有資訊的資料夾會保留現在的內容；還原前會自動備份目前的狀態。'
-                    )}
+                    {tr('勾選要還原的項目。已經有資訊的資料夾會保留現在的內容，不會被覆蓋。')}
                   </Text>
                   {restorePreview.settings && (
                     <Checkbox
                       label={tr('設定（群組、最愛、主題、語言）')}
+                      description={tr('會取代目前的設定；還原後可以按「回到還原之前」退回。')}
                       checked={restoreSettings}
                       disabled={busy}
                       onChange={(event) => setRestoreSettings(event.currentTarget.checked)}
@@ -366,10 +431,7 @@ export function ApplicationSettings({
                 </Alert>
               )}
               <Text size="xs" c="dimmed" mt="md">
-                {tr(
-                  '備份存在這台電腦裡。要防硬碟故障，請把備份匯出到其他磁碟。自動備份只保留最近 {0} 筆。',
-                  AUTO_BACKUPS_KEPT
-                )}
+                {tr('備份存在這台電腦裡。要防硬碟故障，請把備份匯出到其他磁碟。')}
               </Text>
             </section>
           </Stack>

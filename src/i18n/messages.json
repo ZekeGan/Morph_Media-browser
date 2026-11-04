@@ -6677,12 +6677,6 @@
     "en": "Restore from a folder…",
     "es": "Restaurar desde una carpeta…"
   },
-  "勾選要還原的項目。已經有資訊的資料夾會保留現在的內容；還原前會自動備份目前的狀態。": {
-    "ja": "復元する項目にチェックを入れてください。すでに情報があるフォルダーは今の内容を残します。復元の前に今の状態を自動でバックアップします。",
-    "zh-CN": "勾选要还原的项目。已经有信息的文件夹会保留现在的内容；还原前会自动备份目前的状态。",
-    "en": "Tick what to restore. Folders that already have info keep what they have now; the current state is backed up automatically first.",
-    "es": "Marca lo que quieres restaurar. Las carpetas que ya tienen información conservan la actual; antes se hace una copia automática del estado actual."
-  },
   "備份清單": {
     "ja": "バックアップ一覧",
     "zh-CN": "备份列表",
@@ -6755,10 +6749,40 @@
     "en": "No backups yet.",
     "es": "Todavía no hay copias."
   },
-  "備份存在這台電腦裡。要防硬碟故障，請把備份匯出到其他磁碟。自動備份只保留最近 {0} 筆。": {
-    "ja": "バックアップはこのパソコンに保存されます。ディスクの故障に備えるには、別のディスクにエクスポートしてください。自動バックアップは最新の {0} 件だけ残ります。",
-    "zh-CN": "备份存在这台电脑里。要防硬盘故障，请把备份导出到其他磁盘。自动备份只保留最近 {0} 笔。",
-    "en": "Backups are kept on this computer. To be safe from a disk failure, export a backup to another disk. Only the newest {0} automatic backups are kept.",
-    "es": "Las copias se guardan en este equipo. Para protegerte de un fallo del disco, exporta una copia a otro disco. Solo se conservan las {0} copias automáticas más recientes."
+  "已從 {0} 的備份還原設定。": {
+    "ja": "{0} のバックアップから設定を復元しました。",
+    "zh-CN": "已从 {0} 的备份还原设定。",
+    "en": "Settings were restored from the backup of {0}.",
+    "es": "Se restauraron los ajustes de la copia del {0}."
+  },
+  "知道了": {
+    "ja": "わかりました",
+    "zh-CN": "知道了",
+    "en": "Got it",
+    "es": "Entendido"
+  },
+  "回到還原之前": {
+    "ja": "復元前に戻す",
+    "zh-CN": "回到还原之前",
+    "en": "Back to before the restore",
+    "es": "Volver a antes de restaurar"
+  },
+  "勾選要還原的項目。已經有資訊的資料夾會保留現在的內容，不會被覆蓋。": {
+    "ja": "復元する項目にチェックを入れてください。すでに情報があるフォルダーはそのまま残り、上書きされません。",
+    "zh-CN": "勾选要还原的项目。已经有信息的文件夹会保留现在的内容，不会被覆盖。",
+    "en": "Tick what to restore. Folders that already have info keep it; nothing is overwritten.",
+    "es": "Marca lo que quieres restaurar. Las carpetas que ya tienen información la conservan; no se sobrescribe nada."
+  },
+  "會取代目前的設定；還原後可以按「回到還原之前」退回。": {
+    "ja": "今の設定を置き換えます。復元後に「復元前に戻す」で元に戻せます。",
+    "zh-CN": "会取代目前的设定；还原后可以按「回到还原之前」退回。",
+    "en": "Replaces your current settings; after restoring you can press “Back to before the restore”.",
+    "es": "Sustituye tus ajustes actuales; después puedes pulsar «Volver a antes de restaurar»."
+  },
+  "備份存在這台電腦裡。要防硬碟故障，請把備份匯出到其他磁碟。": {
+    "ja": "バックアップはこのパソコンに保存されます。ディスクの故障に備えるには、別のディスクにエクスポートしてください。",
+    "zh-CN": "备份存在这台电脑里。要防硬盘故障，请把备份导出到其他磁盘。",
+    "en": "Backups are kept on this computer. To be safe from a disk failure, export a backup to another disk.",
+    "es": "Las copias se guardan en este equipo. Para protegerte de un fallo del disco, exporta una copia a otro disco."
   }
 }

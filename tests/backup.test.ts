@@ -13,7 +13,6 @@ import {
   listBackups,
   locateBackupProject,
   previewBackup,
-  pruneAutoBackups,
 } from '../electron/backup'
 import { folderFile, readFolder, saveFolder } from '../electron/files'
 
@@ -70,6 +69,9 @@ test('a backup holds settings and every project; restoring in place keeps existi
   assert.deepEqual(result.failed, [])
   assert.deepEqual(result.projects, ['Shelf'])
   assert.equal(result.settings, true)
+  // Restoring makes no backup of its own; the settings it replaced can be put back by their id.
+  assert.ok(result.settingsUndo)
+  assert.deepEqual(await listBackups(library), [])
   assert.deepEqual(await fs.readFile(folderFile(path.join(media, 'A'))), before)
   assert.equal(await fs.readFile(path.join(media, 'A', 'page.txt'), 'utf8'), 'ORIGINAL')
   // A used preview cannot be applied twice.
@@ -155,19 +157,12 @@ test('a folder offers its earlier project back, also after the folder moved', as
   assert.deepEqual(await library.projectsAt(path.join(root, 'nowhere')), [])
 })
 
-test('kept backups form one list; only the newest automatic ones stay, and ids cannot leave the folder', async (t) => {
+test('kept backups form one list of what the user made, and ids cannot leave the folder', async (t) => {
   const { media, out, library, workspace, ids } = await setup(t)
-  const manual = await createKeptBackup(library, workspace, ids(), '0.0.0-test', 'manual')
-  const autos: string[] = []
-  for (let n = 0; n < 7; n++)
-    autos.push((await createKeptBackup(library, workspace, ids(), '0.0.0-test', 'auto')).id)
-  // The backup just restored from stays even when it is the oldest automatic one.
-  await pruneAutoBackups(library, autos[0])
-  const kept = (await listBackups(library)).map((entry) => entry.id)
-  assert.ok(kept.includes(autos[0]) && !kept.includes(autos[1]))
-  await pruneAutoBackups(library)
+  const manual = await createKeptBackup(library, workspace, ids(), '0.0.0-test')
+  await createKeptBackup(library, workspace, ids(), '0.0.0-test')
   const list = await listBackups(library)
-  assert.equal(list.filter((entry) => entry.label === 'auto').length, 5)
+  assert.equal(list.length, 2)
   assert.ok(list.some((entry) => entry.id === manual.id && entry.label === 'manual'))
   assert.ok(list.every((entry) => entry.size > 0 && entry.projects === 1))
   for (const bad of ['..', '../local', 'M-orph-backup-x', path.join('..', manual.id)])

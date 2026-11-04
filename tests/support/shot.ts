@@ -1,6 +1,6 @@
 // One-command screenshot of a sample project, for checking a UI change without writing a throwaway script.
 //   pnpm shot <game|manga|album|other> [--width 1000] [--height 800] [--mode CARD|TABLE|TREE]
-//                                      [--child <folder name>] [--settings] [--project-settings [delete]] [--backup [create]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out path.png]
+//                                      [--child <folder name>] [--settings] [--project-settings [delete]] [--backup [create|undo]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out path.png]
 // Needs a current build (`pnpm build`). Writes the PNG under .test-output/shot/ and prints its path.
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -16,7 +16,7 @@ const option = (name: string) => {
 }
 if (!kind) {
   console.error(
-    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--project-settings [delete]] [--backup [create]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out FILE]'
+    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--project-settings [delete]] [--backup [create|undo]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out FILE]'
   )
   process.exit(2)
 }
@@ -195,6 +195,14 @@ try {
   }
   if (args.includes('--settings'))
     await page.getByRole('tab', { name: '設定', exact: true }).click()
+  if (option('backup') === 'undo')
+    // Shows the way back after a settings restore (the id is only displayed, not used).
+    await page.evaluate(() =>
+      localStorage.setItem(
+        'morph.settingsUndo',
+        JSON.stringify({ id: '00000000-0000-0000-0000-000000000000', at: new Date().toISOString() })
+      )
+    )
   if (args.includes('--backup')) {
     // Application settings › Backup; "create" makes one backup first so the list shows.
     await page.getByRole('button', { name: '應用程式設定', exact: true }).click()

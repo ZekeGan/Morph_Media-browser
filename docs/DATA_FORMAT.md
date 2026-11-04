@@ -94,9 +94,9 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 
 ## 備份資料夾（2026-11-04）
 
-應用程式設定 › 備份的「建立備份」會在程式資料夾 `%APPDATA%\media-viewer\backups\` 建立 `M-orph-backup-<時間>/`（同一秒重複時加 `-2` 之類的編號），不改動任何專案，也不含媒體檔。還原前程式會自動再建一份（`label: "auto"`），自動備份只保留最新 5 筆，手動備份留到使用者刪除。「匯出…」把某一筆整個複製到使用者選的位置（不能在專案資料夾或程式備份資料夾裡）；「從檔案還原…」讀取別處的備份資料夾。
+應用程式設定 › 備份的「建立備份」會在程式資料夾 `%APPDATA%\media-viewer\backups\` 建立 `M-orph-backup-<時間>/`（同一秒重複時加 `-2` 之類的編號），不改動任何專案，也不含媒體檔。備份只在使用者按「建立備份」時產生，留到使用者刪除（舊版曾在還原前自動建立 `label: "auto"` 的備份，仍照常列出）。還原專案只補上缺少的檔案、不覆蓋現有資訊，所以不另做備份；還原設定會整份取代，取代前設定包機制會先把目前設定存到 `workspace-backups`，視窗用它提供「回到還原之前」（只退回最近一次的設定還原）。「匯出…」把某一筆整個複製到使用者選的位置（不能在專案資料夾或程式備份資料夾裡）；「從檔案還原…」讀取別處的備份資料夾。
 
-- `backup.json`：`kind: "morph.backup"`、`schemaVersion`（目前 `1`）、`createdAt`、`appVersion`、`label`（`manual`／`auto`，舊備份沒有時視為 `manual`）、`settings`（設定包的相對路徑）、`projects`（每個專案的 `projectId`、`name`、`root` 與匯出資料夾的相對路徑 `dir`）。
+- `backup.json`：`kind: "morph.backup"`、`schemaVersion`（目前 `1`）、`createdAt`、`appVersion`、`label`（目前一律 `manual`；`auto` 是舊版還原前自動建立的；沒有時視為 `manual`）、`settings`（設定包的相對路徑）、`projects`（每個專案的 `projectId`、`name`、`root` 與匯出資料夾的相對路徑 `dir`）。
 - `settings.json`：上一節的設定包。
 - `projects/M-orph-export-<專案名>-<時間>/`：每個已連結、可讀取的專案各一份下一節的專案匯出資料夾；讀不到的專案列在建立結果裡，不中斷整份備份。
 

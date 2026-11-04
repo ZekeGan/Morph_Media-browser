@@ -4,7 +4,6 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import {
-  AUTO_BACKUPS_KEPT,
   BACKUP_ID,
   BACKUP_KIND,
   BACKUP_VERSION,
@@ -247,18 +246,20 @@ export async function applyBackup(
     }
   }
   // Settings go last so groups and favourites can refer to the projects restored above.
-  let settingsDone = false
+  // Restoring projects only fills in what is missing, so only the settings can be undone: the settings
+  // package saves the current settings first, and its id lets the window offer "back to before the restore".
+  let settingsUndo: string | undefined
   if (settings && plan.settingsToken)
     try {
-      await workspace.update(
+      const state = await workspace.update(
         { action: 'applyPackage', token: plan.settingsToken, mode: 'replace' },
         ids()
       )
-      settingsDone = true
+      settingsUndo = state.backupId
     } catch (error) {
       failed.push(`設定：${message(error)}`)
     }
-  return { projects: restored, failed, settings: settingsDone, source: path.basename(plan.dir) }
+  return { projects: restored, failed, settings: !!settingsUndo, settingsUndo }
 }
 
 // Backups kept in the app's own data folder: one list for manual and automatic backups.
@@ -308,15 +309,6 @@ export async function deleteBackup(library: Library, id: string) {
   await fs.rm(await keptBackup(library, id), { recursive: true })
 }
 
-// Only the newest automatic backups are kept; manual ones stay until the user deletes them.
-// `keep` is the backup just restored from: it stays even when it is an old automatic one.
-export async function pruneAutoBackups(library: Library, keep?: string) {
-  const autos = (await listBackups(library)).filter(
-    (entry) => entry.label === 'auto' && entry.id !== keep
-  )
-  for (const entry of autos.slice(AUTO_BACKUPS_KEPT)) await deleteBackup(library, entry.id)
-}
-
 // Copies a kept backup to another place (another disk, another computer).
 export async function exportBackup(library: Library, id: string, dest: string) {
   const source = await keptBackup(library, id)
@@ -337,15 +329,14 @@ export async function exportBackup(library: Library, id: string, dest: string) {
   return target
 }
 
-// A backup in the app's own folder. Automatic ones are trimmed after the restore that made them.
+// A backup in the app's own folder. (Backups labelled 'auto' were made before restores by an earlier
+// version; they stay listed until the user deletes them.)
 export async function createKeptBackup(
   library: Library,
   workspace: WorkspaceStore,
   ids: string[],
-  appVersion: string,
-  label: 'manual' | 'auto'
+  appVersion: string
 ) {
   await fs.mkdir(backupsDir(library), { recursive: true })
-  const result = await createBackup(library, workspace, ids, backupsDir(library), appVersion, label)
-  return result
+  return createBackup(library, workspace, ids, backupsDir(library), appVersion)
 }

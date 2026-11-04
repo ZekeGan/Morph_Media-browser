@@ -38,7 +38,6 @@ import {
   listBackups,
   locateBackupProject,
   previewBackup,
-  pruneAutoBackups,
 } from './backup'
 
 const directory = path.dirname(fileURLToPath(import.meta.url))
@@ -209,7 +208,7 @@ async function dispatch(request: Request): Promise<Response> {
       break
     case 'createBackup': {
       const ids = library.snapshot().projects.map((p) => p.projectId)
-      const result = await createKeptBackup(library, workspace, ids, app.getVersion(), 'manual')
+      const result = await createKeptBackup(library, workspace, ids, app.getVersion())
       extra.notice = completionNotice(
         result.projects,
         result.skipped.length,
@@ -269,17 +268,6 @@ async function dispatch(request: Request): Promise<Response> {
       break
     }
     case 'restoreBackup': {
-      // What is there now is kept as an automatic backup first, so a restore can always be undone.
-      const undo =
-        request.settings || request.projects.length
-          ? await createKeptBackup(
-              library,
-              workspace,
-              library.snapshot().projects.map((p) => p.projectId),
-              app.getVersion(),
-              'auto'
-            )
-          : undefined
       const result = await applyBackup(
         library,
         workspace,
@@ -288,7 +276,6 @@ async function dispatch(request: Request): Promise<Response> {
         request.settings,
         request.projects
       )
-      await pruneAutoBackups(library, result.source)
       extra.restored = result
       extra.backups = await listBackups(library)
       const done = result.projects.length + (result.settings ? 1 : 0)
@@ -296,8 +283,7 @@ async function dispatch(request: Request): Promise<Response> {
         done,
         result.failed.length,
         `已還原：${[...(result.settings ? ['設定'] : []), ...result.projects].join('、') || '無'}` +
-          (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '') +
-          (undo?.skipped.length ? `\n還原前的自動備份未包含：${undo.skipped.join('、')}` : '')
+          (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '')
       )
       break
     }

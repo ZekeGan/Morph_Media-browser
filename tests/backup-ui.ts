@@ -65,7 +65,9 @@ try {
   await restore.getByRole('button', { name: '還原勾選的項目', exact: true }).click()
   await page.waitForFunction(() => document.body.innerText.includes('已還原：Portable'))
   await restore.waitFor({ state: 'hidden' })
-  await settings.getByRole('listitem').filter({ hasText: '還原前自動備份' }).waitFor()
+  // Restoring projects only fills in, so it adds no backup and offers no settings undo.
+  assert.equal(await settings.getByRole('listitem').count(), 1)
+  assert.equal(await settings.getByRole('button', { name: '回到還原之前' }).count(), 0)
   await page.evaluate(() => {
     window.confirm = () => true
   })
