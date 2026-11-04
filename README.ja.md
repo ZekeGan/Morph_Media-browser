@@ -10,7 +10,7 @@
 <p align="center"><strong>Media Browser</strong><br><em>データはそのまま、姿は自由に。</em></p>
 
 <p align="center">
-  <a href="README.md">English</a> · <a href="README.zh-TW.md">繁體中文</a> · <a href="README.zh-CN.md">简体中文</a> · 日本語 · <a href="README.es.md">Español</a>
+  <a href="README.md">English</a> · <a href="README.zh-TW.md">繁體中文</a> · 日本語
 </p>
 
 M:orph は Windows を第一に考えたデスクトップアプリで、マンガ、アルバム、動画、音楽、ゲームといった大量のフォルダーのコレクションを、カード・表・ツリーで閲覧できます。**プロジェクト**にルートフォルダーを指定すると、条件に合うサブフォルダーがそれぞれ一件のレコードになり、説明を付けたり、検索したり、好きなレイアウトで並べたりできます。扱うのは「見ること」だけです。閲覧のために元のファイルを移動・名前変更・削除することはありません。

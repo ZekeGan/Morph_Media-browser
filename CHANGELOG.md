@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- README: the Traditional Chinese README is rewritten for first-time users (what it is, why use it, download placeholder with the unsigned-build note, features, data storage, developer section); the Simplified Chinese and Spanish READMEs are removed and the language bars of the remaining three now link only English, Traditional Chinese and Japanese. The app's own interface languages are unchanged.
 - Problems and recovery: a "Games to confirm" group lists folders that look like games but nobody has confirmed, with "Confirm game ROOT" and "This is not a game" on each, so they can be settled without opening each folder's settings.
 - Layout editor: a selected component can be duplicated (the copy goes under the last component and gets its own image slot), and the landing spot of a dragged component is drawn in the theme's accent colour.
 - Game toolbar editor: the button colour is picked from a row of ten ready-made swatches (the chosen one shows a tick), "custom colour" opens an inline picker instead of a drop-down that landed below the dialog, and a preview button shows the label in the chosen colour.
