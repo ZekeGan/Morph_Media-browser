@@ -7,129 +7,281 @@
   M:orph
 </h1>
 
-<p align="center"><strong>Media Browser</strong><br><em>Same data, any shape.</em></p>
+<p align="center"><strong>Media Browser</strong><br><em>The same collection, shown a different way.</em></p>
 
 <p align="center">
   English · <a href="README.zh-TW.md">繁體中文</a> · <a href="README.ja.md">日本語</a>
 </p>
 
-M:orph is a Windows-first desktop app for browsing large collections of folders — manga, albums, videos, music, and games — as cards, tables or trees. You point a **project** at a root folder, and the app turns every matching sub-folder into a record you can describe, search and lay out the way you like. It only **views** your data: originals are never moved, renamed or deleted for the sake of browsing.
+M:orph is a **local media collection browser**, built mainly for Windows.
 
-**Data and presentation are kept apart.** What you know about a folder (title, tags, rating, where it came from) is stored with the folder; how it looks is a layout you design once and apply to the whole project.
+If you keep manga, albums, videos, music or games in folders, M:orph gives you a more intuitive way to browse and manage them.
 
-> **Human-led, AI-built.** A human leads the project — direction, requirements, design decisions and review — while AI coding agents (OpenAI Codex, then Anthropic's Claude Code) write the code under that direction.
->
-> The project is **close to its first release**. Current version: **0.39.0** ([changelog](CHANGELOG.md)).
+Choose the folder your collection lives in to create a project, add covers, tags, ratings and other information to your folders, and decide freely how they are shown.
 
----
+Unlike a file manager, M:orph manages **what your collection contains and how it is displayed separately**. You do not have to reorganise your existing files to get a browsing interface that suits you.
 
-## What it does
+## Highlights
 
-**Browse**
+**Three browsing modes**
 
-- Three modes over the same data: **CARD**, **TABLE** and **TREE**, with per-project memory of filters, scope and view settings.
-- A right-hand panel shows the selected folder without leaving the list: details, files, subfolders, and a reader or player for what is inside.
-- Search across every field with a rebuildable local index (substring, AND / OR / exclude, number and date comparisons, saved queries).
+Switch the same collection between card, table and tree views. Every project remembers its own filters and view settings.
 
-**Design the card**
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/01-main-card.png" alt="Card mode"><br>Card</td>
+    <td align="center"><img src="docs/images/02-table.png" alt="Table mode"><br>Table</td>
+    <td align="center"><img src="docs/images/03-tree.png" alt="Tree mode"><br>Tree</td>
+  </tr>
+</table>
 
-- A block editor places **components** on a grid: names, paths, text, tags, numbers, ratings, dates, choices, links, images, dividers, and game components (cover, launch button).
-- Style each component: size, weight, italic / underline / strikethrough, alignment, colours, padding, corners, border, opacity, line and letter spacing, plus ready-made looks. Tags can be coloured by category and choices can have their own colours.
-- Long values stay tidy: ellipsis, wrapping, a **+N** tag badge, or a scrollable cell.
-- **Fallback fields**: one component can list several fields (for example the title from Steam, DLsite and your own notes) and shows the first one that has a value. Search follows the same chain.
-- Real-data preview inside the editor, several named layouts per project, and a layout per content type.
+**Custom card layouts**
 
-**View and play**
+With a drag-and-drop editor you arrange covers, names, tags, ratings and other fields as you like. Adjust the size, position and style of each component to build a browsing interface of your own.
 
-- Album masonry and a full-screen image reader; manga reader with spreads and right-to-left reading; video player with subtitles (SRT / VTT), resume and a cross-project audio / video queue; PDF, ZIP and CBZ in the app.
-- When a video cannot be decoded the app explains why (for example a renamed archive) and offers to open it with the system player.
+**Information travels with the folder**
 
-**Games**
+The information you add about a work is stored in a portable record inside the folder. If you move the collection to another place or computer, keep those records and it can be relinked and read again.
 
-- Detects game folders (including many Japanese visual-novel engines) and protects their insides: the app never creates records inside a game.
-- Launch actions per game: EXE with arguments, folders, files, URLs, and **shortcuts** (so a Locale Emulator shortcut keeps its own settings). A launch component can fall back from one action to another, and each game can hide buttons it does not use.
+**Many kinds of media in one place**
 
-**Fill in the data**
+Besides managing your collection, you can read manga, view images, play audio and video, open documents, or launch the games in your collection, all inside M:orph.
 
-- Paste a page address and the source is recognised automatically: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library and Wikimedia Commons. Review the preview, then choose which fields to import. Nothing is fetched unless you ask. Some of these sites carry adult content; whether to use them is entirely up to you, and each site's own terms apply.
+**Your original file structure stays as it is**
 
-**Look and language**
+M:orph never moves, renames or deletes your original media just for browsing. It only creates the hidden records it needs in managed folders, to keep the information you add.
 
-- Three themes (dark, frosted glass, warm paper) and five interface languages (Traditional Chinese, Simplified Chinese, English, Japanese, Spanish).
+## Features
 
----
+### 1. Browsing and search
 
-## How your data is kept
+M:orph manages a collection as a "project", and each project points at one root folder you choose.
 
-```text
-Folders ──→ portable folder records ──┐
-                                      ├──→ project layout → components on screen
-Project root ──→ portable settings ───┘
-                  │ both are the source of truth
-                  └──→ SQLite search index (rebuildable at any time)
+You can browse by folder level and show the collection in different ways:
+
+- **Card mode:** visual browsing built around covers, tags and your own information.
+- **Table mode:** good for comparing the names, ratings, dates and other fields of many items.
+- **Tree mode:** keeps the hierarchy between folders, which helps with complex directory structures.
+
+When you select a folder, the right-hand panel shows its information and a preview of its contents, so you do not have to leave the collection list.
+
+Built-in search supports plain keywords, field conditions, AND / OR / exclude operators, and number and date comparisons. Frequently used searches can be saved for next time.
+
+### 2. Custom card layouts
+
+One of the core ideas of M:orph is that you decide how your collection should be displayed.
+
+<p align="center">
+  <img src="docs/images/04-editor.png" width="800" alt="Layout editor: components on the left, the canvas with a real-data preview in the middle, component settings on the right">
+</p>
+
+With the visual editor you place components on a card:
+
+- Names, paths, text and links
+- Images and covers
+- Tags, ratings, numbers and dates
+- Choices, dividers and special-purpose components
+
+Each component can be adjusted in position, size, text style, colour, border and more.
+
+**Fallback fields**
+
+One component can point at several data sources. For example, it can show the name from Steam first, switch to the DLsite name when there is none, and finally use a name you entered yourself.
+
+**Several layouts**
+
+A project can keep several layouts and use a different design for each content type.
+
+While editing, you can preview with real data from your collection to check how the layout will look in actual use.
+
+### 3. Reading and playback
+
+M:orph does more than show information about a work; it can also open part of your collection's content.
+
+**Images and manga**
+
+An album masonry view, a full-screen image viewer, and a manga reader with spreads and right-to-left reading.
+
+**Video and music**
+
+A built-in player supports resuming videos, SRT / VTT subtitles and a cross-project play queue. When a video cannot be decoded properly, you can open it with the system player.
+
+**Documents and archives**
+
+PDF, ZIP and CBZ files can be viewed inside the app.
+
+### 4. Game collection management
+
+M:orph recognises some game folders, including many Japanese visual-novel engines.
+
+You can set up launch actions for each game, such as running an EXE, passing launch arguments, or opening a file, folder, URL or shortcut.
+
+Shortcuts made with Locale Emulator also work and keep their own launch settings.
+
+To avoid disturbing the game, M:orph treats the inside of a game's root folder as a protected area and never creates records there during ordinary browsing.
+
+### 5. Fill in work information from websites
+
+If you do not want to type everything in by hand, paste the address of a work's page on a supported website.
+
+M:orph recognises the source, fetches the information available and shows a preview, and you choose which fields to import.
+
+Currently supported: E-Hentai / ExHentai, Steam, DLsite, VNDB, Bangumi, AniList, Hitomi, Pixiv, MusicBrainz, Open Library and Wikimedia Commons.
+
+External data is never fetched in the background; M:orph only connects when you ask for a preview. Some sources contain adult content, so please follow each site's terms of service.
+
+### 6. Appearance and language
+
+M:orph offers three interface themes:
+
+- Dark
+- Frosted glass
+- Warm paper
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/01-main-card.png" alt="Dark theme"><br>Dark</td>
+    <td align="center"><img src="docs/images/06-theme-glass.png" alt="Frosted glass theme"><br>Frosted glass</td>
+    <td align="center"><img src="docs/images/07-theme-paper.png" alt="Warm paper theme"><br>Warm paper</td>
+  </tr>
+</table>
+
+Supported languages: Traditional Chinese, Simplified Chinese, English, Japanese and Spanish.
+
+## Download and install
+
+**Current status: alpha development; no public release yet.**
+
+Once the first public version is out, it will be available from [GitHub Releases](https://github.com/ZekeGan/Morph_media-browser/releases).
+
+Two Windows builds are planned:
+
+| Build | Description |
+| --- | --- |
+| Installer | Installed with the Windows installer |
+| Portable | Runs directly, no installation needed |
+
+The current development builds are not code-signed, so Windows may show a SmartScreen warning. Make sure you trust where the file came from before running it.
+
+Developers can start or build the app with the commands below.
+
+For detailed instructions see the [user guide](docs/USER_GUIDE.md). All data shown in the screenshots is generated sample data.
+
+## How your data is stored
+
+M:orph is **local-first, with portable data**.
+
+It keeps collection information, project layouts and the search index separately.
+
+```mermaid
+flowchart LR
+  F["Folder"] --> FR["Portable folder record<br/>.media-viewer"]
+  PR["Project root"] --> PS["Portable project settings"]
+  FR --> L["Project layout"]
+  PS --> L
+  L --> C["Components on screen"]
+  FR --> IDX[("SQLite search index<br/>rebuildable at any time")]
+  PS --> IDX
+  classDef source fill:#FAEEDA,stroke:#854F0B,color:#633806
+  class FR,PS source
 ```
 
-- Each managed folder carries a hidden `.media-viewer` record, so a folder can move to another place or device and still know what it is. Your original files are left alone. (The folder name is part of the data format and kept from before the product was renamed.)
-- Writes are atomic and recoverable; clean-up removes only what the app created, with a preview first.
-- Values are shared between projects by default; a private override has to be created on purpose.
-- Electron runs with context isolation and a sandbox; the renderer cannot read arbitrary paths or run commands.
+The two orange records are the source of truth; the search index is only a copy.
 
----
+**Collection data**
 
-## Getting started
+Every managed folder gets a hidden `.media-viewer` record that stores its field information and related assets.
 
-Requires Node.js 24 and pnpm 10.
+This directory name comes from the data format used before the product was renamed; it is not another application.
+
+**Project settings**
+
+A project manages the scope of the collection, its field settings and its display layout. Different projects can use the same collection data and show it through different interfaces.
+
+**Local search index**
+
+M:orph builds a local search index with SQLite. The index is not the only source of your collection data and can be rebuilt when needed.
+
+Application settings and the local index are kept in the user's `%APPDATA%\media-viewer`.
+
+M:orph does not modify your original media files for browsing. When you want to clean up the records the app created, it first shows a preview of the scope.
+
+## Development and technology
+
+Requirements: **Node.js 24 and pnpm 10**
+
+Start the development environment:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-| Command | What it does |
+Common commands:
+
+| Command | Purpose |
 | --- | --- |
-| `pnpm dev` | Run the app in development mode |
+| `pnpm dev` | Development mode |
 | `pnpm build` | Type-check and build |
-| `pnpm typecheck` | Type-check only |
+| `pnpm typecheck` | Type-check |
 | `pnpm test` | Data and logic tests |
-| `pnpm test:ui:changed` / `:smoke` / `:all` | Electron UI tests (changed files / core set / everything) |
-| `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm dist` | Build the Windows installer and a portable exe into `release/morph <version>/` |
-| `pnpm shot <game\|manga\|album\|other>` | Screenshot the app with built-in sample data |
+| `pnpm test:ui:changed` | UI tests for the changed files |
+| `pnpm test:ui:smoke` | Core UI tests |
+| `pnpm format:check` | Format check |
+| `pnpm dist` | Build the Windows executables |
 
-Details of verification are in [IMPLEMENTATION](docs/IMPLEMENTATION.md). GitHub Actions runs the type-check, format check and data tests on every push.
+Main technologies: Electron, React 19, Vite 7, TypeScript, Mantine 8, Node SQLite and Playwright.
 
----
+For the full architecture, module responsibilities and how changes are verified, see the [architecture document](docs/ARCHITECTURE.md) and [implementation and verification](docs/IMPLEMENTATION.md).
 
-## Tech stack
+## Project status
 
-Electron · React 18 · Vite 7 · TypeScript · Mantine 8 · Node SQLite (search index) · Playwright (UI tests)
+Current version: **0.39.0 Alpha**
 
----
+M:orph is a personal open-source project led by its author and is still under active development. Features, the interface and the data format may change as it progresses.
+
+**Human-led, AI-built**
+
+A human is responsible for the project's direction, requirements, design decisions and acceptance; the code is written mainly by AI coding agents such as OpenAI Codex and Anthropic's Claude Code, under the author's direction and review.
+
+See the [CHANGELOG](CHANGELOG.md) for updates.
 
 ## Documentation
 
-The design documents are written mainly in Traditional Chinese.
+- [User guide](docs/USER_GUIDE.md)
+- [Documentation index](docs/README.md)
+- [Product scope](docs/PRODUCT.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Current work and known limits](docs/WORK_ITEMS.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
 
-- [Documentation index](docs/README.md) — find the right document for a task.
-- [Product scope](docs/PRODUCT.md) and [architecture](docs/ARCHITECTURE.md).
-- [Current work and known limits](docs/WORK_ITEMS.md), [decisions](docs/DECISIONS.md).
-- [Contributing](CONTRIBUTING.md) and [security policy](SECURITY.md) (report vulnerabilities privately).
-- Contributors and coding agents: read [CLAUDE.md](CLAUDE.md) (Claude Code) or [AGENTS.md](AGENTS.md) (Codex) first. Early POC material is kept in [docs/archive](docs/archive/) and is not a current specification.
+Before contributing, please read [CLAUDE.md](CLAUDE.md) or [AGENTS.md](AGENTS.md). The design documents are written mainly in Traditional Chinese.
 
----
+## Licence
 
-## License
+Copyright (C) 2024–2026 Zeke Gan.
 
-Copyright (C) 2024–2026 Zeke Gan. The source code is free software under the **GNU General Public License, version 3** — see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md). Modified versions must stay open under the same license and keep the notices.
+The source code of M:orph is licensed under the **GNU General Public License v3.0 only (GPL-3.0-only)**.
 
-**The name and the logo are not part of that license.** A modified version may not use the name "M:orph" or the M:orph logo, and may not be published as the official one just by changing the logo or the name. See the [name and logo policy](TRADEMARK.md).
+You may use, study, modify and distribute the code under the terms of the GPL. When you distribute a modified version, you must follow its requirements, such as providing the source code and keeping the licence notices.
 
-The GPL lets anyone sell copies as long as the source comes with them, but a seller cannot use the name or the logo or present a copy as the official product. The official builds are the ones on the Releases page.
+For the full licence see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
-M:orph is not affiliated with any of the websites it can read from; their names belong to their owners.
+**The name and logo have separate usage restrictions.**
 
----
+The M:orph name and brand logo are not covered by the code licence above. When you publish a modified version, please use your own name and logo and make clear how it differs from the official version.
+
+You may say that your work is based on M:orph, but you may not pass a modified version off as the official one or suggest that the original author endorses it.
+
+The GPL allows paid distribution that follows its terms. The official builds are the files published on this repository's Releases page.
+
+For the detailed rules see the [name and logo policy](TRADEMARK.md).
+
+M:orph is not affiliated with, or partnered with, the third-party websites it can read data from.
 
 ## Author
 
-**Zeke Gan** — [GitHub](https://github.com/ZekeGan)
+**Zeke Gan**
+
+[GitHub](https://github.com/ZekeGan)
