@@ -6976,17 +6976,5 @@
     "zh-CN": "清除范围内所有本工具数据；可能影响其他专案。原始媒体保留。",
     "en": "Clears all of the app’s data in the range. It may affect other projects. Your original media stays.",
     "es": "Borra todos los datos de la aplicación en el ámbito. Puede afectar a otros proyectos. Tus medios originales se conservan."
-  },
-  "專案資料": {
-    "ja": "プロジェクトデータ",
-    "zh-CN": "专案数据",
-    "en": "Project data",
-    "es": "Datos del proyecto"
-  },
-  "匯出在各專案的設定 › 資料；匯入在「新增專案」。移除專案與清除資料也在專案設定 › 資料。": {
-    "ja": "エクスポートは各プロジェクトの設定 › データ、インポートは「新規プロジェクト」にあります。プロジェクトの削除とデータの消去も、プロジェクト設定 › データにあります。",
-    "zh-CN": "导出在各专案的设定 › 数据；导入在「新增专案」。移除专案与清除数据也在专案设定 › 数据。",
-    "en": "Export is in each project’s settings › Data; import is in “New project”. Removing a project and clearing its data are also in project settings › Data.",
-    "es": "La exportación está en los ajustes de cada proyecto › Datos; la importación, en «Nuevo proyecto». Quitar un proyecto y borrar sus datos también está en Ajustes del proyecto › Datos."
   }
 }

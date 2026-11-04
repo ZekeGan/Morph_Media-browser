@@ -330,16 +330,6 @@ export function ApplicationSettings({
                 )}
               </Stack>
             </section>
-            <section className="settings-section">
-              <Text fw={600} mb="xs">
-                {tr('專案資料')}
-              </Text>
-              <Text size="sm" c="dimmed">
-                {tr(
-                  '匯出在各專案的設定 › 資料；匯入在「新增專案」。移除專案與清除資料也在專案設定 › 資料。'
-                )}
-              </Text>
-            </section>
           </Stack>
         </Tabs.Panel>
       </Tabs>

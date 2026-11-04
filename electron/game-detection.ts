@@ -165,6 +165,9 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
       add('Defold', '成對 game.arcd／game.arci + EXE')
     if ((await file('love.dll')) && (await files('', /\.love$/i)).length)
       add('LÖVE', 'love.dll + .love + EXE')
+    // A fused LÖVE game has no .love file; its runtime pair (love.dll with the Lua runtime) is the evidence.
+    else if ((await file('love.dll')) && (await file('lua51.dll')))
+      add('LÖVE', 'love.dll + lua51.dll + EXE（合併成單一 EXE 的發行版）')
     if ((await file('cocos2d.dll')) && (await folder('resources')))
       add('Cocos', 'cocos2d.dll + resources + EXE')
     // Engines recognised from the files their runtime ships next to the EXE (public deployment layouts).
@@ -228,6 +231,14 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
       add('SiglusEngine', 'Scene.pck + Gameexe.dat + EXE')
     if (hasFile(/\.ypf$/i)) add('YU-RIS', 'YPF 封包 + EXE（可能為補丁／工具，需確認）')
     if (countFiles(/\.npa$/i) >= 2) add('Nitroplus NPA', '多個 .npa 封包 + EXE')
+    // .int and .pac are common extensions; each needs the engine's own config tool or runtime DLL beside it.
+    if (
+      countFiles(/\.int$/i) >= 2 &&
+      ((await file('cs2conf.dll')) || (await file('config/startup.xml')))
+    )
+      add('CatSystem2', '多個 .int 封包 + cs2conf.dll／config/startup.xml + EXE')
+    if (countFiles(/\.pac$/i) >= 2 && ((await file('dll/Pal.dll')) || (await file('Pal.dll'))))
+      add('SoftPal', '多個 .pac 封包 + Pal.dll + EXE')
     if (countFiles(/\.npk$/i) >= 3)
       add(undefined, 'EXE + 多個 .npk 資源封包：引擎未確認，請確認 ROOT／非遊戲')
     if (packedApp)

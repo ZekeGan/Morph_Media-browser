@@ -65,7 +65,7 @@
 | Cocos Creator／Cocos2d-x | 原生與網頁包裝分開；不拿開發專案目錄當作所有遊戲的部署特徵。 | Creator Windows 發行方向已查：[官方部署文件](https://docs.cocos.com/creator/3.8/manual/en/editor/publish/windows/index.html)；Creator／2d-x 規則待樣本。 |
 | Construct 2／3 | 舊 NW.js 與較新桌面匯出分開；不依賴 NW.js 作必要條件。 | 匯出差異依據已查：[官方淘汰功能說明](https://www.construct.net/en/make-games/manuals/construct-3/tips-and-guides/deprecated-features)；結構規則待樣本。 |
 | Defold | 執行檔與 `game.arcd` 等部署結構組合；不解析資源封包。 | 依據已查：[官方封裝文件](https://defold.com/manuals/bundling/)；Windows 變體待樣本。 |
-| LÖVE | `.love` 與執行環境，或合併 EXE 與配套 DLL；內嵌版本不可要求外部 `.love`。 | 依據已查：[官方發行說明](https://love2d.org/wiki/Game_Distribution)；單一 DLL 仍非充分條件。 |
+| LÖVE | `.love` 與執行環境，或合併 EXE 與配套 DLL（`love.dll`＋`lua51.dll`，2026-11-04 依 Moonring 樣本補上）；內嵌版本不可要求外部 `.love`。 | 依據已查：[官方發行說明](https://love2d.org/wiki/Game_Distribution)；單一 DLL 仍非充分條件。 |
 | Source／Source 2、CRYENGINE | 列入擴充清單；商店啟動器、模組與共用引擎安裝可能使內容根不等於遊戲根。 | 待官方結構研究與樣本；先提供人工 ROOT，不宣稱自動辨識。 |
 | Adventure Game Studio、MonoGame／FNA／XNA、自製引擎 | 列入擴充清單；同一框架可製作一般應用，無通用可靠目錄規則。 | 待研究與樣本；先提供人工 ROOT，後續按真實收藏補規則。 |
 | 日系視覺小說引擎（2026-11-01 依 使用者的日系視覺小說收藏 唯讀結構確認） | Artemis：EXE＋`*.pfs`（含 `.pfs.000`）。AI6WIN（Silky's／Elf）：`AI6WIN*.exe`（補丁版可能把 `.arc` 移進子資料夾，故只看執行檔名）。BGI／Ethornell：`BGI*.exe`＋`.arc`。ONScripter／NScripter：`onscripter*.exe`，或 `nscript.dat`／`ons.cfg` 加 `.nsa`／`.sar`。RealLive／AVG32：`GAMEEXE.INI`＋`SEEN.TXT`／`PDT/`／`AVG32*.exe`。SiglusEngine：`Scene.pck`＋`Gameexe.dat`。YU-RIS：`*.ypf`。Nitroplus NPA：至少兩個 `.npa`。多個 `.npk` 與 Steam（`steam_api*.dll`）發行版引擎不明，只列候選，由人工確認。 | 依據：使用者收藏的實際目錄結構與各引擎公開的檔案慣例；單獨 `.arc`、單一 `.npa`、沒有 EXE 的 `.pfs` 不成立。補丁／外掛可能帶同名檔案，因此皆為候選。 |
@@ -148,7 +148,7 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 | Cocos Creator／Cocos2d-x | 只認 EXE＋`cocos2d.dll`＋`resources`，未涵蓋不同版本／原生與網頁部署。 | 按部署形式組合引擎與入口／資源線索；不把單一 DLL、同名 resources 或開發專案直接當成發行遊戲。 |
 | Construct 2／3 | 只查 EXE＋`www/c2runtime.js`，其他 runtime、路徑及較新桌面匯出未涵蓋。 | 不硬性依賴舊 runtime／NW.js；普通網頁、只有 runtime 腳本或共用桌面框架須列反例，具體新規則先驗樣本。 |
 | Defold | 只認 EXE＋`game.arcd`＋`game.arci`，分層／改名包裝未涵蓋。 | 檢查成對資料與執行檔歸屬；孤立封包、不成對檔案與不同作品標記混放不能直接確認。 |
-| LÖVE | 目前要求 EXE＋`love.dll`＋外部 `.love`，會漏掉合併 EXE 的形式。 | 外部 `.love` 與 fused EXE 分開處理；單獨 love.dll／通用執行環境、不相干 `.love` 與工具須列反例。 |
+| LÖVE | EXE＋`love.dll`＋外部 `.love`，或合併 EXE 的 `love.dll`＋`lua51.dll`（2026-11-04 補上）。 | 外部 `.love` 與 fused EXE 分開處理；單獨 love.dll／通用執行環境、不相干 `.love` 與工具須列反例。 |
 | 尚無規則／自製引擎 | Source／Source 2、CRYENGINE、AGS、MonoGame／FNA／XNA 等沒有自動辨識覆蓋。 | 顯示未知／待人工確認，保留手動 ROOT；不得把「未支援辨識」顯示成已確認不是遊戲，也不承諾通用規則可涵蓋所有框架。 |
 
 ## 驗收與演進
@@ -170,4 +170,16 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 
 ## 2026-11-04 新增規則（尚未用真實樣本驗證）
 
-依公開的部署結構補上：CRYENGINE（`CrySystem.dll`）、Adventure Game Studio（`acsetup.cfg`）、MonoGame／FNA／XNA（框架 DLL）、Source（`hl2.exe` 或 `bin/engine.dll`＋`tier0.dll`）、Source 2（`engine2.dll`）、Adobe AIR（`META-INF/AIR/application.xml`）、DOSBox 套件（`dosbox.exe` 或 `dosbox*.conf`＋EXE）、PC-98 模擬器（Neko Project II 類執行檔＋磁碟映像）。目前只用合成資料夾測試，真實遊戲樣本到手前一律視為候選，需以「確認 ROOT／這不是遊戲」人工把關；日本 galgame 的 CatSystem2、Majiro、SoftPal、Circus、FVP、Live Maker、SMILE GAME BUILDER、RPG Developer Bakin 因缺少可信的部署特徵，等有樣本再補。
+依公開的部署結構補上：CRYENGINE（`CrySystem.dll`）、Adventure Game Studio（`acsetup.cfg`）、MonoGame／FNA／XNA（框架 DLL）、Source（`hl2.exe` 或 `bin/engine.dll`＋`tier0.dll`）、Source 2（`engine2.dll`）、Adobe AIR（`META-INF/AIR/application.xml`）、DOSBox 套件（`dosbox.exe` 或 `dosbox*.conf`＋EXE）、PC-98 模擬器（Neko Project II 類執行檔＋磁碟映像）。目前只用合成資料夾測試，真實遊戲樣本到手前一律視為候選，需以「確認 ROOT／這不是遊戲」人工把關；日本 galgame 的 Majiro、Circus、FVP、Live Maker、SMILE GAME BUILDER、RPG Developer Bakin 因缺少可信的部署特徵，等有樣本再補。
+
+## 2026-11-04 依使用者樣本補上的規則
+
+樣本在使用者的 `test game` 資料夾，只讀取目錄結構，未寫入。
+
+| 引擎 | 規則 | 樣本 |
+| --- | --- | --- |
+| CatSystem2 | 至少兩個 `.int` 封包，加上 `cs2conf.dll` 或 `config/startup.xml`，且有 EXE | 灰色的果實（漢化版，根目錄只有補丁 EXE） |
+| SoftPal | 至少兩個 `.pac` 封包，加上 `Pal.dll`（根目錄或 `dll/`），且有 EXE | 夏色心跳日誌 |
+| LÖVE（合併 EXE） | `love.dll`＋`lua51.dll`，沒有 `.love` | Moonring |
+
+同批以樣本確認既有規則：Ren’Py、Godot（EXE＋同名 `.pck`）、Unity 照常辨識；Godot 單一 EXE 照規則不判遊戲。標為 Majiro 的「Narcissu」實際是 NScripter（`nscript.dat`＋`arc.nsa`），由既有規則辨識，Majiro 仍無真正樣本。反例 `.int`、`.pac` 單獨出現、`love.dll` 單獨出現都不判遊戲，已寫進測試。

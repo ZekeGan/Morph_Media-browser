@@ -873,6 +873,32 @@ test('Japanese visual-novel engines are recognised from their runtime and archiv
     { name: 'ArcWithoutRuntime', names: ['Viewer.exe', 'data.arc'] },
     { name: 'PfsWithoutExe', names: ['readme.txt', 'Game.pfs'] },
     { name: 'SingleNpa', names: ['Archiver.exe', 'pack.npa'] },
+    // Layouts taken from the user's sample folders (names only).
+    {
+      name: 'Cs2',
+      names: [
+        'Patch.exe',
+        'scene.int',
+        'image.int',
+        'bgm.int',
+        'cs2conf.dll',
+        'config/startup.xml',
+      ],
+      engines: ['CatSystem2'],
+    },
+    { name: 'IntWithoutConfig', names: ['Tool.exe', 'a.int', 'b.int'] },
+    {
+      name: 'SoftPalGame',
+      names: ['Game.exe', 'data.pac', 'bgm.pac', 'voice.pac', 'dll/Pal.dll', 'dll/ogg.dll'],
+      engines: ['SoftPal'],
+    },
+    { name: 'PacWithoutPal', names: ['Game.exe', 'data.pac', 'bgm.pac'] },
+    {
+      name: 'FusedLove',
+      names: ['Moonring.exe', 'love.dll', 'lua51.dll', 'SDL2.dll', 'steam_api64.dll'],
+      engines: ['LÖVE'],
+    },
+    { name: 'LoveDllOnly', names: ['Tool.exe', 'love.dll'] },
   ]
   for (const sample of samples) {
     const dir = path.join(media, sample.name)
