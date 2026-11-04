@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Documentation: the architecture is drawn as mermaid diagrams (data path from folders to the screen, and the renderer / preload / main layers with storage) in `docs/ARCHITECTURE.md`, replacing `architecture.svg`; the Traditional Chinese README shows a simplified data-flow diagram and a three-layer diagram.
 - Documentation screenshots: `pnpm shot:docs` rebuilds the eight images in `docs/images/` from a generated sample library (flat covers drawn by the script, fictional titles, no personal paths). The Traditional Chinese README and user guide now use them.
 - Fix: a tag cell that is not in the first row of a card showed only a "+N" badge, because the tags were measured against the wrong box. The tag list now measures against itself.
 - README: the Traditional Chinese README is rewritten for first-time users (what it is, why use it, download placeholder with the unsigned-build note, features, data storage, developer section); the Simplified Chinese and Spanish READMEs are removed and the language bars of the remaining three now link only English, Traditional Chinese and Japanese. The app's own interface languages are unchanged.

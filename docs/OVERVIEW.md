@@ -14,7 +14,7 @@ M:orph (Media Browser) is a Windows-first desktop app (Electron + React + Vite, 
 
 ## Where things are
 
-![Data flow and process boundary](architecture.svg)
+The data flow and the process boundary are drawn in [ARCHITECTURE](ARCHITECTURE.md#資料流與邊界).
 
 | Area | Entry points |
 | --- | --- |

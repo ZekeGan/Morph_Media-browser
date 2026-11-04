@@ -94,14 +94,20 @@ M:orph 是 Windows 上的資料夾收藏瀏覽器。漫畫、相簿、影片、�
 
 ## 資料怎麼保存
 
-```text
-資料夾 ──→ 可攜的資料夾記錄 ──┐
-                              ├──→ 專案版面 → 畫面上的組件
-專案根目錄 ──→ 可攜的設定 ────┘
-                  │ 兩者都是資料來源
-                  └──→ SQLite 搜尋索引（隨時可重建）
+```mermaid
+flowchart LR
+  F["資料夾"] --> FR["可攜的資料夾記錄<br/>.media-viewer"]
+  PR["專案根目錄"] --> PS["可攜的專案設定"]
+  FR --> L["專案版面"]
+  PS --> L
+  L --> C["畫面上的組件"]
+  FR --> IDX[("SQLite 搜尋索引<br/>隨時可重建")]
+  PS --> IDX
+  classDef source fill:#FAEEDA,stroke:#854F0B,color:#633806
+  class FR,PS source
 ```
 
+橘色的兩份記錄是資料來源，搜尋索引只是副本。
 - 每個受管資料夾帶有隱藏的 `.media-viewer` 記錄（這個名稱屬於資料格式，沿用產品改名前的名稱）。
 - 寫入是原子且可復原的。
 - 值預設在專案間共用；私有覆寫必須刻意建立。
@@ -125,6 +131,15 @@ pnpm dev
 | `pnpm format` / `pnpm format:check` | Prettier |
 | `pnpm dist` | 建置 Windows 安裝程式與免安裝版到 `release/morph <版本>/` |
 | `pnpm shot <game\|manga\|album\|other>` | 用內建範例資料截圖 |
+
+```mermaid
+flowchart TB
+  R["renderer · src/<br/>畫面、草稿、互動"] <-->|"受控 API"| P["preload"]
+  P <-->|IPC| M["main · electron/<br/>驗證、檔案、系統操作"]
+  M --> D[("可攜記錄 · 搜尋索引 · 本機設定")]
+```
+
+完整的模組與資料流見[架構](docs/ARCHITECTURE.md)。
 
 技術：Electron · React 19 · Vite 7 · TypeScript · Mantine 8 · Node SQLite · Playwright。Electron 啟用 context isolation 與 sandbox，renderer 不能任意讀取路徑或執行命令。
 

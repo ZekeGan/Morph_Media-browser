@@ -8,8 +8,46 @@
 
 ## 資料流與邊界
 
-![資料流與行程邊界：資料夾與專案設定成為可攜記錄，經專案版面顯示為卡片，另產生可重建的搜尋索引；下方是 renderer、preload、main 三層。](architecture.svg)
+資料從資料夾變成畫面的路徑：兩份可攜記錄是資料來源，搜尋索引是可重建的副本。
 
+```mermaid
+flowchart LR
+  F["Folders"] --> FR["Folder records<br/>.media-viewer"]
+  PR["Project root"] --> PS["Project settings"]
+  FR --> L["Project layout"]
+  PS --> L
+  L --> C["Components on screen"]
+  FR --> IDX[("SQLite index<br/>rebuildable")]
+  PS --> IDX
+  classDef source fill:#FAEEDA,stroke:#854F0B,color:#633806
+  class FR,PS source
+```
+
+行程邊界與模組：只有 main 碰檔案系統，每個模組的責任見下方「按問題找入口」。`shared/`（型別與純邏輯）由 renderer 與 main 共同引用。
+
+```mermaid
+flowchart TB
+  R["renderer · src/<br/>App · DesktopShell · BrowseWorkspace<br/>Editor · FolderPanel · Viewers"]
+  P["preload<br/>window.media · explorer · desktop"]
+  M["main · electron/<br/>Library · Explorer · game-detection<br/>SearchIndex · WorkspaceStore · metadata"]
+  subgraph S["Storage and outside"]
+    direction LR
+    Rec[("Portable records<br/>source of truth")]
+    Orig[("Original files<br/>read only")]
+    SQ[("Search index<br/>rebuildable")]
+    Set[("Local settings<br/>%APPDATA%")]
+    Net(["External sites"])
+  end
+  R <-->|"requests / results"| P
+  P <-->|IPC| M
+  M --> Rec
+  M --> Orig
+  M --> SQ
+  M --> Set
+  M --> Net
+  classDef source fill:#FAEEDA,stroke:#854F0B,color:#633806
+  class Rec source
+```
 `src/main.tsx → PlaybackProvider → App → DesktopShell / BrowseWorkspace → window.media / explorer / desktop → preload → main → Library / Explorer / WorkspaceStore`
 
 Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗證請求與呼叫來源、執行檔案及系統操作。保留 contextIsolation、sandbox、停用 nodeIntegration；不能讓 renderer 任意讀路徑、執行命令或繞過 main 的身分／邊界檢查。
