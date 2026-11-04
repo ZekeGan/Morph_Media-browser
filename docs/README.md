@@ -4,37 +4,41 @@
 
 ## 按任務定位
 
-來源與測試欄只作導航：先找列出的符號，再依實際呼叫與風險擴大。測試名稱不是每次必跑清單，選擇見 [驗證矩陣](IMPLEMENTATION.md#驗證選擇)。
+下表由 [領域登錄表](areas.json) 產生（`node scripts/areas.mjs readme`），只讀本次任務那一列；程式欄是檔名樣式，先 `rg` 定位再讀。測試欄不是每次必跑清單，選擇見 [驗證矩陣](IMPLEMENTATION.md#驗證選擇)；`pnpm test:ui:changed` 會依同一份登錄表挑 UI 測試。
 
-| 任務 | 必讀主章節 | 程式／符號入口 | 驗證入口 |
+<!-- areas:start（由 node scripts/areas.mjs readme 產生，勿手改） -->
+
+| 領域 | 規格 | 程式 | 測試（資料、UI） |
 | --- | --- | --- | --- |
-| 右側漫畫／遊戲／媒體共用 | [共用邊界](WORKSPACE_REVISION.md#右側組件共用邊界)、[詳情](WORKSPACE_REVISION.md#資料夾詳情)；改到專用操作才讀其主規格 | [BrowseWorkspace](../src/BrowseWorkspace.tsx)、[FolderContent](../src/FolderContent.tsx)、[MediaBrowser](../src/MediaBrowser.tsx)、[Gallery](../src/Gallery.tsx) | 按改動選 [pending UI](../tests/pending-ui.ts)、[來源 UI](../tests/media-scope-ui.ts)、[遊戲 UI](../tests/game-actions-ui.ts)，專用生命週期再擴大 |
-| 模組／IPC／資料流 | [架構邊界](ARCHITECTURE.md#資料流與邊界)、[責任表](ARCHITECTURE.md#按問題找入口) | [main](../electron/main.ts)、[preload](../electron/preload.ts) | 依實際契約選 [驗證矩陣](IMPLEMENTATION.md#驗證選擇) |
-| 建立、群組、左右欄 | [外框](WORKSPACE_REVISION.md#外框與專案區)、[建立](WORKSPACE_REVISION.md#建立與既有專案)、[介面細節](WORKSPACE_REVISION.md#工作區介面細節) | [DesktopShell](../src/DesktopShell.tsx)、[BrowseWorkspace](../src/BrowseWorkspace.tsx) | [workspace UI](../tests/workspace-ui.ts)、[workspace](../tests/workspace.test.ts) |
-| CARD／TABLE／TREE、導覽 | [三模式](WORKSPACE_REVISION.md#三模式與開啟行為)、[CARD 控制](WORKSPACE_REVISION.md#card-專屬控制) | [BrowseWorkspace](../src/BrowseWorkspace.tsx)、[TreeView](../src/TreeView.tsx)、[browse](../shared/browse.ts) | [revision](../tests/revision.test.ts)、[workspace UI](../tests/workspace-ui.ts)、[共用導覽 UI](../tests/folder-navigation-ui.ts)；側鍵再查 main／preload 的 `folder:navigate` |
-| 檔案模式／選資料夾 | [檔案總覽](WORKSPACE_REVISION.md#檔案總覽)、[介面細節](WORKSPACE_REVISION.md#工作區介面細節) | [FileOverview](../src/FileOverview.tsx)、[Explorer](../electron/explorer.ts) `overview` | [總覽 UI](../tests/file-overview-ui.ts)、[來源契約](../tests/decided-media.test.ts) |
-| 統一媒體頁／佇列／隱藏檔 | [統一媒體](WORKSPACE_REVISION.md#統一媒體工作區)、[隱藏規則](WORKSPACE_REVISION.md#檔案顯示與隱藏規則)；音樂再看 [故障／封面](WORKSPACE_REVISION.md#音樂播放故障與選型) | [PlaybackProvider](../src/Playback.tsx)、[MediaBrowser](../src/MediaBrowser.tsx)、[Gallery](../src/Gallery.tsx)、[MediaViewer](../src/MediaViewer.tsx)、[AudioViewer](../src/AudioViewer.tsx)；後端 [Explorer](../electron/explorer.ts) `content`／`overview`／`audioCover` | 跨層用 [scope UI](../tests/media-scope-ui.ts)，音樂用 [audio UI](../tests/audio-playback-ui.ts)，共用生命週期用 [media UI](../tests/media-workspace-ui.ts)；依風險選 [來源契約](../tests/decided-media.test.ts)，非每步全跑 |
-| 資料夾身分／共用與私有 | [身分與值](FOLDER_PROJECT_MODEL.md#身分與值) | [model](../shared/model.ts)、[Library](../electron/library.ts) | [model](../tests/model.test.ts)、[library](../tests/library.test.ts) |
-| 保存、清理、刪除、移遷 | [儲存安全](STORAGE_OPTIONS.md#權威與寫入)、[必要驗證](STORAGE_OPTIONS.md#必要驗證)；按操作再讀清理／移除章節 | [files](../electron/files.ts) `atomicJson`、[Library](../electron/library.ts) | [library](../tests/library.test.ts) 成功／失敗／取消／復原 |
-| CELL 拖放／方案／指定方案 | [畫布](EDITOR_DESIGN.md#資料與畫布)、[方案](EDITOR_DESIGN.md#方案管理)、[單筆指定](EDITOR_DESIGN.md#單一資料夾指定方案) | [Editor](../src/Editor.tsx)、[layouts](../shared/layouts.ts) `rowCells`／`removePreset` | [方案契約](../tests/decided.test.ts)、[decided UI](../tests/decided-ui.ts) |
-| 新組件／欄位型別 | [CELL 契約](CELL_CATALOG.md#現行契約)、[組件與型別](CELL_CATALOG.md#新增組件與型別) | [fields](../shared/fields.ts)、[model](../shared/model.ts)、[Card](../src/Card.tsx)、[cells](../shared/cells.ts) | [CELL 驗證](../tests/cells.test.ts)、[model](../tests/model.test.ts)、[型別保存](../tests/decided.test.ts) |
-| 刪除自訂欄位／影響預覽 | [欄位刪除](EDITOR_DESIGN.md#自訂欄位刪除)、[儲存安全](STORAGE_OPTIONS.md#清理與範圍) | [Editor](../src/Editor.tsx)、[Library](../electron/library.ts)、[Explorer](../electron/explorer.ts) `previewDeleteField`／`deleteField`、[maintenance](../electron/maintenance.ts) | [library](../tests/library.test.ts)、[型別保存](../tests/decided.test.ts)、[清理安全](../tests/maintenance.test.ts) |
-| 搜尋畫面／樣式 | [介面](SEARCH_DESIGN.md#搜尋介面)、[樣式](SEARCH_DESIGN.md#搜尋對話框樣式) | [SearchDialog](../src/SearchDialog.tsx)、[style](../src/style.css) | [搜尋 UI](../tests/search-dialog-ui.ts) |
-| 搜尋語法／保存／比較 | [語法](SEARCH_DESIGN.md#基本語法)、[保存](SEARCH_DESIGN.md#索引與保存)、[比較](SEARCH_DESIGN.md#欄位比較) | [query](../shared/query.ts) `parseQuery`／`restoreQuery`、[SearchIndex](../electron/search-index.ts) | [查詢契約](../tests/decided-media.test.ts)、[explorer](../tests/explorer.test.ts) |
-| 相簿瀑布流／載入效能 | [圖片內容](ALBUM_VIEWER_DESIGN.md#圖片內容)、[效能](ALBUM_VIEWER_DESIGN.md#檔案與效能基線) | [Gallery](../src/Gallery.tsx)、[gallery](../shared/gallery.ts)、[Explorer](../electron/explorer.ts) `content`／`thumbnail` | [gallery](../tests/gallery.test.ts)、[效能 UI](../tests/gallery-performance-ui.ts) |
-| 圖片縮放／貼合／資訊 | [圖片閱讀器](ALBUM_VIEWER_DESIGN.md#圖片閱讀器) | [Reader](../src/Reader.tsx) `changeZoom`、[reader](../shared/reader.ts) `spreadGeometry` | [reader](../tests/reader.test.ts)、[reader UI](../tests/reader-ui.ts) |
-| 漫畫閱讀／配對／GIF | [閱讀器](MANGA_VIEWER_DESIGN.md#漫畫閱讀器)；配對／GIF 再讀對應章節 | [Reader](../src/Reader.tsx)、[Gallery](../src/Gallery.tsx)、[reader](../shared/reader.ts) | [reader UI](../tests/reader-ui.ts)、[來源 UI](../tests/media-scope-ui.ts) |
-| 影片控制／自動播放／生命週期 | [播放控制](VIDEO_VIEWER_DESIGN.md#播放控制)、[播放生命週期](VIDEO_VIEWER_DESIGN.md#播放生命週期) | [VideoControls](../src/VideoControls.tsx)、[VideoViewer](../src/VideoViewer.tsx) | [播放器 UI](../tests/video-player-ui.ts) `controls`／`auto-next`／`lifecycle` |
-| 字幕／播放設定／樣式 | [播放設定](VIDEO_VIEWER_DESIGN.md#播放設定)、[字幕](VIDEO_VIEWER_DESIGN.md#拖入字幕與同步設定) | [VideoSubtitleSettings](../src/VideoSubtitleSettings.tsx)、[播放器 CSS](../src/video-player.css)、[subtitles](../shared/subtitles.ts) | [播放器 UI](../tests/video-player-ui.ts) `subtitles`／`appearance` |
-| ZIP／CBZ／PDF | [ZIP](DOCUMENT_VIEWER_DESIGN.md#zipcbz)、[PDF](DOCUMENT_VIEWER_DESIGN.md#pdf) | [DocumentViewer](../src/DocumentViewer.tsx)、[archive](../electron/archive.ts) | [文件契約](../tests/decided-media.test.ts)、[decided UI](../tests/decided-ui.ts) |
-| 遊戲畫面／啟動動作 | [內容](GAME_VIEWER_DESIGN.md#1-已確認的遊戲內容頁)、[執行責任](GAME_VIEWER_DESIGN.md#5-路徑參數與執行責任) | [FolderContent](../src/FolderContent.tsx)、[Explorer](../electron/explorer.ts) | [explorer](../tests/explorer.test.ts)、[遊戲 UI](../tests/game-actions-ui.ts) |
-| 遊戲 ROOT／偵測／內部保護 | [判斷規則](GAME_ENGINE_DETECTION.md#漏判誤判與-root-定位規則)、[驗收](GAME_ENGINE_DETECTION.md#驗收與演進) | [game-detection](../electron/game-detection.ts)、[Library](../electron/library.ts) `scan`／`visit` | [game-detection](../tests/game-detection.test.ts)、[library](../tests/library.test.ts) |
-| 外部資料預覽／套用 | [分類來源](METADATA_ENRICHMENT.md#分類來源)、[套用與追溯](METADATA_ENRICHMENT.md#預覽套用與追溯) | [sources](../shared/sources.ts)、[metadata](../electron/metadata.ts) | [metadata](../tests/metadata.test.ts)、[來源契約](../tests/decided-media.test.ts) |
-| 主題／語言／共用互動 | [外觀與語言](UI_RULES.md#全域外觀與語言)、[焦點與保存](UI_RULES.md#保存焦點與狀態) | [ApplicationSettings](../src/ApplicationSettings.tsx)、[locales](../shared/locales.ts)、[themes](../src/themes/ThemeProvider.tsx) | [appearance](../tests/appearance.test.ts)、[appearance UI](../tests/appearance-ui.ts) |
-| 文件截圖重拍／授權與名稱 | [IMPLEMENTATION](IMPLEMENTATION.md) 指令表 `pnpm shot:docs`；[TRADEMARK](../TRADEMARK.md)、[NOTICE](../NOTICE.md) | [docs-shots](../tests/support/docs-shots.ts)、[demo-data](../tests/support/demo-data.ts) | 無（`pnpm shot:docs` 本身即產出） |
-| 版本階段／tag／發布步驟 | [RELEASING](RELEASING.md) | [package.json](../package.json) `version`／`build`、[CHANGELOG](../CHANGELOG.md) | [CI](../.github/workflows/ci.yml) |
-| 資料格式升級／相容 | [格式升級與相容規則](DATA_FORMAT.md#格式升級與相容規則)、[儲存限制](STORAGE_OPTIONS.md#權威與寫入) | [project-export](../shared/project-export.ts) `migrateRecord`、[model](../shared/model.ts) `validate*` | 尚未實作，見 [WORK_ITEMS](WORK_ITEMS.md#待實作) |
-| 備份與還原（含設定包） | [備份資料夾](DATA_FORMAT.md#備份資料夾2026-11-04)、[設定包](WORKSPACE_REVISION.md#設定包移轉)、[儲存限制](STORAGE_OPTIONS.md#權威與寫入) | [settings-package](../electron/settings-package.ts)、[WorkspaceStore](../electron/workspace.ts) | [decided](../tests/decided.test.ts)、[decided UI](../tests/decided-ui.ts) |
+| 外框、專案欄、建立專案（`shell`） | [外框與專案區](WORKSPACE_REVISION.md#外框與專案區)、[建立與既有專案](WORKSPACE_REVISION.md#建立與既有專案)、[工作區介面細節](WORKSPACE_REVISION.md#工作區介面細節) | `src/DesktopShell*` `src/CreateProjectDialog*` `electron/workspace.ts` `shared/workspace.ts` | `workspace` `workspace-ui` `sidebar-peek-ui` `audio-playback-ui` |
+| CARD／TABLE／TREE、導覽、工具列（`browse`） | [三模式與開啟行為](WORKSPACE_REVISION.md#三模式與開啟行為)、[card-專屬控制](WORKSPACE_REVISION.md#card-專屬控制) | `src/BrowseWorkspace*` `src/BrowseToolbar*` `src/BrowsePanel*` `src/TreeView*` `src/FolderTable*` `src/ViewToggle*` `src/KindBatchBar*` `src/folderStats*` `src/refresh*` `shared/browse*` `shared/kind*` | `browse` `revision` `folder-kind` `folder-navigation-ui` `workspace-toolbar-ui` `workspace-ui` `settings-dock-ui` `game-folder-page-ui` `image-delete-ui` |
+| 右側面板與資料夾設定（`panel`） | [右側內容與覆蓋層](WORKSPACE_REVISION.md#右側內容與覆蓋層)、[右側組件共用邊界](WORKSPACE_REVISION.md#右側組件共用邊界)、[資料夾詳情](WORKSPACE_REVISION.md#資料夾詳情) | `src/RightPanel*` `src/FolderPanel*` `src/FolderParts*` `src/FolderContent*` `src/FolderAdvanced*` `src/PanelSkeleton*` | `image-delete` `settings-dock-ui` `folder-navigation-ui` `game-folder-page-ui` `image-delete-ui` `panel-preview-ui` `pending-ui` |
+| 檔案總覽、隱藏檔（`files`） | [檔案總覽](WORKSPACE_REVISION.md#檔案總覽)、[檔案顯示與隱藏規則](WORKSPACE_REVISION.md#檔案顯示與隱藏規則) | `src/FileOverview*` `src/useFileVisibility*` `electron/explorer-overview*` `electron/hidden*` | `decided-media` `file-probe` `file-overview-ui` `media-scope-ui` `folder-navigation-ui` |
+| 統一媒體頁、播放佇列、音樂（`media`） | [統一媒體工作區](WORKSPACE_REVISION.md#統一媒體工作區)、[跨專案影音佇列與迷你播放器](WORKSPACE_REVISION.md#跨專案影音佇列與迷你播放器)、[音樂播放故障與選型](WORKSPACE_REVISION.md#音樂播放故障與選型) | `src/MediaBrowser*` `src/MediaQueue*` `src/MediaViewer*` `src/AudioViewer*` `src/Playback*` `src/FileMenu*` `src/useVideoAudio*` `src/media-workspace.css` `shared/media*` `shared/explorer*` `electron/media-files*` `electron/explorer.ts` `electron/explorer-content*` `electron/explorer-source*` `electron/explorer-stream*` | `media-workspace` `explorer` `media-scope-ui` `media-workspace-ui` `audio-playback-ui` `media-feedback-ui` |
+| 相簿瀑布流、圖片閱讀（`gallery`） | [圖片內容](ALBUM_VIEWER_DESIGN.md#圖片內容)、[檔案與效能基線](ALBUM_VIEWER_DESIGN.md#檔案與效能基線)、[圖片閱讀器](ALBUM_VIEWER_DESIGN.md#圖片閱讀器) | `src/Gallery*` `shared/gallery*` `shared/images*` `electron/image-url*` | `gallery` `image-url` `gallery-performance-ui` `media-scope-ui` `reader-ui` `image-nth-ui` |
+| 漫畫閱讀器（`reader`） | [漫畫閱讀器](MANGA_VIEWER_DESIGN.md#漫畫閱讀器) | `src/Reader*` `shared/reader*` | `reader` `reader-ui` `media-scope-ui` |
+| 影片播放與字幕（`video`） | [播放控制](VIDEO_VIEWER_DESIGN.md#播放控制)、[播放生命週期](VIDEO_VIEWER_DESIGN.md#播放生命週期)、[拖入字幕與同步設定](VIDEO_VIEWER_DESIGN.md#拖入字幕與同步設定) | `src/Video*` `src/video-player.css` `shared/subtitles*` | `video-player-ui` `video-failure-ui` |
+| ZIP／CBZ／PDF（`documents`） | [zipcbz](DOCUMENT_VIEWER_DESIGN.md#zipcbz)、[pdf](DOCUMENT_VIEWER_DESIGN.md#pdf) | `src/DocumentViewer*` `electron/archive*` | `decided-media` `reader-ui` `decided-ui` |
+| CELL 編輯器、方案、欄位刪除（`editor`） | [資料與畫布](EDITOR_DESIGN.md#資料與畫布)、[方案管理](EDITOR_DESIGN.md#方案管理)、[自訂欄位刪除](EDITOR_DESIGN.md#自訂欄位刪除) | `src/Editor*` `src/editorDrag*` `src/editorKinds*` `src/commonFields*` `src/importedFieldLabels*` `shared/layouts*` | `decided` `cell-editor-ui` `field-edit-ui` `decided-ui` |
+| 卡片組件與欄位型別（`cells`） | [現行契約](CELL_CATALOG.md#現行契約)、[新增組件與型別](CELL_CATALOG.md#新增組件與型別) | `src/Card*` `src/CellStyleEditor*` `src/TagList*` `src/EnumColors*` `src/Fallback*` `src/cells.css` `src/themes/cellStyle*` `shared/cells*` `shared/fields*` | `cells` `cell-fallback` `model` `cell-editor-ui` `field-edit-ui` `cell-style-ui` `cell-scroll-ui` `image-nth-ui` `game-cover-cell-ui` `game-launch-cell-ui` `enum-add-option-ui` |
+| 搜尋畫面、語法、索引（`search`） | [搜尋介面](SEARCH_DESIGN.md#搜尋介面)、[基本語法](SEARCH_DESIGN.md#基本語法)、[索引與保存](SEARCH_DESIGN.md#索引與保存) | `src/SearchDialog*` `src/search-dialog.css` `shared/query*` `shared/search*` `electron/search-index*` | `decided-media` `explorer` `search-dialog-ui` |
+| 遊戲畫面與啟動動作（`game`） | [1-已確認的遊戲內容頁](GAME_VIEWER_DESIGN.md#1-已確認的遊戲內容頁)、[5-路徑參數與執行責任](GAME_VIEWER_DESIGN.md#5-路徑參數與執行責任) | `src/GameActions*` `src/game-actions.css` `shared/launchArgs*` | `game-actions` `game-shortcut` `launch-args` `game-actions-ui` `game-launch-cell-ui` `game-folder-page-ui` |
+| 遊戲 ROOT 偵測與內部保護（`detection`） | [漏判誤判與-root-定位規則](GAME_ENGINE_DETECTION.md#漏判誤判與-root-定位規則)、[驗收與演進](GAME_ENGINE_DETECTION.md#驗收與演進) | `electron/game-detection*` `electron/library-scan*` `src/BoundaryFlag*` | `game-detection` `library` `problems-ui` `game-folder-page-ui` |
+| 外部資料預覽與套用（`metadata`） | [分類來源](METADATA_ENRICHMENT.md#分類來源)、[預覽套用與追溯](METADATA_ENRICHMENT.md#預覽套用與追溯) | `electron/metadata*` `shared/sources*` `src/importSource*` `src/ImageUrlImport*` | `metadata` `decided-media` `media-feedback-ui` |
+| 主題、語言、圖示與共用互動（`appearance`） | [全域外觀與語言](UI_RULES.md#全域外觀與語言)、[保存焦點與狀態](UI_RULES.md#保存焦點與狀態) | `src/ApplicationSettings*` `src/themes/ThemeProvider*` `src/themes/themes.css` `src/i18n/*` `src/style.css` `src/icons*` `src/IconLabel*` `src/BrandMark*` `src/HelpTip*` `shared/themes*` `shared/locales*` `shared/native-messages*` | `appearance` `theme-contrast` `appearance-ui` |
+| 通知與錯誤提示（`notices`） | [保存焦點與狀態](UI_RULES.md#保存焦點與狀態) | `src/App.tsx` `src/Toasts*` `src/errors*` `src/ErrorBoundary*` `shared/notifications*` | `error-message` `notifications-ui` `error-recovery-ui` |
+| 資料夾身分、保存、清理、問題與復原（`storage`） | [身分與值](FOLDER_PROJECT_MODEL.md#身分與值)、[權威與寫入](STORAGE_OPTIONS.md#權威與寫入)、[必要驗證](STORAGE_OPTIONS.md#必要驗證) | `electron/library.ts` `electron/library-cleanup*` `electron/files*` `electron/maintenance*` `shared/model*` `src/ProblemsDialog*` | `library` `maintenance` `model` `folder-navigation-ui` `settings-dock-ui` `game-folder-page-ui` `cell-editor-ui` `media-scope-ui` `workspace-toolbar-ui` `problems-ui` `decided-ui` |
+| 資料格式升級與相容（`upgrade`） | [格式升級與相容規則](DATA_FORMAT.md#格式升級與相容規則) | `shared/upgrade*` | `upgrade` `model` `problems-ui` |
+| 備份與還原、設定包（`backup`） | [備份資料夾](DATA_FORMAT.md#備份資料夾)、[設定包移轉](WORKSPACE_REVISION.md#設定包移轉) | `electron/backup*` `electron/settings-*` `electron/library-export*` `shared/backup*` `shared/project-export*` `src/ApplicationSettings*` | `backup` `project-export` `decided` `backup-ui` `decided-ui` |
+| 專案設定與移除（`project`） | [專案設定與移除](WORKSPACE_REVISION.md#專案設定與移除)、[移除單一專案](STORAGE_OPTIONS.md#移除單一專案) | `src/ProjectSettings*` `electron/library-removal*` `electron/library-field-removal*` | `maintenance` `library` `decided-ui` `problems-ui` |
+| 主程序、IPC、啟動（`core`） | [資料流與邊界](ARCHITECTURE.md#資料流與邊界)、[按問題找入口](ARCHITECTURE.md#按問題找入口) | `electron/main.ts` `electron/preload.ts` `src/main.tsx` `src/index.html` `src/env.d.ts` | `folder-navigation-ui` `settings-dock-ui` `game-folder-page-ui` `cell-editor-ui` `media-scope-ui` `workspace-toolbar-ui` |
+
+<!-- areas:end -->
+
+其他（不屬於程式領域）：
+- 文件截圖重拍、授權與名稱：[IMPLEMENTATION](IMPLEMENTATION.md) 的 `pnpm shot:docs`、[TRADEMARK](../TRADEMARK.md)、[NOTICE](../NOTICE.md)
+- 版本階段、tag、發布：[RELEASING](RELEASING.md)、[CHANGELOG](../CHANGELOG.md)
+- 需求清單與狀態：[WORK_ITEMS](WORK_ITEMS.md)，`pnpm status` 印出狀態區塊
 
 產品邊界見 [PRODUCT](PRODUCT.md)，找畫面可用 [畫面索引](UI_SCREEN_CATALOG.md)；兩者按需讀。音樂播放器等排程／未決細節見 [OPEN_DECISIONS](OPEN_DECISIONS.md)。
 
@@ -46,7 +50,7 @@
 - 核定行為只改對應主規格；PRODUCT 維護範圍與連結。程式及有效測試說明現況，不因需求尚未交付就回改核定目標。
 - 實作差距／阻礙／待查收只在 WORK_ITEMS；未決選項／延後方向只在 OPEN_DECISIONS。重要取捨及被取代關係留 DECISIONS，不將完整功能與進度再抄一份。
 - 新需求直接修改原規則並留待辦差距；完成後清除過時狀態及失效入口。章節採穩定名稱，改名時更新直接引用或保留舊 anchor。
-- 收尾沿本表來源欄反查主文件及直接引用即可，不另建來源映射清單。機械問題用 [文件檢查](IMPLEMENTATION.md#文件檢查)，語意候選仍需核對需求及程式；不以日期／關鍵字自動判定矛盾。
+- 領域、規格、程式、測試的對應只在 [areas.json](areas.json)；新增原始檔或改規格章節時同批更新它並重產本表。收尾跑 `pnpm stale` 點名可能過時的規格卡與失效參照，語意仍需核對需求及程式。
 
 ## 工作流程
 

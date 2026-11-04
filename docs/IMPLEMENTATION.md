@@ -15,9 +15,12 @@
 | `pnpm format`／`pnpm format:check` | Prettier（設定見 prettier.config.cjs）；只涵蓋 src、shared、electron、tests、scripts 的 ts／tsx／mjs，不含 CSS、JSON 與文件。提交前跑 format:check |
 | `pnpm test:workspace` | 現行完整 Electron UI：`tests/workspace-ui.ts`；runner 會自動確保建置為最新 |
 | `pnpm dist`／`pnpm dist:dir` | 先 build，再用 electron-builder 產生 `release/morph <版本>/` 內的安裝程式（每個版本一個資料夾，舊版保留）與免安裝版（`dist:dir` 只產生未封裝資料夾）；設定在 package.json 的 `build`，圖示在 `build/`，未簽章 |
-| `pnpm test:ui:all`／`:smoke`／`:changed` | 依序執行 `tests/*-ui.ts` 並計時；`:smoke` 為核心 6 項（約 1～2 分鐘），`:changed` 依改動檔（對比 origin/main 與工作樹）對應測試，對應表沒涵蓋的檔案會列出並改跑 smoke，也可加檔名片段如 `pnpm test:ui:all video`；任一失敗會自動重跑一次，第二次才過的標為 FLAKY（拖放類測試怕滑鼠干擾，跑測試時請勿操作滑鼠）；重跑仍失敗才非零結束；單一測試超過 4 分鐘（`UI_TEST_TIMEOUT` 秒數可改）視為卡住，標 TIMEOUT 並停掉其 Electron，不重跑。對應表在 `scripts/run-ui-tests.mjs`。GitHub Actions（`.github/workflows/ci.yml`，Windows）推送時跑 typecheck、format:check 與 `pnpm test`，不跑 UI 測試。提交前由 `.githooks/pre-commit` 自動跑型別檢查、格式檢查、UI 測試名稱檢查（`scripts/check-ui-names.mjs`：測試找的按鈕／文字須仍存在於程式或語系檔）與所提交 Markdown 的連結檢查（`pnpm install` 會啟用）；CI 另有不阻擋合併的 UI smoke 工作。UI runner 啟動時會先印出 out/ 建置時間，並在 out/ 缺少或比 src／shared／electron／建置設定舊時自動先跑 `pnpm build`；也會先停掉本專案遺留的 Electron 行程；測試時應用程式視窗預設全透明、可點穿、不取得焦點也不進工作列（要看畫面設 `MEDIA_VIEWER_TEST_VISIBLE=1`（半透明、可點穿、不搶焦點））；原生訊息方塊（如「放棄未保存的變更」）由 `tests/support/app.ts` 的 `launchApp` 自動回答，`closeApp` 關閉時略過未保存提示，所有 UI 測試都用 `closeApp` 結束；要驗證提示本身的測試自行替換 stub；全數通過時會刪除該次在 `.test-output` 新增的產物（失敗時保留供檢查）；`pnpm clean:test` 清除過期產物並保留 `fixtures` |
+| `pnpm test:ui:all`／`:smoke`／`:changed` | 依序執行 `tests/*-ui.ts` 並計時；`:smoke` 為核心 6 項（約 1～2 分鐘），`:changed` 依改動檔（對比 origin/main 與工作樹）對應測試，對應表沒涵蓋的檔案會列出並改跑 smoke，也可加檔名片段如 `pnpm test:ui:all video`；任一失敗會自動重跑一次，第二次才過的標為 FLAKY（拖放類測試怕滑鼠干擾，跑測試時請勿操作滑鼠）；重跑仍失敗才非零結束；單一測試超過 4 分鐘（`UI_TEST_TIMEOUT` 秒數可改）視為卡住，標 TIMEOUT 並停掉其 Electron，不重跑。對應來自 [領域登錄表](areas.json)。GitHub Actions（`.github/workflows/ci.yml`，Windows）推送時跑 typecheck、format:check 與 `pnpm test`，不跑 UI 測試。提交前由 `.githooks/pre-commit` 自動跑型別檢查、格式檢查、UI 測試名稱檢查（`scripts/check-ui-names.mjs`：測試找的按鈕／文字須仍存在於程式或語系檔）、領域登錄表檢查（`node scripts/areas.mjs check`：每個原始檔都屬於某個領域）與所提交 Markdown 的連結檢查（`pnpm install` 會啟用）；CI 另有不阻擋合併的 UI smoke 工作。UI runner 啟動時會先印出 out/ 建置時間，並在 out/ 缺少或比 src／shared／electron／建置設定舊時自動先跑 `pnpm build`；也會先停掉本專案遺留的 Electron 行程；測試時應用程式視窗預設全透明、可點穿、不取得焦點也不進工作列（要看畫面設 `MEDIA_VIEWER_TEST_VISIBLE=1`（半透明、可點穿、不搶焦點））；原生訊息方塊（如「放棄未保存的變更」）由 `tests/support/app.ts` 的 `launchApp` 自動回答，`closeApp` 關閉時略過未保存提示，所有 UI 測試都用 `closeApp` 結束；要驗證提示本身的測試自行替換 stub；全數通過時會刪除該次在 `.test-output` 新增的產物（失敗時保留供檢查）；`pnpm clean:test` 清除過期產物並保留 `fixtures` |
 | `pnpm shot <類型>` | `tests/support/shot.ts`：以內建範例資料（game／manga／album／other）開專案並截圖，可設 `--width`、`--height`、`--mode`、`--child`、`--settings`、`--out`；輸出於 `.test-output/shot/`，執行完自動清除暫存資料 |
 | `pnpm detect <資料夾…> [--children]` | `tests/support/detect.ts`：唯讀執行遊戲引擎偵測並印出引擎與證據；`--children` 逐一檢查子資料夾（一整個遊戲資料夾）。不寫入、不建記錄、不啟動任何程式 |
+| `pnpm status`（`--short`） | 依 [需求清單](WORK_ITEMS.md) 印出每次回覆結尾的狀態區塊 |
+| `pnpm stale` | 收尾時點名可能過時的內容：領域登錄表缺漏、程式在「最後確認」之後改過的規格卡、文件提到不存在的檔案、沒有程式使用的語系文字、清單殘留的完成項目、規格裡的「待實作」與過大的規格；只提示不阻擋（`--strict` 才失敗） |
+| `node scripts/areas.mjs check／readme／which <檔案>` | 領域登錄表：檢查涵蓋、重產 [README](README.md) 定位表、查某個檔案屬於哪個領域與該跑哪些 UI 測試 |
 | `pnpm shot:docs [名稱…]` | `tests/support/docs-shots.ts`：用 `demo-data.ts` 產生的自製示範收藏（自製封面、虛構標題）重拍文件截圖，寫入 `docs/images/`；需先 `pnpm build`，示範資料建在磁碟根目錄的 `Morph-Demo` 並於結束時刪除 |
 
 不要臆造 lint／舊 UI script；需新命令先查 package.json。未改依賴且環境可用，不例行安裝或更新套件。
@@ -68,7 +71,7 @@
 
 不維護逐檔清單（容易過時）；用下列方式找：
 
-- **改了某個原始檔，要跑哪些 UI 測試**：`pnpm test:ui:changed` 會照 `scripts/run-ui-tests.mjs` 的 `coverage` 對應表挑選，並列出沒有對應的檔案；新增原始檔時順手加進對應表。
+- **改了某個原始檔，要跑哪些 UI 測試**：`pnpm test:ui:changed` 依 [領域登錄表](areas.json) 挑選，並列出沒有歸入領域的檔案；新增原始檔時同批加進登錄表（pre-commit 會擋）。`node scripts/areas.mjs which <檔案>` 可單查。
 - **某個功能有沒有測試**：`rg -l "<按鈕文字或函式名>" tests/`；資料測試是 `tests/*.test.ts`，UI 測試是 `tests/*-ui.ts`，共用 Electron 啟動與關閉在 `tests/support/app.ts`，資料 fixture 在 `tests/support/model-fixtures.ts`。
 - **UI 測試找的按鈕還在不在**：`node scripts/check-ui-names.mjs`（pre-commit 已自動執行）。
 

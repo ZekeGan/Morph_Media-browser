@@ -26,6 +26,8 @@
     "shot": "tsx tests/support/shot.ts",
     "shot:docs": "tsx tests/support/docs-shots.ts",
     "detect": "tsx tests/support/detect.ts",
+    "status": "node scripts/status.mjs",
+    "stale": "node scripts/stale.mjs",
     "clean:test": "node scripts/clean-test-output.mjs",
     "postinstall": "install-electron",
     "test:workspace": "tsx tests/workspace-ui.ts",

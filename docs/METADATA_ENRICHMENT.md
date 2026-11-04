@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-目前已實作來源為漫畫的 **E-Hentai** 與遊戲的 **Steam**。2026-10-28 使用者另指定新增 **ExHentai** 與 **Hitomi.la**，兩者尚未實作。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
+已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
 ## 目前能力
 

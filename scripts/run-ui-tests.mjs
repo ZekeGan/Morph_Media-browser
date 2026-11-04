@@ -6,6 +6,7 @@
 import { existsSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
+import { areasOf, isSource, smoke, uiTestsOf } from './areas.mjs'
 
 // Leftovers older than a day (failure artifacts, old screenshots) are pruned on every start.
 spawnSync(process.execPath, ['scripts/clean-test-output.mjs', '--older-than', '24'], {
@@ -13,95 +14,7 @@ spawnSync(process.execPath, ['scripts/clean-test-output.mjs', '--older-than', '2
 })
 
 // Fast set that exercises navigation, the right panel, settings, the editor and the media browser.
-const smoke = [
-  'folder-navigation-ui',
-  'settings-dock-ui',
-  'game-folder-page-ui',
-  'cell-editor-ui',
-  'media-scope-ui',
-  'workspace-toolbar-ui',
-]
-// Changed source file pattern -> the UI tests that cover it. Unmapped UI/main changes fall back to smoke.
-const coverage = [
-  [
-    /src\/(Editor|Card|Cell|TagList|EnumColors|cells\.css)|src\/themes\/cellStyle|shared\/(cells|layouts)/,
-    [
-      'cell-editor-ui',
-      'field-edit-ui',
-      'game-cover-cell-ui',
-      'game-launch-cell-ui',
-      'cell-scroll-ui',
-      'image-nth-ui',
-      'cell-style-ui',
-    ],
-  ],
-  [
-    /src\/(BrowseWorkspace|RightPanel|FolderPanel|FolderParts|FolderContent)/,
-    [
-      'folder-navigation-ui',
-      'settings-dock-ui',
-      'game-folder-page-ui',
-      'workspace-toolbar-ui',
-      'image-delete-ui',
-    ],
-  ],
-  [/shared\/browse|src\/BrowseToolbar/, ['workspace-toolbar-ui', 'folder-navigation-ui']],
-  [/src\/(Playback|FileMenu|ViewToggle|DesktopShell)/, ['audio-playback-ui']],
-  [/src\/(Video|Subtitle)|video-player\.css/, ['video-player-ui']],
-  [
-    /src\/(Gallery|MediaBrowser|FileOverview|media-workspace\.css)/,
-    ['media-scope-ui', 'media-workspace-ui', 'file-overview-ui'],
-  ],
-  [/src\/(Reader|DocumentViewer)/, ['reader-ui']],
-  [/src\/SearchDialog/, ['search-dialog-ui']],
-  [
-    /src\/(Toasts|App\.tsx|errors|ErrorBoundary)|shared\/notifications/,
-    ['notifications-ui', 'error-recovery-ui'],
-  ],
-  [/src\/(Application|themes|i18n)/, ['appearance-ui']],
-  [/src\/(GameActions|game-actions)/, ['game-actions-ui']],
-  [/src\/(ProjectSettings|SettingsPreview)|electron\/settings/, ['decided-ui']],
-  [
-    /src\/(ApplicationSettings|CreateProjectDialog)|electron\/(backup|library-export)|shared\/(backup|project-export)/,
-    ['backup-ui', 'decided-ui'],
-  ],
-  [
-    /src\/(ProblemsDialog|BoundaryFlag|FolderAdvanced)|electron\/(library-scan|game-detection|library-cleanup|library-removal|library-field-removal|maintenance)|shared\/upgrade/,
-    ['problems-ui', 'decided-ui'],
-  ],
-  [
-    /src\/(FolderTable|TreeView|BrowsePanel|KindBatchBar|folderStats|refresh|useFileVisibility)|shared\/(kind|gallery)|electron\/hidden/,
-    ['folder-navigation-ui', 'workspace-ui'],
-  ],
-  [
-    /src\/(AudioViewer|MediaQueue|MediaViewer|useVideoAudio)|shared\/media|electron\/(media-files|explorer-stream)/,
-    ['audio-playback-ui', 'media-workspace-ui'],
-  ],
-  [/shared\/subtitles/, ['video-player-ui']],
-  [/shared\/reader|electron\/archive/, ['reader-ui']],
-  [
-    /electron\/(explorer|image-url)|shared\/(explorer|images)/,
-    ['file-overview-ui', 'media-scope-ui'],
-  ],
-  [
-    /src\/(Fallback|commonFields|editorDrag|editorKinds|importedFieldLabels)|shared\/fields/,
-    ['cell-editor-ui', 'field-edit-ui'],
-  ],
-  [/src\/(ImageUrlImport|importSource)|electron\/metadata|shared\/sources/, ['media-feedback-ui']],
-  [/shared\/(query|search)|electron\/search-index|src\/search-dialog/, ['search-dialog-ui']],
-  [
-    /shared\/(themes|locales|native-messages)|src\/(style\.css|icons|IconLabel|BrandMark|HelpTip|PanelSkeleton)/,
-    ['appearance-ui'],
-  ],
-  [/shared\/launchArgs/, ['game-actions-ui', 'game-launch-cell-ui']],
-  [/electron\/workspace|shared\/workspace/, ['workspace-ui', 'sidebar-peek-ui']],
-  // The core every screen depends on: the smoke set.
-  [
-    /electron\/(main|preload|library|files)\.ts|shared\/model|src\/(main\.tsx|index\.html|env\.d\.ts)/,
-    smoke,
-  ],
-]
-
+// Which UI tests cover which source files lives in docs/areas.json (one registry for tests, docs and stale checks).
 const git = (...args) =>
   spawnSync('git', args, { encoding: 'utf8' }).stdout.split('\n').filter(Boolean)
 const all = readdirSync('tests')
@@ -168,18 +81,13 @@ else if (args.includes('--changed')) {
   const direct = files
     .filter((file) => /^tests\/.+-ui\.ts$/.test(file))
     .map((file) => file.slice(6, -3))
-  const mapped = files.flatMap((file) =>
-    coverage.filter(([pattern]) => pattern.test(file)).flatMap(([, tests]) => tests)
-  )
-  // A new source file nobody mapped yet still gets the smoke set, and is named so the table above can be updated.
-  const unmapped = files.filter(
-    (file) =>
-      /^(src|electron|shared)\//.test(file) && !coverage.some(([pattern]) => pattern.test(file))
-  )
+  const mapped = uiTestsOf(files)
+  // A new source file not yet in docs/areas.json still gets the smoke set, and is named so it can be added.
+  const unmapped = files.filter((file) => isSource(file) && !areasOf(file).length)
   chosen = [...new Set([...direct, ...mapped, ...(unmapped.length ? smoke : [])])]
   if (unmapped.length)
     console.log(
-      'No UI test is mapped for (running smoke; add them to `coverage` in scripts/run-ui-tests.mjs):\n  ' +
+      'Not in any area of docs/areas.json (running smoke; add them there):\n  ' +
         unmapped.join('\n  ')
     )
   console.log('Changed files:', files.length, '-> tests:', chosen.join(', ') || '(none)')

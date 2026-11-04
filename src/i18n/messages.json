@@ -71,12 +71,6 @@
     "en": "Manga",
     "es": "Manga"
   },
-  "相簿": {
-    "ja": "アルバム",
-    "zh-CN": "相簿",
-    "en": "Albums",
-    "es": "Álbumes"
-  },
   "遊戲": {
     "ja": "ゲーム",
     "zh-CN": "游戏",
@@ -100,36 +94,6 @@
     "zh-CN": "其他",
     "en": "Other",
     "es": "Otros"
-  },
-  "顯示模式（根為第 1 層）": {
-    "ja": "表示モード（ルートは第1階層）",
-    "zh-CN": "显示模式（根为第 1 层）",
-    "en": "Display mode (root is level 1)",
-    "es": "Modo de vista (raíz: nivel 1)"
-  },
-  "顯示第 1 至 N 層": {
-    "ja": "第1～N階層を表示",
-    "zh-CN": "显示第 1 至 N 层",
-    "en": "Show levels 1–N",
-    "es": "Mostrar niveles 1–N"
-  },
-  "只顯示第 N 層": {
-    "ja": "第N階層のみ表示",
-    "zh-CN": "只显示第 N 层",
-    "en": "Show only level N",
-    "es": "Mostrar solo el nivel N"
-  },
-  "N 層": {
-    "ja": "階層 N",
-    "zh-CN": "N 层",
-    "en": "Level N",
-    "es": "Nivel N"
-  },
-  "我的媒體": {
-    "ja": "マイメディア",
-    "zh-CN": "我的媒体",
-    "en": "My media",
-    "es": "Mis archivos multimedia"
   },
   "部分資料清理失敗：": {
     "ja": "一部のデータを消去できませんでした：",
@@ -196,12 +160,6 @@
     "zh-CN": "就绪",
     "en": "Ready",
     "es": "Listo"
-  },
-  "檢視舊資料匯入": {
-    "ja": "旧データのインポートを確認",
-    "zh-CN": "检视旧数据导入",
-    "en": "Review legacy import",
-    "es": "Revisar importación anterior"
   },
   "{0}資訊版面": {
     "ja": "{0}の情報レイアウト",
@@ -275,12 +233,6 @@
     "en": "Project name",
     "es": "Nombre del proyecto"
   },
-  "媒體分類": {
-    "ja": "メディアの種類",
-    "zh-CN": "媒体分类",
-    "en": "Media category",
-    "es": "Categoría multimedia"
-  },
   "選擇資料夾": {
     "en": "Choose folder",
     "ja": "フォルダーを選択",
@@ -340,18 +292,6 @@
     "zh-CN": "问题与复原",
     "en": "Issues and recovery",
     "es": "Problemas y recuperación"
-  },
-  "唯讀／損壞項目可從列表詳情重試或恢復；重複 ID 的副本可另配新 ID。根失效時使用「重新連結專案」。": {
-    "ja": "読み取り専用・破損項目は詳細から再試行・復元できます。重複IDには新しいIDを割り当てられます。ルートが無効なら再連携してください。",
-    "zh-CN": "唯读／损坏项目可从列表详情重试或恢复；重复 ID 的副本可另配新 ID。根失效时使用「重新连结项目」。",
-    "en": "Retry or restore read-only or damaged items from their details. Copies with duplicate IDs can receive new IDs. Relink projects whose root is unavailable.",
-    "es": "Reintenta o restaura los elementos dañados o de solo lectura desde sus detalles. Las copias con ID duplicado pueden recibir otro ID. Vuelve a vincular los proyectos cuya raíz no esté disponible."
-  },
-  "目前沒有已知問題。": {
-    "ja": "既知の問題はありません。",
-    "zh-CN": "目前没有已知问题。",
-    "en": "No known issues.",
-    "es": "No hay problemas conocidos."
   },
   "重新掃描並重建列表": {
     "ja": "再スキャンして一覧を更新",
@@ -418,24 +358,6 @@
     "zh-CN": "确认清除列出的 M:orph 信息",
     "en": "Confirm clearing the listed M:orph info",
     "es": "Confirmar el borrado de la información de M:orph indicada"
-  },
-  "舊資料匯入預覽": {
-    "ja": "旧データのインポートプレビュー",
-    "zh-CN": "旧数据导入预览",
-    "en": "Legacy import preview",
-    "es": "Vista previa de importación anterior"
-  },
-  "{0} · {1} · {2} 筆": {
-    "ja": "{0} · {1} · {2}件",
-    "zh-CN": "{0} · {1} · {2} 笔",
-    "en": "{0} · {1} · {2} items",
-    "es": "{0} · {1} · {2} elementos"
-  },
-  "備份舊檔並匯入選定專案": {
-    "ja": "旧ファイルをバックアップして選択項目をインポート",
-    "zh-CN": "备份旧档并导入选定项目",
-    "en": "Back up old files and import selected projects",
-    "es": "Respaldar los archivos anteriores e importar los proyectos seleccionados"
   },
   "應用程式設定": {
     "ja": "アプリ設定",
@@ -1607,12 +1529,6 @@
     "en": "Discard field drafts before applying the boundary?",
     "es": "¿Descartar el borrador de los campos antes de aplicar el límite?"
   },
-  "請貼上 E-Hentai 的完整圖庫網址": {
-    "ja": "E-Hentaiの完全なギャラリーURLを貼り付けてください",
-    "zh-CN": "请贴上 E-Hentai 的完整图库网址",
-    "en": "Paste the full E-Hentai gallery URL",
-    "es": "Pega la URL completa de la galería E-Hentai"
-  },
   "請輸入 Steam 商店網址或 App ID": {
     "ja": "SteamストアURLまたはApp IDを入力してください",
     "zh-CN": "请输入 Steam 商店网址或 App ID",
@@ -1733,18 +1649,6 @@
     "en": "image source",
     "es": "origen de imagen"
   },
-  "未設定（可留空）": {
-    "ja": "未設定（空欄可）",
-    "zh-CN": "未设定（可留空）",
-    "en": "Not set (optional)",
-    "es": "Sin asignar (opcional)"
-  },
-  "匯入至圖片": {
-    "ja": "画像としてインポート",
-    "zh-CN": "导入至图片",
-    "en": "Import as image",
-    "es": "Importar como imagen"
-  },
   "目前版面沒有圖片組件，無須為每個資料夾指定圖片。": {
     "ja": "このレイアウトに画像コンポーネントはありません。各フォルダーの画像指定は不要です。",
     "zh-CN": "目前版面没有图片组件，无须为每个文件夹指定图片。",
@@ -1769,12 +1673,6 @@
     "en": "Import cover",
     "es": "Importar portada"
   },
-  "已保存的圖片（": {
-    "ja": "保存済み画像（",
-    "zh-CN": "已保存的图片（",
-    "en": "Saved images (",
-    "es": "Imágenes guardadas ("
-  },
   "從網站補充資訊": {
     "ja": "Webから情報を補足",
     "zh-CN": "从网站补充信息",
@@ -1792,12 +1690,6 @@
     "zh-CN": "Steam 商店网址或 App ID",
     "en": "Steam store URL or App ID",
     "es": "URL de Steam o App ID"
-  },
-  "E-Hentai 圖庫網址": {
-    "ja": "E-HentaiギャラリーURL",
-    "zh-CN": "E-Hentai 图库网址",
-    "en": "E-Hentai gallery URL",
-    "es": "URL de galería E-Hentai"
   },
   "取得預覽": {
     "ja": "プレビューを取得",
@@ -1918,24 +1810,6 @@
     "zh-CN": "数据范围",
     "en": "Data scope",
     "es": "Ámbito de datos"
-  },
-  "此專案使用獨立資料": {
-    "ja": "このプロジェクトで独立データを使用",
-    "zh-CN": "此项目使用独立数据",
-    "en": "Use private data for this project",
-    "es": "Usar datos privados en este proyecto"
-  },
-  "開啟後，修改只用在目前專案；其他專案仍使用各專案共用的資訊。": {
-    "ja": "オンにすると、変更はこのプロジェクトだけに使われます。ほかのプロジェクトは共有の情報を使い続けます。",
-    "zh-CN": "开启后，修改只用在目前项目；其他项目仍使用各项目共用的信息。",
-    "en": "When on, changes apply only to this project; other projects keep using the shared info.",
-    "es": "Si se activa, los cambios solo se aplican a este proyecto; los demás siguen usando la información compartida."
-  },
-  "編輯只在這個專案的資訊": {
-    "ja": "このプロジェクトだけの情報を編集",
-    "zh-CN": "编辑仅此项目的信息",
-    "en": "Edit this project's own info",
-    "es": "Editar la información propia de este proyecto"
   },
   "切換會放棄目前欄位草稿？": {
     "ja": "切り替えると現在の下書きを破棄しますか？",
@@ -2201,12 +2075,6 @@
     "en": "General",
     "es": "General"
   },
-  "決定右側內容的呈現方式，不更改原始資料夾。": {
-    "ja": "右側の表示方法を設定します。元のフォルダーは変更しません。",
-    "zh-CN": "决定右侧内容的呈现方式，不更改原始文件夹。",
-    "en": "Choose how the content panel displays media. Original folders are unchanged.",
-    "es": "Elige cómo muestra el contenido el panel. Las carpetas originales no cambian."
-  },
   "資料夾位置": {
     "ja": "フォルダーの場所",
     "zh-CN": "文件夹位置",
@@ -2224,12 +2092,6 @@
     "zh-CN": "旧项目：扩大扫描范围",
     "en": "Legacy project: expand scan scope",
     "es": "Proyecto anterior: ampliar ámbito del escaneo"
-  },
-  "取消專案連結": {
-    "ja": "プロジェクト連携を解除",
-    "zh-CN": "取消项目连结",
-    "en": "Unlink project",
-    "es": "Desvincular proyecto"
   },
   "復原位置：": {
     "ja": "復元先：",
@@ -2626,12 +2488,6 @@
     "zh-CN": "开启项目後可保存常用搜寻。",
     "en": "Open a project to save searches.",
     "es": "Abre un proyecto para guardar búsquedas."
-  },
-  "名稱篩選例：folder_name:\"中文 名稱\"。其他條件可使用下方欄位。空格／同欄位逗號＝同時符合；~＝任一符合；-＝排除。引號包住空格，反斜線用來跳脫。": {
-    "ja": "名前検索例：folder_name:\"日本語の名前\"。スペースや同項目のカンマはAND、~はOR、-は除外です。空白は引用符で囲み、バックスラッシュでエスケープします。",
-    "zh-CN": "名称筛选例：folder_name:\"中文 名称\"。其他条件可使用下方栏位。空格／同栏位逗号＝同时符合；~＝任一符合；-＝排除。引号包住空格，反斜线用来跳脱。",
-    "en": "Name example: folder_name:\"folder name\". Spaces and same-field commas mean AND; ~ means OR; - excludes. Quote spaces and escape with backslashes.",
-    "es": "Ejemplo: folder_name:\"nombre carpeta\". Espacios y comas del mismo campo significan Y; ~ significa O; - excluye. Usa comillas para espacios y barras inversas para escapar."
   },
   "選取結果後開啟，也可雙擊直接進入。": {
     "ja": "結果を選んで開くか、ダブルクリックで直接移動します。",
@@ -3551,12 +3407,6 @@
     "en": "Fill empty values by default; keep manual fields.",
     "es": "Completa los valores vacíos por defecto y conserva los campos manuales."
   },
-  "目前值：{0}": {
-    "ja": "現在の値：{0}",
-    "zh-CN": "当前值：{0}",
-    "en": "Current value: {0}",
-    "es": "Valor actual: {0}"
-  },
   "漫畫／動畫": {
     "ja": "漫画／アニメ",
     "zh-CN": "漫画／动画",
@@ -3586,12 +3436,6 @@
     "zh-CN": "类型",
     "en": "Genre",
     "es": "Género"
-  },
-  "遵循通用設定（此專案版面）": {
-    "ja": "プロジェクトのレイアウトに従う",
-    "zh-CN": "遵循通用设置（此项目版面）",
-    "en": "Follow project layout",
-    "es": "Usar diseño del proyecto"
   },
   "由左至右": {
     "ja": "左から右",
@@ -4162,30 +4006,6 @@
     "en": "Add to queue",
     "ja": "キューに追加",
     "es": "Añadir a la cola"
-  },
-  "預覽轉換為媒體專案": {
-    "zh-CN": "预览转换为媒体项目",
-    "en": "Preview conversion to media project",
-    "ja": "メディアプロジェクトへの変換を確認",
-    "es": "Vista previa de conversión"
-  },
-  "確認轉換": {
-    "zh-CN": "确认转换",
-    "en": "Confirm conversion",
-    "ja": "変換を確定",
-    "es": "Confirmar conversión"
-  },
-  "恢復原分類": {
-    "zh-CN": "恢复原分类",
-    "en": "Restore original category",
-    "ja": "元の分類に戻す",
-    "es": "Restaurar categoría original"
-  },
-  "保留專案身分、欄位、版面、封面及舊播放偏好。改用共用媒體頁，進入資料夾不自動播放；保存前可取消，保存時建立原設定備份。": {
-    "zh-CN": "保留项目身份、字段、布局、封面及旧播放偏好。使用共用媒体页，进入文件夹不自动播放；保存前可取消，保存时备份原设置。",
-    "en": "Keep project identity, fields, layouts, covers and legacy playback preferences. Switch to the shared media page, without autoplay on folder entry. Cancel before saving; saving backs up original settings.",
-    "ja": "ID・フィールド・レイアウト・カバー・旧再生設定を保持します。共通のメディアページに切り替わり、フォルダー移動で自動再生しません。保存前はキャンセル可能で、保存時に元の設定をバックアップします。",
-    "es": "Conserva identidad, campos, diseños, portadas y preferencias anteriores. Cambia a la página multimedia compartida, sin reproducción automática al entrar en carpetas. Puedes cancelar antes de guardar; se crea una copia de la configuración original."
   },
   "加入播放佇列": {
     "zh-CN": "加入播放队列",
@@ -4925,12 +4745,6 @@
     "ja": "項目がまだありません。「＋ 項目を追加」で作成し、キャンバスへドラッグします。",
     "es": "Aún no hay campos. Crea uno con \"+ Nuevo campo\" y arrástralo al lienzo."
   },
-  "專案尚未配置欄位，可在積木編輯器新增。": {
-    "zh-CN": "项目尚未配置字段，可在积木编辑器中添加。",
-    "en": "No fields are set up yet; add them in the block editor.",
-    "ja": "項目が未設定です。ブロックエディターで追加できます。",
-    "es": "Aún no hay campos; añádelos en el editor de bloques."
-  },
   "尚無最愛": {
     "zh-CN": "尚无收藏",
     "en": "No favorites yet",
@@ -4960,12 +4774,6 @@
     "en": "Launch this game in one click (uses the folder's bound launch file)",
     "ja": "ワンクリックでこのゲームを起動（フォルダーに設定した起動ファイルを使用）",
     "es": "Inicia este juego con un clic (usa el archivo de inicio vinculado a la carpeta)"
-  },
-  "遊戲組件只能用於遊戲專案": {
-    "zh-CN": "游戏组件只能用于游戏项目",
-    "en": "Game components can only be used in game projects",
-    "ja": "ゲーム用コンポーネントはゲームプロジェクトでのみ使えます",
-    "es": "Los componentes de juego solo se pueden usar en proyectos de juego"
   },
   "執行資料夾內的捷徑": {
     "zh-CN": "运行文件夹内的快捷方式",
@@ -5897,12 +5705,6 @@
     "ja": "種類ごとの既定レイアウト",
     "es": "Diseño predeterminado por tipo"
   },
-  "每個資料夾依其類型套用；資料夾設定中另選的版面優先。": {
-    "zh-CN": "每个文件夹按其类型套用；文件夹设置中另选的版面优先。",
-    "en": "Each folder uses the layout of its type; a layout chosen in the folder's settings wins.",
-    "ja": "各フォルダーはその種類のレイアウトを使い、フォルダー設定で選んだレイアウトが優先されます。",
-    "es": "Cada carpeta usa el diseño de su tipo; el elegido en los ajustes de la carpeta tiene prioridad."
-  },
   "遵循專案目前版面": {
     "zh-CN": "遵循项目当前版面",
     "en": "Follow the project's current layout",
@@ -6035,12 +5837,6 @@
     "ja": "プロジェクトの追加をキャンセルしますか？まだデータは作成されていません。",
     "es": "¿Cancelar? Aún no se ha creado nada."
   },
-  "偵測到舊版資料，可預覽後匯入。": {
-    "zh-CN": "检测到旧版数据，可预览后导入。",
-    "en": "Older data was found; preview it before importing.",
-    "ja": "旧バージョンのデータが見つかりました。プレビューしてからインポートできます。",
-    "es": "Se encontraron datos antiguos; puedes verlos antes de importar."
-  },
   "無法套用": {
     "zh-CN": "无法套用",
     "en": "Could not apply",
@@ -6136,18 +5932,6 @@
     "en": "Remove project",
     "ja": "プロジェクトを削除",
     "es": "Quitar proyecto"
-  },
-  "移除範圍": {
-    "zh-CN": "移除范围",
-    "en": "What to remove",
-    "ja": "削除の範囲",
-    "es": "Qué quitar"
-  },
-  "舊版資料": {
-    "zh-CN": "旧版数据",
-    "en": "Older data",
-    "ja": "旧バージョンのデータ",
-    "es": "Datos antiguos"
   },
   "隱藏此欄": {
     "zh-CN": "隐藏此列",

@@ -6,6 +6,8 @@ pnpm typecheck
 pnpm format:check
 # UI tests must not look for buttons or text the app no longer has (about 0.3 s).
 node scripts/check-ui-names.mjs
+# Every source file belongs to an area in docs/areas.json, and the tests it names exist.
+node scripts/areas.mjs check
 docs=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.md$' || true)
 if [ -n "$docs" ]; then
   node scripts/check-docs.mjs $docs
