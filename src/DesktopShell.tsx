@@ -42,7 +42,6 @@ interface Props {
   onDirty: (value: boolean) => void
   onSnapshot: (snapshot: Snapshot) => void
   toolbarRef?: (node: HTMLDivElement | null) => void
-  footer: ReactNode
   banner: ReactNode
   status: string
   children: ReactNode

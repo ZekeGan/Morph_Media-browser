@@ -75,7 +75,7 @@ The gear at the top right opens **Application settings**:
 - **Appearance**: three themes (Classic dark, Frosted glass, Paper and ink) and five languages, previewed before you save.
 - **Project data**: the project menu's "Export project data" saves the project's records, images and subtitles (no media) to a folder; Links and maintenance → "Import project data" puts them back into a root folder after a preview.
 - **Transfer settings**: export or import a settings package (groups, favourites, preferences; no media and no paths). Import shows a preview and backs up the current settings first, so it can be undone.
-- **Connections and maintenance**: relink, and clean up the data M:orph created (the scope is previewed first; your original media is not deleted).
+- **Remove a project** (project settings › Data): three levels, starting on the safest one, "Only unlink" (all data stays). "This project's data only" and "Also clear shared data" preview their scope first, and your original media is never deleted. To clear every trace, run "Also clear shared data" once for each project.
 
 ## 9. FAQ
 

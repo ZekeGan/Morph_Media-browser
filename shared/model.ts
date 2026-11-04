@@ -229,14 +229,7 @@ export interface ProjectInput {
 }
 export type Request =
   | {
-      action:
-        | 'snapshot'
-        | 'scan'
-        | 'cancelScan'
-        | 'link'
-        | 'cleanupAllPreview'
-        | 'chooseRoot'
-        | 'chooseBundle'
+      action: 'snapshot' | 'scan' | 'cancelScan' | 'link' | 'chooseRoot' | 'chooseBundle'
     }
   | { action: 'create'; input: ProjectInput; rootToken?: string }
   | { action: 'saveProject'; project: Project }

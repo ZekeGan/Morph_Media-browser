@@ -203,12 +203,6 @@
     "en": "Review legacy import",
     "es": "Revisar importación anterior"
   },
-  "清理全部已連結資料": {
-    "ja": "連携済みデータをすべて消去",
-    "zh-CN": "清理全部已连结数据",
-    "en": "Clear all linked app data",
-    "es": "Borrar todos los datos vinculados de la aplicación"
-  },
   "{0}資訊版面": {
     "ja": "{0}の情報レイアウト",
     "zh-CN": "{0}信息版面",
@@ -6461,12 +6455,6 @@
     "ja": "設定のバックアップ",
     "es": "Copia de ajustes"
   },
-  "預覽範圍後才會清理；原始資料夾與媒體保留。": {
-    "zh-CN": "先预览范围才会清理；原始文件夹与媒体保留。",
-    "en": "Cleanup runs only after you preview its scope; original folders and media stay.",
-    "ja": "範囲をプレビューしてから整理します。元のフォルダーとメディアは残ります。",
-    "es": "La limpieza solo se hace tras previsualizar su alcance; las carpetas y medios originales se conservan."
-  },
   "無法套用": {
     "zh-CN": "无法套用",
     "en": "Could not apply",
@@ -6970,5 +6958,35 @@
     "en": "Duplicate component",
     "ja": "コンポーネントを複製",
     "es": "Duplicar componente"
+  },
+  "只取消連結": {
+    "ja": "連携の解除のみ",
+    "zh-CN": "只取消连结",
+    "en": "Only unlink",
+    "es": "Solo desvincular"
+  },
+  "移除此專案設定與私有覆寫；共用值與原始媒體保留。": {
+    "ja": "このプロジェクトの設定と非共有の上書きを削除します。共有値と元のメディアは残ります。",
+    "zh-CN": "移除此专案设定与私有覆写；共用值与原始媒体保留。",
+    "en": "Removes this project's settings and private overrides. Shared values and your original media stay.",
+    "es": "Elimina los ajustes del proyecto y sus valores privados. Los valores compartidos y tus medios originales se conservan."
+  },
+  "清除範圍內所有本工具資料；可能影響其他專案。原始媒體保留。": {
+    "ja": "範囲内のこのアプリのデータをすべて削除します。他のプロジェクトに影響する場合があります。元のメディアは残ります。",
+    "zh-CN": "清除范围内所有本工具数据；可能影响其他专案。原始媒体保留。",
+    "en": "Clears all of the app’s data in the range. It may affect other projects. Your original media stays.",
+    "es": "Borra todos los datos de la aplicación en el ámbito. Puede afectar a otros proyectos. Tus medios originales se conservan."
+  },
+  "專案資料": {
+    "ja": "プロジェクトデータ",
+    "zh-CN": "专案数据",
+    "en": "Project data",
+    "es": "Datos del proyecto"
+  },
+  "匯出在各專案的設定 › 資料；匯入在「新增專案」。移除專案與清除資料也在專案設定 › 資料。": {
+    "ja": "エクスポートは各プロジェクトの設定 › データ、インポートは「新規プロジェクト」にあります。プロジェクトの削除とデータの消去も、プロジェクト設定 › データにあります。",
+    "zh-CN": "导出在各专案的设定 › 数据；导入在「新增专案」。移除专案与清除数据也在专案设定 › 数据。",
+    "en": "Export is in each project’s settings › Data; import is in “New project”. Removing a project and clearing its data are also in project settings › Data.",
+    "es": "La exportación está en los ajustes de cada proyecto › Datos; la importación, en «Nuevo proyecto». Quitar un proyecto y borrar sus datos también está en Ajustes del proyecto › Datos."
   }
 }

@@ -1,6 +1,6 @@
 // One-command screenshot of a sample project, for checking a UI change without writing a throwaway script.
 //   pnpm shot <game|manga|album|other> [--width 1000] [--height 800] [--mode CARD|TABLE|TREE]
-//                                      [--child <folder name>] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out path.png]
+//                                      [--child <folder name>] [--settings] [--project-settings [private|full]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out path.png]
 // Needs a current build (`pnpm build`). Writes the PNG under .test-output/shot/ and prints its path.
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -16,7 +16,7 @@ const option = (name: string) => {
 }
 if (!kind) {
   console.error(
-    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out FILE]'
+    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--project-settings [private|full]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out FILE]'
   )
   process.exit(2)
 }
@@ -169,6 +169,7 @@ try {
     const name = { glass: '霧白玻璃', paper: '暖紙墨橘', dark: '深色經典' }[theme as 'dark']
     await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
     await page.getByRole('button', { name: name + ' 主題', exact: true }).click()
+    await page.waitForTimeout(500)
     await page.keyboard.press('Escape')
     await page.getByRole('dialog').waitFor({ state: 'hidden' })
   }
@@ -194,6 +195,17 @@ try {
   }
   if (args.includes('--settings'))
     await page.getByRole('tab', { name: '設定', exact: true }).click()
+  if (args.includes('--project-settings')) {
+    // The project's Data tab; the value picks the removal level to show (unlink, private or full).
+    await page.getByRole('button', { name: '開啟專案 Shot', exact: true }).first().hover()
+    await page.getByRole('button', { name: '專案選單 Shot', exact: true }).click()
+    await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
+    await page.getByRole('tab', { name: '資料', exact: true }).click()
+    const level = { private: '只移除此專案的資料', full: '連同共用資料一併清除' }[
+      option('project-settings') as 'private'
+    ]
+    if (level) await page.getByRole('radio', { name: level, exact: true }).check()
+  }
   if (args.includes('--mark')) {
     // Ctrl+click marks the first two folders so the batch type bar can be inspected.
     const items = page.locator('.folder-card, .folder-table tbody tr')

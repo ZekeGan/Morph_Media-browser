@@ -345,19 +345,6 @@ export function App() {
                   ? tr('尚未保存')
                   : tr('就緒')
           }
-          footer={
-            <>
-              <Button
-                color="red"
-                variant="subtle"
-                size="xs"
-                disabled={busy || dirty}
-                onClick={() => act({ action: 'cleanupAllPreview' })}
-              >
-                {tr('清理全部已連結資料')}
-              </Button>
-            </>
-          }
           banner={null}
         >
           {editor && project ? (
@@ -514,13 +501,6 @@ export function App() {
         opened={settingsOpen}
         close={() => setSettingsOpen(false)}
         onDirty={setAppearanceDirty}
-        actions={{
-          busy,
-          cleanAll: () => {
-            setSettingsOpen(false)
-            void act({ action: 'cleanupAllPreview' })
-          },
-        }}
       />
       <Modal
         opened={!!settings}

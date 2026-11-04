@@ -188,9 +188,6 @@ async function dispatch(request: Request): Promise<Response> {
     case 'cleanupPreview':
       extra.preview = await library.previewCleanup(request.rowId, request.scope)
       break
-    case 'cleanupAllPreview':
-      extra.preview = await library.previewCleanup(undefined, 'all')
-      break
     case 'cleanup':
       extra.cleanup = await library.cleanup(request.token, request.restart)
       break

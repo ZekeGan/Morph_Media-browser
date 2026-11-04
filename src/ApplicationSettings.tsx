@@ -13,15 +13,10 @@ export function ApplicationSettings({
   opened,
   close,
   onDirty,
-  actions,
 }: {
   opened: boolean
   close: () => void
   onDirty: (value: boolean) => void
-  actions: {
-    busy: boolean
-    cleanAll: () => void
-  }
 }) {
   useLocale()
 
@@ -335,27 +330,16 @@ export function ApplicationSettings({
                 )}
               </Stack>
             </section>
-            <Accordion variant="separated" className="danger-accordion">
-              <Accordion.Item value="danger">
-                <Accordion.Control c="red">{tr('危險操作')}</Accordion.Control>
-                <Accordion.Panel>
-                  <Text size="sm" fw={600}>
-                    {tr('清理全部已連結資料')}
-                  </Text>
-                  <Text size="xs" c="dimmed" my="xs">
-                    {tr('預覽範圍後才會清理；原始資料夾與媒體保留。')}
-                  </Text>
-                  <Button
-                    variant="default"
-                    color="red"
-                    disabled={actions.busy}
-                    onClick={actions.cleanAll}
-                  >
-                    {tr('清理全部已連結資料')}
-                  </Button>
-                </Accordion.Panel>
-              </Accordion.Item>
-            </Accordion>
+            <section className="settings-section">
+              <Text fw={600} mb="xs">
+                {tr('專案資料')}
+              </Text>
+              <Text size="sm" c="dimmed">
+                {tr(
+                  '匯出在各專案的設定 › 資料；匯入在「新增專案」。移除專案與清除資料也在專案設定 › 資料。'
+                )}
+              </Text>
+            </section>
           </Stack>
         </Tabs.Panel>
       </Tabs>
