@@ -125,3 +125,22 @@ test('roots written in the backup are only trusted when the project already live
   }
   assert.deepEqual(await fs.readdir(stranger), [])
 })
+
+test('a folder offers its earlier project back, also after the folder moved', async (t) => {
+  const { root, media, library } = await setup(t)
+  const projectId = library.snapshot().projects[0].projectId
+  assert.deepEqual(
+    (await library.projectsAt(media)).map((p) => [p.projectId, p.linked]),
+    [[projectId, true]]
+  )
+  // The old link stays in the list after a move; the moved folder must still be offered.
+  const moved = path.join(root, 'Moved')
+  await fs.rename(media, moved)
+  assert.deepEqual(
+    (await library.projectsAt(moved)).map((p) => [p.projectId, p.linked]),
+    [[projectId, false]]
+  )
+  await library.link(moved)
+  assert.equal((await library.projectsAt(moved))[0].linked, true)
+  assert.deepEqual(await library.projectsAt(path.join(root, 'nowhere')), [])
+})

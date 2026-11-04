@@ -229,8 +229,9 @@ export interface ProjectInput {
 }
 export type Request =
   | {
-      action: 'snapshot' | 'scan' | 'cancelScan' | 'link' | 'chooseRoot' | 'chooseBundle'
+      action: 'snapshot' | 'scan' | 'cancelScan' | 'chooseRoot'
     }
+  | { action: 'link'; rootToken?: string }
   | { action: 'create'; input: ProjectInput; rootToken?: string }
   | { action: 'saveProject'; project: Project }
   | { action: 'unlink'; projectId: string }
@@ -252,8 +253,6 @@ export type Request =
   | { action: 'previewBackup' }
   | { action: 'locateBackup'; token: string; projectId: string }
   | { action: 'restoreBackup'; token: string; settings: boolean; projects: string[] }
-  | { action: 'projectImportPreview'; bundleToken: string; rootToken: string }
-  | { action: 'projectImport'; token: string; overwrite: boolean }
 export interface Response {
   snapshot: Snapshot
   preview?: CleanupPreview
@@ -263,12 +262,17 @@ export interface Response {
   fullRemovalPreview?: FullRemovalPreview
   fieldDeletionPreview?: FieldDeletionPreview
   recoveryPath?: string
-  projectImport?: import('./project-export').ProjectImportPreview
   backup?: import('./backup').BackupPreview
   restored?: { projects: string[]; failed: string[]; settings: boolean }
   notice?: Notice
   cancelled?: boolean
-  rootSelection?: { token: string; path: string }
+  rootSelection?: RootSelection
+}
+// A folder picked in the native dialog; `existing` lists projects whose definitions already live in it.
+export interface RootSelection {
+  token: string
+  path: string
+  existing?: { projectId: string; name: string; linked: boolean }[]
 }
 export interface MediaApi {
   request(request: Request): Promise<Response>

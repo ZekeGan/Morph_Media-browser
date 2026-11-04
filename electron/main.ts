@@ -101,7 +101,8 @@ async function dispatch(request: Request): Promise<Response> {
       break
     case 'chooseRoot': {
       const root = await selectFolder()
-      if (root) extra.rootSelection = rememberChoice(root)
+      if (root)
+        extra.rootSelection = { ...rememberChoice(root), existing: await library.projectsAt(root) }
       else extra.cancelled = true
       break
     }
@@ -117,9 +118,14 @@ async function dispatch(request: Request): Promise<Response> {
       break
     }
     case 'link': {
-      const root = await selectFolder()
-      if (root) await library.link(root)
-      else extra.cancelled = true
+      const choice = request.rootToken ? rootChoices.get(request.rootToken) : undefined
+      if (request.rootToken && (!choice || choice.expires < Date.now()))
+        throw new Error('資料夾選擇已失效，請重新選擇')
+      const root = choice?.path ?? (await selectFolder())
+      if (root) {
+        await library.link(root)
+        if (request.rootToken) rootChoices.delete(request.rootToken)
+      } else extra.cancelled = true
       break
     }
     case 'unlink':
@@ -254,39 +260,6 @@ async function dispatch(request: Request): Promise<Response> {
         result.failed.length,
         `已還原：${[...(result.settings ? ['設定'] : []), ...result.projects].join('、') || '無'}` +
           (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '')
-      )
-      break
-    }
-    case 'chooseBundle': {
-      const chosen = await dialog.showOpenDialog(win!, {
-        title: nt('選擇專案匯出資料夾'),
-        properties: ['openDirectory'],
-      })
-      if (chosen.canceled || !chosen.filePaths[0]) extra.cancelled = true
-      else extra.rootSelection = rememberChoice(chosen.filePaths[0])
-      break
-    }
-    case 'projectImportPreview': {
-      const bundle = rootChoices.get(request.bundleToken),
-        root = rootChoices.get(request.rootToken)
-      if (!bundle || !root || bundle.expires < Date.now() || root.expires < Date.now())
-        throw new Error('資料夾選擇已失效，請重新選擇')
-      extra.projectImport = await library.previewProjectImport(bundle.path, root.path)
-      rootChoices.delete(request.bundleToken)
-      rootChoices.delete(request.rootToken)
-      break
-    }
-    case 'projectImport': {
-      const result = await library.applyProjectImport(request.token, request.overwrite === true)
-      extra.notice = completionNotice(
-        result.written,
-        0,
-        `已匯入「${result.projectName}」：寫入 ${result.written} 個檔案，保留 ${result.kept} 個${
-          result.backup
-            ? `
-覆寫前備份：${result.backup}`
-            : ''
-        }`
       )
       break
     }

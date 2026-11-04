@@ -5849,30 +5849,6 @@
     "en": "A game was detected. To protect its files, no info is created inside it.",
     "es": "Se detectó un juego. Para proteger sus archivos, no se crea información dentro."
   },
-  "匯入專案資料": {
-    "ja": "プロジェクトデータをインポート",
-    "zh-CN": "导入项目数据",
-    "en": "Import project data",
-    "es": "Importar datos del proyecto"
-  },
-  "放入：{0}": {
-    "ja": "取り込み先：{0}",
-    "zh-CN": "放入：{0}",
-    "en": "Into: {0}",
-    "es": "En: {0}"
-  },
-  "資料夾資訊 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。": {
-    "ja": "フォルダー情報 {0} 件。新しいファイル {1} 件、同じ内容 {2} 件、異なる内容 {3} 件。",
-    "zh-CN": "文件夹信息 {0} 个；新增 {1} 个文件，内容相同 {2} 个，内容不同 {3} 个。",
-    "en": "Folder info for {0} folders; {1} new files, {2} identical, {3} different.",
-    "es": "Información de {0} carpetas; {1} archivos nuevos, {2} idénticos, {3} distintos."
-  },
-  "覆寫目標位置內容不同的檔案（覆寫前會先備份）": {
-    "ja": "内容が異なるファイルを上書き（上書き前にバックアップ）",
-    "zh-CN": "覆盖目标位置内容不同的文件（覆盖前会先备份）",
-    "en": "Overwrite files whose content differs (backed up first)",
-    "es": "Sobrescribir archivos con contenido distinto (con copia previa)"
-  },
   "書籍／漫畫": {
     "ja": "本／マンガ",
     "zh-CN": "书籍／漫画",
@@ -6053,24 +6029,6 @@
     "ja": "レイアウトの優先順位：フォルダー指定 › 種類の既定 › プロジェクトの現在のレイアウト。",
     "es": "Prioridad del diseño: el propio de la carpeta › el del tipo › el actual del proyecto."
   },
-  "新增方式": {
-    "zh-CN": "新增方式",
-    "en": "How to add",
-    "ja": "追加方法",
-    "es": "Cómo añadir"
-  },
-  "從資料夾建立": {
-    "zh-CN": "从文件夹创建",
-    "en": "Create from a folder",
-    "ja": "フォルダーから作成",
-    "es": "Crear desde una carpeta"
-  },
-  "匯入匯出的專案資料": {
-    "zh-CN": "导入导出的项目数据",
-    "en": "Import exported project data",
-    "ja": "エクスポートしたデータをインポート",
-    "es": "Importar datos exportados"
-  },
   "選一個資料夾開始瀏覽；原始資料夾不會被搬移或刪除。": {
     "zh-CN": "选一个文件夹开始浏览；原始文件夹不会被移动或删除。",
     "en": "Pick a folder to start browsing. The original folder is never moved or deleted.",
@@ -6088,66 +6046,6 @@
     "en": "Cancel adding the project? Nothing has been created yet.",
     "ja": "プロジェクトの追加をキャンセルしますか？まだデータは作成されていません。",
     "es": "¿Cancelar? Aún no se ha creado nada."
-  },
-  "把先前「匯出專案資料」得到的資料夾，放回一個根資料夾。匯入前會先預覽，不會直接寫入。": {
-    "zh-CN": "把先前“导出项目数据”得到的文件夹，放回一个根文件夹。导入前会先预览，不会直接写入。",
-    "en": "Put a folder made earlier with “Export project data” back into a root folder. You see a preview first; nothing is written until you confirm.",
-    "ja": "以前「プロジェクトデータをエクスポート」で作ったフォルダーを、ルートフォルダーに戻します。先にプレビューを表示し、確認するまで書き込みません。",
-    "es": "Devuelve a una carpeta raíz la carpeta creada con «Exportar datos del proyecto». Verás una vista previa antes de escribir nada."
-  },
-  "匯出的資料夾": {
-    "zh-CN": "导出的文件夹",
-    "en": "Exported folder",
-    "ja": "エクスポートしたフォルダー",
-    "es": "Carpeta exportada"
-  },
-  "選擇匯出資料夾": {
-    "zh-CN": "选择导出文件夹",
-    "en": "Choose exported folder",
-    "ja": "エクスポート先を選択",
-    "es": "Elegir carpeta exportada"
-  },
-  "已選匯出資料夾": {
-    "zh-CN": "已选导出文件夹",
-    "en": "Selected exported folder",
-    "ja": "選択したエクスポートフォルダー",
-    "es": "Carpeta exportada elegida"
-  },
-  "放入的根資料夾": {
-    "zh-CN": "放入的根文件夹",
-    "en": "Root folder to put it in",
-    "ja": "配置先のルートフォルダー",
-    "es": "Carpeta raíz de destino"
-  },
-  "選擇放入位置": {
-    "zh-CN": "选择放入位置",
-    "en": "Choose destination",
-    "ja": "配置先を選択",
-    "es": "Elegir destino"
-  },
-  "已選放入位置": {
-    "zh-CN": "已选放入位置",
-    "en": "Selected destination",
-    "ja": "選択した配置先",
-    "es": "Destino elegido"
-  },
-  "請先選擇匯出的資料夾": {
-    "zh-CN": "请先选择导出的文件夹",
-    "en": "Choose the exported folder first",
-    "ja": "先にエクスポートしたフォルダーを選んでください",
-    "es": "Elige primero la carpeta exportada"
-  },
-  "請再選擇要放入的根資料夾": {
-    "zh-CN": "请再选择要放入的根文件夹",
-    "en": "Now choose the root folder to put it in",
-    "ja": "次に配置先のルートフォルダーを選んでください",
-    "es": "Ahora elige la carpeta raíz de destino"
-  },
-  "預覽匯入": {
-    "zh-CN": "预览导入",
-    "en": "Preview import",
-    "ja": "インポートをプレビュー",
-    "es": "Vista previa de importación"
   },
   "偵測到舊版資料，可預覽後匯入。": {
     "zh-CN": "检测到旧版数据，可预览后导入。",
@@ -6256,24 +6154,6 @@
     "en": "What to remove",
     "ja": "削除の範囲",
     "es": "Qué quitar"
-  },
-  "連結既有專案": {
-    "zh-CN": "链接现有项目",
-    "en": "Link an existing project",
-    "ja": "既存のプロジェクトをリンク",
-    "es": "Vincular un proyecto existente"
-  },
-  "資料夾搬了位置，或換了電腦時，指回原本的專案資料夾；原有的設定與資料都會保留。": {
-    "zh-CN": "文件夹移动了位置，或换了电脑时，指回原本的项目文件夹；原有的设置与数据都会保留。",
-    "en": "If a folder moved or you changed computers, point back at the original project folder; its settings and data are kept.",
-    "ja": "フォルダーを移動したときやPCを替えたときに、元のプロジェクトフォルダーを指定し直します。設定とデータは保持されます。",
-    "es": "Si una carpeta se movió o cambiaste de equipo, indica la carpeta original del proyecto; se conservan sus ajustes y datos."
-  },
-  "選擇專案資料夾並連結": {
-    "zh-CN": "选择项目文件夹并链接",
-    "en": "Choose project folder and link",
-    "ja": "プロジェクトフォルダーを選んでリンク",
-    "es": "Elegir carpeta del proyecto y vincular"
   },
   "舊版資料": {
     "zh-CN": "旧版数据",
@@ -6802,5 +6682,29 @@
     "zh-CN": "放弃尚未完成的还原？",
     "en": "Discard the unfinished restore?",
     "es": "¿Descartar la restauración sin terminar?"
+  },
+  "這個資料夾裡有之前的專案": {
+    "ja": "このフォルダーには以前のプロジェクトがあります",
+    "zh-CN": "这个文件夹里有之前的项目",
+    "en": "This folder has an earlier project",
+    "es": "Esta carpeta tiene un proyecto anterior"
+  },
+  "「{0}」。要接回原本的專案嗎？原有的設定與資訊都會保留。": {
+    "ja": "「{0}」。元のプロジェクトを戻しますか？設定と情報はそのまま残ります。",
+    "zh-CN": "「{0}」。要接回原本的项目吗？原有的设定与信息都会保留。",
+    "en": "“{0}”. Bring back that project? Its settings and info are kept.",
+    "es": "«{0}». ¿Recuperar ese proyecto? Se conservan sus ajustes e información."
+  },
+  "改為建立新專案": {
+    "ja": "新しいプロジェクトを作成する",
+    "zh-CN": "改为建立新项目",
+    "en": "Create a new project instead",
+    "es": "Crear un proyecto nuevo"
+  },
+  "接回原本的專案": {
+    "ja": "元のプロジェクトを戻す",
+    "zh-CN": "接回原本的项目",
+    "en": "Bring back the project",
+    "es": "Recuperar el proyecto"
   }
 }

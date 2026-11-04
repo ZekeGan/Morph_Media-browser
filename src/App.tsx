@@ -1,8 +1,9 @@
 import { syncPresetDraft } from '../shared/layouts'
 import { t as tr, useLocale } from './i18n'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Alert, Button, Checkbox, Group, Modal, Stack, Text } from '@mantine/core'
+import { Alert, Button, Checkbox, Group, Modal, Stack } from '@mantine/core'
 import type {
+  RootSelection,
   CleanupPreview,
   Project,
   ProjectInput,
@@ -10,12 +11,11 @@ import type {
   Response,
   Snapshot,
 } from '../shared/model'
-import type { ProjectImportPreview } from '../shared/project-export'
 import { Editor } from './Editor'
 import { usePlayback } from './Playback'
 import { ProjectSettings } from './ProjectSettings'
 import { ProblemsDialog, problemCount } from './ProblemsDialog'
-import { CreateProjectDialog, type CreateMode } from './CreateProjectDialog'
+import { CreateProjectDialog } from './CreateProjectDialog'
 import { ApplicationSettings } from './ApplicationSettings'
 import { DesktopShell } from './DesktopShell'
 import { RefreshContext } from './refresh'
@@ -73,8 +73,7 @@ export function App() {
       depth: { mode: 'through', level: 50 },
       scanAll: true,
     })
-  const [createMode, setCreateMode] = useState<CreateMode>('create'),
-    [rootChoice, setRootChoice] = useState<{ token: string; path: string }>(),
+  const [rootChoice, setRootChoice] = useState<RootSelection>(),
     [createGroup, setCreateGroup] = useState(''),
     [groups, setGroups] = useState<WorkspacePrefs['groups']>([]),
     [settingsOpen, setSettingsOpen] = useState(false)
@@ -97,8 +96,6 @@ export function App() {
   const [appearanceDirty, setAppearanceDirty] = useState(false)
   const [cleanup, setCleanup] = useState<CleanupPreview>(),
     [restart, setRestart] = useState(false)
-  const [projectImport, setProjectImport] = useState<ProjectImportPreview>(),
-    [overwrite, setOverwrite] = useState(false)
   const act: Act = useCallback(
     async (request) => {
       if (busyRef.current && request.action !== 'cancelScan') return
@@ -115,10 +112,6 @@ export function App() {
         if (result.preview?.scope === 'all') {
           setCleanup(result.preview)
           setRestart(false)
-        }
-        if (result.projectImport) {
-          setProjectImport(result.projectImport)
-          setOverwrite(false)
         }
         return result
       } catch (error) {
@@ -192,28 +185,16 @@ export function App() {
     if (rowId) setDetailsId(rowId)
     return true
   }
-  const beginCreate = (mode: CreateMode = 'create') => {
+  const beginCreate = () => {
     if (confirmLeave()) {
       clearEditors()
-      setCreateMode(mode)
       setInput((current) => ({ ...current, name: '' }))
       setRootChoice(undefined)
       setCreateGroup('')
       setCreateOpen(true)
     }
   }
-  const beginLink = async () => {
-    if (!confirmLeave()) return
-    clearEditors()
-    const before = new Set(snapshot.projects.map((p) => p.projectId)),
-      result = await act({ action: 'link' })
-    if (result && !result.cancelled) {
-      const next =
-        result.snapshot.projects.find((p) => !before.has(p.projectId)) ??
-        result.snapshot.projects.at(-1)
-      if (next) openProject(next.projectId, undefined, true)
-    }
-  }
+  const beginLink = () => beginCreate()
   useLayoutEffect(() => {
     const beforeUnload = (event: BeforeUnloadEvent) => {
       if (dirty || busyRef.current) {
@@ -461,7 +442,6 @@ export function App() {
       </RefreshContext.Provider>
       <CreateProjectDialog
         opened={createOpen}
-        initialMode={createMode}
         busy={busy}
         input={input}
         setInput={setInput}
@@ -471,9 +451,15 @@ export function App() {
         rootChoice={rootChoice}
         setRootChoice={setRootChoice}
         act={act}
-        link={async () => {
+        link={async (rootToken) => {
+          const before = new Set(snapshot.projects.map((p) => p.projectId)),
+            result = await act({ action: 'link', rootToken })
+          if (!result || result.cancelled) return
           setCreateOpen(false)
-          await beginLink()
+          const next =
+            result.snapshot.projects.find((p) => !before.has(p.projectId)) ??
+            result.snapshot.projects.at(-1)
+          if (next) openProject(next.projectId, undefined, true)
         }}
         close={() => {
           if (
@@ -501,10 +487,6 @@ export function App() {
               openProject(id, undefined, true)
             }
           }
-        }}
-        preview={async (bundleToken, rootToken) => {
-          const result = await act({ action: 'projectImportPreview', bundleToken, rootToken })
-          if (result?.projectImport) setCreateOpen(false)
         }}
       />
       <ApplicationSettings
@@ -606,64 +588,6 @@ export function App() {
             >
               {tr('確認清除列出的 M:orph 資訊')}
             </Button>
-          </Stack>
-        )}
-      </Modal>
-      <Modal
-        opened={!!projectImport}
-        onClose={() => setProjectImport(undefined)}
-        title={tr('匯入專案資料')}
-        size="lg"
-      >
-        {projectImport && (
-          <Stack>
-            <Text fw={600}>{projectImport.projectName}</Text>
-            <Text size="sm" c="dimmed" className="path">
-              {tr('放入：{0}', projectImport.root)}
-            </Text>
-            {projectImport.blocker && <Alert color="red">{projectImport.blocker}</Alert>}
-            {projectImport.warnings.map((warning, index) => (
-              <Alert key={index} color="orange">
-                {warning}
-              </Alert>
-            ))}
-            <Text size="sm">
-              {tr(
-                '資料夾資訊 {0} 個；新增 {1} 個檔案，內容相同 {2} 個，內容不同 {3} 個。',
-                projectImport.folders,
-                projectImport.added,
-                projectImport.same,
-                projectImport.conflicts
-              )}
-            </Text>
-            {projectImport.conflicts > 0 && (
-              <Checkbox
-                checked={overwrite}
-                onChange={(event) => setOverwrite(event.currentTarget.checked)}
-                label={tr('覆寫目標位置內容不同的檔案（覆寫前會先備份）')}
-              />
-            )}
-            <Group justify="flex-end">
-              <Button variant="default" onClick={() => setProjectImport(undefined)}>
-                {tr('取消')}
-              </Button>
-              <Button
-                loading={busy}
-                disabled={!!projectImport.blocker || projectImport.files === 0}
-                onClick={async () => {
-                  if (
-                    await act({
-                      action: 'projectImport',
-                      token: projectImport.token,
-                      overwrite,
-                    })
-                  )
-                    setProjectImport(undefined)
-                }}
-              >
-                {tr('匯入')}
-              </Button>
-            </Group>
           </Stack>
         )}
       </Modal>

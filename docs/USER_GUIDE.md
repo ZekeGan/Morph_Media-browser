@@ -24,13 +24,13 @@ Your settings and the search index live in `%APPDATA%\media-viewer`; each manage
 ## 3. Create your first project
 
 1. Press **New project** at the bottom of the left project bar.
-2. With **Create from a folder**, press **Choose folder** to pick the root folder. The project name starts as the folder name and can be changed; then pick a group.
-3. Press **Create project**. M:orph scans the folder and creates the records, and the project appears in the list. To bring back data you exported earlier, choose **Import exported project data** instead, pick the export folder and the root folder to put it in, and import after the preview.
+2. Press **Choose folder** to pick the root folder. The project name starts as the folder name and can be changed; then pick a group.
+3. Press **Create project**. M:orph scans the folder and creates the folder info, and the project appears in the list.
 4. Use **Add group** to group projects; a project can also be marked as a favourite.
 
-![The New project dialog with three tabs: Create from a folder, Import exported project data, Link an existing project](images/05-create-project.png)
+![The New project dialog: choose a folder, the project name and its group](images/05-create-project.png)
 
-If you already created a project and only moved to another computer or folder, use **Link an existing project** in the same dialog.
+If the folder already holds an earlier project (a new computer, a moved folder, or a project you removed from the list), choosing it offers **Bring back the project**, which keeps its settings and info. To bring info back from a backup, use "Restore from backup" in application settings › Backup.
 
 ## 4. Browse
 

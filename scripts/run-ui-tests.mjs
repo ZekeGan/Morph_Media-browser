@@ -62,7 +62,7 @@ const coverage = [
   [/src\/(GameActions|game-actions)/, ['game-actions-ui']],
   [/src\/(ProjectSettings|SettingsPreview)|electron\/settings/, ['decided-ui']],
   [
-    /src\/ApplicationSettings|electron\/(backup|library-export)|shared\/backup/,
+    /src\/(ApplicationSettings|CreateProjectDialog)|electron\/(backup|library-export)|shared\/backup/,
     ['backup-ui', 'decided-ui'],
   ],
 ]

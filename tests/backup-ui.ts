@@ -62,9 +62,33 @@ try {
   await restore.waitFor({ state: 'hidden' })
   assert.deepEqual(await fs.readFile(folderFile(path.join(media, 'Work'))), record)
   assert.equal(await fs.readFile(path.join(media, 'Work', 'page.txt'), 'utf8'), 'ORIGINAL')
+  await page.keyboard.press('Escape')
+  await settings.waitFor({ state: 'hidden' })
+
+  // A project removed from the list comes back through "New project": the folder still holds it.
+  await page.locator('.sidebar-project').filter({ hasText: 'Portable' }).hover()
+  await page.getByRole('button', { name: '專案選單 Portable', exact: true }).click({ force: true })
+  await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
+  const projectSettings = page.getByRole('dialog', { name: '專案設定 · Portable', exact: true })
+  await projectSettings.getByRole('tab', { name: '移除', exact: true }).click()
+  await projectSettings.getByRole('button', { name: '從清單移除', exact: true }).click()
+  await projectSettings.waitFor({ state: 'hidden' })
+  assert.equal(await page.locator('.sidebar-project').filter({ hasText: 'Portable' }).count(), 0)
+  await answer(media)
+  await page.getByRole('button', { name: '新增專案', exact: true }).first().click()
+  const create = page.getByRole('dialog', { name: '新增專案', exact: true })
+  await create.getByRole('button', { name: '選擇資料夾', exact: true }).click()
+  await create.getByText('這個資料夾裡有之前的專案').waitFor()
+  await create.getByRole('button', { name: '接回原本的專案', exact: true }).click()
+  await create.waitFor({ state: 'hidden' })
+  await page.locator('.sidebar-project').filter({ hasText: 'Portable' }).first().waitFor()
+  assert.deepEqual(await fs.readFile(folderFile(path.join(media, 'Work'))), record)
   assert.deepEqual(errors, [])
   passed = true
-  console.log('PASS backup from the application settings and restore preview/apply. ' + root)
+  console.log(
+    'PASS backup, restore preview/apply, and bringing a removed project back from New project. ' +
+      root
+  )
 } catch (error) {
   await reportFailure(page, root)
   throw error

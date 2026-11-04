@@ -201,6 +201,40 @@ export class Library {
     await this.persistRefs()
     return this.scan()
   }
+  // Projects whose definitions already live in this folder, so a new project can offer to bring them back.
+  // Only definitions `link` would accept are offered; `linked` means linked at this very folder (a project
+  // moved from another place is still offered, because linking replaces its missing old location).
+  async projectsAt(root: string) {
+    const found: { projectId: string; name: string; linked: boolean }[] = []
+    try {
+      root = await fs.realpath(root)
+      const rootId = (await readFolder(root)).folderId,
+        dir = path.join(root, DATA_DIR, 'projects')
+      for (const name of (await fs.readdir(dir))
+        .filter((n) => /^[\w-]+\.json$/.test(n))
+        .slice(0, 50))
+        try {
+          const file = path.join(dir, name)
+          await safePath(root, file)
+          if ((await fs.stat(file)).size > 2 * 1024 * 1024) continue
+          const project = (await readJson(file)) as Project
+          validateProject(project)
+          if (name !== `${project.projectId}.json` || project.rootFolderId !== rootId) continue
+          found.push({
+            projectId: project.projectId,
+            name: project.name,
+            linked: this.refs.some(
+              (ref) => ref.projectId === project.projectId && keyPath(ref.root) === keyPath(root)
+            ),
+          })
+        } catch {
+          // Unreadable or foreign files are not offered.
+        }
+    } catch {
+      // No folder record or no project folder: nothing to bring back.
+    }
+    return found
+  }
   async link(root: string) {
     root = await fs.realpath(root)
     let record: FolderRecord

@@ -12,12 +12,6 @@ const messages = {
     en: 'Choose a backup folder',
     es: 'Elige una carpeta de copia',
   },
-  選擇專案匯出資料夾: {
-    ja: 'プロジェクトのエクスポートフォルダーを選択',
-    'zh-CN': '选择项目导出文件夹',
-    en: 'Choose the project export folder',
-    es: 'Elige la carpeta de exportación del proyecto',
-  },
   選擇要放入資料的根資料夾: {
     ja: 'データを入れるルートフォルダーを選択',
     'zh-CN': '选择要放入数据的根文件夹',
