@@ -15,11 +15,7 @@
 
 ### 待查收
 
-- README 文案校訂（2026-11-05）：三語釐清遊戲啟動、引擎辨識與索引副本的語意，修正英日文指涉、備用欄位條件與日文搭配；紙色主題沿用介面日文名稱，品牌標語同步首頁。驗收：切換三語，確認遊戲啟動與資料保存段落意思一致。
-2026-11-04 使用者確認通過：先前各批，以及英日文 README、Godot 規則、兩批遊戲引擎規則（CatSystem2、SoftPal、LÖVE 單一 EXE、Circus、LiveMaker、Bakin、SMILE GAME BUILDER）、用詞表、移除專案兩個按鈕與共用切換（C-122）、新增專案只剩一步、備份清單（C-124、C-125）、過渡動畫；移除專案選項卡片與 C-121 已被後續版本取代。之後尚待查收：
-- 待查收（新增）：介面整理第一組（專案設定改用固定保存列，只在有未保存改動時出現，保存後不關閉視窗；拿掉「CARD 顯示」指路說明；設定備份範圍、清除資料夾資料、清除後重新開始記錄、遊戲操作範圍四處說明由「?」改成直接顯示）。驗收：改專案名稱，底部出現保存列，按「放棄」名稱還原；資料夾設定 › 進階與遊戲操作頁可直接看到說明。限制：用詞表尚待你核定，未套用。2026-11-04 查收發現保存後保存列仍在、再按保存出現版本衝突，已修正（保存後草稿改用剛存好的版本），請再試一次。
-- 待查收（新增）：依 `D:\Media\gal` 的 16 款遊戲（唯讀）新增 LucaSystem（AIR Steam 版；`files/SCRIPT.PAK`＋其他 `.PAK`）規則，多個 `.npk` 改判為 Nitroplus NPK（みにくいモジカの子）；`gal` 與 `test game` 共 28 款唯讀實測皆符合預期。驗收：在應用程式重新掃描 `D:\Media\gal`，AIR 與モジカ不再出現在「待確認的遊戲」。
-- 待查收（新增）：依 `D:\Media\r18\game` 的 37 款（唯讀）新增兩條規則：Godot 單一 EXE 旁有同名 `.console.exe` 判 Godot（Train45）；Electron 打包的 TyranoScript 只讀 `app.asar` 開頭的檔案目錄（最上層有 `tyrano` 與 `data`）判 TyranoScript（HOME_、NeetAndAngel、otsutome）。其餘 30 款（Unity 14、RPG Maker MV／MZ 9、Unreal 3、TyranoScript 2、KiriKiri、WOLF RPG、Ren’Py 各 1）本來就認得。限制：舊版 NW.js 打包的 TyranoScript（発育測定…）只有存檔名可用，維持候選。驗收：在應用程式掃描該資料夾，Train45 與三款 Tyrano 不再出現在「待確認的遊戲」。
+2026-11-05 使用者確認通過：專案設定保存列修正、LucaSystem 與 Nitroplus NPK 規則、Godot `.console.exe` 與 Electron 打包 TyranoScript 規則，以及先前所有批次。目前沒有待查收項目。
 - 未做：Majiro（需真正的 Majiro 樣本）、FVP，等使用者準備的樣本；UI 測試偶發失敗延後處理（`workspace-polish-ui` 約 9 次 1 次；2026-11-04 完整測試中 `game-actions-ui`、`media-workspace-ui` 第二次才過，當時與重新建置重疊）。
 
 - 未做：多欄位組件的表格排序；卡片上沒有直接編輯，編輯在資料夾設定（每個欄位各自寫入）。
