@@ -290,7 +290,15 @@ export function ProjectSettings({
             <Button
               loading={busy}
               disabled={!project.name.trim()}
-              onClick={() => void act({ action: 'saveProject', project })}
+              onClick={async () => {
+                // The saved copy has a new revision; the draft follows it so the bar clears and the next save
+                // is not refused as a conflict.
+                const result = await act({ action: 'saveProject', project })
+                const stored = result?.snapshot.projects.find(
+                  (linked) => linked.projectId === project.projectId
+                )?.project
+                if (stored) change(structuredClone(stored))
+              }}
             >
               {tr('保存')}
             </Button>

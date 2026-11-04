@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix: after saving project settings the save bar stayed and a second save failed with a version conflict, because the draft kept the old revision. The draft now follows the saved project.
 - Game detection: Circus (an `AdvData` folder with CRX images or MES scripts), LiveMaker (`live.dll` beside the EXE), RPG Developer Bakin (`data/bakinplayer.exe` or `data/data.rbpack`) and SMILE GAME BUILDER (`data.sgbpack` or `sgb_rpgplayer.exe`) are now recognised, from a second set of sample folders (read only).
 - Restore no longer makes an automatic backup: restoring projects only fills in missing info, so such a backup could not undo anything. After restoring settings (the only thing a restore replaces) the Backup page shows "Back to before the restore". The backup list holds only backups you made; automatic ones left by the previous build stay listed until you delete them. `pnpm shot --backup undo` shows that notice.
 - Backups are one list kept by the app: "Create backup" saves straight into the app's data folder (no folder to choose); each entry shows its date, whether it was made by hand or automatically before a restore, how many projects and its size, with "Restore", "Export…" and "Delete". Every restore first makes an automatic backup (only the newest 5 are kept), which replaces the separate "go back to earlier settings" list. Backups from another computer open with "Restore from a folder…". `pnpm shot` gained `--backup [create]`.

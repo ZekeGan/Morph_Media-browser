@@ -205,6 +205,13 @@ try {
   await savebar.getByRole('button', { name: '放棄', exact: true }).click()
   await savebar.waitFor({ state: 'hidden' })
   assert.equal(await nameInput.inputValue(), 'Pending Manga')
+  // Saving clears the bar, and a second save right after works (the draft follows the saved revision).
+  for (const name of ['Renamed Manga', 'Pending Manga']) {
+    await nameInput.fill(name)
+    await savebar.getByRole('button', { name: '保存', exact: true }).click()
+    await savebar.waitFor({ state: 'hidden' })
+  }
+  assert.equal(await page.locator('.app-toasts [data-level="error"]').count(), 0)
   await page.getByRole('tab', { name: '移除', exact: true }).click()
   const beforeRemoval = await fs.readFile(folderFile(media), 'utf8')
   const settings = page.getByRole('dialog', { name: '專案設定 · Pending Manga', exact: true })
