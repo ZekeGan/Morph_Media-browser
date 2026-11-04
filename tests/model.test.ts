@@ -7,6 +7,7 @@ import {
   withoutGroupCells,
 } from '../shared/model'
 import { modelDetails, modelFolder, modelProject } from './support/model-fixtures'
+import { NewerFormatError } from '../shared/upgrade'
 
 const reject = (check: (value: unknown) => void, value: unknown, message: string) => {
   assert.throws(
@@ -25,9 +26,11 @@ test('portable validation accepts representative records without changing values
     check(value)
     assert.deepEqual(value, before)
     assert.equal(value.schemaVersion, 1)
+    // Data a newer version wrote is reported as such, never as damaged.
+    assert.throws(() => check({ ...value, schemaVersion: 2 }), NewerFormatError)
     reject(
       check,
-      { ...value, schemaVersion: 2 },
+      { ...value, schemaVersion: 0 },
       check === validateFolder
         ? '記錄損壞、版本不支援或不屬於本程式；原檔保留'
         : check === validateProject

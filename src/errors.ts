@@ -40,6 +40,12 @@ export function describeError(raw: unknown): { message: string; hint?: string; d
         message: detail,
         hint: tr('資料已在別處更新，請重新載入後再試一次；你的修改不會被自動覆蓋。'),
       }
+    case 'newer':
+      return {
+        message: tr('這份資料來自較新版本的 M:orph'),
+        hint: tr('請更新程式。在那之前只能查看，不會寫入、復原或清除。'),
+        detail,
+      }
     default:
       return { message: detail }
   }

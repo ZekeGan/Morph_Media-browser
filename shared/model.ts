@@ -3,6 +3,7 @@ import type { Notice } from './notifications'
 import { imageTypes } from './images'
 import { httpUrl, validFieldValue } from './fields'
 import { validStableQuery, type StableQuery } from './query'
+import { checkNotNewer, FORMAT_VERSION } from './upgrade'
 export const DATA_DIR = '.media-viewer'
 export type CellKind =
   | 'name'
@@ -510,10 +511,11 @@ function validPlaybackEntry([k, p]: [string, unknown]): boolean {
 }
 
 export function validateFolder(v: unknown): asserts v is FolderRecord {
+  checkNotNewer('folder', v)
   if (
     !obj(v) ||
     v.kind !== 'media-viewer.folder' ||
-    v.schemaVersion !== 1 ||
+    v.schemaVersion !== FORMAT_VERSION.folder ||
     !id(v.folderId) ||
     !integer(v.revision, 1, Number.MAX_SAFE_INTEGER) ||
     !Array.isArray(v.attributes) ||
@@ -530,7 +532,8 @@ export function validateFolder(v: unknown): asserts v is FolderRecord {
   if (v.details !== undefined) validateDetails(v.details)
 }
 export function validateDetails(v: unknown): asserts v is FolderDetails {
-  if (!obj(v) || v.schemaVersion !== 1 || JSON.stringify(v).length > 2000000)
+  checkNotNewer('details', v)
+  if (!obj(v) || v.schemaVersion !== FORMAT_VERSION.details || JSON.stringify(v).length > 2000000)
     throw new Error('內容設定不合法')
   // Sections with truthy guards retain compatibility with existing null values.
   if (
@@ -596,6 +599,7 @@ export function validateDetails(v: unknown): asserts v is FolderDetails {
     throw new Error('播放設定不合法')
 }
 export function validateProject(v: unknown): asserts v is Project {
+  checkNotNewer('project', v)
   if (
     obj(v) &&
     ((v.scanAll !== undefined && typeof v.scanAll !== 'boolean') ||
@@ -611,7 +615,7 @@ export function validateProject(v: unknown): asserts v is Project {
   if (
     !obj(v) ||
     v.kind !== 'media-viewer.project' ||
-    v.schemaVersion !== 1 ||
+    v.schemaVersion !== FORMAT_VERSION.project ||
     !id(v.projectId) ||
     !id(v.rootFolderId) ||
     !integer(v.revision, 1, Number.MAX_SAFE_INTEGER) ||

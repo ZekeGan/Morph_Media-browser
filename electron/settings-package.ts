@@ -1,4 +1,5 @@
 import { defaultWorkspace, type SettingsPackage, type WorkspacePrefs } from '../shared/workspace'
+import { FORMAT_VERSION, upgradeFormat } from '../shared/upgrade'
 
 const keys = [
   'sidebarWidth',
@@ -28,10 +29,10 @@ export function exportSettings(prefs: WorkspacePrefs): SettingsPackage {
 export function importSettings(value: unknown): WorkspacePrefs {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw new Error('設定包格式不合法')
-  const item = value as Record<string, unknown>
+  const item = upgradeFormat('settings', value) as Record<string, unknown>
   if (
     item.kind !== 'media-viewer.settings' ||
-    item.schemaVersion !== 1 ||
+    item.schemaVersion !== FORMAT_VERSION.settings ||
     !item.prefs ||
     typeof item.prefs !== 'object' ||
     Array.isArray(item.prefs)

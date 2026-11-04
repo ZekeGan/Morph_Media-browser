@@ -6784,5 +6784,29 @@
     "zh-CN": "备份存在这台电脑里。要防硬盘故障，请把备份导出到其他磁盘。",
     "en": "Backups are kept on this computer. To be safe from a disk failure, export a backup to another disk.",
     "es": "Las copias se guardan en este equipo. Para protegerte de un fallo del disco, exporta una copia a otro disco."
+  },
+  "需要更新程式": {
+    "zh-CN": "需要更新程序",
+    "en": "Update required",
+    "ja": "アプリの更新が必要",
+    "es": "Hace falta actualizar"
+  },
+  "這些資料來自較新版本的 M:orph。在更新程式之前只能查看，不會寫入、復原或清除。": {
+    "zh-CN": "这些数据来自较新版本的 M:orph。在更新程序之前只能查看，不会写入、恢复或清除。",
+    "en": "This data comes from a newer version of M:orph. Until you update, it can only be viewed; it is never written, restored or cleaned up.",
+    "ja": "このデータは新しいバージョンの M:orph で作成されました。アプリを更新するまでは表示のみで、書き込み・復元・削除は行いません。",
+    "es": "Estos datos proceden de una versión más reciente de M:orph. Hasta que actualices, solo se pueden ver; no se escriben, restauran ni limpian."
+  },
+  "這份資料來自較新版本的 M:orph": {
+    "zh-CN": "这份数据来自较新版本的 M:orph",
+    "en": "This data comes from a newer version of M:orph",
+    "ja": "このデータは新しいバージョンの M:orph で作成されました",
+    "es": "Estos datos proceden de una versión más reciente de M:orph"
+  },
+  "請更新程式。在那之前只能查看，不會寫入、復原或清除。": {
+    "zh-CN": "请更新程序。在那之前只能查看，不会写入、恢复或清除。",
+    "en": "Please update the app. Until then it can only be viewed; nothing is written, restored or cleaned up.",
+    "ja": "アプリを更新してください。それまでは表示のみで、書き込み・復元・削除は行いません。",
+    "es": "Actualiza la aplicación. Hasta entonces solo se puede ver; no se escribe, restaura ni limpia nada."
   }
 }

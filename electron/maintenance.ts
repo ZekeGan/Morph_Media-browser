@@ -10,6 +10,7 @@ import {
   type Project,
 } from '../shared/model'
 import { fingerprint, exists, keyPath, within, safePath, readJson, message } from './files'
+import { isNewerFormat } from '../shared/upgrade'
 
 export interface ManagedFile {
   root: string
@@ -37,7 +38,15 @@ export async function managedTree(root: string) {
     if (await exists(file)) files.push({ root, path: file, hash: await fingerprint(file) })
   }
   const inspect = async (dir: string, meta: string) => {
-    const records: FolderRecord[] = []
+    const records: FolderRecord[] = [],
+      start = files.length
+    // Data a newer version wrote is never cleaned: the whole folder's records are kept as they are.
+    const keepNewer = (error: unknown) => {
+      if (!isNewerFormat(error)) return false
+      files.length = start
+      skipped.push(`${meta}: 含較新版本的資料，整個保留`)
+      return true
+    }
     for (const suffix of ['', '.bak']) {
       const file = path.join(meta, 'folder.json' + suffix)
       if (!(await exists(file))) continue
@@ -49,6 +58,7 @@ export async function managedTree(root: string) {
         await add(file)
       } catch (error) {
         skipped.push(`${file}: ${message(error)}`)
+        if (keepNewer(error)) return true
       }
     }
     if (!records.length) {
@@ -73,6 +83,7 @@ export async function managedTree(root: string) {
           await add(file)
         } catch (error) {
           skipped.push(`${file}: ${message(error)}`)
+          if (keepNewer(error)) return true
         }
       }
     }
@@ -92,20 +103,26 @@ export async function managedTree(root: string) {
       }
     }
     await unknown(meta)
+    return false
   }
   const pending = [root]
   while (pending.length) {
     const dir = pending.pop()!
     await safePath(root, dir)
-    for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+    const entries = await fs.readdir(dir, { withFileTypes: true }),
+      meta = entries.find(
+        (entry) =>
+          entry.isDirectory() && !entry.isSymbolicLink() && entry.name.toLowerCase() === DATA_DIR
+      )
+    // Below a folder a newer version manages, nothing is offered either (the scan does not go there).
+    if (meta && (await inspect(dir, path.join(dir, meta.name)))) continue
+    for (const entry of entries) {
       const file = path.join(dir, entry.name)
       if (entry.isSymbolicLink()) {
         skipped.push(`${file}: 連結保留`)
         continue
       }
-      if (!entry.isDirectory()) continue
-      if (entry.name.toLowerCase() === DATA_DIR) await inspect(dir, file)
-      else pending.push(file)
+      if (entry.isDirectory() && entry !== meta) pending.push(file)
     }
   }
   return {

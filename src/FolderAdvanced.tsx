@@ -3,6 +3,7 @@ import { Alert, Button, Checkbox, Group, Stack, Tabs, Text, Tooltip } from '@man
 import { t as tr } from './i18n'
 import { HelpTip } from './HelpTip'
 import type { CleanupPreview, CleanupResult, FolderRow, Request, Response } from '../shared/model'
+import { isNewerFormat } from '../shared/upgrade'
 
 // The folder settings "Advanced" tab: scan boundary, record recovery, stored attributes and the dangerous actions.
 export function FolderAdvanced({
@@ -143,7 +144,14 @@ export function FolderAdvanced({
                   {tr('這筆是副本，另配新 ID')}
                 </Button>
               )}
-              {row.error && !row.duplicate && (
+              {isNewerFormat(row.error) && (
+                <Text size="sm" c="dimmed">
+                  {tr(
+                    '這些資料來自較新版本的 M:orph。在更新程式之前只能查看，不會寫入、復原或清除。'
+                  )}
+                </Text>
+              )}
+              {row.error && !row.duplicate && !isNewerFormat(row.error) && (
                 <Button
                   color="orange"
                   variant="default"

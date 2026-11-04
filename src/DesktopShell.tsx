@@ -1,6 +1,7 @@
 import { t as tr, useLocale } from './i18n'
 import { Icon } from './icons'
 import { BrandMark } from './BrandMark'
+import { describeError } from './errors'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import {
   ActionIcon,
@@ -11,6 +12,7 @@ import {
   Menu,
   Modal,
   Stack,
+  Text,
   TextInput,
   Tooltip,
 } from '@mantine/core'
@@ -760,7 +762,12 @@ export function DesktopShell(props: Props) {
         <main className={'content' + (selected ? ' workspace-content' : '')}>
           {(error || workspace.error) && (
             <Alert color="orange" mb="md" title={tr('側欄／視窗設定')}>
-              {error || workspace.error}
+              {describeError(error || workspace.error).message}
+              {describeError(error || workspace.error).hint && (
+                <Text size="sm" c="dimmed">
+                  {describeError(error || workspace.error).hint}
+                </Text>
+              )}
             </Alert>
           )}
           {props.banner}

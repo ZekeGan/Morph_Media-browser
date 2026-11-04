@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { upgradeStored } from '../shared/upgrade'
 import { randomUUID } from 'node:crypto'
 import {
   DATA_DIR,
@@ -492,7 +493,7 @@ export async function removeProject(ex: Library, token: string): Promise<Cleanup
           await safePath(ex.userData, copy)
           if ((await fingerprint(copy)) !== primary.hash) throw new Error('復原副本已變更')
           const bytes = await fs.readFile(copy)
-          validateFolder(JSON.parse(bytes.toString()))
+          validateFolder(upgradeStored(JSON.parse(bytes.toString())))
           await safePath(plan.root, primary.path)
           await fs.mkdir(path.dirname(primary.path), { recursive: true })
           const handle = await fs.open(primary.path, 'wx')

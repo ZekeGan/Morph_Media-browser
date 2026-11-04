@@ -4,6 +4,7 @@ import { randomUUID, createHash } from 'node:crypto'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { DATA_DIR, type FolderRecord, validateFolder, validateProject } from '../shared/model'
+import { upgradeStored } from '../shared/upgrade'
 
 export const missing = (e: unknown) => (e as NodeJS.ErrnoException)?.code === 'ENOENT'
 export const message = (e: unknown) => (e instanceof Error ? e.message : String(e))
@@ -43,8 +44,10 @@ export async function safePath(root: string, target: string) {
     }
   }
 }
+// Folder and project records (and their .bak copies) come back upgraded to the current format, so every reader
+// validates the current shape; a record from a newer version throws NewerFormatError. Other JSON is returned as is.
 export async function readJson(file: string): Promise<unknown> {
-  return JSON.parse(await fs.readFile(file, 'utf8'))
+  return upgradeStored(JSON.parse(await fs.readFile(file, 'utf8')))
 }
 export async function atomicJson(file: string, value: unknown, expected?: number) {
   const old = await fs.readFile(file).catch((e) => {
@@ -86,6 +89,7 @@ export async function atomicJson(file: string, value: unknown, expected?: number
 }
 export async function readFolder(dir: string): Promise<FolderRecord> {
   await safePath(dir, folderFile(dir))
+  // An older record is upgraded in memory only; it is written in the new format when it is next saved.
   const record = await readJson(folderFile(dir))
   validateFolder(record)
   return record
@@ -184,13 +188,22 @@ export async function restoreJson<T extends { revision: number }>(
   await safePath(root, file)
   await safePath(root, `${file}.bak`)
   const backupBytes = await fs.readFile(`${file}.bak`),
-    backup: unknown = JSON.parse(backupBytes.toString())
+    backup: unknown = upgradeStored(JSON.parse(backupBytes.toString()))
   validate(backup)
   if (!identity(backup)) throw new Error('備份身分與目前專案不符，未復原')
   const original = await fs.readFile(file).catch((error) => {
     if (missing(error)) return undefined
     throw error
   })
+  if (original) {
+    let current: unknown
+    try {
+      current = JSON.parse(original.toString())
+    } catch {
+      current = undefined
+    }
+    upgradeStored(current)
+  }
   if (original) await fs.writeFile(`${file}.${randomUUID()}.damaged`, original, { flag: 'wx' })
   const temp = `${file}.${randomUUID()}.tmp`
   try {

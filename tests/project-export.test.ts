@@ -1,4 +1,5 @@
 import { test } from 'node:test'
+import { NewerFormatError } from '../shared/upgrade'
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -216,4 +217,28 @@ test('an export from before folder types is upgraded: categories dropped, templa
   const folder = { folderId: 'f' }
   assert.deepEqual(migrateRecord(1, folder, 'folder'), folder)
   assert.equal(migrateRecord(2, old, 'project'), old)
+})
+
+test('import never overwrites a project record a newer version wrote, even with overwrite', async (t) => {
+  const root = await workspace(t, 'project-export-newer')
+  const src = await source(root),
+    out = path.join(root, 'out')
+  await fs.mkdir(out)
+  const { dir } = await src.lib.exportProject(src.projectId, out, 'test')
+  const dst = await target(root, 'dst')
+  const rootRecord = (await ensureFolder(dst.media, false)).record
+  const exported = JSON.parse(
+    await fs.readFile(
+      path.join(dir, 'files', DATA_DIR, 'projects', src.projectId + '.json'),
+      'utf8'
+    )
+  )
+  const localFile = path.join(dst.media, DATA_DIR, 'projects', src.projectId + '.json')
+  await fs.mkdir(path.dirname(localFile), { recursive: true })
+  const newer = JSON.stringify({ ...exported, schemaVersion: 5, rootFolderId: rootRecord.folderId })
+  await fs.writeFile(localFile, newer)
+  const preview = await dst.lib.previewProjectImport(dir, dst.media)
+  await assert.rejects(dst.lib.applyProjectImport(preview.token, true), NewerFormatError)
+  assert.equal(await fs.readFile(localFile, 'utf8'), newer)
+  assert.equal(await exists(localFile + '.bak'), false)
 })

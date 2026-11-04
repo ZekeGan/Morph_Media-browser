@@ -22,6 +22,7 @@ import {
 } from './files'
 import { hideDirectories } from './hidden'
 import { detectGame, insideAppBundle, GameProbeLimit } from './game-detection'
+import { isNewerFormat } from '../shared/upgrade'
 import type { Library } from './library'
 
 export async function scan(ex: Library) {
@@ -113,7 +114,12 @@ export async function scan(ex: Library) {
           boundary = { state: 'candidate', engines: [], evidence: [e.message] }
         else {
           probeError = message(e)
-          problems.push(`${dir}: 無法確認邊界，停止此分支：${probeError}`)
+          // A folder a newer version manages is left as it is, children included, until the app is updated.
+          problems.push(
+            isNewerFormat(e)
+              ? `${dir}: 含較新版本的資料，唯讀且不深入`
+              : `${dir}: 無法確認邊界，停止此分支：${probeError}`
+          )
           progress.errors++
           progress.visited++
         }

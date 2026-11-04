@@ -44,6 +44,7 @@ import * as removalFns from './library-removal'
 import * as exportFns from './library-export'
 import * as cleanupFns from './library-cleanup'
 import * as scanFns from './library-scan'
+import { isNewerFormat } from '../shared/upgrade'
 export interface PlanEntry {
   dir: string
   record: FolderRecord
@@ -241,6 +242,7 @@ export class Library {
     try {
       record = await readFolder(root)
     } catch (error) {
+      if (isNewerFormat(error)) throw error
       await safePath(root, `${folderFile(root)}.bak`)
       if (!(await exists(`${folderFile(root)}.bak`))) {
         if (missing(error))
@@ -266,7 +268,8 @@ export class Library {
         const current = withoutGroupCells(await readJson(path.join(dir, name)))
         validateProject(current)
         p = current
-      } catch {
+      } catch (error) {
+        if (isNewerFormat(error)) throw error
         await safePath(root, path.join(dir, `${name}.bak`))
         const backup = withoutGroupCells(await readJson(path.join(dir, `${name}.bak`)))
         validateProject(backup)

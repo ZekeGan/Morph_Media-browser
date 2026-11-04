@@ -28,6 +28,7 @@ import {
 } from './files'
 import { managedTree } from './maintenance'
 import type { Library } from './library'
+import { isNewerFormat, upgradeStored } from '../shared/upgrade'
 
 const sha = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex')
 const inBundle = (bundle: string, rel: string) => path.join(bundle, 'files', ...rel.split('/'))
@@ -240,6 +241,12 @@ export async function applyProjectImport(
     await safePath(plan.root, entry.target)
     const now = (await exists(entry.target)) ? await fingerprint(entry.target) : undefined
     if (now !== entry.existing) throw new Error(`目標檔案在預覽後已改變，請重新預覽：${entry.rel}`)
+    // A record (or its backup) a newer version wrote is never replaced; nothing is written then.
+    if (entry.role !== 'asset')
+      for (const file of [entry.target, `${entry.target}.bak`])
+        await readJson(file).catch((error) => {
+          if (isNewerFormat(error)) throw error
+        })
   }
   // Existing folder records keep their identity and content even when overwrite is chosen.
   const todo = plan.entries.filter(
@@ -251,10 +258,13 @@ export async function applyProjectImport(
   const values = new Map<string, any>()
   for (const entry of todo.filter((item) => item.role !== 'asset')) {
     const kind = entry.role as 'folder' | 'project'
-    const value = migrateRecord(
-      plan.manifest.schemaVersion,
-      JSON.parse(bytes.get(entry.rel)!.toString('utf8')),
-      kind
+    // The package layout is migrated first, then the record itself goes through the format upgrade.
+    const value = upgradeStored(
+      migrateRecord(
+        plan.manifest.schemaVersion,
+        JSON.parse(bytes.get(entry.rel)!.toString('utf8')),
+        kind
+      )
     ) as any
     if (kind === 'folder') validateFolder(value)
     else validateProject(value)

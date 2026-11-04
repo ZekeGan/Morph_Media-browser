@@ -3,14 +3,18 @@ import { Accordion, Alert, Badge, Button, Group, Modal, Stack, Text } from '@man
 import { t as tr, useLocale } from './i18n'
 import type { FolderRow, LinkedProject, Request, Response, Snapshot } from '../shared/model'
 import type { ExplorerRequest, ExplorerResponse } from '../shared/explorer'
+import { isNewerFormat } from '../shared/upgrade'
 
 type Overview = Pick<Snapshot, 'projects' | 'rows' | 'problems'>
 
 // What needs attention, grouped by what can be done about it.
 export const problemItems = (snapshot: Overview) => ({
-  roots: snapshot.projects.filter((p) => p.error),
+  roots: snapshot.projects.filter((p) => p.error && !isNewerFormat(p.error)),
+  // Written by a newer version: only updating the app helps, so nothing is offered here.
+  newerProjects: snapshot.projects.filter((p) => isNewerFormat(p.error)),
+  newer: snapshot.rows.filter((r) => isNewerFormat(r.error)),
   duplicates: snapshot.rows.filter((r) => r.duplicate),
-  broken: snapshot.rows.filter((r) => r.error && !r.duplicate),
+  broken: snapshot.rows.filter((r) => r.error && !r.duplicate && !isNewerFormat(r.error)),
   stopped: snapshot.rows.filter((r) => r.stopped && !r.error && !r.duplicate),
   // Looks like a game but nobody has said so yet.
   candidates: snapshot.rows.filter(
@@ -54,8 +58,16 @@ export function ProblemsDialog({
   relink: () => void
 }) {
   useLocale()
-  const { roots, duplicates, broken, stopped, candidates } = problemItems(snapshot),
-    count = roots.length + duplicates.length + broken.length + stopped.length + candidates.length,
+  const { roots, newerProjects, newer, duplicates, broken, stopped, candidates } =
+      problemItems(snapshot),
+    count =
+      roots.length +
+      newerProjects.length +
+      newer.length +
+      duplicates.length +
+      broken.length +
+      stopped.length +
+      candidates.length,
     { notes, others } = splitMessages(snapshot.problems)
   const entry = (
     key: string,
@@ -136,6 +148,16 @@ export function ProblemsDialog({
               </Button>
             )
           )
+        )}
+        {group(
+          tr('需要更新程式'),
+          tr('這些資料來自較新版本的 M:orph。在更新程式之前只能查看，不會寫入、復原或清除。'),
+          [
+            ...newerProjects.map((p: LinkedProject) =>
+              entry(p.projectId, p.project?.name ?? p.root, p.error, p.root, null)
+            ),
+            ...newer.map((row) => rowEntry(row, null)),
+          ]
         )}
         {group(
           tr('重複的資料夾 ID'),

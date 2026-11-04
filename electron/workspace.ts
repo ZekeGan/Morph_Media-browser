@@ -13,6 +13,7 @@ import {
 import { isThemeId } from '../shared/themes'
 import { isLocaleId, systemLocale } from '../shared/locales'
 import { exportSettings, importSettings, mergeSettings } from './settings-package'
+import { checkNotNewer, FORMAT_VERSION, isNewerFormat, upgradeFormat } from '../shared/upgrade'
 
 const key = (v: unknown): v is string =>
   typeof v === 'string' &&
@@ -28,9 +29,10 @@ function groupName(v: unknown): string {
   return v.trim()
 }
 export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
+  checkNotNewer('workspace', v)
   if (
     !object(v) ||
-    v.schemaVersion !== 1 ||
+    v.schemaVersion !== FORMAT_VERSION.workspace ||
     !integer(v.revision, 0) ||
     !integer(v.nextOrder, 1) ||
     !integer(v.sidebarWidth, 200, 360) ||
@@ -262,12 +264,20 @@ export class WorkspaceStore {
     await fs.mkdir(this.root, { recursive: true })
     try {
       await safePath(this.root, this.file)
-      const value = await readJson(this.file)
+      const raw = await readJson(this.file),
+        value = upgradeFormat('workspace', raw)
       validateWorkspace(value)
       this.prefs = value
       this.onDisk = true
+      // App data is upgraded once at start-up, after the file as the older version wrote it is kept.
+      if (value !== raw) {
+        await this.keepBeforeUpgrade()
+        await this.commit(structuredClone(value))
+      }
     } catch (error) {
-      if (!missing(error))
+      // Settings a newer version wrote stay untouched: they are shown, but nothing is saved over them.
+      if (isNewerFormat(error)) this.error = (error as Error).message
+      else if (!missing(error))
         this.error = `側欄設定無法讀取，原檔保留；暫用預設且停止保存。${String(error)}`
     }
     if (!this.error && !this.prefs.locale && this.languages)
@@ -295,6 +305,14 @@ export class WorkspaceStore {
     await atomicJson(this.file, next, this.onDisk ? this.prefs.revision : undefined)
     this.prefs = next
     this.onDisk = true
+  }
+  // The file as an older version wrote it, kept beside the setting backups before the start-up upgrade.
+  private async keepBeforeUpgrade() {
+    const dir = path.join(this.root, 'workspace-backups')
+    await fs.mkdir(dir, { recursive: true })
+    const copy = path.join(dir, `before-upgrade-${Date.now()}.json`)
+    await safePath(this.root, copy)
+    await fs.copyFile(this.file, copy, fs.constants.COPYFILE_EXCL)
   }
   private async backup() {
     const id = randomUUID(),
@@ -418,8 +436,8 @@ export class WorkspaceStore {
             saved.schemaVersion !== 1
           )
             throw new Error('復原備份不合法')
-          validateWorkspace(saved.prefs)
-          const restored = structuredClone(saved.prefs)
+          const restored = structuredClone(upgradeFormat('workspace', saved.prefs))
+          validateWorkspace(restored)
           this.sync(restored, ids)
           const backupId = await this.backup()
           await this.commit(restored)

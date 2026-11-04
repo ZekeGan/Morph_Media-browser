@@ -28,6 +28,7 @@ import {
   within,
 } from './files'
 import type { Library, PlanEntry } from './library'
+import { isNewerFormat } from '../shared/upgrade'
 
 export async function previewCleanup(
   ex: Library,
@@ -218,7 +219,8 @@ export async function restoreProject(ex: Library, projectId: string) {
     repairRoot = false
   try {
     project = await ex.currentProject(ref)
-  } catch {
+  } catch (error) {
+    if (isNewerFormat(error)) throw error
     await safePath(ref.root, `${file}.bak`)
     const backup = await readJson(`${file}.bak`)
     validateProject(backup)
@@ -229,7 +231,8 @@ export async function restoreProject(ex: Library, projectId: string) {
   let rootRecord: FolderRecord
   try {
     rootRecord = await readFolder(ref.root)
-  } catch {
+  } catch (error) {
+    if (isNewerFormat(error)) throw error
     await safePath(ref.root, `${folderFile(ref.root)}.bak`)
     const backup = await readJson(`${folderFile(ref.root)}.bak`)
     validateFolder(backup)

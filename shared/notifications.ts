@@ -1,3 +1,5 @@
+import { isNewerFormat } from './upgrade'
+
 export type NoticeLevel = 'success' | 'warning' | 'error'
 
 // Transient operation feedback. Never stored in portable folder/project records.
@@ -24,7 +26,7 @@ export function errorMessage(text: string): string {
 }
 
 export type ErrorKind =
-  'permission' | 'busy' | 'diskFull' | 'missing' | 'offline' | 'conflict' | 'unknown'
+  'permission' | 'busy' | 'diskFull' | 'missing' | 'offline' | 'conflict' | 'newer' | 'unknown'
 
 // Classifies raw system errors (Node error codes, network failures) so the UI can say what to do next.
 export function classifyError(text: string): ErrorKind {
@@ -38,5 +40,6 @@ export function classifyError(text: string): ErrorKind {
   )
     return 'offline'
   if (/版本衝突/.test(text)) return 'conflict'
+  if (isNewerFormat(text)) return 'newer'
   return 'unknown'
 }
