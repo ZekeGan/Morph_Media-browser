@@ -630,6 +630,21 @@ test('existing engine families keep their bounded positive rules and manual fall
   await files(path.join(media, 'Unknown'), ['Custom.exe', 'Assets/packed.bin'])
   assert.equal(await detectGame(path.join(media, 'Unknown')), undefined)
 })
+test('Godot needs an EXE with its own PCK; a lone EXE (embedded PCK) and PAK files stay ordinary folders', async (t) => {
+  const { media, files } = await fixture(t)
+  await files(path.join(media, 'WithPck'), ['Renamed.exe', 'Renamed.pck'])
+  assert.deepEqual((await detectGame(path.join(media, 'WithPck')))?.engines, ['Godot'])
+  // A single-file Godot export has no external marker: unknown engine, not a game until marked by hand.
+  await files(path.join(media, 'SingleExe'), ['Game.exe'])
+  await files(path.join(media, 'OtherPck'), ['Game.exe', 'Other.pck'])
+  // PAK is used by Unreal, id Tech and many mods; it is never Godot evidence.
+  await files(path.join(media, 'PakOnly'), ['Game.exe', 'Game.pak'])
+  for (const name of ['SingleExe', 'OtherPck', 'PakOnly'])
+    assert.equal(await detectGame(path.join(media, name)), undefined, name)
+  // SiglusEngine also ships Scene.pck; its own rule applies instead of Godot.
+  await files(path.join(media, 'Siglus'), ['SiglusEngine.exe', 'Scene.pck', 'Gameexe.dat'])
+  assert.deepEqual((await detectGame(path.join(media, 'Siglus')))?.engines, ['SiglusEngine'])
+})
 test('ASAR remains an unknown candidate; manual ROOT/not-game and readonly traversal never rewrite history', async (t) => {
   const { media, lib, files } = await fixture(t)
   for (const name of ['TyranoManualSample', 'TyranoAsarSample', 'TyranoDataSample'])

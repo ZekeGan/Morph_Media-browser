@@ -55,7 +55,7 @@
 | --- | --- | --- |
 | Unity | EXE、`UnityPlayer.dll`、對應 `*_Data` 組合；版本／改名變體另驗證，非遊戲工具也能命中。 | 依據已查：[Windows 建置](https://docs.unity3d.com/6000.0/Documentation/Manual/WindowsStandaloneBinaries.html)。 |
 | Unreal Engine | 執行檔與部署內容結構組合，`.pak` 只是輔助；不同世代及容器需分規則，不能僅看到副檔名就判定。 | 依據已查：[封裝說明](https://dev.epicgames.com/documentation/en-us/unreal-engine/packaging-your-project)；UE3／4／5 變體待樣本。 |
-| Godot | EXE＋PCK 候選；支援內嵌 PCK，單檔版可能無外部特徵，先人工指定，不能用缺 PCK 排除遊戲。 | 依據已查：[Windows 匯出](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_windows.html)。 |
+| Godot | 同名 EXE＋`.pck` 判為 Godot（2026-11-04 使用者核定）。內嵌 PCK 的單一 EXE 沒有外部特徵：引擎未知、不判為遊戲（一般資料夾），可手動指定為遊戲，引擎顯示未知；不讀 EXE 內容。`.pak` 不是 Godot 證據（Unreal、id Tech 與許多模組也用）。 | 依據已查：[Windows 匯出](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_windows.html)。 |
 | RPG Maker | 2000／2003、XP／VX／VX Ace、MV／MZ、UNITE 分家族規則；MV 核心腳本與資料結構可作組合線索。UNITE 與 Unity 規則可能重疊，不強行猜版本。 | MV／MZ 依據已查：[MV 核心原始碼](https://github.com/rpgtkoolmv/corescript)、[MZ 部署](https://rpgmakerofficial.com/product/MZ_help-en/01_11_03.html)。其他版本及封裝變體待樣本，不以編輯器專案檔作發行版必要條件。 |
 | Ren’Py | 啟動程式與 `game/` 內 `.rpy`／`.rpyc`／`.rpa` 等結構組合；不要求原始腳本存在。 | 依據已查：[檔案與目錄](https://www.renpy.org/doc/html/language_basics.html)、[發行封裝](https://www.renpy.org/doc/html/build.html)。 |
 | 吉里吉里／KiriKiri／KiriKiri Z | 執行檔與 XP3 等線索組合，副檔名不唯一，內嵌／自訂包裝需人工指定；不解包。 | XP3 依據已查：[引擎原始碼](https://github.com/krkrz/krkrz/blob/master/base/XP3Archive.cpp)；發行版組合待樣本。 |
@@ -136,7 +136,7 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 | --- | --- | --- |
 | Unreal | 僅認同層 EXE＋直接部署路徑，漏掉 UnrealSampleA 形式；UE3／4／5、容器與啟動器變體未完整驗證。 | 組合外層啟動 EXE／Engine 與所屬內層 Binaries／Content；涵蓋 PAK／IoStore 線索。工具、模組、單獨 `.pak`／`.utoc`、共用 Engine 及多遊戲集合不能直接確認為一款遊戲 ROOT。 |
 | Unity | 目前硬性要求同層 EXE、`UnityPlayer.dll`、任意 `*_Data`；其他輸出／分層形式與 UnitySample Mac App 會漏判。 | 驗證 EXE 與資料目錄關聯；缺 DLL 的版本／部署形式另立有證據的規則，Mac bundle 依上節結合 plist／執行檔／引擎資源。引擎工具／編輯器與不相干標記拼湊須列反例，不能因 Unity 身分直接確認遊戲。 |
-| Godot | 外部 `.pck` 以外，只特判一個 EXE 名稱；內嵌 PCK 的改名單檔版無對應辨識。 | 外部／內嵌形式分開；任意 EXE＋不相干 `.pck`、編輯器名稱與一般 Godot 應用不得單獨當作遊戲證據。無法安全驗證的單檔版維持人工入口。 |
+| Godot | 外部 `.pck` 以外，只特判一個 EXE 名稱；內嵌 PCK 的改名單檔版無對應辨識。 | 外部／內嵌形式分開；任意 EXE＋不相干 `.pck`、編輯器名稱與一般 Godot 應用不得單獨當作遊戲證據。單檔內嵌版維持人工入口：只有 EXE 一律不判為遊戲（測試固定）；`Scene.pck`＋`Gameexe.dat` 走 SiglusEngine 規則。 |
 | RPG Maker 2000／2003 | 目前只認同層 EXE＋固定名稱 LDB／LMT；分層或自訂包裝未涵蓋。 | 以對應資料與執行環境組合，專案原始資料、只有其中一個標記、無關啟動器不能直接確認；版本不明時保留家族候選。 |
 | RPG Maker XP／VX／VX Ace | 只認 `Game.rgssad`／`Game.rgss2a`／`Game.rgss3a`，未涵蓋沒有這些固定封包的資料形式。 | 封包與未封包形式分開研究；結合設定、資料及執行環境，不能只靠通用 `Game.exe`／Data 或 RGSS DLL；不把缺封包當成不是遊戲。 |
 | RPG Maker MV／MZ／UNITE | MV／MZ 只查 `js`／`www/js` 的固定核心檔；額外封裝、改路徑未涵蓋；UNITE 無獨立規則。 | 核心腳本與資料／入口關聯後再提出候選；NW.js／Electron、普通網頁程式及編輯器專案檔不是充分證據。UNITE 與 Unity 可重疊，不強猜版本。 |
