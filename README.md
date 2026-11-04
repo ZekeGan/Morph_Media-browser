@@ -120,11 +120,11 @@ The design documents are written mainly in Traditional Chinese.
 
 ## License
 
-Copyright (C) 2024–2026 Zeke Gan. The source code is free software under the **GNU General Public License, version 3 or (at your option) any later version** — see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md). Modified versions must stay open under the same license and keep the notices.
+Copyright (C) 2024–2026 Zeke Gan. The source code is free software under the **GNU General Public License, version 3** — see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md). Modified versions must stay open under the same license and keep the notices.
 
 **The name and the logo are not part of that license.** A modified version may not use the name "M:orph" or the M:orph logo, and may not be published as the official one just by changing the logo or the name. See the [name and logo policy](TRADEMARK.md).
 
-The GPL lets anyone sell copies as long as the source comes with them, but a seller cannot use the name or the logo or present a paid copy as the official product. The official builds are the ones on the Releases page, and they are free.
+The GPL lets anyone sell copies as long as the source comes with them, but a seller cannot use the name or the logo or present a copy as the official product. The official builds are the ones on the Releases page.
 
 M:orph is not affiliated with any of the websites it can read from; their names belong to their owners.
 

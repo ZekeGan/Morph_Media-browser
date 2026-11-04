@@ -3,7 +3,7 @@
   "productName": "Morph",
   "version": "0.39.0",
   "description": "M:orph (Media Browser): a local-first folder viewer where you decide how each folder is shown.",
-  "license": "GPL-3.0-or-later",
+  "license": "GPL-3.0-only",
   "author": "Zeke Gan",
   "repository": {
     "type": "git",
