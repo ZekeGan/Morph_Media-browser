@@ -842,7 +842,23 @@ test('Japanese visual-novel engines are recognised from their runtime and archiv
       names: ['game_cn.exe', 'cg.npa', 'nss.npa', 'sound.npa'],
       engines: ['Nitroplus NPA'],
     },
-    { name: 'NpkUnknown', names: ['launcher.exe', 'cg.npk', 'dx.npk', 'script.npk'], engines: [] },
+    {
+      name: 'NitroNpk',
+      names: ['launcher.exe', 'cg.npk', 'dx.npk', 'script.npk'],
+      engines: ['Nitroplus NPK'],
+    },
+    {
+      name: 'LucaGame',
+      names: [
+        'AIR.exe',
+        'steam_api64.dll',
+        'files/SCRIPT.PAK',
+        'files/PARAM.PAK',
+        'files/SYSSE.PAK',
+      ],
+      engines: ['LucaSystem'],
+    },
+    { name: 'ScriptPakOnly', names: ['Tool.exe', 'files/SCRIPT.PAK'] },
     {
       name: 'SteamUnknown',
       names: ['Game.exe', 'steam_api64.dll', 'files/image/a.pak'],

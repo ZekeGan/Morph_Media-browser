@@ -68,7 +68,7 @@
 | LÖVE | `.love` 與執行環境，或合併 EXE 與配套 DLL（`love.dll`＋`lua51.dll`，2026-11-04 依 Moonring 樣本補上）；內嵌版本不可要求外部 `.love`。 | 依據已查：[官方發行說明](https://love2d.org/wiki/Game_Distribution)；單一 DLL 仍非充分條件。 |
 | Source／Source 2、CRYENGINE | 列入擴充清單；商店啟動器、模組與共用引擎安裝可能使內容根不等於遊戲根。 | 待官方結構研究與樣本；先提供人工 ROOT，不宣稱自動辨識。 |
 | Adventure Game Studio、MonoGame／FNA／XNA、自製引擎 | 列入擴充清單；同一框架可製作一般應用，無通用可靠目錄規則。 | 待研究與樣本；先提供人工 ROOT，後續按真實收藏補規則。 |
-| 日系視覺小說引擎（2026-11-01 依 使用者的日系視覺小說收藏 唯讀結構確認） | Artemis：EXE＋`*.pfs`（含 `.pfs.000`）。AI6WIN（Silky's／Elf）：`AI6WIN*.exe`（補丁版可能把 `.arc` 移進子資料夾，故只看執行檔名）。BGI／Ethornell：`BGI*.exe`＋`.arc`。ONScripter／NScripter：`onscripter*.exe`，或 `nscript.dat`／`ons.cfg` 加 `.nsa`／`.sar`。RealLive／AVG32：`GAMEEXE.INI`＋`SEEN.TXT`／`PDT/`／`AVG32*.exe`。SiglusEngine：`Scene.pck`＋`Gameexe.dat`。YU-RIS：`*.ypf`。Nitroplus NPA：至少兩個 `.npa`。多個 `.npk` 與 Steam（`steam_api*.dll`）發行版引擎不明，只列候選，由人工確認。 | 依據：使用者收藏的實際目錄結構與各引擎公開的檔案慣例；單獨 `.arc`、單一 `.npa`、沒有 EXE 的 `.pfs` 不成立。補丁／外掛可能帶同名檔案，因此皆為候選。 |
+| 日系視覺小說引擎（2026-11-01 依 使用者的日系視覺小說收藏 唯讀結構確認） | Artemis：EXE＋`*.pfs`（含 `.pfs.000`）。AI6WIN（Silky's／Elf）：`AI6WIN*.exe`（補丁版可能把 `.arc` 移進子資料夾，故只看執行檔名）。BGI／Ethornell：`BGI*.exe`＋`.arc`。ONScripter／NScripter：`onscripter*.exe`，或 `nscript.dat`／`ons.cfg` 加 `.nsa`／`.sar`。RealLive／AVG32：`GAMEEXE.INI`＋`SEEN.TXT`／`PDT/`／`AVG32*.exe`。SiglusEngine：`Scene.pck`＋`Gameexe.dat`。YU-RIS：`*.ypf`。Nitroplus NPA：至少兩個 `.npa`。多個 `.npk` 判為 Nitroplus NPK（2026-11-04 起，見下節）；Steam（`steam_api*.dll`）發行版引擎不明時只列候選，由人工確認。 | 依據：使用者收藏的實際目錄結構與各引擎公開的檔案慣例；單獨 `.arc`、單一 `.npa`、沒有 EXE 的 `.pfs` 不成立。補丁／外掛可能帶同名檔案，因此皆為候選。 |
 
 ## 漏判、誤判與 ROOT 定位規則
 
@@ -185,5 +185,7 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 | LiveMaker | `live.dll`＋EXE（遊戲資料包在 EXE 內） | 4gatsu_8ka |
 | RPG Developer Bakin | `data/bakinplayer.exe` 或 `data/data.rbpack`，且有 EXE | Blade of Zenna Demo |
 | SMILE GAME BUILDER | `data.sgbpack` 或 `sgb_rpgplayer.exe` | グランブーム国物語 |
+| LucaSystem | `files/SCRIPT.PAK` 加上 `files` 裡至少另一個 `.PAK`，且有 EXE；Prototype 的引擎，Key 作品的 Steam 版（AIR、CLANNAD、Kanon、Summer Pockets 等）使用，依 [LuckSystem](https://github.com/wetor/LuckSystem) 的說明確認 | AIR（Steam 版，原版是 RealLive） |
+| Nitroplus NPK | 至少 3 個 `.npk` 封包＋EXE；Nitroplus／Nitro Origin 的封包格式，引擎沒有公開名稱，故以封包命名 | みにくいモジカの子（Steam 版） |
 
 同批以樣本確認既有規則：Ren’Py、Godot（EXE＋同名 `.pck`）、Unity 照常辨識；Godot 單一 EXE 照規則不判遊戲。標為 Majiro 的「Narcissu」實際是 NScripter（`nscript.dat`＋`arc.nsa`），由既有規則辨識，Majiro 仍無真正樣本。標為 Ethornell 的「水夏 A.S.+」實際是 Circus（CRX 圖片是 Circus 的格式），Ethornell 仍以既有規則（`BGI*.exe`＋`.arc`）辨識。「RPG Developer BAKIN Multi Vignette System」樣本資料夾是空的，無法判斷。反例 `.int`、`.pac` 單獨出現、`love.dll` 單獨出現都不判遊戲，已寫進測試。

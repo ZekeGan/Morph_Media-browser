@@ -253,7 +253,13 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
     if ((await file('data.sgbpack')) || hasExe(/^sgb_rpgplayer/i))
       add('SMILE GAME BUILDER', 'data.sgbpack 或 sgb_rpgplayer.exe')
     if (countFiles(/\.npk$/i) >= 3)
-      add(undefined, 'EXE + 多個 .npk 資源封包：引擎未確認，請確認 ROOT／非遊戲')
+      add('Nitroplus NPK', 'EXE + 多個 .npk 封包（Nitroplus／Nitro Origin 的封包格式）')
+    // LucaSystem (Prototype; the Steam releases of Key titles) keeps SCRIPT.PAK and other .PAK packs in files/.
+    if ((await file('files/SCRIPT.PAK')) && (await files('files', /\.pak$/i)).length >= 2)
+      add(
+        'LucaSystem',
+        'files/SCRIPT.PAK 與其他 .PAK 封包 + EXE（Prototype 引擎，Key 作品 Steam 版）'
+      )
     if (packedApp)
       add(
         undefined,
