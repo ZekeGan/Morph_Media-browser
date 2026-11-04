@@ -3,8 +3,7 @@ import { HelpTip } from './HelpTip'
 import { useState } from 'react'
 import { cardPresets } from '../shared/layouts'
 import { folderKinds } from '../shared/kind'
-import { Alert, Button, Group, Select, Stack, Tabs, Text, TextInput } from '@mantine/core'
-import { Icon } from './icons'
+import { Alert, Button, Checkbox, Group, Select, Stack, Tabs, Text, TextInput } from '@mantine/core'
 import type {
   Project,
   ProjectRemovalPreview,
@@ -13,26 +12,6 @@ import type {
   Request,
   Response,
 } from '../shared/model'
-
-type RemoveLevel = 'unlink' | 'private' | 'full'
-const removeLevels: { value: RemoveLevel; label: string; hint: string; danger?: boolean }[] = [
-  {
-    value: 'unlink',
-    label: '只取消連結',
-    hint: '只從本機清單移除。專案設定與資料保留，之後可重新連結。',
-  },
-  {
-    value: 'private',
-    label: '只移除此專案的資料',
-    hint: '移除此專案的設定與只在這個專案的資訊；各專案共用的資訊與你的檔案都會保留。',
-  },
-  {
-    value: 'full',
-    label: '連同各專案共用的資訊一併清除',
-    hint: '清除範圍內所有 M:orph 建立的資訊；可能影響其他專案。你的檔案（漫畫、圖片、影片）會保留。',
-    danger: true,
-  },
-]
 
 export function ProjectSettings({
   project,
@@ -55,16 +34,30 @@ export function ProjectSettings({
 }) {
   useLocale()
 
-  const [removeScope, setRemoveScope] = useState<RemoveLevel>('unlink')
-  const chooseLevel = (value: RemoveLevel) => {
-    setRemoveScope(value)
-    setPreview(undefined)
-    setFullPreview(undefined)
-    setResult(undefined)
-  }
   const [preview, setPreview] = useState<ProjectRemovalPreview>(),
     [result, setResult] = useState<CleanupResult>()
-  const [fullPreview, setFullPreview] = useState<FullRemovalPreview>()
+  const [fullPreview, setFullPreview] = useState<FullRemovalPreview>(),
+    [alsoShared, setAlsoShared] = useState(false)
+  // Deleting removes only this project's own info. Clearing everything M:orph made in the tree (shared info, game
+  // decisions, projects removed from the list earlier) needs its own tick, even when no other linked project uses it.
+  const deleteShared = !!fullPreview && alsoShared
+  const resetDelete = () => {
+    setPreview(undefined)
+    setFullPreview(undefined)
+    setAlsoShared(false)
+  }
+  const planDelete = async () => {
+    resetDelete()
+    setResult(undefined)
+    const full = (await act({ action: 'fullRemovalPreview', projectId: project.projectId }))
+      ?.fullRemovalPreview
+    if (!full) return
+    const own = (await act({ action: 'removeProjectPreview', projectId: project.projectId }))
+      ?.removalPreview
+    if (!own) return
+    setPreview(own)
+    setFullPreview(full)
+  }
   return (
     <Stack gap="md">
       <Tabs defaultValue="general">
@@ -165,266 +158,129 @@ export function ProjectSettings({
               </Button>
             </section>
             <section className="settings-section">
-              <Text size="sm" fw={500} id="remove-level-label">
-                {tr('移除專案')}
-              </Text>
-              <div
-                className="choice-cards"
-                role="radiogroup"
-                aria-labelledby="remove-level-label"
-                onKeyDown={(event) => {
-                  const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[
-                    event.key
-                  ]
-                  if (!step || busy) return
-                  event.preventDefault()
-                  const index = removeLevels.findIndex((level) => level.value === removeScope)
-                  chooseLevel(
-                    removeLevels[(index + step + removeLevels.length) % removeLevels.length].value
-                  )
-                  requestAnimationFrame(() =>
-                    event.currentTarget.querySelector<HTMLElement>('[aria-checked="true"]')?.focus()
-                  )
-                }}
-              >
-                {removeLevels.map((level) => (
-                  <button
-                    key={level.value}
-                    type="button"
-                    role="radio"
-                    aria-checked={removeScope === level.value}
-                    aria-labelledby={'remove-level-' + level.value}
-                    aria-describedby={'remove-level-' + level.value + '-hint'}
-                    tabIndex={removeScope === level.value ? 0 : -1}
-                    disabled={busy}
-                    className={
-                      'choice-card' +
-                      (removeScope === level.value ? ' selected' : '') +
-                      (level.danger ? ' danger' : '')
-                    }
-                    onClick={() => chooseLevel(level.value)}
-                  >
-                    <span className="choice-card-heading">
-                      <strong id={'remove-level-' + level.value}>{tr(level.label)}</strong>
-                      <span className="theme-choice">
-                        {removeScope === level.value && <Icon name="check" size={13} />}
-                      </span>
-                    </span>
-                    <span
-                      className="theme-description"
-                      id={'remove-level-' + level.value + '-hint'}
-                    >
-                      {tr(level.hint)}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <Stack gap="lg" mt="md">
-                {removeScope === 'unlink' && (
+              <Text fw={600}>{tr('移除專案')}</Text>
+              <Group justify="space-between" wrap="nowrap" gap="md" mt="sm">
+                <Text size="sm" c="dimmed">
+                  {tr('從清單移除後，資訊都會保留，之後可以加回來。')}
+                </Text>
+                <Button
+                  variant="default"
+                  disabled={busy || dirty}
+                  onClick={async () => {
+                    if (await act({ action: 'unlink', projectId: project.projectId })) close()
+                  }}
+                >
+                  {tr('從清單移除')}
+                </Button>
+              </Group>
+              {!fullPreview && (
+                <Group justify="space-between" wrap="nowrap" gap="md" mt="md">
+                  <Text size="sm" c="dimmed">
+                    {tr('想連資訊一起刪掉？')}
+                  </Text>
                   <Button
-                    variant="default"
+                    variant="light"
+                    color="red"
                     disabled={busy || dirty}
-                    onClick={async () => {
-                      if (await act({ action: 'unlink', projectId: project.projectId })) close()
-                    }}
+                    onClick={() => void planDelete()}
                   >
-                    {tr('取消專案連結（保留資料）')}
+                    {tr('刪除這個專案的資訊…')}
                   </Button>
-                )}
-                {removeScope === 'private' && (
-                  <section className="settings-section cleanup-section">
-                    <Text size="sm" c="dimmed" mb="sm">
-                      {tr(
-                        '移除此專案的設定與只在這個專案的資訊。主資料夾裡沒有其他用途的資訊，會先備份到本機再清除。各專案共用的資訊、圖片、其他專案與你的檔案（漫畫、圖片、影片）都會保留。'
-                      )}
+                </Group>
+              )}
+              {fullPreview && (
+                <Stack gap="sm" mt="md" className="cleanup-section">
+                  <Alert color="red" title={tr('刪除「{0}」的資訊', project.name)}>
+                    <Text size="sm">
+                      {deleteShared
+                        ? tr(
+                            '會刪除 M:orph 在這些資料夾建立的所有資訊（{0} 個檔案）。',
+                            fullPreview.paths.length
+                          )
+                        : tr(
+                            '會刪除這個專案的設定，以及 {0} 個資料夾裡只屬於這個專案的資訊。',
+                            preview?.privateCount ?? 0
+                          )}
                     </Text>
-                    {!preview && (
-                      <Button
-                        variant="light"
-                        color="red"
-                        disabled={busy || dirty}
-                        onClick={async () => {
-                          setFullPreview(undefined)
-                          setResult(undefined)
-                          const response = await act({
-                            action: 'removeProjectPreview',
-                            projectId: project.projectId,
-                          })
-                          if (response?.removalPreview) setPreview(response.removalPreview)
-                        }}
-                      >
-                        {tr('預覽移除')}
-                      </Button>
-                    )}
-                    {preview && (
-                      <Stack gap="sm" mt="md">
-                        <Alert color="orange" title={tr('即將移除「') + preview.name + '」'}>
-                          {tr('從')}
-                          {preview.privateCount}{' '}
-                          {tr('個資料夾移除只在這個專案的資訊，並封存此專案的設定與備份。')}
-                          {preview.rootCleanup && (
-                            <>
-                              <Text size="sm" mt="xs">
-                                {tr(
-                                  '主資料夾的資訊會移到本機的備份區；之後重新加入時會建立新的資訊。'
-                                )}
-                              </Text>
-                              <Text size="xs" className="path">
-                                {tr('復原位置：')}
-                                {preview.recoveryPath}
-                              </Text>
-                            </>
-                          )}
-                        </Alert>
-                        <details>
-                          <summary>
-                            {tr('查看影響範圍（')}
-                            {preview.paths.length} {tr('個檔案）')}
-                          </summary>
-                          <div className="file-list">
-                            {preview.paths.map((file) => (
-                              <div key={file}>{file}</div>
-                            ))}
-                          </div>
-                        </details>
-                        {preview.skipped.length > 0 && (
-                          <details>
-                            <summary>
-                              {tr('保留／略過項目（')}
-                              {preview.skipped.length}）
-                            </summary>
-                            {preview.skipped.map((text, index) => (
-                              <Text size="xs" key={index}>
-                                {text}
-                              </Text>
-                            ))}
-                          </details>
-                        )}
-                        <Group justify="flex-end">
-                          <Button
-                            variant="default"
-                            disabled={busy}
-                            onClick={() => setPreview(undefined)}
-                          >
-                            {tr('取消移除')}
-                          </Button>
-                          <Button
-                            color="red"
-                            loading={busy}
-                            onClick={async () => {
-                              const response = await act({
-                                action: 'removeProject',
-                                token: preview.token,
-                              })
-                              setPreview(undefined)
-                              if (response?.removal) {
-                                setResult(response.removal)
-                                if (!response.removal.failed.length) close()
-                              }
-                            }}
-                          >
-                            {tr('確認移除專案及私有資料')}
-                          </Button>
-                        </Group>
-                      </Stack>
-                    )}
-                  </section>
-                )}
-                {removeScope === 'full' && (
-                  <section className="settings-section">
-                    <Text size="sm" c="dimmed" mb="sm">
-                      {tr(
-                        '清除主資料夾與所有子資料夾裡 M:orph 建立的資訊，包含各專案共用的資訊、設定與備份。你的檔案（漫畫、圖片、影片）會保留；可能影響其他使用這些資料夾的專案。'
-                      )}
+                    <Text size="sm" fw={600} mt="xs">
+                      {tr('你的檔案（漫畫、圖片、影片）不會被刪除。')}
                     </Text>
-                    <Button
-                      color="red"
-                      variant="default"
-                      disabled={busy || dirty}
-                      onClick={async () => {
-                        setPreview(undefined)
-                        setResult(undefined)
-                        const result = await act({
-                          action: 'fullRemovalPreview',
-                          projectId: project.projectId,
-                        })
-                        if (result?.fullRemovalPreview) setFullPreview(result.fullRemovalPreview)
-                      }}
-                    >
-                      {tr('預覽移除')}
-                    </Button>
-                    {fullPreview && (
-                      <Stack mt="md">
-                        <Alert
-                          color="red"
-                          title={tr(
-                            '可能受影響的其他專案（{0}）',
-                            fullPreview.affectedProjects.length
-                          )}
-                        >
-                          {tr('這個範圍內各專案共用的資訊會被清除，可能影響其他專案。')}
-                          {fullPreview.affectedProjects.map((ref) => (
-                            <Text key={ref.projectId} size="sm">
-                              {ref.name}
-                              <small className="path"> · {ref.root}</small>
-                            </Text>
-                          ))}
-                          {!fullPreview.affectedProjects.length && (
-                            <Text size="sm">{tr('已檢查目前已連結的同根、巢狀及重疊專案。')}</Text>
-                          )}
-                        </Alert>
-                        <details>
-                          <summary>
-                            {tr('查看影響範圍（')}
-                            {fullPreview.paths.length}
-                            {tr('個檔案）')}
-                          </summary>
-                          <div className="file-list">
-                            {fullPreview.paths.map((file) => (
-                              <div key={file}>{file}</div>
-                            ))}
-                          </div>
-                        </details>
-                        {fullPreview.skipped.map((text) => (
-                          <Text size="xs" key={text}>
-                            {text}
+                  </Alert>
+                  <div>
+                    {!!fullPreview.affectedProjects.length && (
+                      <>
+                        <Text size="sm">{tr('這些資料夾也被下列專案使用：')}</Text>
+                        {fullPreview.affectedProjects.map((ref) => (
+                          <Text key={ref.projectId} size="sm">
+                            {ref.name}
+                            <small className="path"> · {ref.root}</small>
                           </Text>
                         ))}
-                        <Text size="xs" className="path">
-                          {tr('復原位置：')}
-                          {fullPreview.recoveryPath}
-                        </Text>
-                        <Group justify="flex-end">
-                          <Button
-                            variant="default"
-                            disabled={busy}
-                            onClick={() => setFullPreview(undefined)}
-                          >
-                            {tr('取消')}
-                          </Button>
-                          <Button
-                            color="red"
-                            loading={busy}
-                            onClick={async () => {
-                              const result = await act({
-                                action: 'fullRemoval',
-                                token: fullPreview.token,
-                              })
-                              setFullPreview(undefined)
-                              if (result?.removal) {
-                                setResult(result.removal)
-                                if (!result.removal.failed.length) close()
-                              }
-                            }}
-                          >
-                            {tr('確認清除列出的 M:orph 資訊')}
-                          </Button>
-                        </Group>
-                      </Stack>
+                      </>
                     )}
-                  </section>
-                )}
-              </Stack>
+                    <Checkbox
+                      mt="sm"
+                      color="red"
+                      checked={alsoShared}
+                      disabled={busy}
+                      onChange={(event) => setAlsoShared(event.currentTarget.checked)}
+                      label={tr('也刪除這些資料夾裡 M:orph 建立的其他資訊')}
+                      description={tr(
+                        '包含各專案共用的資訊、遊戲判斷，以及之前從清單移除的專案；也使用這些資料夾的專案會失去這些資訊。只檢查目前已連結的專案。'
+                      )}
+                    />
+                    {alsoShared && (
+                      <Text size="xs" mt="xs" className="path">
+                        {tr('刪除前會先備份到：')}
+                        {fullPreview.recoveryPath}
+                      </Text>
+                    )}
+                  </div>
+                  <details>
+                    <summary>{tr('查看詳細')}</summary>
+                    <div className="file-list">
+                      {(deleteShared ? fullPreview.paths : (preview?.paths ?? [])).map((file) => (
+                        <div key={file}>{file}</div>
+                      ))}
+                    </div>
+                    {(deleteShared ? fullPreview.skipped : (preview?.skipped ?? [])).map(
+                      (text, index) => (
+                        <Text size="xs" key={index}>
+                          {text}
+                        </Text>
+                      )
+                    )}
+                    {(deleteShared || preview?.rootCleanup) && (
+                      <Text size="xs" className="path">
+                        {tr('復原位置：')}
+                        {deleteShared ? fullPreview.recoveryPath : preview?.recoveryPath}
+                      </Text>
+                    )}
+                  </details>
+                  <Group justify="flex-end">
+                    <Button variant="default" disabled={busy} onClick={resetDelete}>
+                      {tr('取消')}
+                    </Button>
+                    <Button
+                      color="red"
+                      loading={busy}
+                      disabled={dirty}
+                      onClick={async () => {
+                        const response = deleteShared
+                          ? await act({ action: 'fullRemoval', token: fullPreview.token })
+                          : await act({ action: 'removeProject', token: preview!.token })
+                        resetDelete()
+                        if (response?.removal) {
+                          setResult(response.removal)
+                          if (!response.removal.failed.length) close()
+                        }
+                      }}
+                    >
+                      {tr('刪除「{0}」的資訊', project.name)}
+                    </Button>
+                  </Group>
+                </Stack>
+              )}
             </section>
             {result && (
               <Alert mt="md" color="orange" title={tr('部分移除未完成')}>

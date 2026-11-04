@@ -75,7 +75,7 @@ The gear at the top right opens **Application settings**:
 - **Appearance**: three themes (Classic dark, Frosted glass, Paper and ink) and five languages, previewed before you save.
 - **Project data**: the project menu's "Export project data" saves the project's records, images and subtitles (no media) to a folder; Links and maintenance → "Import project data" puts them back into a root folder after a preview.
 - **Transfer settings**: export or import a settings package (groups, favourites, preferences; no media and no paths). Import shows a preview and backs up the current settings first, so it can be undone.
-- **Remove a project** (project settings › Backup and removal): three levels, starting on the safest one, "Only unlink" (all data stays). "This project's data only" and "Also clear shared info" preview their scope first, and your original media is never deleted. To clear every trace, run "Also clear shared info" once for each project.
+- **Remove a project** (project settings › Backup and removal): "Remove from list" only takes the project off the list; all its info stays and you can add it back later. "Delete this project's info…" deletes only this project's own info by default; to also delete shared info, game decisions and projects removed from the list earlier, tick "Also delete the other info M:orph created in these folders" (a backup is made first). Your files (manga, images, videos) are never deleted.
 
 ## 9. FAQ
 

@@ -57,6 +57,7 @@ type Run = (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
 let lastTab: string | null = null
 export function FolderPanel({
   row,
+  shared,
   project,
   busy,
   act,
@@ -66,6 +67,8 @@ export function FolderPanel({
   initialTab = 'fields',
 }: {
   row: FolderRow
+  // Another linked project also shows this folder.
+  shared?: boolean
   project: Project
   busy: boolean
   act: Act
@@ -603,10 +606,21 @@ export function FolderPanel({
       )}
       {!isGame && row.boundary && (
         <Alert color="blue" className="folder-boundary-note">
-          <Group justify="space-between" wrap="nowrap" gap="xs">
-            <Text size="sm">{tr('偵測到遊戲，為了保護內部檔案，不會在裡面建立資訊。')}</Text>
-            <Button size="compact-sm" variant="light" onClick={() => setTab('advanced')}>
-              {tr('邊界設定')}
+          <Text size="sm">{tr('偵測到遊戲，為了保護內部檔案，不會在裡面建立資訊。')}</Text>
+          <Group gap="xs" mt="xs">
+            <Button size="compact-sm" disabled={disabled} onClick={() => boundary('root')}>
+              {tr('確認為遊戲主資料夾')}
+            </Button>
+            <Button
+              size="compact-sm"
+              variant="default"
+              disabled={disabled}
+              onClick={() => boundary('not-game')}
+            >
+              {tr('這不是遊戲目錄')}
+            </Button>
+            <Button size="compact-sm" variant="subtle" onClick={() => setTab('advanced')}>
+              {tr('更多選項')}
             </Button>
           </Group>
         </Alert>
@@ -660,22 +674,26 @@ export function FolderPanel({
                   />
                 </Group>
               </div>
-              <SegmentedControl
-                size="xs"
-                aria-label={tr('資料範圍')}
-                value={privateValues ? 'private' : 'shared'}
-                disabled={disabled}
-                data={[
-                  { value: 'shared', label: tr('各專案共用的資訊') },
-                  { value: 'private', label: tr('僅目前專案') },
-                ]}
-                onChange={(value) => {
-                  if (!fieldDirty || window.confirm(tr('切換會放棄目前欄位草稿？'))) {
-                    setValues({})
-                    setPrivate(value === 'private')
-                  }
-                }}
-              />
+              {(shared ||
+                privateValues ||
+                !!row.record?.projectOverrides[row.projectId]?.length) && (
+                <SegmentedControl
+                  size="xs"
+                  aria-label={tr('資料範圍')}
+                  value={privateValues ? 'private' : 'shared'}
+                  disabled={disabled}
+                  data={[
+                    { value: 'shared', label: tr('各專案共用的資訊') },
+                    { value: 'private', label: tr('僅目前專案') },
+                  ]}
+                  onChange={(value) => {
+                    if (!fieldDirty || window.confirm(tr('切換會放棄目前欄位草稿？'))) {
+                      setValues({})
+                      setPrivate(value === 'private')
+                    }
+                  }}
+                />
+              )}
             </Group>
             {row.record && (
               <Select

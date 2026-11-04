@@ -112,6 +112,8 @@ try {
   const drawer = page.locator('.folder-panel-dock-settings'),
     scheme = drawer.getByRole('textbox', { name: '此資料夾的卡片外觀', exact: true })
   assert.match(await scheme.inputValue(), /^遵循類型與專案設定（目前：/)
+  // Pending Manga shows the same folder, so the shared / this-project switch is offered here.
+  await drawer.locator('label').filter({ hasText: '僅目前專案' }).waitFor()
   assert.equal(await drawer.locator('.mantine-Divider-root').count(), 1)
   await scheme.click()
   await page.getByRole('option', { name: '預設版面', exact: true }).click()
@@ -206,14 +208,18 @@ try {
   await page.getByRole('tab', { name: '備份與移除', exact: true }).click()
   const beforeRemoval = await fs.readFile(folderFile(media), 'utf8')
   const settings = page.getByRole('dialog', { name: '專案設定 · Pending Manga', exact: true })
-  // Removal starts on the safest level: unlink only, with the data kept.
-  assert.ok(await settings.getByRole('radio', { name: '只取消連結', exact: true }).isChecked())
-  await settings.getByRole('button', { name: '取消專案連結（保留資料）', exact: true }).waitFor()
-  await settings.getByRole('radio', { name: '連同各專案共用的資訊一併清除', exact: true }).check()
-  await button('預覽移除').click()
-  await settings.getByText('Pending Album', { exact: false }).first().waitFor()
-  assert.ok((await settings.textContent())!.includes('可能受影響的其他專案（1）'))
+  // Removing from the list keeps everything; deleting info removes only this project's own info unless
+  // the wider option is ticked; Pending Album uses the same folders, so it is listed.
+  await settings.getByRole('button', { name: '從清單移除', exact: true }).waitFor()
+  await settings.getByRole('button', { name: '刪除這個專案的資訊…', exact: true }).click()
+  const alsoShared = settings.getByRole('checkbox', {
+    name: '也刪除這些資料夾裡 M:orph 建立的其他資訊',
+  })
+  await alsoShared.waitFor()
+  assert.equal(await alsoShared.isChecked(), false)
+  assert.ok((await settings.textContent())!.includes('Pending Album'))
   await settings.getByRole('button', { name: '取消', exact: true }).click()
+  await alsoShared.waitFor({ state: 'hidden' })
   assert.equal(await fs.readFile(folderFile(media), 'utf8'), beforeRemoval)
   await page.keyboard.press('Escape')
   await settings.waitFor({ state: 'hidden' })

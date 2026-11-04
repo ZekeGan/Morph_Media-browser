@@ -1,6 +1,6 @@
 // One-command screenshot of a sample project, for checking a UI change without writing a throwaway script.
 //   pnpm shot <game|manga|album|other> [--width 1000] [--height 800] [--mode CARD|TABLE|TREE]
-//                                      [--child <folder name>] [--settings] [--project-settings [private|full]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out path.png]
+//                                      [--child <folder name>] [--settings] [--project-settings [delete]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out path.png]
 // Needs a current build (`pnpm build`). Writes the PNG under .test-output/shot/ and prints its path.
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -16,7 +16,7 @@ const option = (name: string) => {
 }
 if (!kind) {
   console.error(
-    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--project-settings [private|full]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out FILE]'
+    'Usage: pnpm shot <game|manga|album|other> [--width N] [--height N] [--mode CARD|TABLE|TREE] [--child NAME] [--settings] [--project-settings [delete]] [--editor [--select N] [--section NAME]] [--fields] [--theme dark|glass|paper] [--home] [--click BUTTON] [--press KEY] [--out FILE]'
   )
   process.exit(2)
 }
@@ -196,15 +196,13 @@ try {
   if (args.includes('--settings'))
     await page.getByRole('tab', { name: '設定', exact: true }).click()
   if (args.includes('--project-settings')) {
-    // The project's Backup and removal tab; the value picks the removal level to show (unlink, private or full).
+    // The project's Backup and removal tab; "delete" also opens the delete-info step.
     await page.getByRole('button', { name: '開啟專案 Shot', exact: true }).first().hover()
     await page.getByRole('button', { name: '專案選單 Shot', exact: true }).click()
     await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
     await page.getByRole('tab', { name: '備份與移除', exact: true }).click()
-    const level = { private: '只移除此專案的資料', full: '連同各專案共用的資訊一併清除' }[
-      option('project-settings') as 'private'
-    ]
-    if (level) await page.getByRole('radio', { name: level, exact: true }).check()
+    if (option('project-settings') === 'delete')
+      await page.getByRole('button', { name: '刪除這個專案的資訊…', exact: true }).click()
   }
   if (args.includes('--mark')) {
     // Ctrl+click marks the first two folders so the batch type bar can be inspected.

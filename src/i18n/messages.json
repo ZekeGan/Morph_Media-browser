@@ -1943,12 +1943,6 @@
     "en": "Discard field drafts and switch?",
     "es": "¿Descartar el borrador de los campos y cambiar?"
   },
-  "全部已存屬性與來源": {
-    "ja": "保存済みの全属性と出典",
-    "zh-CN": "全部已存属性与来源",
-    "en": "All saved attributes and sources",
-    "es": "Todos los atributos y orígenes guardados"
-  },
   "沒有資料夾資訊": {
     "ja": "フォルダー情報なし",
     "zh-CN": "没有文件夹信息",
@@ -2237,83 +2231,11 @@
     "en": "Unlink project",
     "es": "Desvincular proyecto"
   },
-  "只從本機清單移除。專案設定與資料保留，之後可重新連結。": {
-    "ja": "本機の一覧からのみ削除します。設定とデータは保持され、後で再連携できます。",
-    "zh-CN": "只从本机清单移除。项目设定与数据保留，之後可重新连结。",
-    "en": "Removes only the local link. Project settings and data remain and can be relinked later.",
-    "es": "Solo elimina el vínculo local. Se conservan los ajustes y datos para volver a vincularlos después."
-  },
-  "取消專案連結（保留資料）": {
-    "ja": "連携を解除（データを保持）",
-    "zh-CN": "取消项目连结（保留数据）",
-    "en": "Unlink project (keep data)",
-    "es": "Desvincular proyecto (conservar datos)"
-  },
-  "移除此專案的設定與只在這個專案的資訊。主資料夾裡沒有其他用途的資訊，會先備份到本機再清除。各專案共用的資訊、圖片、其他專案與你的檔案（漫畫、圖片、影片）都會保留。": {
-    "ja": "このプロジェクトの設定と、このプロジェクトだけの情報を削除します。メインフォルダーでほかに使われていない情報は、このパソコンにバックアップしてから消去します。共有の情報、画像、ほかのプロジェクト、あなたのファイル（マンガ、画像、動画）は残ります。",
-    "zh-CN": "移除此项目的设定与仅此项目的信息。主文件夹里没有其他用途的信息，会先备份到本机再清除。各项目共用的信息、图片、其他项目与你的文件（漫画、图片、视频）都会保留。",
-    "en": "Removes this project's settings and its own info. Info in the main folder that nothing else uses is backed up on this computer before it is cleared. Shared info, images, other projects and your files (manga, images, videos) are kept.",
-    "es": "Quita los ajustes del proyecto y su información propia. La información de la carpeta principal que nada más usa se respalda en este equipo antes de borrarla. La información compartida, las imágenes, otros proyectos y tus archivos (mangas, imágenes, vídeos) se conservan."
-  },
-  "即將移除「": {
-    "ja": "削除対象「",
-    "zh-CN": "即将移除「",
-    "en": "Removing “",
-    "es": "Se eliminará «"
-  },
-  "從": {
-    "ja": "対象：",
-    "zh-CN": "从",
-    "en": "From",
-    "es": "De"
-  },
-  "個資料夾移除只在這個專案的資訊，並封存此專案的設定與備份。": {
-    "ja": "件のフォルダーから、このプロジェクトだけの情報を削除し、プロジェクト設定とバックアップを保管します。",
-    "zh-CN": "个文件夹移除仅此项目的信息，并封存此项目的设定与备份。",
-    "en": "folders: remove this project's own info, and archive the project settings and backups.",
-    "es": "carpetas: quitar la información propia del proyecto y archivar sus ajustes y copias."
-  },
-  "主資料夾的資訊會移到本機的備份區；之後重新加入時會建立新的資訊。": {
-    "ja": "メインフォルダーの情報はこのパソコンのバックアップ領域に移ります。あとで追加し直すと新しい情報が作成されます。",
-    "zh-CN": "主文件夹的信息会移到本机的备份区；之后重新加入时会建立新的信息。",
-    "en": "The main folder's info moves to the backup area on this computer; adding it again later creates new info.",
-    "es": "La información de la carpeta principal pasa a la zona de copias de este equipo; si la vuelves a añadir, se crea información nueva."
-  },
   "復原位置：": {
     "ja": "復元先：",
     "zh-CN": "复原位置：",
     "en": "Recovery location:",
     "es": "Ubicación de recuperación:"
-  },
-  "查看影響範圍（": {
-    "ja": "対象範囲を表示（",
-    "zh-CN": "查看影响范围（",
-    "en": "View affected files (",
-    "es": "Ver archivos afectados ("
-  },
-  "個檔案）": {
-    "ja": "ファイル）",
-    "zh-CN": "个文件）",
-    "en": "files)",
-    "es": "archivos)"
-  },
-  "保留／略過項目（": {
-    "ja": "保持／スキップ（",
-    "zh-CN": "保留／略过项目（\u0001",
-    "en": "Preserved / skipped (",
-    "es": "Conservados / omitidos ("
-  },
-  "取消移除": {
-    "ja": "削除をキャンセル",
-    "zh-CN": "取消移除",
-    "en": "Cancel removal",
-    "es": "Cancelar eliminación"
-  },
-  "確認移除專案及私有資料": {
-    "ja": "プロジェクトと非共有値の削除を確認",
-    "zh-CN": "确认移除项目及私有数据",
-    "en": "Confirm project and private data removal",
-    "es": "Confirmar eliminación del proyecto y sus datos privados"
   },
   "部分移除未完成": {
     "ja": "一部の削除が未完了です",
@@ -3874,30 +3796,6 @@
     "ja": "フィールドとデータの削除を確認",
     "zh-CN": "确认删除字段及数据",
     "es": "Confirmar eliminación del campo y sus datos"
-  },
-  "清除主資料夾與所有子資料夾裡 M:orph 建立的資訊，包含各專案共用的資訊、設定與備份。你的檔案（漫畫、圖片、影片）會保留；可能影響其他使用這些資料夾的專案。": {
-    "en": "Clears the info M:orph created in the main folder and all subfolders, including shared info, settings and backups. Your files (manga, images, videos) are kept; other projects using these folders may be affected.",
-    "ja": "メインフォルダーとすべてのサブフォルダーで M:orph が作成した情報（共有の情報、設定、バックアップを含む）を消去します。あなたのファイル（マンガ、画像、動画）は残ります。これらのフォルダーを使うほかのプロジェクトに影響することがあります。",
-    "zh-CN": "清除主文件夹与所有子文件夹里 M:orph 建立的信息，包含各项目共用的信息、设定与备份。你的文件（漫画、图片、视频）会保留；可能影响其他使用这些文件夹的项目。",
-    "es": "Borra la información que creó M:orph en la carpeta principal y todas las subcarpetas, incluida la información compartida, los ajustes y las copias. Tus archivos (mangas, imágenes, vídeos) se conservan; puede afectar a otros proyectos que usan estas carpetas."
-  },
-  "可能受影響的其他專案（{0}）": {
-    "en": "Other projects possibly affected ({0})",
-    "ja": "影響する可能性のある他のプロジェクト（{0}）",
-    "zh-CN": "可能受影响的其他项目（{0}）",
-    "es": "Otros proyectos que pueden verse afectados ({0})"
-  },
-  "這個範圍內各專案共用的資訊會被清除，可能影響其他專案。": {
-    "en": "Shared info in this range will be cleared and may affect other projects.",
-    "ja": "この範囲の共有の情報は消去され、ほかのプロジェクトに影響することがあります。",
-    "zh-CN": "这个范围内各项目共用的信息会被清除，可能影响其他项目。",
-    "es": "La información compartida de este alcance se borrará y puede afectar a otros proyectos."
-  },
-  "已檢查目前已連結的同根、巢狀及重疊專案。": {
-    "en": "Checked currently linked projects with the same, nested or overlapping roots.",
-    "ja": "現在リンクされている同一ルート・入れ子・重複するプロジェクトを確認しました。",
-    "zh-CN": "已检查当前已链接的同根、嵌套及重叠项目。",
-    "es": "Se han comprobado los proyectos vinculados con raíces iguales, anidadas o superpuestas."
   },
   "引用此欄位的組件與常用搜尋會一併移除；其他欄位值保留。": {
     "en": "Components and saved searches referencing this field will also be removed. Other field values are kept.",
@@ -6077,12 +5975,6 @@
     "en": "A game was detected. To protect its files, no info is created inside it.",
     "es": "Se detectó un juego. Para proteger sus archivos, no se crea información dentro."
   },
-  "邊界設定": {
-    "ja": "境界の設定",
-    "zh-CN": "边界设置",
-    "en": "Boundary settings",
-    "es": "Ajustes de límite"
-  },
   "匯出專案資料": {
     "ja": "プロジェクトデータをエクスポート",
     "zh-CN": "导出项目数据",
@@ -6292,12 +6184,6 @@
     "en": "Layout priority: the folder's own choice › type default › the project's current layout.",
     "ja": "レイアウトの優先順位：フォルダー指定 › 種類の既定 › プロジェクトの現在のレイアウト。",
     "es": "Prioridad del diseño: el propio de la carpeta › el del tipo › el actual del proyecto."
-  },
-  "危險操作": {
-    "zh-CN": "危险操作",
-    "en": "Dangerous actions",
-    "ja": "危険な操作",
-    "es": "Acciones peligrosas"
   },
   "新增方式": {
     "zh-CN": "新增方式",
@@ -6532,24 +6418,6 @@
     "en": "What to remove",
     "ja": "削除の範囲",
     "es": "Qué quitar"
-  },
-  "只移除此專案的資料": {
-    "zh-CN": "只移除此项目的数据",
-    "en": "This project's data only",
-    "ja": "このプロジェクトのデータのみ",
-    "es": "Solo los datos de este proyecto"
-  },
-  "連同各專案共用的資訊一併清除": {
-    "zh-CN": "连同各项目共用的信息一并清除",
-    "en": "Also clear shared info",
-    "ja": "共有の情報もまとめて消去",
-    "es": "Borrar también la información compartida"
-  },
-  "預覽移除": {
-    "zh-CN": "预览移除",
-    "en": "Preview removal",
-    "ja": "削除をプレビュー",
-    "es": "Vista previa de la eliminación"
   },
   "連結既有專案": {
     "zh-CN": "链接现有项目",
@@ -6917,24 +6785,6 @@
     "ja": "コンポーネントを複製",
     "es": "Duplicar componente"
   },
-  "只取消連結": {
-    "ja": "連携の解除のみ",
-    "zh-CN": "只取消连结",
-    "en": "Only unlink",
-    "es": "Solo desvincular"
-  },
-  "移除此專案的設定與只在這個專案的資訊；各專案共用的資訊與你的檔案都會保留。": {
-    "ja": "このプロジェクトの設定と、このプロジェクトだけの情報を削除します。共有の情報とあなたのファイルは残ります。",
-    "zh-CN": "移除此项目的设定与仅此项目的信息；各项目共用的信息与你的文件都会保留。",
-    "en": "Removes this project's settings and its own info. Shared info and your files stay.",
-    "es": "Quita los ajustes del proyecto y su información propia. La información compartida y tus archivos se conservan."
-  },
-  "清除範圍內所有 M:orph 建立的資訊；可能影響其他專案。你的檔案（漫畫、圖片、影片）會保留。": {
-    "ja": "範囲内で M:orph が作成したすべての情報を消去します。ほかのプロジェクトに影響することがあります。あなたのファイル（マンガ、画像、動画）は残ります。",
-    "zh-CN": "清除范围内所有 M:orph 建立的信息；可能影响其他项目。你的文件（漫画、图片、视频）会保留。",
-    "en": "Clears all the info M:orph created in the range. It may affect other projects. Your files (manga, images, videos) stay.",
-    "es": "Borra toda la información que creó M:orph en el alcance. Puede afectar a otros proyectos. Tus archivos (mangas, imágenes, vídeos) se conservan."
-  },
   "專案設定尚未保存": {
     "ja": "プロジェクト設定はまだ保存されていません",
     "zh-CN": "项目设定尚未保存",
@@ -6946,5 +6796,95 @@
     "zh-CN": "备份与移除",
     "en": "Backup and removal",
     "es": "Copia y eliminación"
+  },
+  "技術細節（原始資料）": {
+    "ja": "技術的な詳細（元データ）",
+    "zh-CN": "技术细节（原始数据）",
+    "en": "Technical details (raw data)",
+    "es": "Detalles técnicos (datos sin procesar)"
+  },
+  "更多選項": {
+    "ja": "その他のオプション",
+    "zh-CN": "更多选项",
+    "en": "More options",
+    "es": "Más opciones"
+  },
+  "從清單移除": {
+    "ja": "一覧から削除",
+    "zh-CN": "从列表移除",
+    "en": "Remove from list",
+    "es": "Quitar de la lista"
+  },
+  "從清單移除後，資訊都會保留，之後可以加回來。": {
+    "ja": "一覧から削除しても情報はすべて残り、あとで戻せます。",
+    "zh-CN": "从列表移除后，信息都会保留，之后可以加回来。",
+    "en": "Removing it from the list keeps all its info; you can add it back later.",
+    "es": "Al quitarlo de la lista se conserva toda su información; puedes volver a añadirlo después."
+  },
+  "想連資訊一起刪掉？": {
+    "ja": "情報もまとめて削除しますか？",
+    "zh-CN": "想连信息一起删掉？",
+    "en": "Want to delete its info too?",
+    "es": "¿Quieres borrar también su información?"
+  },
+  "刪除這個專案的資訊…": {
+    "ja": "このプロジェクトの情報を削除…",
+    "zh-CN": "删除这个项目的信息…",
+    "en": "Delete this project's info…",
+    "es": "Borrar la información de este proyecto…"
+  },
+  "刪除「{0}」的資訊": {
+    "ja": "「{0}」の情報を削除",
+    "zh-CN": "删除「{0}」的信息",
+    "en": "Delete the info of “{0}”",
+    "es": "Borrar la información de «{0}»"
+  },
+  "會刪除 M:orph 在這些資料夾建立的所有資訊（{0} 個檔案）。": {
+    "ja": "これらのフォルダーで M:orph が作成した情報をすべて削除します（{0} 個のファイル）。",
+    "zh-CN": "会删除 M:orph 在这些文件夹建立的所有信息（{0} 个文件）。",
+    "en": "Everything M:orph created in these folders will be deleted ({0} files).",
+    "es": "Se borrará todo lo que M:orph creó en estas carpetas ({0} archivos)."
+  },
+  "會刪除這個專案的設定，以及 {0} 個資料夾裡只屬於這個專案的資訊。": {
+    "ja": "このプロジェクトの設定と、{0} 個のフォルダーにあるこのプロジェクトだけの情報を削除します。",
+    "zh-CN": "会删除这个项目的设定，以及 {0} 个文件夹里只属于这个项目的信息。",
+    "en": "This project's settings and its own info in {0} folders will be deleted.",
+    "es": "Se borrarán los ajustes del proyecto y su información propia en {0} carpetas."
+  },
+  "你的檔案（漫畫、圖片、影片）不會被刪除。": {
+    "ja": "あなたのファイル（マンガ、画像、動画）は削除されません。",
+    "zh-CN": "你的文件（漫画、图片、视频）不会被删除。",
+    "en": "Your files (manga, images, videos) are not deleted.",
+    "es": "Tus archivos (mangas, imágenes, vídeos) no se borran."
+  },
+  "這些資料夾也被下列專案使用：": {
+    "ja": "これらのフォルダーは次のプロジェクトでも使われています：",
+    "zh-CN": "这些文件夹也被下列项目使用：",
+    "en": "These folders are also used by:",
+    "es": "Estas carpetas también las usan:"
+  },
+  "查看詳細": {
+    "ja": "詳細を表示",
+    "zh-CN": "查看详细",
+    "en": "Show details",
+    "es": "Ver detalles"
+  },
+  "也刪除這些資料夾裡 M:orph 建立的其他資訊": {
+    "ja": "これらのフォルダーで M:orph が作成したほかの情報も削除",
+    "zh-CN": "也删除这些文件夹里 M:orph 建立的其他信息",
+    "en": "Also delete the other info M:orph created in these folders",
+    "es": "Borrar también el resto de información que creó M:orph en estas carpetas"
+  },
+  "包含各專案共用的資訊、遊戲判斷，以及之前從清單移除的專案；也使用這些資料夾的專案會失去這些資訊。只檢查目前已連結的專案。": {
+    "ja": "プロジェクト間で共有する情報、ゲームの判定、以前に一覧から削除したプロジェクトを含みます。これらのフォルダーを使うプロジェクトもこの情報を失います。確認するのは現在リンクしているプロジェクトだけです。",
+    "zh-CN": "包含各项目共用的信息、游戏判断，以及之前从列表移除的项目；也使用这些文件夹的项目会失去这些信息。只检查目前已链接的项目。",
+    "en": "This includes info shared by all projects, game decisions and projects you removed from the list earlier; projects that also use these folders lose this info. Only projects linked now are checked.",
+    "es": "Incluye la información compartida, las decisiones sobre juegos y los proyectos que quitaste de la lista antes; los proyectos que también usan estas carpetas pierden esta información. Solo se comprueban los proyectos vinculados ahora."
+  },
+  "刪除前會先備份到：": {
+    "ja": "削除前のバックアップ先：",
+    "zh-CN": "删除前会先备份到：",
+    "en": "Backed up before deleting to: ",
+    "es": "Antes de borrar se guarda una copia en: "
   }
 }

@@ -55,6 +55,7 @@ interface Props {
   project: Project
   root: string
   rows: FolderRow[]
+  sharedFolders: Set<string>
   structure: FolderRow[]
   busy: boolean
   selected?: string
@@ -72,6 +73,7 @@ export function BrowseWorkspace({
   project,
   root,
   rows,
+  sharedFolders,
   structure,
   busy,
   selected,
@@ -594,6 +596,7 @@ export function BrowseWorkspace({
         key={config.rowId}
         initialTab={configTab}
         row={config}
+        shared={!!config.record && sharedFolders.has(config.record.folderId)}
         project={project}
         busy={busy}
         act={act}

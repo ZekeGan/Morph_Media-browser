@@ -228,6 +228,15 @@ export function App() {
     () => snapshot.rows.filter((r) => r.projectId === selected),
     [snapshot.rows, selected]
   )
+  // Folders that more than one linked project shows; only these need the shared / this-project switch.
+  const sharedFolders = useMemo(() => {
+    const owners = new Map<string, Set<string>>()
+    for (const r of snapshot.rows) {
+      const id = r.record?.folderId
+      if (id) owners.set(id, (owners.get(id) ?? new Set()).add(r.projectId))
+    }
+    return new Set([...owners].filter(([, set]) => set.size > 1).map(([id]) => id))
+  }, [snapshot.rows])
   const chooseDetail = (id: string) => {
     setDetailsId(id)
     return true
@@ -390,6 +399,7 @@ export function App() {
               project={project}
               root={linked!.root}
               rows={rows}
+              sharedFolders={sharedFolders}
               structure={(snapshot.structure ?? snapshot.rows).filter(
                 (r) => r.projectId === selected
               )}

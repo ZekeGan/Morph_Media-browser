@@ -317,13 +317,3 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
   .section-projects, .panel-scrim, .statusbar > span:first-child, .mantine-Tabs-panel { animation: none; }
 }
 .statusbar .status-version { color: var(--muted); }
-.choice-cards { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-.choice-card { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--text); text-align: left; cursor: pointer; }
-.choice-card:hover { border-color: var(--accent); }
-.choice-card.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.choice-card.danger:hover { border-color: var(--error); }
-.choice-card.danger.selected { border-color: var(--error); box-shadow: 0 0 0 1px var(--error); }
-.choice-card.danger.selected .theme-choice { background: var(--error); border-color: var(--error); }
-.choice-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.choice-card:disabled { opacity: .6; cursor: default; }
-.choice-card-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; }

@@ -55,9 +55,8 @@ try {
   await savebar.getByRole('button', { name: '放棄', exact: true }).click()
   await savebar.waitFor({ state: 'hidden' })
   assert.equal(await page.getByRole('textbox', { name: '狀態', exact: true }).inputValue(), '')
-  // The shared / this-project switch lives in the data tab; its explanation is a hover tip and the tab shows a badge.
-  await page.locator('label').filter({ hasText: '僅目前專案' }).click()
-  await page.getByRole('tab', { name: /私有/ }).waitFor()
+  // The shared / this-project switch only appears when another linked project also shows this folder.
+  assert.equal(await page.locator('label').filter({ hasText: '僅目前專案' }).count(), 0)
   // The folder type is detected and can be set by hand.
   const kind = page.getByRole('textbox', { name: '資料夾類型', exact: true })
   await kind.waitFor()
@@ -77,7 +76,7 @@ try {
   await page.getByRole('tab', { name: '遊戲操作', exact: true }).waitFor({ state: 'detached' })
   // Scan boundaries belong to games: a manga project with no detected game does not show them.
   await page.getByRole('tab', { name: '進階', exact: true }).click()
-  await page.getByText('全部已存屬性與來源').waitFor()
+  await page.getByText('技術細節（原始資料）').waitFor()
   assert.equal(await page.getByText('掃描範圍', { exact: true }).count(), 0)
   assert.deepEqual(errors, [])
   passed = true
