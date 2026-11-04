@@ -52,7 +52,7 @@ test('every UI message has complete translations and preserves substitution valu
   assert.equal(tr('應用程式設定'), '應用程式設定')
 })
 test('translations contain no corrupted characters', () => {
-  const garbled = /[ᄀ-ᇿ᐀-ᙿ가-힯-�]/
+  const garbled = /[\u0000-\u0008\u000b\u000c\u000e-\u001fᄀ-ᇿ᐀-ᙿ가-힯-�翿]/
   for (const [locale, messages] of Object.entries(catalog))
     for (const [source, text] of Object.entries(messages))
       assert.ok(!garbled.test(text), locale + ': "' + source + '" has garbled text')

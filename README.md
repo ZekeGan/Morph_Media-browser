@@ -238,7 +238,7 @@ For the full architecture, module responsibilities and how changes are verified,
 
 Current version: **0.39.0 Alpha**
 
-M:orph is a personal open-source project led by its author and is still under active development. Features, the interface and the data format may change as it progresses.
+M:orph is a personal source-available project led by its author and is still under active development. Features, the interface and the data format may change as it progresses.
 
 **Human-led, AI-built**
 
@@ -262,9 +262,9 @@ Before contributing, please read [CLAUDE.md](CLAUDE.md) or [AGENTS.md](AGENTS.md
 
 Copyright (C) 2024–2026 Zeke Gan.
 
-The source code of M:orph is licensed under the **GNU General Public License v3.0 only (GPL-3.0-only)**.
+The source code of M:orph is provided under the **M:orph Source-Available License 1.0**.
 
-You may use, study, modify and distribute the code under the terms of the GPL. When you distribute a modified version, you must follow its requirements, such as providing the source code and keeping the licence notices.
+You may use, study, modify and share the software free of charge. Selling unchanged copies, or copies with only superficial changes such as a new name or logo, requires the author's written permission. Versions with substantive changes to functionality or behavior may be sold. When distributing any version, keep the licence notices and provide recipients with the corresponding source code under the same terms.
 
 For the full licence see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
@@ -274,7 +274,7 @@ The M:orph name and brand logo are not covered by the code licence above. When y
 
 You may say that your work is based on M:orph, but you may not pass a modified version off as the official one or suggest that the original author endorses it.
 
-The GPL allows paid distribution that follows its terms. The official builds are the files published on this repository's Releases page.
+This custom license is source-available rather than a standard open-source license. Earlier versions distributed under the GNU GPL retain their original terms. The official builds are the files published on this repository's Releases page.
 
 For the detailed rules see the [name and logo policy](TRADEMARK.md).
 

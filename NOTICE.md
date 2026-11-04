@@ -3,21 +3,14 @@
 M:orph (Media Browser)
 Copyright (C) 2024–2026 Zeke Gan
 
-This program is free software: you can redistribute it and/or modify it under the terms of the **GNU General Public License, version 3, as published by the Free Software Foundation** (version 3 only, not "or any later version"). It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [LICENSE](LICENSE) file for the full text.
+Project-owned code, documentation and generated sample covers are provided under the [M:orph Source-Available License 1.0](LICENSE). You may use, modify and share them free of charge. Selling unchanged copies, or copies with only superficial changes such as a new name or logo, requires the author's written permission. Versions with substantive changes to functionality or behavior may be sold under the license's conditions.
 
-## Additional terms (GPL-3.0 section 7)
+This is a custom source-available license, not an OSI-approved open-source license. Earlier versions distributed under the GNU GPL remain available under their original terms; the new license does not revoke those rights.
 
-As permitted by section 7 of the GNU GPL version 3, the following additional terms apply to this program:
+The name and logo are governed by [TRADEMARK.md](TRADEMARK.md). The software is provided without warranty; see [LICENSE](LICENSE).
 
-1. **Marking modified versions (section 7(c)).** A modified version must be marked in a reasonable way as different from the original version, and must not be presented as the original M:orph.
-2. **Name and logo (section 7(e)).** No rights are granted under trademark law for the name "M:orph", the subtitle "Media Browser" when used with it, or the M:orph mark and icons (`docs/brand/`, `build/icon.*`, `build/icons/`, and the drawing in `src/BrandMark.tsx`). See [TRADEMARK.md](TRADEMARK.md).
-3. **Notices.** Copyright notices, this file and the license text must be kept in copies and modified versions, as the GPL already requires.
-4. **Documentation and sample images.** The documentation and the generated sample covers in `tests/support/demo-data.ts` and `docs/images/` are under the same terms as the code. The name, mark and icons listed above are not.
+## Third-party software and websites
 
-If you remove or replace these additional terms, the remaining terms of the GPL still apply.
+Third-party dependencies retain their own licenses; this project's resale restriction does not change those licenses. Their license texts are available in the installed packages (pnpm licenses list). Electron includes Chromium and Node.js under their own licenses.
 
-## Third-party software
-
-The dependencies used by the application are licensed under MIT, Apache-2.0, BSD-3-Clause, ISC, 0BSD or CC0-1.0, which are compatible with the GPL. Their license texts are available in the installed packages (`pnpm licenses list`). The Electron runtime bundles Chromium and Node.js under their own licenses.
-
-The application can fetch public information from third-party websites (for example E-Hentai, Steam, DLsite, VNDB and others) only when you ask it to. M:orph is not affiliated with, endorsed by or sponsored by any of them, and their names and trademarks belong to their owners.
+M:orph can fetch information from third-party websites only when requested. It is not affiliated with, endorsed by or sponsored by those websites; their names and trademarks belong to their owners.

@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Licensing: replace the GPL for newly licensed project material with M:orph Source-Available License 1.0: no resale of unchanged or superficially changed copies without written permission; substantively modified versions may be sold with corresponding source. Earlier GPL grants and third-party licenses remain unchanged.
+- Translations: remove corruption from 85 Simplified Chinese messages, clarify row density, automatic audio playback, image components and shared media pages, and restore the Japanese video recovery instruction. Traditional Chinese source keys are unchanged; the corruption check now rejects control characters and the observed garbled suffix.
 - Documentation: clarify game launching, engine detection, portable records and search indexes in all three READMEs; improve English and Japanese wording and align the brand tagline with the homepage.
 - Game detection: a Godot single-file export is recognised by its `.console.exe` beside the EXE; an Electron-packed TyranoScript game is recognised by the top-level names (`tyrano`, `data`) in the file tree at the start of `resources/app.asar` (only that header is read, never file contents). Checked read-only on 37 sample games.
 - Game detection: LucaSystem, the engine of the Steam releases of Key titles (AIR, CLANNAD, Kanon, Summer Pockets), is recognised from `files/SCRIPT.PAK` with other `.PAK` packs; several `.npk` packs are now reported as Nitroplus NPK instead of an unknown engine. Checked read-only on 28 sample games.
