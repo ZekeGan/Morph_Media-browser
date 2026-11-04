@@ -21,10 +21,6 @@ M:orph 是一款以 Windows 為主要平台的**本機媒體收藏瀏覽器**。
 
 與一般檔案總管不同，M:orph 將**收藏內容與顯示方式分開管理**。你不需要重新整理原本的檔案結構，也能建立符合自己習慣的瀏覽介面。
 
-<p align="center">
-  <img src="docs/images/01-main-card.png" width="900" alt="M:orph 主畫面：卡片模式，右側是選取資料夾的內容">
-</p>
-
 ## 主要特色
 
 **三種瀏覽模式**
@@ -33,6 +29,7 @@ M:orph 是一款以 Windows 為主要平台的**本機媒體收藏瀏覽器**。
 
 <table>
   <tr>
+     <td align="center"><img src="docs/images/01-main-card.png" alt="卡片模式"><br>卡片</td>
     <td align="center"><img src="docs/images/02-table.png" alt="表格模式"><br>表格</td>
     <td align="center"><img src="docs/images/03-tree.png" alt="樹狀模式"><br>樹狀</td>
   </tr>
@@ -62,9 +59,9 @@ M:orph 以「專案」管理收藏，每個專案對應一個指定的根資料�
 
 你可以依照資料夾層級瀏覽內容，也能使用不同方式呈現收藏：
 
-- **卡片模式：**以封面、標籤與自訂資訊為主的視覺化瀏覽。
-- **表格模式：**適合比較大量收藏的名稱、評分、日期與其他欄位。
-- **樹狀模式：**保留資料夾之間的階層關係，方便瀏覽複雜的目錄結構。
+- **卡片模式：** 以封面、標籤與自訂資訊為主的視覺化瀏覽。
+- **表格模式：** 適合比較大量收藏的名稱、評分、日期與其他欄位。
+- **樹狀模式：** 保留資料夾之間的階層關係，方便瀏覽複雜的目錄結構。
 
 選取資料夾時，右側面板會顯示相關資訊與內容預覽，不必離開目前的收藏清單。
 
@@ -233,12 +230,6 @@ pnpm dev
 | `pnpm format:check` | 格式檢查 |
 | `pnpm dist` | 建置 Windows 執行檔 |
 
-```mermaid
-flowchart TB
-  R["renderer · src/<br/>畫面、草稿、互動"] <-->|"受控 API"| P["preload"]
-  P <-->|IPC| M["main · electron/<br/>驗證、檔案、系統操作"]
-  M --> D[("可攜記錄 · 搜尋索引 · 本機設定")]
-```
 
 主要技術：Electron、React 19、Vite 7、TypeScript、Mantine 8、Node SQLite 與 Playwright。
 
