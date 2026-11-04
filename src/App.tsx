@@ -553,6 +553,7 @@ export function App() {
         snapshot={snapshot}
         busy={busy}
         act={act}
+        run={explore}
         relink={() => {
           setProblems(false)
           void beginLink()

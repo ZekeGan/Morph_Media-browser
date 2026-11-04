@@ -47,6 +47,7 @@ export type EditorInspectorProps = {
   change: (next: Project) => void
   updateCell: (update: Partial<Cell>) => void
   removeSelected: () => void
+  duplicateSelected: () => void
   setRenaming: (value: { id: string; name: string }) => void
 }
 
@@ -70,6 +71,7 @@ export function EditorInspector(props: EditorInspectorProps) {
     change,
     updateCell,
     removeSelected,
+    duplicateSelected,
     setRenaming,
   } = props
   return (
@@ -84,16 +86,23 @@ export function EditorInspector(props: EditorInspectorProps) {
                 {hints[selectedCell.kind]}
               </Text>
             </div>
-            <Tooltip label={tr('移除組件') + ' (Delete)'}>
-              <ActionIcon
-                color="red"
-                variant="light"
-                aria-label={tr('移除組件')}
-                onClick={removeSelected}
-              >
-                <Icon name="close" size={16} />
-              </ActionIcon>
-            </Tooltip>
+            <Group gap={4} wrap="nowrap">
+              <Tooltip label={tr('複製組件')}>
+                <ActionIcon variant="light" aria-label={tr('複製組件')} onClick={duplicateSelected}>
+                  <Icon name="copy" size={16} />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label={tr('移除組件') + ' (Delete)'}>
+                <ActionIcon
+                  color="red"
+                  variant="light"
+                  aria-label={tr('移除組件')}
+                  onClick={removeSelected}
+                >
+                  <Icon name="close" size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
           </Group>
           <Accordion multiple variant="separated" value={openSections} onChange={setOpenSections}>
             {hasContent && (

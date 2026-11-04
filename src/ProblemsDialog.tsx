@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Accordion, Alert, Badge, Button, Group, Modal, Stack, Text } from '@mantine/core'
 import { t as tr, useLocale } from './i18n'
 import type { FolderRow, LinkedProject, Request, Response, Snapshot } from '../shared/model'
+import type { ExplorerRequest, ExplorerResponse } from '../shared/explorer'
 
 type Overview = Pick<Snapshot, 'projects' | 'rows' | 'problems'>
 
@@ -11,6 +12,10 @@ export const problemItems = (snapshot: Overview) => ({
   duplicates: snapshot.rows.filter((r) => r.duplicate),
   broken: snapshot.rows.filter((r) => r.error && !r.duplicate),
   stopped: snapshot.rows.filter((r) => r.stopped && !r.error && !r.duplicate),
+  // Looks like a game but nobody has said so yet.
+  candidates: snapshot.rows.filter(
+    (r) => r.boundary && r.boundary.state !== 'root' && r.boundary.state !== 'not-game' && r.record
+  ),
 })
 // Scan messages that only say a game folder is being protected are notes, not problems.
 const isNote = (text: string) => /內部不寫入|唯讀且不深入/.test(text)
@@ -35,6 +40,7 @@ export function ProblemsDialog({
   snapshot,
   busy,
   act,
+  run,
   openFolder,
   relink,
 }: {
@@ -43,12 +49,13 @@ export function ProblemsDialog({
   snapshot: Snapshot
   busy: boolean
   act: (request: Request) => Promise<Response | undefined>
+  run: (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
   openFolder: (row: FolderRow) => void
   relink: () => void
 }) {
   useLocale()
-  const { roots, duplicates, broken, stopped } = problemItems(snapshot),
-    count = roots.length + duplicates.length + broken.length + stopped.length,
+  const { roots, duplicates, broken, stopped, candidates } = problemItems(snapshot),
+    count = roots.length + duplicates.length + broken.length + stopped.length + candidates.length,
     { notes, others } = splitMessages(snapshot.problems)
   const entry = (
     key: string,
@@ -186,6 +193,50 @@ export function ProblemsDialog({
               >
                 {tr('重新啟用記錄')}
               </Button>
+            )
+          )
+        )}
+        {group(
+          tr('待確認的遊戲'),
+          tr('這些資料夾看起來像遊戲，所以內部先受保護、不會寫入。請告訴工具它是不是遊戲。'),
+          candidates.map((row) =>
+            entry(
+              row.rowId,
+              row.name,
+              undefined,
+              row.path,
+              <>
+                <Button
+                  size="compact-sm"
+                  disabled={busy}
+                  onClick={() =>
+                    void run({
+                      action: 'boundary',
+                      rowId: row.rowId,
+                      revision: row.record!.revision,
+                      state: 'root',
+                    })
+                  }
+                >
+                  {tr('確認遊戲 ROOT')}
+                </Button>
+                <Button
+                  size="compact-sm"
+                  variant="default"
+                  disabled={busy}
+                  onClick={() =>
+                    void run({
+                      action: 'boundary',
+                      rowId: row.rowId,
+                      revision: row.record!.revision,
+                      state: 'not-game',
+                    })
+                  }
+                >
+                  {tr('這不是遊戲目錄')}
+                </Button>
+              </>,
+              () => openFolder(row)
             )
           )
         )}

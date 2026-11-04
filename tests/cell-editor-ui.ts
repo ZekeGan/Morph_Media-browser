@@ -232,6 +232,16 @@ try {
     '進度'
   )
   await page.screenshot({ path: path.join(root, 'editor.png') })
+  // A selected component can be copied; the copy is a new component.
+  const cellCount = await page.locator('.editor-cell').count()
+  await button('複製組件').click()
+  await page.waitForFunction(
+    (n) => document.querySelectorAll('.editor-cell').length === n + 1,
+    cellCount
+  )
+  await page.evaluate(() => {
+    window.confirm = () => true
+  })
   await page.getByRole('button', { name: /^(放棄變更|關閉)$/ }).click()
   assert.deepEqual(await fs.readFile(folderFile(media)), originalRecord)
   assert.equal(await fs.readFile(path.join(media, 'original.txt'), 'utf8'), 'PRESERVE ORIGINAL')

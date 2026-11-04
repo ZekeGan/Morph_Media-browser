@@ -206,11 +206,11 @@ try {
   ])
   assert.equal(tops[0], tops[1])
   await page.locator('.titlebar').hover()
-  assert.equal(
-    await page
-      .locator('.sidebar-project.selected .project-actions')
-      .evaluate((e) => getComputedStyle(e).visibility),
-    'hidden'
+  // The actions fade out (visibility flips once the short fade is over), so wait for it instead of reading at once.
+  await page.waitForFunction(
+    () =>
+      getComputedStyle(document.querySelector('.sidebar-project.selected .project-actions')!)
+        .visibility === 'hidden'
   )
   assert.equal(await page.getByRole('button', { name: '新增專案', exact: true }).count(), 1)
   await page.getByRole('button', { name: '新增群組', exact: true }).click()

@@ -6952,5 +6952,23 @@
     "en": "Preview",
     "ja": "プレビュー",
     "es": "Vista previa"
+  },
+  "待確認的遊戲": {
+    "zh-CN": "待确认的游戏",
+    "en": "Games to confirm",
+    "ja": "確認待ちのゲーム",
+    "es": "Juegos por confirmar"
+  },
+  "這些資料夾看起來像遊戲，所以內部先受保護、不會寫入。請告訴工具它是不是遊戲。": {
+    "zh-CN": "这些文件夹看起来像游戏，所以内部先受保护、不会写入。请告诉工具它是不是游戏。",
+    "en": "These folders look like games, so their insides are protected and nothing is written there. Tell the app whether each one is a game.",
+    "ja": "これらのフォルダーはゲームのようなので、内部は保護され何も書き込まれません。ゲームかどうかを指定してください。",
+    "es": "Estas carpetas parecen juegos, así que su interior está protegido y no se escribe nada. Indica si cada una es un juego."
+  },
+  "複製組件": {
+    "zh-CN": "复制组件",
+    "en": "Duplicate component",
+    "ja": "コンポーネントを複製",
+    "es": "Duplicar componente"
   }
 }

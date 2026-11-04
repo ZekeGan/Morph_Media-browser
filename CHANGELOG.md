@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Problems and recovery: a "Games to confirm" group lists folders that look like games but nobody has confirmed, with "Confirm game ROOT" and "This is not a game" on each, so they can be settled without opening each folder's settings.
+- Layout editor: a selected component can be duplicated (the copy goes under the last component and gets its own image slot), and the landing spot of a dragged component is drawn in the theme's accent colour.
 - Game toolbar editor: the button colour is picked from a row of ten ready-made swatches (the chosen one shows a tick), "custom colour" opens an inline picker instead of a drop-down that landed below the dialog, and a preview button shows the label in the chosen colour.
 - The version number is shown in the app: "v0.39.0" in the status bar and "M:orph 0.39.0" at the bottom of Application settings (read from package.json when the interface is built).
 - Problems and recovery: scan messages that only say a game folder is protected ("inside is not written to") are no longer counted as problems; they sit in a folded "Game folder protection notes" section with an explanation, so the status bar and the dialog only show things that need doing.

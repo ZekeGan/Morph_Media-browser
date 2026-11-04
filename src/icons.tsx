@@ -223,6 +223,12 @@ const paths = {
     </>
   ),
   external: <path d="M8 4H4v12h12v-4M11 3h6v6M17 3l-8 8" />,
+  copy: (
+    <>
+      <rect x="7" y="7" width="10" height="10" rx="2" />
+      <path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+    </>
+  ),
   layers: <path d="m10 3-7 4 7 4 7-4zM3 11l7 4 7-4M3 14.5l7 4 7-4" />,
   layout: (
     <>

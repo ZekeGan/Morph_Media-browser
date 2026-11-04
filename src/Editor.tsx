@@ -407,6 +407,29 @@ export function Editor({
     setSelected(cell.cellId)
     setError('')
   }
+  // A copy goes under the last component, with its own image slot if it is an image.
+  const duplicateSelected = () => {
+    const cell = level.find((c) => c.cellId === selected)
+    if (!cell || busy) return
+    if (level.length >= 50) {
+      setError(tr('POC 每張卡片最多 50 個組件'))
+      return
+    }
+    const y = Math.max(0, ...level.map((c) => c.grid.y + c.grid.h)),
+      copy: Cell = {
+        ...structuredClone(cell),
+        cellId: crypto.randomUUID(),
+        grid: { ...cell.grid, y },
+      }
+    if (copy.kind === 'image') copy.attributeId = crypto.randomUUID()
+    if (y + copy.grid.h > 100) {
+      setError(tr('畫布沒有空間，請先移動或刪除組件'))
+      return
+    }
+    change(withLevel([...level, copy]))
+    setSelected(copy.cellId)
+    setError('')
+  }
   const removeSelected = () => {
     if (!selected || busy) return
     change(withLevel(level.filter((c) => c.cellId !== selected)))
@@ -926,6 +949,7 @@ export function Editor({
           change={change}
           updateCell={updateCell}
           removeSelected={removeSelected}
+          duplicateSelected={duplicateSelected}
           setRenaming={setRenaming}
         />
       </div>
