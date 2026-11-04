@@ -645,6 +645,63 @@ test('Godot needs an EXE with its own PCK; a lone EXE (embedded PCK) and PAK fil
   await files(path.join(media, 'Siglus'), ['SiglusEngine.exe', 'Scene.pck', 'Gameexe.dat'])
   assert.deepEqual((await detectGame(path.join(media, 'Siglus')))?.engines, ['SiglusEngine'])
 })
+test('Godot single-file exports are recognised by their console wrapper, not by a lone EXE', async (t) => {
+  const { media, files } = await fixture(t)
+  await files(path.join(media, 'Train'), ['Train.exe', 'Train.console.exe'])
+  assert.deepEqual((await detectGame(path.join(media, 'Train')))?.engines, ['Godot'])
+  // The wrapper must belong to an EXE of the same name; an unrelated pair is not evidence.
+  await files(path.join(media, 'Unrelated'), ['Other.exe', 'Tool.console.exe'])
+  await files(path.join(media, 'WrapperOnly'), ['Tool.console.exe'])
+  for (const name of ['Unrelated', 'WrapperOnly'])
+    assert.equal(await detectGame(path.join(media, name)), undefined, name)
+})
+// A minimal app.asar: the 16-byte pickle header and the JSON file tree (no file contents).
+const asar = (tree: object, patch?: (head: Buffer) => void) => {
+  const json = Buffer.from(JSON.stringify({ files: tree })),
+    pad = (4 - (json.length % 4)) % 4,
+    head = Buffer.alloc(16)
+  head.writeUInt32LE(4, 0)
+  head.writeUInt32LE(8 + json.length + pad, 4)
+  head.writeUInt32LE(4 + json.length + pad, 8)
+  head.writeUInt32LE(json.length, 12)
+  patch?.(head)
+  return Buffer.concat([head, json, Buffer.alloc(pad)])
+}
+test('an Electron-packed TyranoScript game is recognised from the top of its app.asar tree, never its contents', async (t) => {
+  const { media } = await fixture(t)
+  const write = async (name: string, data: Buffer) => {
+    const dir = path.join(media, name)
+    await fs.mkdir(path.join(dir, 'resources'), { recursive: true })
+    await fs.writeFile(path.join(dir, 'Game.exe'), 'x')
+    await fs.writeFile(path.join(dir, 'resources', 'app.asar'), data)
+  }
+  const folder = { files: {} },
+    file = { size: 1, offset: '0' }
+  await write('Tyrano', asar({ tyrano: folder, data: folder, 'index.html': file }))
+  const found = await detectGame(path.join(media, 'Tyrano'))
+  assert.deepEqual(found?.engines, ['TyranoScript'])
+  assert.ok(!found!.evidence.some((line) => line.includes('封裝應用候選')))
+  // Other packed apps stay the unknown candidate, and damaged or oversized headers never throw.
+  await write('OtherApp', asar({ src: folder, 'package.json': file }))
+  await write('NoData', asar({ tyrano: folder }))
+  await write(
+    'NotJson',
+    Buffer.concat([asar({}).subarray(0, 12), Buffer.from('\0\0\0\x20{not json at all ...........')])
+  )
+  await write(
+    'Huge',
+    asar({ tyrano: folder, data: folder }, (head) => head.writeUInt32LE(0x7fffffff, 12))
+  )
+  await write('Tiny', Buffer.from('ASAR'))
+  // A directory named app.asar (unpacked app) cannot be opened as a file: still the candidate, no exception.
+  await fs.mkdir(path.join(media, 'AsarDir', 'resources', 'app.asar'), { recursive: true })
+  await fs.writeFile(path.join(media, 'AsarDir', 'Game.exe'), 'x')
+  for (const name of ['OtherApp', 'NoData', 'NotJson', 'Huge', 'Tiny', 'AsarDir']) {
+    const result = await detectGame(path.join(media, name))
+    assert.deepEqual(result?.engines, [], name)
+    assert.match(result!.evidence.join(' '), /封裝應用候選|解包應用候選/, name)
+  }
+})
 test('ASAR remains an unknown candidate; manual ROOT/not-game and readonly traversal never rewrite history', async (t) => {
   const { media, lib, files } = await fixture(t)
   for (const name of ['TyranoManualSample', 'TyranoAsarSample', 'TyranoDataSample'])

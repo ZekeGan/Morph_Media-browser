@@ -55,7 +55,7 @@
 | --- | --- | --- |
 | Unity | EXE、`UnityPlayer.dll`、對應 `*_Data` 組合；版本／改名變體另驗證，非遊戲工具也能命中。 | 依據已查：[Windows 建置](https://docs.unity3d.com/6000.0/Documentation/Manual/WindowsStandaloneBinaries.html)。 |
 | Unreal Engine | 執行檔與部署內容結構組合，`.pak` 只是輔助；不同世代及容器需分規則，不能僅看到副檔名就判定。 | 依據已查：[封裝說明](https://dev.epicgames.com/documentation/en-us/unreal-engine/packaging-your-project)；UE3／4／5 變體待樣本。 |
-| Godot | 同名 EXE＋`.pck` 判為 Godot（2026-11-04 使用者核定）。內嵌 PCK 的單一 EXE 沒有外部特徵：引擎未知、不判為遊戲（一般資料夾），可手動指定為遊戲，引擎顯示未知；不讀 EXE 內容。`.pak` 不是 Godot 證據（Unreal、id Tech 與許多模組也用）。 | 依據已查：[Windows 匯出](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_windows.html)。 |
+| Godot | 同名 EXE＋`.pck` 判為 Godot（2026-11-04 使用者核定）。內嵌 PCK 的單一 EXE 只有在旁邊有同名的 `.console.exe`（Godot 匯出時附帶的主控台版本，2026-11-04 依 Train45 樣本補上）時判為 Godot；單獨一個 EXE 仍然引擎未知、不判為遊戲（一般資料夾），可手動指定為遊戲；不讀 EXE 內容。`.pak` 不是 Godot 證據（Unreal、id Tech 與許多模組也用）。 | 依據已查：[Windows 匯出](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_windows.html)。 |
 | RPG Maker | 2000／2003、XP／VX／VX Ace、MV／MZ、UNITE 分家族規則；MV 核心腳本與資料結構可作組合線索。UNITE 與 Unity 規則可能重疊，不強行猜版本。 | MV／MZ 依據已查：[MV 核心原始碼](https://github.com/rpgtkoolmv/corescript)、[MZ 部署](https://rpgmakerofficial.com/product/MZ_help-en/01_11_03.html)。其他版本及封裝變體待樣本，不以編輯器專案檔作發行版必要條件。 |
 | Ren’Py | 啟動程式與 `game/` 內 `.rpy`／`.rpyc`／`.rpa` 等結構組合；不要求原始腳本存在。 | 依據已查：[檔案與目錄](https://www.renpy.org/doc/html/language_basics.html)、[發行封裝](https://www.renpy.org/doc/html/build.html)。 |
 | 吉里吉里／KiriKiri／KiriKiri Z | 執行檔與 XP3 等線索組合，副檔名不唯一，內嵌／自訂包裝需人工指定；不解包。 | XP3 依據已查：[引擎原始碼](https://github.com/krkrz/krkrz/blob/master/base/XP3Archive.cpp)；發行版組合待樣本。 |
@@ -186,6 +186,7 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 | RPG Developer Bakin | `data/bakinplayer.exe` 或 `data/data.rbpack`，且有 EXE | Blade of Zenna Demo |
 | SMILE GAME BUILDER | `data.sgbpack` 或 `sgb_rpgplayer.exe` | グランブーム国物語 |
 | LucaSystem | `files/SCRIPT.PAK` 加上 `files` 裡至少另一個 `.PAK`，且有 EXE；Prototype 的引擎，Key 作品的 Steam 版（AIR、CLANNAD、Kanon、Summer Pockets 等）使用，依 [LuckSystem](https://github.com/wetor/LuckSystem) 的說明確認 | AIR（Steam 版，原版是 RealLive） |
+| TyranoScript（Electron 打包版） | `resources/app.asar` 檔案目錄的最上層有 `tyrano` 與 `data`，且有 EXE。只讀 asar 開頭的 16 位元組表頭與最多 4 MiB 的 JSON 檔案目錄、只看最上層名稱，不讀檔案內容、不解包；表頭異常或過大一律當成原本的「封裝應用候選」。依賴的是 asar 的公開格式 | HOME_、NeetAndAngel、otsutome |
 | Nitroplus NPK | 至少 3 個 `.npk` 封包＋EXE；Nitroplus／Nitro Origin 的封包格式，引擎沒有公開名稱，故以封包命名 | みにくいモジカの子（Steam 版） |
 
 同批以樣本確認既有規則：Ren’Py、Godot（EXE＋同名 `.pck`）、Unity 照常辨識；Godot 單一 EXE 照規則不判遊戲。標為 Majiro 的「Narcissu」實際是 NScripter（`nscript.dat`＋`arc.nsa`），由既有規則辨識，Majiro 仍無真正樣本。標為 Ethornell 的「水夏 A.S.+」實際是 Circus（CRX 圖片是 Circus 的格式），Ethornell 仍以既有規則（`BGI*.exe`＋`.arc`）辨識。「RPG Developer BAKIN Multi Vignette System」樣本資料夾是空的，無法判斷。反例 `.int`、`.pac` 單獨出現、`love.dll` 單獨出現都不判遊戲，已寫進測試。

@@ -8,6 +8,32 @@ export interface GameDetection {
   engines: string[]
   evidence: string[]
 }
+// An Electron app.asar starts with a 16-byte pickle header followed by the JSON file tree. Only that tree's
+// top-level names are read (never file contents), and only up to a fixed size; anything unexpected gives undefined.
+export const ASAR_HEADER_LIMIT = 4 * 1024 * 1024
+export async function asarTopLevel(file: string): Promise<Set<string> | undefined> {
+  let handle: Awaited<ReturnType<typeof fs.open>> | undefined
+  try {
+    // A file that cannot be opened (locked, no permission) simply stays the unknown candidate.
+    handle = await fs.open(file, 'r')
+    const stat = await handle.stat()
+    if (!stat.isFile() || stat.size < 17) return undefined
+    const head = Buffer.alloc(16)
+    if ((await handle.read(head, 0, 16, 0)).bytesRead !== 16) return undefined
+    const length = head.readUInt32LE(12)
+    if (head.readUInt32LE(0) !== 4 || length < 2 || length > ASAR_HEADER_LIMIT) return undefined
+    if (length > head.readUInt32LE(8) || 16 + length > stat.size) return undefined
+    const json = Buffer.alloc(length)
+    if ((await handle.read(json, 0, length, 16)).bytesRead !== length) return undefined
+    const tree = JSON.parse(json.toString('utf8')) as { files?: unknown }
+    if (!tree || typeof tree.files !== 'object' || tree.files === null) return undefined
+    return new Set(Object.keys(tree.files).map((name) => name.toLowerCase()))
+  } catch {
+    return undefined
+  } finally {
+    await handle?.close().catch(() => {})
+  }
+}
 export const insideAppBundle = (dir: string) =>
   path
     .resolve(dir)
@@ -110,6 +136,17 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
       !exes.every((e) => /godot.*(editor|tools)/i.test(e.name))
     )
       add('Godot', '同名 EXE／PCK（內嵌版本需人工確認）')
+    // A single-file export (PCK embedded) still ships Godot's console wrapper: Game.exe beside Game.console.exe.
+    if (
+      !result.engines.includes('Godot') &&
+      exes.some(
+        (e) =>
+          /\.console\.exe$/i.test(e.name) &&
+          stems.some((stem) => stem.toLowerCase() === e.name.slice(0, -12).toLowerCase())
+      ) &&
+      !exes.every((e) => /godot.*(editor|tools)/i.test(e.name))
+    )
+      add('Godot', '同名 EXE + .console.exe（Godot 的主控台版本；PCK 內嵌，需人工確認）')
     for (const base of ['', 'www/']) {
       if (!(await folder(base + 'data')) || !(await folder(base + 'js'))) continue
       if (await file(base + 'js/rmmz_core.js'))
@@ -128,6 +165,13 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
     )
       add('TyranoScript', 'Tyrano 入口／核心 + tyrano + data + EXE')
     const packedApp = await file('resources/app.asar')
+    // An Electron-packed TyranoScript game keeps tyrano/ and data/ at the top of its app.asar tree.
+    const packedTree = packedApp
+      ? await asarTopLevel(path.join(dir, 'resources', 'app.asar'))
+      : undefined
+    const tyranoPacked = !!packedTree?.has('tyrano') && packedTree.has('data')
+    if (tyranoPacked)
+      add('TyranoScript', 'resources/app.asar 的檔案目錄含 tyrano + data + EXE（不解包）')
     // Do not infer the contents of a real archive from a neighboring app folder.
     if (!packedApp)
       for (const base of ['resources/app', 'resources/app.asar']) {
@@ -260,7 +304,7 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
         'LucaSystem',
         'files/SCRIPT.PAK 與其他 .PAK 封包 + EXE（Prototype 引擎，Key 作品 Steam 版）'
       )
-    if (packedApp)
+    if (packedApp && !tyranoPacked)
       add(
         undefined,
         'EXE + resources/app.asar：封裝應用候選，不解包或推定引擎；請確認遊戲 ROOT 或標記非遊戲'
