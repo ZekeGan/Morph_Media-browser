@@ -1,8 +1,20 @@
-import type { SettingsImportPreview } from '../shared/workspace'
+import type { BackupPreview } from '../shared/backup'
+import type { Request, Response } from '../shared/model'
 import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
 import { useEffect, useState } from 'react'
-import { Accordion, Alert, Button, Group, Modal, Select, Stack, Tabs, Text } from '@mantine/core'
+import {
+  Accordion,
+  Alert,
+  Button,
+  Checkbox,
+  Group,
+  Modal,
+  Select,
+  Stack,
+  Tabs,
+  Text,
+} from '@mantine/core'
 import { localeOptions, type LocaleId } from '../shared/locales'
 import { themes, useAppTheme } from './themes/ThemeProvider'
 import type { ThemeId } from '../shared/themes'
@@ -13,30 +25,33 @@ export function ApplicationSettings({
   opened,
   close,
   onDirty,
+  act,
+  busy,
 }: {
   opened: boolean
   close: () => void
   onDirty: (value: boolean) => void
+  act: (request: Request) => Promise<Response | undefined>
+  busy: boolean
 }) {
   useLocale()
 
   const appearance = useAppTheme(),
     [saving, setSaving] = useState(false),
     [error, setError] = useState('')
-  const [importPreview, setImportPreview] = useState<SettingsImportPreview>(),
-    [importMode, setImportMode] = useState<'merge' | 'replace'>('merge'),
-    [backups, setBackups] = useState<{ id: string; createdAt: string }[]>([]),
-    [transferResult, setTransferResult] = useState('')
+  const [restorePreview, setRestorePreview] = useState<BackupPreview>(),
+    [restoreSettings, setRestoreSettings] = useState(true),
+    [restoreProjects, setRestoreProjects] = useState<string[]>([]),
+    [backups, setBackups] = useState<{ id: string; createdAt: string }[]>([])
   const [applied, setApplied] = useState(false)
   useEffect(() => {
-    onDirty(opened && !!importPreview)
+    onDirty(opened && !!restorePreview)
     return () => onDirty(false)
-  }, [opened, importPreview, onDirty])
+  }, [opened, restorePreview, onDirty])
   useEffect(() => {
     if (opened) {
       setError('')
-      setImportPreview(undefined)
-      setTransferResult('')
+      setRestorePreview(undefined)
       void window.desktop
         .updateWorkspace({ action: 'listBackups' })
         .then((state) => setBackups(state.backups ?? []))
@@ -45,7 +60,7 @@ export function ApplicationSettings({
     }
   }, [opened])
   const requestClose = () => {
-    if (!saving && (!importPreview || window.confirm(tr('放棄尚未套用的設定匯入？')))) close()
+    if (!saving && (!restorePreview || window.confirm(tr('放棄尚未完成的還原？')))) close()
   }
   // Language and theme apply as soon as they are chosen; a failed save puts the saved choice back.
   const apply = async (theme: ThemeId, locale: LocaleId) => {
@@ -65,73 +80,39 @@ export function ApplicationSettings({
       setSaving(false)
     }
   }
-  const transferLabels: Record<string, string> = {
-    groups: tr('群組'),
-    projects: tr('專案分類與最愛'),
-    theme: tr('介面主題'),
-    locale: tr('介面語言'),
-    sidebarWidth: tr('側欄寬度'),
-    sidebarHidden: tr('隱藏側欄'),
-    collapsed: tr('收合狀態'),
-    sections: tr('群組順序'),
-    projectOrder: tr('專案順序'),
-    videoAudio: tr('影片音量'),
+  const showRestore = (preview: BackupPreview) => {
+    setRestorePreview(preview)
+    setRestoreSettings(preview.settings !== undefined)
+    setRestoreProjects(preview.projects.filter((p) => p.state === 'ready').map((p) => p.projectId))
   }
-  const formatPreference = (value: unknown, field: string): string => {
-    if (value === undefined) return tr('未設定')
-    if (typeof value === 'boolean') return value ? tr('是') : tr('否')
-    if (field === 'locale')
-      return localeOptions.find((option) => option.value === value)?.label ?? String(value)
-    if (field === 'theme')
-      return tr(themes.find((theme) => theme.id === value)?.name ?? String(value))
-    if (field === 'groups' && Array.isArray(value))
-      return value.map((group) => group.name).join('、') || tr('無')
-    if (field === 'projects' && value && typeof value === 'object')
-      return tr(
-        '{0} 個專案，{1} 個最愛',
-        Object.keys(value).length,
-        Object.values(value).filter((project) => project.favorite).length
-      )
-    return typeof value === 'object' ? tr('{0} 筆', Object.keys(value ?? {}).length) : String(value)
-  }
-  const transfer = async (action: 'export' | 'import') => {
-    setSaving(true)
+  const chooseBackup = async () => {
     setError('')
-    setTransferResult('')
-    try {
-      const state = await window.desktop.settingsFile(action)
-      if (state.cancelled) return
-      if (state.importPreview) {
-        setImportPreview(state.importPreview)
-        setImportMode('merge')
-      } else setTransferResult('設定包已匯出')
-    } catch (reason) {
-      setError(String(reason))
-    } finally {
-      setSaving(false)
-    }
+    const result = await act({ action: 'previewBackup' })
+    if (result?.backup) showRestore(result.backup)
   }
-  const applyImport = async () => {
-    if (!importPreview) return
-    setSaving(true)
-    setError('')
-    try {
-      await window.desktop.updateWorkspace({
-        action: 'applyPackage',
-        token: importPreview.token,
-        mode: importMode,
-      })
-      // The page is reloaded next; the unsaved-changes guard must already see "clean", so the state is committed first
-      // (React 19 no longer applies updates made after an await before a timer callback runs).
-      flushSync(() => {
-        setImportPreview(undefined)
-        onDirty(false)
-      })
-      window.location.reload()
-    } catch (reason) {
-      setError(String(reason))
-      setSaving(false)
-    }
+  const locate = async (projectId: string) => {
+    if (!restorePreview) return
+    const result = await act({ action: 'locateBackup', token: restorePreview.token, projectId })
+    if (!result?.backup) return
+    setRestorePreview(result.backup)
+    if (result.backup.projects.find((p) => p.projectId === projectId)?.state === 'ready')
+      setRestoreProjects((list) => [...new Set([...list, projectId])])
+  }
+  const applyRestore = async () => {
+    if (!restorePreview) return
+    const result = await act({
+      action: 'restoreBackup',
+      token: restorePreview.token,
+      settings: restoreSettings && restorePreview.settings !== undefined,
+      projects: restoreProjects,
+    })
+    if (!result?.restored) return
+    // Restored settings change groups, theme and language: reload so every part of the window reads them again.
+    flushSync(() => {
+      setRestorePreview(undefined)
+      onDirty(false)
+    })
+    if (result.restored.settings) window.location.reload()
   }
   const restore = async (backupId: string) => {
     if (!window.confirm(tr('復原此設定備份？目前設定會先另存備份，媒體與專案連結保持原樣。')))
@@ -162,7 +143,7 @@ export function ApplicationSettings({
           <Tabs.Tab value="general" leftSection={<Icon name="sliders" />}>
             {tr('一般')}
           </Tabs.Tab>
-          <Tabs.Tab value="data">{tr('資料與備份')}</Tabs.Tab>
+          <Tabs.Tab value="data">{tr('備份')}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="general" pt="lg">
           <Select
@@ -243,64 +224,118 @@ export function ApplicationSettings({
         <Tabs.Panel value="data" pt="lg">
           <Stack gap="lg">
             <section className="settings-section">
-              <Text fw={600}>{tr('設定備份')}</Text>
+              <Text fw={600}>{tr('備份')}</Text>
               <Text size="sm" c="dimmed" mb="sm">
-                {tr('匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。')}
+                {tr(
+                  '把設定和所有專案的資訊（標籤、評分、封面）存成一個資料夾。你的檔案（漫畫、圖片、影片）不會被複製。'
+                )}
               </Text>
               <Stack>
                 <Group>
-                  <Button disabled={saving} onClick={() => void transfer('export')}>
-                    {tr('匯出設定包')}
+                  <Button
+                    disabled={busy || !!restorePreview}
+                    onClick={() => void act({ action: 'createBackup' })}
+                  >
+                    {tr('建立備份')}
                   </Button>
                   <Button
                     variant="default"
-                    disabled={saving}
-                    onClick={() => void transfer('import')}
+                    disabled={busy || !!restorePreview}
+                    onClick={() => void chooseBackup()}
                   >
-                    {tr('匯入設定包')}
+                    {tr('從備份還原')}
                   </Button>
                 </Group>
-                {importPreview && (
-                  <Stack>
-                    <Text fw={600}>{tr('設定匯入預覽')}</Text>
-                    {importPreview.changes.map((change) => (
-                      <Text key={change.field} size="sm">
-                        {transferLabels[change.field] ?? change.field}:{' '}
-                        {formatPreference(change.current, change.field)} →{' '}
-                        {formatPreference(change.incoming, change.field)}
-                      </Text>
+                {restorePreview && (
+                  <Stack gap="sm" className="restore-preview">
+                    <Text fw={600}>
+                      {tr(
+                        '從 {0} 的備份還原',
+                        new Date(restorePreview.createdAt).toLocaleString(appearance.locale)
+                      )}
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                      {tr('勾選要還原的項目。已經有資訊的資料夾會保留現在的內容。')}
+                    </Text>
+                    {restorePreview.settings && (
+                      <Checkbox
+                        label={tr('設定（群組、最愛、主題、語言）')}
+                        description={tr('目前的設定會先另存一份，之後可以回到還原之前。')}
+                        checked={restoreSettings}
+                        disabled={busy}
+                        onChange={(event) => setRestoreSettings(event.currentTarget.checked)}
+                      />
+                    )}
+                    {restorePreview.projects.map((item) => (
+                      <Group
+                        key={item.projectId}
+                        justify="space-between"
+                        wrap="nowrap"
+                        align="flex-start"
+                      >
+                        <Checkbox
+                          label={item.name}
+                          description={
+                            <>
+                              <span className="path">{item.root}</span>
+                              <br />
+                              {item.state === 'ready'
+                                ? tr('找到資料夾')
+                                : item.state === 'missing'
+                                  ? tr('找不到這個資料夾，請選擇它現在的位置或略過。')
+                                  : item.message}
+                            </>
+                          }
+                          checked={restoreProjects.includes(item.projectId)}
+                          disabled={busy || item.state !== 'ready'}
+                          onChange={(event) => {
+                            const on = event.currentTarget.checked
+                            setRestoreProjects((list) =>
+                              on
+                                ? [...list, item.projectId]
+                                : list.filter((id) => id !== item.projectId)
+                            )
+                          }}
+                        />
+                        {item.state !== 'ready' && (
+                          <Button
+                            size="xs"
+                            variant="default"
+                            disabled={busy}
+                            onClick={() => void locate(item.projectId)}
+                          >
+                            {tr('選擇新位置')}
+                          </Button>
+                        )}
+                      </Group>
                     ))}
-                    <Select
-                      label={tr('匯入方式')}
-                      allowDeselect={false}
-                      value={importMode}
-                      onChange={(value) => setImportMode(value as 'merge' | 'replace')}
-                      data={[
-                        { value: 'merge', label: tr('合併：保留目前設定') },
-                        { value: 'replace', label: tr('以匯入設定取代') },
-                      ]}
-                    />
-                    <Group>
+                    <Group justify="flex-end">
                       <Button
                         variant="default"
-                        disabled={saving}
-                        onClick={() => setImportPreview(undefined)}
+                        disabled={busy}
+                        onClick={() => setRestorePreview(undefined)}
                       >
-                        {tr('取消匯入')}
+                        {tr('取消')}
                       </Button>
-                      <Button loading={saving} onClick={() => void applyImport()}>
-                        {tr('備份並匯入')}
+                      <Button
+                        loading={busy}
+                        disabled={
+                          !restoreProjects.length &&
+                          !(restoreSettings && restorePreview.settings !== undefined)
+                        }
+                        onClick={() => void applyRestore()}
+                      >
+                        {tr('還原勾選的項目')}
                       </Button>
                     </Group>
                   </Stack>
                 )}
-                {transferResult && <Alert color="teal">{tr(transferResult)}</Alert>}
                 {error && <Alert color="red">{error}</Alert>}
                 {backups.length ? (
                   <Accordion variant="separated">
                     <Accordion.Item value="restore-points">
                       <Accordion.Control>
-                        {tr('可復原的設定備份')} ({backups.length})
+                        {tr('回到之前的設定')} ({backups.length})
                       </Accordion.Control>
                       <Accordion.Panel>
                         <Stack gap="xs">
@@ -312,7 +347,7 @@ export function ApplicationSettings({
                               <Button
                                 size="xs"
                                 variant="default"
-                                disabled={saving}
+                                disabled={saving || busy || !!restorePreview}
                                 onClick={() => void restore(backup.id)}
                               >
                                 {tr('復原此備份')}
@@ -323,11 +358,7 @@ export function ApplicationSettings({
                       </Accordion.Panel>
                     </Accordion.Item>
                   </Accordion>
-                ) : (
-                  <Text size="xs" c="dimmed">
-                    {tr('尚無設定備份')}
-                  </Text>
-                )}
+                ) : null}
               </Stack>
             </section>
           </Stack>

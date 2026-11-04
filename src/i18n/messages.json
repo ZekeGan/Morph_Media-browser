@@ -3113,54 +3113,6 @@
     "en": "Tree",
     "es": "Árbol"
   },
-  "群組": {
-    "ja": "グループ",
-    "zh-CN": "分组",
-    "en": "Groups",
-    "es": "Grupos"
-  },
-  "專案分類與最愛": {
-    "ja": "プロジェクトの分類とお気に入り",
-    "zh-CN": "项目分类与收藏",
-    "en": "Project groups and favorites",
-    "es": "Grupos y favoritos de proyectos"
-  },
-  "側欄寬度": {
-    "ja": "サイドバーの幅",
-    "zh-CN": "侧栏宽度",
-    "en": "Sidebar width",
-    "es": "Ancho de la barra lateral"
-  },
-  "隱藏側欄": {
-    "ja": "サイドバーを隠す",
-    "zh-CN": "隐藏侧栏",
-    "en": "Hide sidebar",
-    "es": "Ocultar barra lateral"
-  },
-  "收合狀態": {
-    "ja": "折りたたみ状態",
-    "zh-CN": "折叠状态",
-    "en": "Collapsed sections",
-    "es": "Secciones contraídas"
-  },
-  "群組順序": {
-    "ja": "グループの順序",
-    "zh-CN": "分组顺序",
-    "en": "Group order",
-    "es": "Orden de grupos"
-  },
-  "專案順序": {
-    "ja": "プロジェクトの順序",
-    "zh-CN": "项目顺序",
-    "en": "Project order",
-    "es": "Orden de proyectos"
-  },
-  "影片音量": {
-    "ja": "動画の音量",
-    "zh-CN": "视频音量",
-    "en": "Video volume",
-    "es": "Volumen de vídeo"
-  },
   "是": {
     "ja": "はい",
     "zh-CN": "是",
@@ -3179,89 +3131,11 @@
     "en": "None",
     "es": "Ninguno"
   },
-  "{0} 個專案，{1} 個最愛": {
-    "ja": "{0} プロジェクト、{1} 件のお気に入り",
-    "zh-CN": "{0} 个项目，{1} 个收藏",
-    "en": "{0} projects, {1} favorites",
-    "es": "{0} proyectos, {1} favoritos"
-  },
-  "{0} 筆": {
-    "ja": "{0} 件",
-    "zh-CN": "{0} 项",
-    "en": "{0} items",
-    "es": "{0} elementos"
-  },
-  "設定包已匯出": {
-    "ja": "設定をエクスポートしました",
-    "zh-CN": "设置包已导出",
-    "en": "Settings exported",
-    "es": "Ajustes exportados"
-  },
   "復原此設定備份？目前設定會先另存備份，媒體與專案連結保持原樣。": {
     "ja": "この設定バックアップを復元しますか？現在の設定は先にバックアップされ、メディアとプロジェクトのリンクは保持されます。",
     "zh-CN": "恢复此设置备份？当前设置会先备份，媒体与项目链接保持原样。",
     "en": "Restore this settings backup? Current settings will be backed up first. Media and project links will be preserved.",
     "es": "¿Restaurar esta copia de ajustes? Se guardará una copia de los ajustes actuales. Se conservarán los medios y enlaces de proyectos."
-  },
-  "匯出群組、收藏與操作偏好；不包含媒體、路徑連結或登入憑證。": {
-    "ja": "グループ、お気に入り、操作設定をエクスポートします。メディア、パスのリンク、認証情報は含まれません。",
-    "zh-CN": "导出分组、收藏与操作偏好；不包含媒体、路径链接或登录凭证。",
-    "en": "Export groups, favorites and preferences. Media, path links and login credentials are excluded.",
-    "es": "Exporta grupos, favoritos y preferencias. No incluye medios, rutas ni credenciales."
-  },
-  "匯出設定包": {
-    "ja": "設定をエクスポート",
-    "zh-CN": "导出设置包",
-    "en": "Export settings",
-    "es": "Exportar ajustes"
-  },
-  "匯入設定包": {
-    "ja": "設定をインポート",
-    "zh-CN": "导入设置包",
-    "en": "Import settings",
-    "es": "Importar ajustes"
-  },
-  "設定匯入預覽": {
-    "ja": "設定インポートのプレビュー",
-    "zh-CN": "设置导入预览",
-    "en": "Settings import preview",
-    "es": "Vista previa de importación"
-  },
-  "匯入方式": {
-    "ja": "インポート方法",
-    "zh-CN": "导入方式",
-    "en": "Import mode",
-    "es": "Modo de importación"
-  },
-  "合併：保留目前設定": {
-    "ja": "結合：現在の設定を優先",
-    "zh-CN": "合并：保留当前设置",
-    "en": "Merge: keep current settings",
-    "es": "Combinar: conservar ajustes actuales"
-  },
-  "以匯入設定取代": {
-    "ja": "インポートした設定で置き換え",
-    "zh-CN": "替换为导入设置",
-    "en": "Replace with imported settings",
-    "es": "Reemplazar con los ajustes importados"
-  },
-  "取消匯入": {
-    "ja": "インポートをキャンセル",
-    "zh-CN": "取消导入",
-    "en": "Cancel import",
-    "es": "Cancelar importación"
-  },
-  "備份並匯入": {
-    "ja": "バックアップしてインポート",
-    "zh-CN": "备份并导入",
-    "en": "Back up and import",
-    "es": "Crear copia e importar"
-  },
-  "可復原的設定備份": {
-    "ja": "復元可能な設定バックアップ",
-    "zh-CN": "可恢复的设置备份",
-    "en": "Available settings backups",
-    "es": "Copias de ajustes disponibles"
   },
   "復原此備份": {
     "ja": "このバックアップを復元",
@@ -5975,12 +5849,6 @@
     "en": "A game was detected. To protect its files, no info is created inside it.",
     "es": "Se detectó un juego. Para proteger sus archivos, no se crea información dentro."
   },
-  "匯出專案資料": {
-    "ja": "プロジェクトデータをエクスポート",
-    "zh-CN": "导出项目数据",
-    "en": "Export project data",
-    "es": "Exportar datos del proyecto"
-  },
   "匯入專案資料": {
     "ja": "プロジェクトデータをインポート",
     "zh-CN": "导入项目数据",
@@ -6281,23 +6149,11 @@
     "ja": "インポートをプレビュー",
     "es": "Vista previa de importación"
   },
-  "資料與備份": {
-    "zh-CN": "数据与备份",
-    "en": "Data and backup",
-    "ja": "データとバックアップ",
-    "es": "Datos y copias"
-  },
   "偵測到舊版資料，可預覽後匯入。": {
     "zh-CN": "检测到旧版数据，可预览后导入。",
     "en": "Older data was found; preview it before importing.",
     "ja": "旧バージョンのデータが見つかりました。プレビューしてからインポートできます。",
     "es": "Se encontraron datos antiguos; puedes verlos antes de importar."
-  },
-  "設定備份": {
-    "zh-CN": "设置备份",
-    "en": "Settings backup",
-    "ja": "設定のバックアップ",
-    "es": "Copia de ajustes"
   },
   "無法套用": {
     "zh-CN": "无法套用",
@@ -6310,12 +6166,6 @@
     "en": "Applied",
     "ja": "適用しました",
     "es": "Aplicado"
-  },
-  "放棄尚未套用的設定匯入？": {
-    "zh-CN": "放弃尚未套用的设置导入？",
-    "en": "Discard the settings import that has not been applied?",
-    "ja": "適用していない設定のインポートを破棄しますか？",
-    "es": "¿Descartar la importación de ajustes sin aplicar?"
   },
   "顯示資料夾內容": {
     "zh-CN": "显示文件夹内容",
@@ -6359,12 +6209,6 @@
     "ja": "選ぶとすぐ適用されます。プロジェクト名とデータはそのままです。",
     "es": "Se aplica al elegir; los nombres y datos no cambian."
   },
-  "尚無設定備份": {
-    "zh-CN": "尚无设置备份",
-    "en": "No settings backups yet",
-    "ja": "設定のバックアップはまだありません",
-    "es": "Aún no hay copias de ajustes"
-  },
   "分組": {
     "zh-CN": "分组",
     "en": "Groups",
@@ -6400,12 +6244,6 @@
     "en": "Files view scope",
     "ja": "ファイル一覧の範囲",
     "es": "Alcance de la vista de archivos"
-  },
-  "把這個專案的資料夾資訊、圖片與字幕（不含你的檔案）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。": {
-    "zh-CN": "把这个项目的文件夹信息、图片与字幕（不含你的文件）存成一个文件夹；之后可在「新增项目」导入，放到另一台电脑或另一个位置。",
-    "en": "Saves this project's folder info, images and subtitles (not your files) as a folder. Import it later from “New project” on another computer or in another place.",
-    "ja": "このプロジェクトのフォルダー情報、画像、字幕（あなたのファイルは含みません）を一つのフォルダーに保存します。あとで「新規プロジェクト」から、別のパソコンや別の場所にインポートできます。",
-    "es": "Guarda la información de las carpetas, las imágenes y los subtítulos del proyecto (no tus archivos) en una carpeta. Impórtala después desde «Nuevo proyecto» en otro equipo o en otro lugar."
   },
   "移除專案": {
     "zh-CN": "移除项目",
@@ -6791,12 +6629,6 @@
     "en": "Project settings not saved yet",
     "es": "Los ajustes del proyecto aún no se han guardado"
   },
-  "備份與移除": {
-    "ja": "バックアップと削除",
-    "zh-CN": "备份与移除",
-    "en": "Backup and removal",
-    "es": "Copia y eliminación"
-  },
   "技術細節（原始資料）": {
     "ja": "技術的な詳細（元データ）",
     "zh-CN": "技术细节（原始数据）",
@@ -6886,5 +6718,89 @@
     "zh-CN": "删除前会先备份到：",
     "en": "Backed up before deleting to: ",
     "es": "Antes de borrar se guarda una copia en: "
+  },
+  "備份": {
+    "ja": "バックアップ",
+    "zh-CN": "备份",
+    "en": "Backup",
+    "es": "Copia de seguridad"
+  },
+  "把設定和所有專案的資訊（標籤、評分、封面）存成一個資料夾。你的檔案（漫畫、圖片、影片）不會被複製。": {
+    "ja": "設定とすべてのプロジェクトの情報（タグ、評価、カバー）を一つのフォルダーに保存します。あなたのファイル（マンガ、画像、動画）はコピーされません。",
+    "zh-CN": "把设定和所有项目的信息（标签、评分、封面）存成一个文件夹。你的文件（漫画、图片、视频）不会被复制。",
+    "en": "Saves your settings and the info of every project (tags, ratings, covers) as one folder. Your files (manga, images, videos) are not copied.",
+    "es": "Guarda tus ajustes y la información de todos los proyectos (etiquetas, valoraciones, portadas) en una carpeta. Tus archivos (mangas, imágenes, vídeos) no se copian."
+  },
+  "建立備份": {
+    "ja": "バックアップを作成",
+    "zh-CN": "建立备份",
+    "en": "Create backup",
+    "es": "Crear copia"
+  },
+  "從備份還原": {
+    "ja": "バックアップから復元",
+    "zh-CN": "从备份还原",
+    "en": "Restore from backup",
+    "es": "Restaurar desde una copia"
+  },
+  "從 {0} 的備份還原": {
+    "ja": "{0} のバックアップから復元",
+    "zh-CN": "从 {0} 的备份还原",
+    "en": "Restore from the backup of {0}",
+    "es": "Restaurar la copia del {0}"
+  },
+  "勾選要還原的項目。已經有資訊的資料夾會保留現在的內容。": {
+    "ja": "復元する項目にチェックを入れてください。すでに情報があるフォルダーは今の内容を残します。",
+    "zh-CN": "勾选要还原的项目。已经有信息的文件夹会保留现在的内容。",
+    "en": "Tick what to restore. Folders that already have info keep what they have now.",
+    "es": "Marca lo que quieres restaurar. Las carpetas que ya tienen información conservan la actual."
+  },
+  "設定（群組、最愛、主題、語言）": {
+    "ja": "設定（グループ、お気に入り、テーマ、言語）",
+    "zh-CN": "设定（群组、最爱、主题、语言）",
+    "en": "Settings (groups, favourites, theme, language)",
+    "es": "Ajustes (grupos, favoritos, tema, idioma)"
+  },
+  "目前的設定會先另存一份，之後可以回到還原之前。": {
+    "ja": "今の設定を先に保存するので、あとで復元前に戻せます。",
+    "zh-CN": "目前的设定会先另存一份，之后可以回到还原之前。",
+    "en": "Your current settings are saved first, so you can go back to them later.",
+    "es": "Tus ajustes actuales se guardan antes, así que podrás volver a ellos."
+  },
+  "找到資料夾": {
+    "ja": "フォルダーが見つかりました",
+    "zh-CN": "找到文件夹",
+    "en": "Folder found",
+    "es": "Carpeta encontrada"
+  },
+  "找不到這個資料夾，請選擇它現在的位置或略過。": {
+    "ja": "このフォルダーが見つかりません。今の場所を選ぶか、スキップしてください。",
+    "zh-CN": "找不到这个文件夹，请选择它现在的位置或略过。",
+    "en": "This folder was not found. Choose where it is now, or skip it.",
+    "es": "No se encontró esta carpeta. Elige dónde está ahora u omítela."
+  },
+  "選擇新位置": {
+    "ja": "新しい場所を選択",
+    "zh-CN": "选择新位置",
+    "en": "Choose new location",
+    "es": "Elegir nueva ubicación"
+  },
+  "還原勾選的項目": {
+    "ja": "チェックした項目を復元",
+    "zh-CN": "还原勾选的项目",
+    "en": "Restore ticked items",
+    "es": "Restaurar lo marcado"
+  },
+  "回到之前的設定": {
+    "ja": "以前の設定に戻す",
+    "zh-CN": "回到之前的设定",
+    "en": "Go back to earlier settings",
+    "es": "Volver a ajustes anteriores"
+  },
+  "放棄尚未完成的還原？": {
+    "ja": "未完了の復元を破棄しますか？",
+    "zh-CN": "放弃尚未完成的还原？",
+    "en": "Discard the unfinished restore?",
+    "es": "¿Descartar la restauración sin terminar?"
   }
 }

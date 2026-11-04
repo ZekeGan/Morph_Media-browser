@@ -1,22 +1,16 @@
 import type { LocaleId } from './locales'
 const messages = {
-  匯出設定包: {
-    ja: '設定をエクスポート',
-    'zh-CN': '导出设置包',
-    en: 'Export settings package',
-    es: 'Exportar paquete de ajustes',
+  選擇備份位置: {
+    ja: 'バックアップの保存先を選択',
+    'zh-CN': '选择备份位置',
+    en: 'Choose where to save the backup',
+    es: 'Elige dónde guardar la copia',
   },
-  匯入設定包: {
-    ja: '設定をインポート',
-    'zh-CN': '导入设置包',
-    en: 'Import settings package',
-    es: 'Importar paquete de ajustes',
-  },
-  選擇匯出位置: {
-    ja: 'エクスポート先を選択',
-    'zh-CN': '选择导出位置',
-    en: 'Choose where to export',
-    es: 'Elige dónde exportar',
+  選擇備份資料夾: {
+    ja: 'バックアップフォルダーを選択',
+    'zh-CN': '选择备份文件夹',
+    en: 'Choose a backup folder',
+    es: 'Elige una carpeta de copia',
   },
   選擇專案匯出資料夾: {
     ja: 'プロジェクトのエクスポートフォルダーを選択',

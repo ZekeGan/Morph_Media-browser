@@ -63,7 +63,7 @@ export function ProjectSettings({
       <Tabs defaultValue="general">
         <Tabs.List>
           <Tabs.Tab value="general">{tr('一般')}</Tabs.Tab>
-          <Tabs.Tab value="connection">{tr('備份與移除')}</Tabs.Tab>
+          <Tabs.Tab value="connection">{tr('移除')}</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="general" pt="lg">
           <Stack gap="lg">
@@ -142,21 +142,6 @@ export function ProjectSettings({
         </Tabs.Panel>
         <Tabs.Panel value="connection" pt="lg">
           <Stack gap="lg">
-            <section className="settings-section">
-              <Text fw={600}>{tr('匯出專案資料')}</Text>
-              <Text size="sm" c="dimmed" my="sm">
-                {tr(
-                  '把這個專案的資料夾資訊、圖片與字幕（不含你的檔案）存成一個資料夾；之後可在「新增專案」匯入，放到另一台電腦或另一個位置。'
-                )}
-              </Text>
-              <Button
-                variant="default"
-                disabled={busy || dirty}
-                onClick={() => void act({ action: 'exportProject', projectId: project.projectId })}
-              >
-                {tr('匯出專案資料')}
-              </Button>
-            </section>
             <section className="settings-section">
               <Text fw={600}>{tr('移除專案')}</Text>
               <Group justify="space-between" wrap="nowrap" gap="md" mt="sm">

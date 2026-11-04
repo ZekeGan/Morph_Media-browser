@@ -1,4 +1,3 @@
-import { writeSettingsFile } from './settings-file'
 import {
   app,
   BrowserWindow,
@@ -13,7 +12,6 @@ import {
 } from 'electron'
 import { spawn } from 'node:child_process'
 import path from 'node:path'
-import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { imageTypes } from '../shared/images'
@@ -31,6 +29,7 @@ import type { ExplorerRequest } from '../shared/explorer'
 import type { LocaleId } from '../shared/locales'
 import { nativeText } from '../shared/native-messages'
 import { completionNotice } from '../shared/notifications'
+import { applyBackup, createBackup, locateBackupProject, previewBackup } from './backup'
 
 const directory = path.dirname(fileURLToPath(import.meta.url))
 // Taskbar and Alt+Tab icon; a build without the build/ folder simply keeps the default icon.
@@ -50,6 +49,7 @@ protocol.registerSchemesAsPrivileged(
 )
 let win: BrowserWindow | undefined
 let library: Library
+let workspace: WorkspaceStore
 let pendingRequests = 0
 let nativeLocale: LocaleId = 'zh-TW'
 const nt = (source: Parameters<typeof nativeText>[0]) => nativeText(source, nativeLocale)
@@ -191,21 +191,70 @@ async function dispatch(request: Request): Promise<Response> {
     case 'cleanup':
       extra.cleanup = await library.cleanup(request.token, request.restart)
       break
-    case 'exportProject': {
+    case 'createBackup': {
       const chosen = await dialog.showOpenDialog(win!, {
-        title: nt('選擇匯出位置'),
+        title: nt('選擇備份位置'),
         properties: ['openDirectory', 'createDirectory'],
       })
       if (chosen.canceled || !chosen.filePaths[0]) {
         extra.cancelled = true
         break
       }
-      const result = await library.exportProject(
-        request.projectId,
+      const ids = library.snapshot().projects.map((p) => p.projectId)
+      const result = await createBackup(
+        library,
+        workspace,
+        ids,
         chosen.filePaths[0],
         app.getVersion()
       )
-      extra.notice = completionNotice(result.files, result.skipped, `已匯出到：${result.dir}`)
+      extra.notice = completionNotice(
+        result.projects,
+        result.skipped.length,
+        `已建立備份：${result.dir}` +
+          (result.skipped.length ? `\n未備份：${result.skipped.join('、')}` : '')
+      )
+      break
+    }
+    case 'previewBackup': {
+      const chosen = await dialog.showOpenDialog(win!, {
+        title: nt('選擇備份資料夾'),
+        properties: ['openDirectory'],
+      })
+      if (chosen.canceled || !chosen.filePaths[0]) {
+        extra.cancelled = true
+        break
+      }
+      const ids = library.snapshot().projects.map((p) => p.projectId)
+      extra.backup = await previewBackup(library, workspace, ids, chosen.filePaths[0])
+      break
+    }
+    case 'locateBackup': {
+      const root = await selectFolder()
+      if (!root) {
+        extra.cancelled = true
+        break
+      }
+      extra.backup = await locateBackupProject(library, request.token, request.projectId, root)
+      break
+    }
+    case 'restoreBackup': {
+      const result = await applyBackup(
+        library,
+        workspace,
+        () => library.snapshot().projects.map((p) => p.projectId),
+        request.token,
+        request.settings,
+        request.projects
+      )
+      extra.restored = result
+      const done = result.projects.length + (result.settings ? 1 : 0)
+      extra.notice = completionNotice(
+        done,
+        result.failed.length,
+        `已還原：${[...(result.settings ? ['設定'] : []), ...result.projects].join('、') || '無'}` +
+          (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '')
+      )
       break
     }
     case 'chooseBundle': {
@@ -290,7 +339,7 @@ else {
         startupError = String(e)
         console.error(e)
       }
-      const workspace = new WorkspaceStore(
+      workspace = new WorkspaceStore(
         app.getPath('userData'),
         process.env.MEDIA_VIEWER_TEST_DATA ? ['zh-TW'] : app.getPreferredSystemLanguages()
       )
@@ -394,39 +443,6 @@ else {
         pendingRequests++
         try {
           return await workspace.read(projectIds())
-        } finally {
-          pendingRequests--
-        }
-      })
-      ipcMain.handle('workspace:file', async (event, action: 'export' | 'import') => {
-        checkSender(event)
-        pendingRequests++
-        try {
-          if (action === 'export') {
-            const state = await workspace.update({ action: 'exportPackage' }, projectIds())
-            const chosen = await dialog.showSaveDialog(win!, {
-              title: nt('匯出設定包'),
-              defaultPath: 'media-viewer-settings.json',
-              filters: [{ name: 'JSON', extensions: ['json'] }],
-            })
-            if (chosen.canceled || !chosen.filePath) return { ...state, cancelled: true }
-            await writeSettingsFile(chosen.filePath, state.settingsPackage!)
-            return state
-          }
-          if (action !== 'import') throw new Error('設定包操作不合法')
-          const chosen = await dialog.showOpenDialog(win!, {
-            title: nt('匯入設定包'),
-            properties: ['openFile'],
-            filters: [{ name: 'JSON', extensions: ['json'] }],
-          })
-          if (chosen.canceled) return { ...(await workspace.read(projectIds())), cancelled: true }
-          const file = chosen.filePaths[0],
-            stat = await fs.stat(file)
-          if (!stat.isFile() || stat.size > 4 * 1024 * 1024) throw new Error('設定包過大或不是檔案')
-          return await workspace.update(
-            { action: 'previewPackage', value: JSON.parse(await fs.readFile(file, 'utf8')) },
-            projectIds()
-          )
         } finally {
           pendingRequests--
         }

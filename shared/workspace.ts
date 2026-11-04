@@ -73,7 +73,6 @@ export interface FolderNavigation {
   y: number
 }
 export interface DesktopApi {
-  settingsFile(action: 'export' | 'import'): Promise<WorkspaceState>
   workspace(): Promise<WorkspaceState>
   updateWorkspace(command: WorkspaceCommand): Promise<WorkspaceState>
   windowAction(action: WindowAction): Promise<WindowState>

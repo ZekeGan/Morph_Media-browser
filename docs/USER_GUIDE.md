@@ -73,9 +73,8 @@ Open a folder's **Folder settings**. The "Still to add" card at the top lists wh
 The gear at the top right opens **Application settings**:
 
 - **Appearance**: three themes (Classic dark, Frosted glass, Paper and ink) and five languages, previewed before you save.
-- **Project data**: the project menu's "Export project data" saves the project's records, images and subtitles (no media) to a folder; Links and maintenance → "Import project data" puts them back into a root folder after a preview.
-- **Transfer settings**: export or import a settings package (groups, favourites, preferences; no media and no paths). Import shows a preview and backs up the current settings first, so it can be undone.
-- **Remove a project** (project settings › Backup and removal): "Remove from list" only takes the project off the list; all its info stays and you can add it back later. "Delete this project's info…" deletes only this project's own info by default; to also delete shared info, game decisions and projects removed from the list earlier, tick "Also delete the other info M:orph created in these folders" (a backup is made first). Your files (manga, images, videos) are never deleted.
+- **Backup** (application settings › Backup): "Create backup" saves your settings and the info of every project (tags, ratings, covers, subtitles) as one folder; your files are not copied. "Restore from backup" first lists what is inside so you can tick what to restore; if a folder has moved, press "Choose new location". Your current settings are saved before restoring settings, and "Go back to earlier settings" undoes it.
+- **Remove a project** (project settings › Remove): "Remove from list" only takes the project off the list; all its info stays and you can add it back later. "Delete this project's info…" deletes only this project's own info by default; to also delete shared info, game decisions and projects removed from the list earlier, tick "Also delete the other info M:orph created in these folders" (a backup is made first). Your files (manga, images, videos) are never deleted.
 
 ## 9. FAQ
 

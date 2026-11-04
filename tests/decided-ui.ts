@@ -271,48 +271,51 @@ try {
   )
   await page.keyboard.press('Escape')
   await button('應用程式設定').click()
-  await settings().getByRole('tab', { name: '資料與備份', exact: true }).click()
-  const exported = path.join(root, 'exported.json')
-  await app.evaluate(({ dialog }, file) => {
-    dialog.showSaveDialog = (async () => ({
-      canceled: false,
-      filePath: file,
-    })) as typeof dialog.showSaveDialog
-  }, exported)
-  await settings().getByRole('button', { name: '匯出設定包', exact: true }).click()
-  await settings().getByText('設定包已匯出', { exact: true }).waitFor()
-  const exportedValue = JSON.parse(await fs.readFile(exported, 'utf8'))
+  await settings().getByRole('tab', { name: '備份', exact: true }).click()
+  const backups = path.join(root, 'backups')
+  await fs.mkdir(backups)
+  const answer = (folder: string | undefined) =>
+    app.evaluate(({ dialog }, chosen) => {
+      dialog.showOpenDialog = (async () => ({
+        canceled: !chosen,
+        filePaths: chosen ? [chosen] : [],
+      })) as typeof dialog.showOpenDialog
+    }, folder)
+  await answer(backups)
+  await settings().getByRole('button', { name: '建立備份', exact: true }).click()
+  await page.waitForFunction(() => document.body.innerText.includes('已建立備份'))
+  const made = path.join(
+    backups,
+    (await fs.readdir(backups)).find((name) => name.startsWith('M-orph-backup-'))!
+  )
+  const exportedValue = JSON.parse(await fs.readFile(path.join(made, 'settings.json'), 'utf8'))
   assert.equal(exportedValue.kind, 'media-viewer.settings')
   assert.equal(exportedValue.prefs.browse, undefined)
   assert.equal(exportedValue.prefs.registry, undefined)
-  await app.evaluate(({ dialog }) => {
-    dialog.showOpenDialog = (async () => ({
-      canceled: true,
-      filePaths: [],
-    })) as typeof dialog.showOpenDialog
-  })
-  await settings().getByRole('button', { name: '匯入設定包', exact: true }).click()
-  assert.equal(await settings().getByText('設定匯入預覽', { exact: true }).count(), 0)
-  await app.evaluate(({ dialog }, file) => {
-    dialog.showOpenDialog = (async () => ({
-      canceled: false,
-      filePaths: [file],
-    })) as typeof dialog.showOpenDialog
-  }, incoming)
-  await settings().getByRole('button', { name: '匯入設定包', exact: true }).click()
-  await settings().getByText('設定匯入預覽', { exact: true }).waitFor()
+  // Cancelling the folder choice shows nothing.
+  await answer(undefined)
+  await settings().getByRole('button', { name: '從備份還原', exact: true }).click()
+  assert.equal(await settings().locator('.restore-preview').count(), 0)
+  // The backup's settings are replaced by other ones (paper theme) to see the restore take effect.
+  await fs.copyFile(incoming, path.join(made, 'settings.json'))
+  await answer(made)
+  await settings().getByRole('button', { name: '從備份還原', exact: true }).click()
+  const restore = settings().locator('.restore-preview')
+  await restore.waitFor()
   assert.equal(
     await page.evaluate(() => window.desktop.workspace()).then((state) => state.prefs.theme),
     'dark'
   )
-  await choose('匯入方式', '以匯入設定取代')
-  await settings().getByRole('button', { name: '備份並匯入', exact: true }).click()
+  // Only the settings are restored here; project boxes are cleared.
+  const boxes = restore.getByRole('checkbox')
+  for (let index = 1; index < (await boxes.count()); index++) await boxes.nth(index).uncheck()
+  await restore.getByRole('button', { name: '還原勾選的項目', exact: true }).click()
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'paper')
   await page.getByRole('heading', { name: '你的資料夾，你的瀏覽方式' }).waitFor()
   await button('應用程式設定').click()
-  await settings().getByRole('tab', { name: '資料與備份', exact: true }).click()
+  await settings().getByRole('tab', { name: '備份', exact: true }).click()
   await settings()
-    .getByRole('button', { name: /^可復原的設定備份/ })
+    .getByRole('button', { name: /^回到之前的設定/ })
     .click()
   await settings().getByRole('button', { name: '復原此備份', exact: true }).first().waitFor()
   await page.screenshot({ path: path.join(screens, 'settings-backup.png') })

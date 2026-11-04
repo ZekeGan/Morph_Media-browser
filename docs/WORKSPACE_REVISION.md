@@ -218,10 +218,10 @@ main 的 overview 只列出目前快照內有有效記錄的同專案資料夾�
 
 ## 專案設定與移除（2026-10-27）
 
-各專案 ⋯ 選單開啟名稱／分類與連結資料設定；一般設定與「備份與移除」分頁（原「資料」）；2026-11-04 起該分頁的移除改為單一「移除專案」單選三級（預設只取消連結／只移除此專案的資料／連同各專案共用的資訊一併清除），不再有獨立的取消連結區塊與「危險操作」摺疊。兩種移除須顯示差別說明，完全移除預覽列出可能受影響的其他專案名稱；影響範圍、確認、備份與失敗復原由 [儲存安全](STORAGE_OPTIONS.md#移除單一專案) 持有。
+各專案 ⋯ 選單開啟名稱／分類與連結資料設定；一般設定與「移除」分頁（原「資料」）；2026-11-04 起該分頁的移除改為單一「移除專案」單選三級（預設只取消連結／只移除此專案的資料／連同各專案共用的資訊一併清除），不再有獨立的取消連結區塊與「危險操作」摺疊。兩種移除須顯示差別說明，完全移除預覽列出可能受影響的其他專案名稱；影響範圍、確認、備份與失敗復原由 [儲存安全](STORAGE_OPTIONS.md#移除單一專案) 持有。
 
 ## 設定包移轉
 
-「應用程式設定 → 設定移轉」匯出 schemaVersion 1 的 media-viewer.settings JSON，僅允許群組、收藏／專案排序、側欄、主題、語言、音量及瀏覽操作偏好；不含媒體、registry 路徑、單機 browse 位置或未知／登入欄位。匯入先預覽差異，預設合併保留目前同身分設定，可明確改為取代；媒體連結保持原樣。預覽 token 綁定目前 revision，過期需重看。
+設定包是「應用程式設定 › 備份」裡 `settings.json` 的格式（2026-11-04 起不再單獨匯出匯入，見 [DATA_FORMAT](DATA_FORMAT.md#備份資料夾2026-11-04)）：schemaVersion 1 的 media-viewer.settings JSON，僅允許群組、收藏／專案排序、側欄、主題、語言、音量及瀏覽操作偏好；不含媒體、registry 路徑、單機 browse 位置或未知／登入欄位。匯入先預覽差異，預設合併保留目前同身分設定，可明確改為取代；媒體連結保持原樣。預覽 token 綁定目前 revision，過期需重看。
 
 每次套用／復原先把目前 workspace 設定原子備份到 userData/workspace-backups，再保存；備份或保存失敗不切換記憶體狀態。備份清單可復原，復原前也備份目前狀態。匯出檔案已存在時只覆寫可辨識的設定包，保留獨立 UUID 備份，拒絕覆寫其他 JSON 或可攜媒體目錄。匯入不掃描／遷移實際收藏，schemaVersion 仍為 1；雲端同步延後。入口 electron/settings-package.ts、electron/settings-file.ts、electron/workspace.ts、ApplicationSettings；驗證 tests/decided.test.ts、tests/decided-media.test.ts、tests/decided-ui.ts。

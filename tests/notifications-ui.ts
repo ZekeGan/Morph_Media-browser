@@ -34,22 +34,18 @@ const page = await app.firstWindow(),
 page.setDefaultTimeout(15000)
 page.on('pageerror', (error) => errors.push(error.message))
 const toast = page.locator('.app-toasts [data-level]')
-// A real success notice: exporting the project from its settings.
-const exportProject = async () => {
+// A real success notice: creating a backup from the application settings.
+const createBackup = async () => {
   await app.evaluate(({ dialog }, folder) => {
     dialog.showOpenDialog = (async () => ({
       canceled: false,
       filePaths: [folder],
     })) as unknown as typeof dialog.showOpenDialog
   }, out)
-  await page.locator('.sidebar-project').filter({ hasText: 'QA-失敗只是名稱' }).hover()
-  await page
-    .getByRole('button', { name: '專案選單 QA-失敗只是名稱', exact: true })
-    .click({ force: true })
-  await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
-  const settings = page.getByRole('dialog', { name: /^專案設定/ })
-  await settings.getByRole('tab', { name: '備份與移除', exact: true }).click()
-  await settings.getByRole('button', { name: '匯出專案資料', exact: true }).click()
+  await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
+  const settings = page.getByRole('dialog', { name: '應用程式設定', exact: true })
+  await settings.getByRole('tab', { name: '備份', exact: true }).click()
+  await settings.getByRole('button', { name: '建立備份', exact: true }).click()
   await toast.waitFor()
   await page.keyboard.press('Escape')
   await settings.waitFor({ state: 'hidden' })
@@ -63,7 +59,7 @@ try {
   await page.bringToFront()
   await page.clock.install()
 
-  await exportProject()
+  await createBackup()
   assert.equal(await toast.getAttribute('data-level'), 'success')
   assert.equal(await toast.getAttribute('role'), 'status')
   await page.screenshot({ path: path.join(screens, 'success.png'), animations: 'disabled' })

@@ -51,7 +51,6 @@ const desktop: DesktopApi = {
         window.removeEventListener(type, mouse, true)
     }
   },
-  settingsFile: (action) => ipcRenderer.invoke('workspace:file', action),
   workspace: () => ipcRenderer.invoke('workspace:read'),
   updateWorkspace: (command) => ipcRenderer.invoke('workspace:update', command),
   windowAction: (action) => ipcRenderer.invoke('window:action', action),

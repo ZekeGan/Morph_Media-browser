@@ -34,7 +34,7 @@
 | 文件截圖重拍／授權與名稱 | [IMPLEMENTATION](IMPLEMENTATION.md) 指令表 `pnpm shot:docs`；[TRADEMARK](../TRADEMARK.md)、[NOTICE](../NOTICE.md) | [docs-shots](../tests/support/docs-shots.ts)、[demo-data](../tests/support/demo-data.ts) | 無（`pnpm shot:docs` 本身即產出） |
 | 版本階段／tag／發布步驟 | [RELEASING](RELEASING.md) | [package.json](../package.json) `version`／`build`、[CHANGELOG](../CHANGELOG.md) | [CI](../.github/workflows/ci.yml) |
 | 資料格式升級／相容 | [格式升級與相容規則](DATA_FORMAT.md#格式升級與相容規則)、[儲存限制](STORAGE_OPTIONS.md#權威與寫入) | [project-export](../shared/project-export.ts) `migrateRecord`、[model](../shared/model.ts) `validate*` | 尚未實作，見 [WORK_ITEMS](WORK_ITEMS.md#待實作) |
-| 設定包備份／移轉 | [設定包](WORKSPACE_REVISION.md#設定包移轉)、[儲存限制](STORAGE_OPTIONS.md#權威與寫入) | [settings-package](../electron/settings-package.ts)、[WorkspaceStore](../electron/workspace.ts) | [decided](../tests/decided.test.ts)、[decided UI](../tests/decided-ui.ts) |
+| 備份與還原（含設定包） | [備份資料夾](DATA_FORMAT.md#備份資料夾2026-11-04)、[設定包](WORKSPACE_REVISION.md#設定包移轉)、[儲存限制](STORAGE_OPTIONS.md#權威與寫入) | [settings-package](../electron/settings-package.ts)、[WorkspaceStore](../electron/workspace.ts) | [decided](../tests/decided.test.ts)、[decided UI](../tests/decided-ui.ts) |
 
 產品邊界見 [PRODUCT](PRODUCT.md)，找畫面可用 [畫面索引](UI_SCREEN_CATALOG.md)；兩者按需讀。音樂播放器等排程／未決細節見 [OPEN_DECISIONS](OPEN_DECISIONS.md)。
 

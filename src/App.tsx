@@ -511,6 +511,8 @@ export function App() {
         opened={settingsOpen}
         close={() => setSettingsOpen(false)}
         onDirty={setAppearanceDirty}
+        act={act}
+        busy={busy}
       />
       <Modal
         opened={!!settings}
