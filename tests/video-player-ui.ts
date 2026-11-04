@@ -6,6 +6,7 @@ import { Library } from '../electron/library'
 import { folderFile } from '../electron/files'
 
 import { videoFixture } from './support/video-fixture'
+import { closeApp } from './support/app'
 
 const groups = ['controls', 'subtitles', 'appearance'] as const
 type Group = (typeof groups)[number]
@@ -562,6 +563,6 @@ async function runGroup(group: Group, fixture: string) {
         win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
       }
     })
-    await app.close()
+    await closeApp(app)
   }
 }

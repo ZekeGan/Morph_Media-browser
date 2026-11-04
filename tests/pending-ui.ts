@@ -6,6 +6,7 @@ import { Library } from '../electron/library'
 import { presetDraft, addPreset, syncPresetDraft } from '../shared/layouts'
 import { folderFile, readFolder, saveFolder } from '../electron/files'
 import { WorkspaceStore } from '../electron/workspace'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -247,5 +248,5 @@ try {
       win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
     }
   })
-  await app.close()
+  await closeApp(app)
 }

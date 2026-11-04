@@ -9,6 +9,7 @@ import { WorkspaceStore } from '../electron/workspace'
 import { folderFile, projectFile, readFolder, saveFolder } from '../electron/files'
 import { catalog } from '../src/i18n/catalog'
 import type { LocaleId } from '../shared/locales'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -478,5 +479,5 @@ try {
       for (const win of BrowserWindow.getAllWindows()) win.destroy()
     })
     .catch(() => {})
-  await app.close().catch(() => {})
+  await closeApp(app).catch(() => {})
 }

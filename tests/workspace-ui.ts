@@ -9,6 +9,7 @@ import { createHash } from 'node:crypto'
 import { DATA_DIR } from '../shared/model'
 import { folderFile } from '../electron/files'
 import packageInfo from '../package.json'
+import { closeApp } from './support/app'
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
 const root = await fs.mkdtemp(path.join(base, 'workspace05-')),
@@ -518,5 +519,5 @@ try {
   await page.screenshot({ path: path.join(screens, 'failure.png') }).catch(() => {})
   throw e
 } finally {
-  await app.close()
+  await closeApp(app)
 }

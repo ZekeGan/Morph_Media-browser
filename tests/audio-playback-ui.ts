@@ -10,6 +10,7 @@ import { projectFile } from '../electron/files'
 import { tinyPng } from './support/archive-fixture'
 import { createServer } from 'vite'
 import { videoFixture } from './support/video-fixture'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -465,6 +466,6 @@ try {
       win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
     }
   })
-  await app.close()
+  await closeApp(app)
   await server?.close()
 }

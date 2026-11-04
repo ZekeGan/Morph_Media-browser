@@ -7,6 +7,7 @@ import { folderFile } from '../electron/files'
 import { zipFixture, tinyPng } from './support/archive-fixture'
 import { exportSettings } from '../electron/settings-package'
 import { defaultWorkspace } from '../shared/workspace'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -354,5 +355,5 @@ try {
       for (const win of BrowserWindow.getAllWindows()) win.destroy()
     })
     .catch(() => {})
-  await app.close().catch(() => {})
+  await closeApp(app).catch(() => {})
 }

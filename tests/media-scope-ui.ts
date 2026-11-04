@@ -6,6 +6,7 @@ import { Library } from '../electron/library'
 import { WorkspaceStore } from '../electron/workspace'
 import { folderFile, projectFile } from '../electron/files'
 import { tinyPng } from './support/archive-fixture'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -189,5 +190,5 @@ try {
       win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
     }
   })
-  await app.close()
+  await closeApp(app)
 }

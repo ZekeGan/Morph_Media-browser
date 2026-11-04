@@ -62,8 +62,43 @@ const coverage = [
   [/src\/(GameActions|game-actions)/, ['game-actions-ui']],
   [/src\/(ProjectSettings|SettingsPreview)|electron\/settings/, ['decided-ui']],
   [
-    /src\/(ApplicationSettings|CreateProjectDialog)|electron\/(backup|library-export)|shared\/backup/,
+    /src\/(ApplicationSettings|CreateProjectDialog)|electron\/(backup|library-export)|shared\/(backup|project-export)/,
     ['backup-ui', 'decided-ui'],
+  ],
+  [
+    /src\/(ProblemsDialog|BoundaryFlag|FolderAdvanced)|electron\/(library-scan|game-detection|library-cleanup|library-removal|library-field-removal|maintenance)|shared\/upgrade/,
+    ['problems-ui', 'decided-ui'],
+  ],
+  [
+    /src\/(FolderTable|TreeView|BrowsePanel|KindBatchBar|folderStats|refresh|useFileVisibility)|shared\/(kind|gallery)|electron\/hidden/,
+    ['folder-navigation-ui', 'workspace-ui'],
+  ],
+  [
+    /src\/(AudioViewer|MediaQueue|MediaViewer|useVideoAudio)|shared\/media|electron\/(media-files|explorer-stream)/,
+    ['audio-playback-ui', 'media-workspace-ui'],
+  ],
+  [/shared\/subtitles/, ['video-player-ui']],
+  [/shared\/reader|electron\/archive/, ['reader-ui']],
+  [
+    /electron\/(explorer|image-url)|shared\/(explorer|images)/,
+    ['file-overview-ui', 'media-scope-ui'],
+  ],
+  [
+    /src\/(Fallback|commonFields|editorDrag|editorKinds|importedFieldLabels)|shared\/fields/,
+    ['cell-editor-ui', 'field-edit-ui'],
+  ],
+  [/src\/(ImageUrlImport|importSource)|electron\/metadata|shared\/sources/, ['media-feedback-ui']],
+  [/shared\/(query|search)|electron\/search-index|src\/search-dialog/, ['search-dialog-ui']],
+  [
+    /shared\/(themes|locales|native-messages)|src\/(style\.css|icons|IconLabel|BrandMark|HelpTip|PanelSkeleton)/,
+    ['appearance-ui'],
+  ],
+  [/shared\/launchArgs/, ['game-actions-ui', 'game-launch-cell-ui']],
+  [/electron\/workspace|shared\/workspace/, ['workspace-ui', 'sidebar-peek-ui']],
+  // The core every screen depends on: the smoke set.
+  [
+    /electron\/(main|preload|library|files)\.ts|shared\/model|src\/(main\.tsx|index\.html|env\.d\.ts)/,
+    smoke,
   ],
 ]
 
@@ -136,8 +171,17 @@ else if (args.includes('--changed')) {
   const mapped = files.flatMap((file) =>
     coverage.filter(([pattern]) => pattern.test(file)).flatMap(([, tests]) => tests)
   )
-  const touchesApp = files.some((file) => /^(src|electron|shared)\//.test(file))
-  chosen = [...new Set([...direct, ...mapped, ...(touchesApp && !mapped.length ? smoke : [])])]
+  // A new source file nobody mapped yet still gets the smoke set, and is named so the table above can be updated.
+  const unmapped = files.filter(
+    (file) =>
+      /^(src|electron|shared)\//.test(file) && !coverage.some(([pattern]) => pattern.test(file))
+  )
+  chosen = [...new Set([...direct, ...mapped, ...(unmapped.length ? smoke : [])])]
+  if (unmapped.length)
+    console.log(
+      'No UI test is mapped for (running smoke; add them to `coverage` in scripts/run-ui-tests.mjs):\n  ' +
+        unmapped.join('\n  ')
+    )
   console.log('Changed files:', files.length, '-> tests:', chosen.join(', ') || '(none)')
 } else if (args.length) chosen = all.filter((name) => args.some((word) => name.includes(word)))
 else chosen = all
@@ -150,13 +194,25 @@ const files = all.filter((name) => chosen.includes(name))
 const results = []
 // Native drag and drop and window focus make a few tests sensitive to the machine being used at the same time, so a
 // failure is run once more; a pass on the second run is reported as flaky instead of hiding the first failure.
-const execute = (name) =>
-  spawnSync('pnpm', ['exec', 'tsx', `tests/${name}.ts`], { encoding: 'utf8', shell: true })
+// A test that has not finished in UI_TEST_TIMEOUT seconds (default 240; the slowest normally takes under a minute)
+// is stuck, usually on a prompt nobody answers: it is stopped, reported as TIMEOUT and not run again.
+const limit = Number(process.env.UI_TEST_TIMEOUT || 240) * 1000
+const execute = (name) => {
+  const run = spawnSync('pnpm', ['exec', 'tsx', `tests/${name}.ts`], {
+    encoding: 'utf8',
+    shell: true,
+    timeout: limit,
+  })
+  const timedOut = run.error?.code === 'ETIMEDOUT'
+  // Killing the shell leaves its Electron behind, which would stall the next test.
+  if (timedOut) stopStrayElectron()
+  return { ...run, stdout: run.stdout ?? '', stderr: run.stderr ?? '', timedOut }
+}
 for (const name of files) {
   const started = Date.now()
   let run = execute(name),
     flaky = false
-  if (run.status !== 0) {
+  if (run.status !== 0 && !run.timedOut) {
     const first = run
     run = execute(name)
     if (run.status === 0) {
@@ -168,7 +224,8 @@ for (const name of files) {
   }
   const seconds = Math.round((Date.now() - started) / 1000)
   results.push({ name, ok: run.status === 0, seconds, flaky })
-  console.log(`${run.status === 0 ? (flaky ? 'FLAKY' : 'PASS') : 'FAIL'} ${name} (${seconds}s)`)
+  const verdict = run.status === 0 ? (flaky ? 'FLAKY' : 'PASS') : run.timedOut ? 'TIMEOUT' : 'FAIL'
+  console.log(`${verdict} ${name} (${seconds}s)`)
   if (run.status !== 0) console.log((run.stdout + run.stderr).split('\n').slice(-12).join('\n'))
 }
 const failed = results.filter((r) => !r.ok)

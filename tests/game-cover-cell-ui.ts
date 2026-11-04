@@ -6,6 +6,7 @@ import { Library } from '../electron/library'
 import { folderFile, readFolder } from '../electron/files'
 import { DATA_DIR, type Cell } from '../shared/model'
 import { tinyPng } from './support/archive-fixture'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -147,7 +148,7 @@ for (const [w, h] of [
         win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
       }
     })
-    await app.close()
+    await closeApp(app)
   }
 }
 assert.equal(

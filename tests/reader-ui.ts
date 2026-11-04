@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { Library } from '../electron/library'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -327,5 +328,5 @@ try {
       win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
     }
   })
-  await app.close()
+  await closeApp(app)
 }

@@ -4,6 +4,7 @@ import path from 'node:path'
 import assert from 'node:assert/strict'
 import { Library } from '../electron/library'
 import { folderFile, projectFile } from '../electron/files'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -248,5 +249,5 @@ try {
       }
     })
     .catch(() => {})
-  await app.close()
+  await closeApp(app)
 }

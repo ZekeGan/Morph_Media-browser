@@ -9,6 +9,7 @@ import { folderFile } from '../electron/files'
 import { catalog } from '../src/i18n/catalog'
 import type { LocaleId } from '../shared/locales'
 import { nativeText } from '../shared/native-messages'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -270,5 +271,5 @@ try {
     .catch(() => {})
   throw error
 } finally {
-  await app.close()
+  await closeApp(app)
 }

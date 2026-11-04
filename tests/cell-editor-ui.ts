@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import { Library } from '../electron/library'
 import { folderFile, readFolder, readJson, projectFile } from '../electron/files'
 import type { Cell, Project } from '../shared/model'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -261,5 +262,5 @@ try {
       win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
     }
   })
-  await app.close()
+  await closeApp(app)
 }

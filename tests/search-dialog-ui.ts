@@ -7,6 +7,7 @@ import { Explorer } from '../electron/explorer'
 import { WorkspaceStore } from '../electron/workspace'
 import { folderFile, projectFile } from '../electron/files'
 import { stabilizeQuery } from '../shared/query'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -87,7 +88,7 @@ try {
     query = dialog.getByRole('textbox', { name: '資料夾名稱、路徑或欄位值', exact: true })
   await dialog.waitFor()
   assert.equal(
-    await dialog.getByText('進階搜尋與索引', { exact: true }).count(),
+    await dialog.getByText('進階搜尋與索引', { exact: true }).count(), // ui-names: ignore (must not appear)
     0,
     'advanced/index panel must be removed'
   )
@@ -252,5 +253,5 @@ try {
       win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
     }
   })
-  await app.close()
+  await closeApp(app)
 }

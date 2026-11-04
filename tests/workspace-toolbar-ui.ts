@@ -3,6 +3,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { Library } from '../electron/library'
+import { closeApp } from './support/app'
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
 const root = await fs.mkdtemp(path.join(base, 'toolbar-ui-')),
@@ -90,5 +91,5 @@ try {
       w.webContents.on('will-prevent-unload', (e) => e.preventDefault())
     }
   })
-  await app.close()
+  await closeApp(app)
 }

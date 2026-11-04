@@ -7,6 +7,7 @@ import { WorkspaceStore } from '../electron/workspace'
 import { folderFile, projectFile } from '../electron/files'
 import { tinyPng } from './support/archive-fixture'
 import { videoFixture } from './support/video-fixture'
+import { closeApp } from './support/app'
 
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
@@ -211,5 +212,5 @@ try {
       for (const win of BrowserWindow.getAllWindows()) win.destroy()
     })
     .catch(() => {})
-  await app.close().catch(() => {})
+  await closeApp(app).catch(() => {})
 }

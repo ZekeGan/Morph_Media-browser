@@ -15,11 +15,12 @@
 | `pnpm format`／`pnpm format:check` | Prettier（設定見 prettier.config.cjs）；只涵蓋 src、shared、electron、tests、scripts 的 ts／tsx／mjs，不含 CSS、JSON 與文件。提交前跑 format:check |
 | `pnpm test:workspace` | 現行完整 Electron UI：`tests/workspace-ui.ts`；runner 會自動確保建置為最新 |
 | `pnpm dist`／`pnpm dist:dir` | 先 build，再用 electron-builder 產生 `release/morph <版本>/` 內的安裝程式（每個版本一個資料夾，舊版保留）與免安裝版（`dist:dir` 只產生未封裝資料夾）；設定在 package.json 的 `build`，圖示在 `build/`，未簽章 |
-| `pnpm test:ui:all`／`:smoke`／`:changed` | 依序執行 `tests/*-ui.ts` 並計時；`:smoke` 為核心 6 項（約 1～2 分鐘），`:changed` 依改動檔（對比 origin/main 與工作樹）對應測試，未對應的 UI／主程序改動退回 smoke，也可加檔名片段如 `pnpm test:ui:all video`；任一失敗會自動重跑一次，第二次才過的標為 FLAKY（拖放類測試怕滑鼠干擾，跑測試時請勿操作滑鼠）；重跑仍失敗才非零結束。對應表在 `scripts/run-ui-tests.mjs`。GitHub Actions（`.github/workflows/ci.yml`，Windows）推送時跑 typecheck、format:check 與 `pnpm test`，不跑 UI 測試。提交前由 `.githooks/pre-commit` 自動跑型別檢查、格式檢查與所提交 Markdown 的連結檢查（`pnpm install` 會啟用）；CI 另有不阻擋合併的 UI smoke 工作。UI runner 啟動時會先印出 out/ 建置時間，並在 out/ 缺少或比 src／shared／electron／建置設定舊時自動先跑 `pnpm build`；也會先停掉本專案遺留的 Electron 行程；測試時應用程式視窗預設全透明、可點穿、不取得焦點也不進工作列（要看畫面設 `MEDIA_VIEWER_TEST_VISIBLE=1`（半透明、可點穿、不搶焦點））；原生訊息方塊（如「放棄未保存的變更」）由 `tests/support/app.ts` 的 `launchApp` 自動回答，不會卡住測試，要驗證提示本身的測試自行替換 stub；全數通過時會刪除該次在 `.test-output` 新增的產物（失敗時保留供檢查）；`pnpm clean:test` 清除過期產物並保留 `fixtures` |
+| `pnpm test:ui:all`／`:smoke`／`:changed` | 依序執行 `tests/*-ui.ts` 並計時；`:smoke` 為核心 6 項（約 1～2 分鐘），`:changed` 依改動檔（對比 origin/main 與工作樹）對應測試，對應表沒涵蓋的檔案會列出並改跑 smoke，也可加檔名片段如 `pnpm test:ui:all video`；任一失敗會自動重跑一次，第二次才過的標為 FLAKY（拖放類測試怕滑鼠干擾，跑測試時請勿操作滑鼠）；重跑仍失敗才非零結束；單一測試超過 4 分鐘（`UI_TEST_TIMEOUT` 秒數可改）視為卡住，標 TIMEOUT 並停掉其 Electron，不重跑。對應表在 `scripts/run-ui-tests.mjs`。GitHub Actions（`.github/workflows/ci.yml`，Windows）推送時跑 typecheck、format:check 與 `pnpm test`，不跑 UI 測試。提交前由 `.githooks/pre-commit` 自動跑型別檢查、格式檢查、UI 測試名稱檢查（`scripts/check-ui-names.mjs`：測試找的按鈕／文字須仍存在於程式或語系檔）與所提交 Markdown 的連結檢查（`pnpm install` 會啟用）；CI 另有不阻擋合併的 UI smoke 工作。UI runner 啟動時會先印出 out/ 建置時間，並在 out/ 缺少或比 src／shared／electron／建置設定舊時自動先跑 `pnpm build`；也會先停掉本專案遺留的 Electron 行程；測試時應用程式視窗預設全透明、可點穿、不取得焦點也不進工作列（要看畫面設 `MEDIA_VIEWER_TEST_VISIBLE=1`（半透明、可點穿、不搶焦點））；原生訊息方塊（如「放棄未保存的變更」）由 `tests/support/app.ts` 的 `launchApp` 自動回答，`closeApp` 關閉時略過未保存提示，所有 UI 測試都用 `closeApp` 結束；要驗證提示本身的測試自行替換 stub；全數通過時會刪除該次在 `.test-output` 新增的產物（失敗時保留供檢查）；`pnpm clean:test` 清除過期產物並保留 `fixtures` |
 | `pnpm shot <類型>` | `tests/support/shot.ts`：以內建範例資料（game／manga／album／other）開專案並截圖，可設 `--width`、`--height`、`--mode`、`--child`、`--settings`、`--out`；輸出於 `.test-output/shot/`，執行完自動清除暫存資料 |
+| `pnpm detect <資料夾…> [--children]` | `tests/support/detect.ts`：唯讀執行遊戲引擎偵測並印出引擎與證據；`--children` 逐一檢查子資料夾（一整個遊戲資料夾）。不寫入、不建記錄、不啟動任何程式 |
 | `pnpm shot:docs [名稱…]` | `tests/support/docs-shots.ts`：用 `demo-data.ts` 產生的自製示範收藏（自製封面、虛構標題）重拍文件截圖，寫入 `docs/images/`；需先 `pnpm build`，示範資料建在磁碟根目錄的 `Morph-Demo` 並於結束時刪除 |
 
-`test:ui` 與 `test:workspace` 是同一 runner，選一個即可。不要臆造 lint／舊 UI script；需新命令先查 package.json。未改依賴且環境可用，不例行安裝或更新套件。
+不要臆造 lint／舊 UI script；需新命令先查 package.json。未改依賴且環境可用，不例行安裝或更新套件。
 
 應用視窗聚焦時按 `F12` 可開啟／關閉 DevTools；開發與已建置版本均可使用。修改主程序後須重新啟動應用，長按不重複切換。
 
@@ -65,47 +66,21 @@
 
 ## 測試定位與失敗處理
 
+不維護逐檔清單（容易過時）；用下列方式找：
 
+- **改了某個原始檔，要跑哪些 UI 測試**：`pnpm test:ui:changed` 會照 `scripts/run-ui-tests.mjs` 的 `coverage` 對應表挑選，並列出沒有對應的檔案；新增原始檔時順手加進對應表。
+- **某個功能有沒有測試**：`rg -l "<按鈕文字或函式名>" tests/`；資料測試是 `tests/*.test.ts`，UI 測試是 `tests/*-ui.ts`，共用 Electron 啟動與關閉在 `tests/support/app.ts`，資料 fixture 在 `tests/support/model-fixtures.ts`。
+- **UI 測試找的按鈕還在不在**：`node scripts/check-ui-names.mjs`（pre-commit 已自動執行）。
 
-| 入口 | 涵蓋 |
+需要額外參數或環境的測試：
+
+| 測試 | 參數 |
 | --- | --- |
-| `tests/library.test.ts` | 可攜讀寫、清理／復原、重疊專案、副本／遷移、取消與路徑限制 |
-| `tests/model.test.ts` | 可攜 folder／project／details 的接受／拒絕、CELL／字幕／路徑邊界、第一個錯誤順序、既有 null 相容性與輸入不變；資料 fixture 在 `tests/support/model-fixtures.ts` |
-| `tests/explorer.test.ts` | 型別值／覆寫、搜尋、媒體串流、字幕、遊戲動作與來源固定回應 |
-| `tests/image-url.test.ts` | 遊戲封面圖片網址：內網／憑證／重新導向／非圖片／超限拒絕、預覽不寫入、版本衝突與過期 token 保留原封面 |
-| `tests/decided.test.ts`／`tests/decided-media.test.ts` | 系統語言、型別／方案、設定匯出入／失敗復原、免憑證來源、唯讀 ZIP、總覽來源及穩定查詢 |
-| `tests/decided-ui.ts` | 實際欄位／方案／來源選單、面板偏好、虛擬總覽／即時語言、ZIP 解碼／原生 PDF、原生設定匯出／取消／匯入／復原；受控原檔不變 |
-| `tests/workspace.test.ts` | UI 設定、排序、併發及失敗保留 |
-| `tests/file-overview-ui.ts` | `pnpm exec tsx tests/file-overview-ui.ts`：圖片／影片各 1,200 檔，重現連續捲動導致 renderer 卸載；驗證三種展示、篩選、尺寸、重新整理、實際可視卡片及原檔／記錄保留 |
-| `tests/appearance.test.ts` | 介面字典覆蓋、插值不改使用者內容、預設 CELL 與自訂配色保留 |
-| `tests/appearance-ui.ts` | `pnpm exec tsx tests/appearance-ui.ts`：隔離資料驗證三主題／五語言、預覽取消、保存重開、三模式、隱藏側欄與窄視窗；截圖在 `.test-output/appearance-*/screens/` |
-| `tests/notifications-ui.ts` | `pnpm exec tsx tests/notifications-ui.ts`：受控舊資料的真實成功／部分完成／全部失敗通知，名稱不影響等級、成功自動收起、警告／錯誤保留、取消、英文 IPC 例外與草稿保留；同時比對原檔及匯入備份 |
-| `tests/revision.test.ts` | 模式／方案、有效記錄與遊戲邊界、小數尺寸、Windows 保留目錄大小寫 |
-| `tests/workspace-ui.ts` | 目前外框／瀏覽／媒體整合；測試資料與截圖在 `.test-output/` |
-| `tests/folder-navigation-ui.ts` | `pnpm exec tsx tests/folder-navigation-ui.ts`：左右共用歷史／停用狀態、資料夾圖示、原生命令加 DOM 序列不重複導覽、跨模式／縮放／專案隔離、可見浮層阻擋、缺失記錄拒絕與原檔／可攜記錄比對；原生命令採受控事件注入，不代表各實體滑鼠驅動已驗收 |
-| `tests/error-recovery-ui.ts` | 未被捕捉的非同步失敗顯示為錯誤提示：白話訊息、下一步建議與可展開的技術細節；中斷類錯誤（AbortError）不打擾使用者 |
-| `tests/error-message.test.ts` | IPC 前綴移除與系統錯誤（權限、佔用、空間不足、找不到、離線、版本衝突）分類 |
-| `tests/browse.test.ts` | CARD 單層開專案落點（列出根的子資料夾、無子資料夾時顯示根）、末層資料夾顯示自己的卡片、TABLE 維持子資料夾清單 |
-| `tests/video-failure-ui.ts` | 偽裝成影片的 ZIP 播放失敗時，播放器說明原因並提供「用系統預設播放器開啟」「在檔案總管顯示」（不實際點擊外部開啟） |
-| `tests/file-probe.test.ts` | 以檔頭位元組辨識 ZIP／RAR／7z／網頁／空檔／一般媒體 |
-| `tests/game-launch-cell-ui.ts` | 「啟動遊戲」組件：未綁定啟動檔時停用、已綁定時可用，並出現在遊戲專案的編輯器組件列（不實際啟動） |
-| `tests/panel-preview-ui.ts` | 單擊資料夾在右側面板預覽（中央不進入），雙擊才進入 |
-| `tests/game-shortcut.test.ts` | 捷徑動作：清單只列資料夾頂層 `.lnk`／`.url`，綁定拒絕路徑與非捷徑、不收參數，執行走系統開啟且不改原檔；啟動組件的動作選擇與退回順序 |
-| `tests/launch-args.test.ts` | 啟動參數 JSON：單反斜線路徑自動補正、`\new` 不變成換行、錯誤格式被拒 |
-| `tests/field-edit-ui.ts` | CELL 編輯器欄位改名（清單與設定面板兩處）、重複名稱拒絕、單選比較值選項、字級／對齊／換行、數字單位、大於小於條件選項與設定區塊收合 |
-| `tests/game-cover-cell-ui.ts` | 遊戲封面組件在卡片與編輯器各種格位大小下填滿容器，含填滿方式 |
-| `tests/game-folder-page-ui.ts` | 遊戲專案內非遊戲根資料夾使用共用的詳情／子資料夾／檔案頁 |
-| `tests/settings-dock-ui.ts` | 資料夾設定一律停靠右側面板：分頁切換、窄窗、關閉圖示與重啟 |
-| `tests/gallery-performance-ui.ts` | `pnpm exec tsx tests/gallery-performance-ui.ts`：1,200 張受控圖片的首批／首圖時間、捲動幀距、DOM／請求上界、相簿與漫畫翻組及開啟；`GALLERY_BENCH_BASELINE=1` 僅供比較，略過新能力斷言 |
-| `tests/gallery.test.ts` | 圖庫可見範圍、鍵盤焦點保留、比例到達後欄位穩定與調寬 |
-| `tests/media-feedback-ui.ts` | `pnpm exec tsx tests/media-feedback-ui.ts`：音樂篩選後的封面自動展示／選擇／壞圖復原、影片佇列清單／圖片切換及鍵盤提示、相同影片元件保留、漫畫舊檔案偏好回退；受控素材與可攜記錄逐位元比對，不代表音樂發聲驗收 |
-| `tests/media-workspace-ui.ts` | `pnpm exec tsx tests/media-workspace-ui.ts`：混合列表三種展示的不支援檔案限制／資訊與所在資料夾、預設收合佇列／過渡／焦點／減少動態效果、241 張圖虛擬清單與閱讀狀態、影音與 PDF 元件保留／卸載、損壞影片錯誤及 PDF／CBZ；隔離資料比對原檔與記錄 |
-| `tests/media-scope-ui.ts` | `pnpm exec tsx tests/media-scope-ui.ts`：目前／子資料夾範圍、三種排列搭配來源分組及收合、同名檔案／來源佇列、關閉還原及明確前往來源；比對原檔／專案與非閱讀資料 |
-| `tests/audio-playback-ui.ts` | `pnpm exec tsx tests/audio-playback-ui.ts`：FFmpeg 有聲 MP3／ID3 封面，驗證新舊入口、既有內容版面、有限時長／Range／非零 PCM、播放與暫停後繼續、音量 0～100／靜音、封面與卸載。`AUDIO_DEV_RENDERER=1` 啟動隔離 Vite renderer 驗證 StrictMode；`AUDIO_SAMPLE` 指向經授權唯讀檔案時，只將副本寫入測試樹並比對原檔不變；含封面的樣本適用完整封面斷言；並驗證跨專案持續播放、最小化、混合影音／重複追加、拖排／移除、迷你播放器貼邊及縮窗。不代表未提供樣本或聲卡輸出驗收 |
-| `tests/video-player-ui.ts` | `pnpm exec tsx tests/video-player-ui.ts` 執行全部；`--list` 列出群組，`--group controls`／`subtitles`／`appearance` 選擇重跑，可重複傳入 `--group`。各組獨立建立媒體樹、專案及 userData，保留原檔逐位元比較；涵蓋控制列、字幕／全螢幕、主題及窄視窗（由資料夾頁點檔案進入試播面板；接續與離開／隱藏等生命週期已由 `audio-playback-ui` 的播放佇列涵蓋，原 auto-next／lifecycle 組隨舊內嵌播放器設計移除） |
-| `tests/reader-ui.ts` | 閱讀器專項：`pnpm exec tsx tests/reader-ui.ts`；視窗／最大化與全螢幕還原、無上下留白、縮小下限／細節放大／平移、沉浸隱藏、固定 RTL 圖示、頁碼框與翻頁焦點；同樣使用隔離資料與 FFmpeg 測試圖片 |
-| `tests/workspace-polish-ui.ts` | `pnpm exec tsx tests/workspace-polish-ui.ts`：受控直／橫／長圖、舊原尺寸偏好、連續縮放錨點／平移／貼合，281 個資料夾的長路徑／同名搜尋及鍵盤選取，遊戲舊檢視偏好回退，側欄開合／調寬／減少動態效果，三主題五語言的方案工具列與搜尋樣式；比對原檔及專案記錄。`POLISH_SCOPE=layout`／`folders` 分別只跑樣式語言／資料夾選單及遊戲回退，不代表完整閱讀器／側欄驗證 |
-| `tests/performance.ts` | `pnpm exec tsx tests/performance.ts`：受控實體 1,000 資料夾的首次建立／重掃與 snapshot；另以 20 專案、1,000／10,000 筆模擬記錄分測首次建索引、snapshot、未變同步、SQL 與完整 main 搜尋請求。後四項暖身 3 次、取 24 次的中位數／p95，不含 IPC／UI；JSON 保存在 `.test-output/performance-*.json`。`POC_PERF_COUNT=10000` 可放大實體掃描。僅性能工作按需執行，不作日常門檻 |
+| `video-player-ui` | `--list` 列出群組，`--group controls`／`subtitles`／`appearance` 只跑指定群組；`appearance` 群組寫出 `computed-styles.json`，設 `VIDEO_CSS_REFERENCE` 指向舊的 JSON 可比對樣式重整前後 |
+| `audio-playback-ui` | `AUDIO_DEV_RENDERER=1` 用 Vite renderer 驗證 StrictMode；`AUDIO_SAMPLE` 指向經授權的唯讀樣本（只複製副本進測試樹） |
+| `workspace-polish-ui` | `POLISH_SCOPE=layout`／`folders` 只跑其中一部分 |
+| `gallery-performance-ui` | `GALLERY_BENCH_BASELINE=1` 只量測、略過新能力斷言 |
+| `tests/performance.ts` | 性能工作按需執行，不是日常門檻；`POC_PERF_COUNT=10000` 放大實體掃描，結果 JSON 在 `.test-output/` |
 
 資料與 UI 測試只使用自建測試樹及隔離的 userData，勿指向使用者收藏。UI runner 用專案根 `args: ['.']` 啟動，配合 `MEDIA_VIEWER_TEST_DATA`；檢查 runner 的媒體生成條件，勿把缺環境工具誤報為產品失敗。
 
@@ -120,8 +95,6 @@
 非同步測試等待可觀察的完成狀態（metadata、字幕結果、圖片解碼／排版等），避免任意延遲。倒數等時間行為保留代表性的真實時間驗證，其餘案例可用受控時鐘或測試注入縮短等待，不改正式環境行為或降低原驗收要求。
 
 開發時先跑受影響情境，最後按矩陣完成一次適用整合驗證。驗收與必要檢查全部通過即交付；只有新修改、失敗或具體剩餘風險才擴大／重跑，不在完成前臨時加入無關驗收。
-
-`tests/pending-ui.ts` 驗證本批方案繼承、工具列、群組拖放／減少動畫、共用 TOP、圖片點開、漫畫來源邊界與刪除確認／取消；`tests/maintenance.test.ts` 驗證欄位／完全移除的指紋、範圍、備份、失敗復原及未知資料保留。兩者只用隔離資料。
 
 ## 驗證紀錄的使用
 
