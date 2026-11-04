@@ -205,7 +205,7 @@ try {
   await savebar.getByRole('button', { name: '放棄', exact: true }).click()
   await savebar.waitFor({ state: 'hidden' })
   assert.equal(await nameInput.inputValue(), 'Pending Manga')
-  await page.getByRole('tab', { name: '備份與移除', exact: true }).click()
+  await page.getByRole('tab', { name: '移除', exact: true }).click()
   const beforeRemoval = await fs.readFile(folderFile(media), 'utf8')
   const settings = page.getByRole('dialog', { name: '專案設定 · Pending Manga', exact: true })
   // Removing from the list keeps everything; deleting info removes only this project's own info unless

@@ -200,7 +200,7 @@ try {
     await page.getByRole('button', { name: '開啟專案 Shot', exact: true }).first().hover()
     await page.getByRole('button', { name: '專案選單 Shot', exact: true }).click()
     await page.getByRole('menuitem', { name: '專案設定', exact: true }).click()
-    await page.getByRole('tab', { name: '備份與移除', exact: true }).click()
+    await page.getByRole('tab', { name: '移除', exact: true }).click()
     if (option('project-settings') === 'delete')
       await page.getByRole('button', { name: '刪除這個專案的資訊…', exact: true }).click()
   }
