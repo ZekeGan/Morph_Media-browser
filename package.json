@@ -25,6 +25,7 @@
     "test:ui:smoke": "node scripts/run-ui-tests.mjs --smoke",
     "test:ui:changed": "node scripts/run-ui-tests.mjs --changed",
     "shot": "tsx tests/support/shot.ts",
+    "shot:docs": "tsx tests/support/docs-shots.ts",
     "clean:test": "node scripts/clean-test-output.mjs",
     "postinstall": "install-electron",
     "test:workspace": "tsx tests/workspace-ui.ts",

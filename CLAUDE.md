@@ -50,7 +50,7 @@ Windows 優先的資料夾檢視器（Electron + React + Vite，pnpm），POC �
 
 ## 命令與驗證
 
-`pnpm dev`／`pnpm build`（含 tsc）／`pnpm typecheck`／`pnpm exec tsx --test tests/<name>.test.ts`／`pnpm test`（全部資料測試）／`pnpm test:workspace`（單一 Electron UI 流程；runner 會在 out/ 缺少或比原始碼舊時自動先 build）／`pnpm test:ui:changed`（依改動檔對應測試，平常用）／`pnpm test:ui:smoke`（核心 6 項，約 1～2 分鐘）／`pnpm test:ui:all`（全部，約 12 分鐘，發布前或使用者要求才跑；可加名稱片段篩選）／`pnpm shot <game|manga|album|other> [--width --mode --child --settings]`（內建範例資料一行截圖，檢查 UI 外觀用，取代臨時腳本）。格式用 `pnpm format`（提交前 `pnpm format:check`）；不臆造 lint 或其他 script；未改依賴不重裝。
+`pnpm dev`／`pnpm build`（含 tsc）／`pnpm typecheck`／`pnpm exec tsx --test tests/<name>.test.ts`／`pnpm test`（全部資料測試）／`pnpm test:workspace`（單一 Electron UI 流程；runner 會在 out/ 缺少或比原始碼舊時自動先 build）／`pnpm test:ui:changed`（依改動檔對應測試，平常用）／`pnpm test:ui:smoke`（核心 6 項，約 1～2 分鐘）／`pnpm test:ui:all`（全部，約 12 分鐘，發布前或使用者要求才跑；可加名稱片段篩選）／`pnpm shot <game|manga|album|other> [--width --mode --child --settings]`（內建範例資料一行截圖，檢查 UI 外觀用，取代臨時腳本）／`pnpm shot:docs [名稱片段]`（用自製示範資料重拍 `docs/images/` 的文件截圖，需先 `pnpm build`；介面大改後重拍）。格式用 `pnpm format`（提交前 `pnpm format:check`）；不臆造 lint 或其他 script；未改依賴不重裝。
 
 依風險選最小有效驗證（完整表：`docs/IMPLEMENTATION.md#驗證選擇`）：
 

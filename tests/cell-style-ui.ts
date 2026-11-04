@@ -148,7 +148,14 @@ try {
   assert.equal(box['justify-content'], 'flex-end')
   // Tags: namespace colours differ and the prefix is left out; a choice uses its own colour.
   const badges = card.locator('.tag-list [data-tag]')
-  assert.deepEqual(await badges.allInnerTexts(), ['ahegao', 'condom', 'chinese'])
+  // textContent, not the rendered text: the badges are shown in capitals.
+  assert.deepEqual(await badges.evaluateAll((nodes) => nodes.map((node) => node.textContent)), [
+    'ahegao',
+    'condom',
+    'chinese',
+  ])
+  // A tag cell below the first row still shows its tags (they used to be measured against the wrong box and hidden).
+  assert.ok(await badges.first().isVisible())
   const tint = (index: number) =>
     badges.nth(index).evaluate((node) => getComputedStyle(node).backgroundColor)
   assert.notEqual(await tint(0), await tint(1))

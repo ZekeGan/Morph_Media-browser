@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Documentation screenshots: `pnpm shot:docs` rebuilds the eight images in `docs/images/` from a generated sample library (flat covers drawn by the script, fictional titles, no personal paths). The Traditional Chinese README and user guide now use them.
+- Fix: a tag cell that is not in the first row of a card showed only a "+N" badge, because the tags were measured against the wrong box. The tag list now measures against itself.
 - README: the Traditional Chinese README is rewritten for first-time users (what it is, why use it, download placeholder with the unsigned-build note, features, data storage, developer section); the Simplified Chinese and Spanish READMEs are removed and the language bars of the remaining three now link only English, Traditional Chinese and Japanese. The app's own interface languages are unchanged.
 - Problems and recovery: a "Games to confirm" group lists folders that look like games but nobody has confirmed, with "Confirm game ROOT" and "This is not a game" on each, so they can be settled without opening each folder's settings.
 - Layout editor: a selected component can be duplicated (the copy goes under the last component and gets its own image slot), and the landing spot of a dragged component is drawn in the theme's accent colour.

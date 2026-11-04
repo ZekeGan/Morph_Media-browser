@@ -17,7 +17,9 @@ M:orph 是 Windows 上的資料夾收藏瀏覽器。漫畫、相簿、影片、�
 
 它只**檢視**你的資料，不會為了瀏覽而搬移、改名或刪除任何原始檔案。
 
-<!-- TODO 截圖：主畫面（卡片模式，暗色），寬 1500，放在這裡 -->
+<p align="center">
+  <img src="docs/images/01-main-card.png" width="900" alt="M:orph 主畫面：卡片模式，右側是選取資料夾的內容">
+</p>
 
 ## 為什麼用它
 
@@ -26,7 +28,12 @@ M:orph 是 Windows 上的資料夾收藏瀏覽器。漫畫、相簿、影片、�
 - **資料跟著資料夾走。** 名稱、標籤、評分、來源都存在資料夾自己身上，搬到別的位置或別台電腦，它仍然知道自己是什麼。
 - **不動你的原始檔。** 應用程式建立的內容都在隱藏記錄裡，清理時只移除它自己建立的東西，而且先預覽。
 
-<!-- TODO 截圖：版面編輯器，或三個主題並排 -->
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/02-table.png" alt="表格模式"><br>表格</td>
+    <td align="center"><img src="docs/images/03-tree.png" alt="樹狀模式"><br>樹狀</td>
+  </tr>
+</table>
 
 ## 下載與安裝
 
@@ -36,7 +43,7 @@ M:orph 是 Windows 上的資料夾收藏瀏覽器。漫畫、相簿、影片、�
 - **免安裝版**（`Morph-Portable-<版本>.exe`）：直接執行，不寫入系統。
 - 目前的版本**沒有程式碼簽章**，第一次執行時 Windows 會出現藍色 SmartScreen 警告：點「其他資訊」，再點「仍要執行」。
 
-第一次使用的步驟見[使用說明](docs/USER_GUIDE.zh-TW.md)。
+第一次使用的步驟見[使用說明](docs/USER_GUIDE.zh-TW.md)。畫面中的資料都是自製的示範資料。
 
 ## 功能
 
@@ -46,6 +53,10 @@ M:orph 是 Windows 上的資料夾收藏瀏覽器。漫畫、相簿、影片、�
 - 搜尋所有欄位：子字串、AND／OR／排除、數字與日期比較，可儲存搜尋。索引在本機，隨時可重建。
 
 **設計卡片**
+
+<p align="center">
+  <img src="docs/images/04-editor.png" width="800" alt="版面編輯器：左邊是組件，中間是畫布與真實資料預覽，右邊是組件設定">
+</p>
 
 - 把名稱、路徑、文字、標籤、數字、評分、日期、單選、連結、圖片等**組件**拖到網格上，每個組件都能調整字級、顏色、對齊、邊框等樣式。
 - **備用欄位**：一個組件可以列出多個欄位（例如 Steam、DLsite 與你自己備註的名稱），顯示第一個有值的。
@@ -70,6 +81,15 @@ M:orph 是 Windows 上的資料夾收藏瀏覽器。漫畫、相簿、影片、�
 **外觀與語言**
 
 - 三種主題：深色、霧白玻璃、暖紙。
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/01-main-card.png" alt="深色主題"><br>深色</td>
+    <td align="center"><img src="docs/images/06-theme-glass.png" alt="霧白玻璃主題"><br>霧白玻璃</td>
+    <td align="center"><img src="docs/images/07-theme-paper.png" alt="暖紙主題"><br>暖紙</td>
+  </tr>
+</table>
+
 - 介面語言有繁體中文、簡體中文、英文、日文、西班牙文。
 
 ## 資料怎麼保存
