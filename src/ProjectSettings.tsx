@@ -3,7 +3,8 @@ import { HelpTip } from './HelpTip'
 import { useState } from 'react'
 import { cardPresets } from '../shared/layouts'
 import { folderKinds } from '../shared/kind'
-import { Alert, Button, Group, Radio, Select, Stack, Tabs, Text, TextInput } from '@mantine/core'
+import { Alert, Button, Group, Select, Stack, Tabs, Text, TextInput } from '@mantine/core'
+import { Icon } from './icons'
 import type {
   Project,
   ProjectRemovalPreview,
@@ -12,6 +13,26 @@ import type {
   Request,
   Response,
 } from '../shared/model'
+
+type RemoveLevel = 'unlink' | 'private' | 'full'
+const removeLevels: { value: RemoveLevel; label: string; hint: string; danger?: boolean }[] = [
+  {
+    value: 'unlink',
+    label: '只取消連結',
+    hint: '只從本機清單移除。專案設定與資料保留，之後可重新連結。',
+  },
+  {
+    value: 'private',
+    label: '只移除此專案的資料',
+    hint: '移除此專案設定與私有覆寫；共用值與原始媒體保留。',
+  },
+  {
+    value: 'full',
+    label: '連同共用資料一併清除',
+    hint: '清除範圍內所有本工具資料；可能影響其他專案。原始媒體保留。',
+    danger: true,
+  },
+]
 
 export function ProjectSettings({
   project,
@@ -32,7 +53,13 @@ export function ProjectSettings({
 }) {
   useLocale()
 
-  const [removeScope, setRemoveScope] = useState<'unlink' | 'private' | 'full'>('unlink')
+  const [removeScope, setRemoveScope] = useState<RemoveLevel>('unlink')
+  const chooseLevel = (value: RemoveLevel) => {
+    setRemoveScope(value)
+    setPreview(undefined)
+    setFullPreview(undefined)
+    setResult(undefined)
+  }
   const [preview, setPreview] = useState<ProjectRemovalPreview>(),
     [result, setResult] = useState<CleanupResult>()
   const [fullPreview, setFullPreview] = useState<FullRemovalPreview>()
@@ -160,37 +187,55 @@ export function ProjectSettings({
             </Button>
           </section>
           <section className="settings-section">
-            <Radio.Group
-              label={tr('移除專案')}
-              value={removeScope}
-              onChange={(value) => {
-                setRemoveScope(value as 'unlink' | 'private' | 'full')
-                setPreview(undefined)
-                setFullPreview(undefined)
-                setResult(undefined)
+            <Text size="sm" fw={500} id="remove-level-label">
+              {tr('移除專案')}
+            </Text>
+            <div
+              className="choice-cards"
+              role="radiogroup"
+              aria-labelledby="remove-level-label"
+              onKeyDown={(event) => {
+                const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key]
+                if (!step || busy) return
+                event.preventDefault()
+                const index = removeLevels.findIndex((level) => level.value === removeScope)
+                chooseLevel(
+                  removeLevels[(index + step + removeLevels.length) % removeLevels.length].value
+                )
+                requestAnimationFrame(() =>
+                  event.currentTarget.querySelector<HTMLElement>('[aria-checked="true"]')?.focus()
+                )
               }}
             >
-              <Stack gap="xs" mt="xs">
-                <Radio
-                  value="unlink"
+              {removeLevels.map((level) => (
+                <button
+                  key={level.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={removeScope === level.value}
+                  aria-labelledby={'remove-level-' + level.value}
+                  aria-describedby={'remove-level-' + level.value + '-hint'}
+                  tabIndex={removeScope === level.value ? 0 : -1}
                   disabled={busy}
-                  label={tr('只取消連結')}
-                  description={tr('只從本機清單移除。專案設定與資料保留，之後可重新連結。')}
-                />
-                <Radio
-                  value="private"
-                  disabled={busy}
-                  label={tr('只移除此專案的資料')}
-                  description={tr('移除此專案設定與私有覆寫；共用值與原始媒體保留。')}
-                />
-                <Radio
-                  value="full"
-                  disabled={busy}
-                  label={tr('連同共用資料一併清除')}
-                  description={tr('清除範圍內所有本工具資料；可能影響其他專案。原始媒體保留。')}
-                />
-              </Stack>
-            </Radio.Group>
+                  className={
+                    'choice-card' +
+                    (removeScope === level.value ? ' selected' : '') +
+                    (level.danger ? ' danger' : '')
+                  }
+                  onClick={() => chooseLevel(level.value)}
+                >
+                  <span className="choice-card-heading">
+                    <strong id={'remove-level-' + level.value}>{tr(level.label)}</strong>
+                    <span className="theme-choice">
+                      {removeScope === level.value && <Icon name="check" size={13} />}
+                    </span>
+                  </span>
+                  <span className="theme-description" id={'remove-level-' + level.value + '-hint'}>
+                    {tr(level.hint)}
+                  </span>
+                </button>
+              ))}
+            </div>
             <Stack gap="lg" mt="md">
               {removeScope === 'unlink' && (
                 <Button
