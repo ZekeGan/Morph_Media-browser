@@ -12,6 +12,7 @@ As permitted by section 7 of the GNU GPL version 3, the following additional ter
 1. **Marking modified versions (section 7(c)).** A modified version must be marked in a reasonable way as different from the original version, and must not be presented as the original M:orph.
 2. **Name and logo (section 7(e)).** No rights are granted under trademark law for the name "M:orph", the subtitle "Media Browser" when used with it, or the M:orph mark and icons (`docs/brand/`, `build/icon.*`, `build/icons/`, and the drawing in `src/BrandMark.tsx`). See [TRADEMARK.md](TRADEMARK.md).
 3. **Notices.** Copyright notices, this file and the license text must be kept in copies and modified versions, as the GPL already requires.
+4. **Documentation and sample images.** The documentation and the generated sample covers in `tests/support/demo-data.ts` and `docs/images/` are under the same terms as the code. The name, mark and icons listed above are not.
 
 If you remove or replace these additional terms, the remaining terms of the GPL still apply.
 

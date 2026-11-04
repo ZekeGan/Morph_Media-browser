@@ -16,6 +16,11 @@ This applies to the name "M:orph" (with the subtitle "Media Browser"), the mark 
 - Publish a modified version under the name M:orph, or with the M:orph logo or a confusingly similar one. That includes a version that changes only the logo, or only the name.
 - Suggest that your version, product, website or service is the official one, or is made, approved or endorsed by the author.
 - Use the name or the logo as the name of your product, package, repository, domain, app store listing or social media account.
+- Present a paid copy as the official product, or hide that the official build is free. The GPL lets anyone sell copies if the source comes with them; it does not let a seller trade on the name.
+
+## Official builds
+
+The official builds are the ones published on this repository's Releases page. A copy from anywhere else is not official, even when its code is unmodified. If you redistribute an unmodified official build, say plainly that it is a third-party copy and where the official build can be downloaded.
 
 ## If you publish a modified version
 
@@ -27,4 +32,4 @@ Questions or permission requests: open an issue in the repository.
 
 ## 簡述（繁體中文）
 
-程式碼依 GPL 授權，可自由使用、修改與散布，但必須同樣以 GPL 公開原始碼並保留版權與授權聲明。「M:orph」名稱與標誌不在授權範圍內：修改後的版本不得沿用此名稱或標誌，也不能只換掉標誌或只改名就當作官方版本發布；請使用自己的名稱與標誌，註明為修改版，並可寫「基於 M:orph（Zeke Gan）」。
+程式碼依 GPL 授權，可自由使用、修改與散布，但必須同樣以 GPL 公開原始碼並保留版權與授權聲明。「M:orph」名稱與標誌不在授權範圍內：修改後的版本不得沿用此名稱或標誌，也不能只換掉標誌或只改名就當作官方版本發布；請使用自己的名稱與標誌，註明為修改版，並可寫「基於 M:orph（Zeke Gan）」。官方版只指本專案 Releases 頁面上的檔案；GPL 允許收費散布（須附原始碼），但不得冒用名稱、不得把收費版說成官方版，也不得隱瞞官方版免費。

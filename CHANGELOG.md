@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Licence notes: the licence stays GPL-3.0-or-later with the name and logo policy. The policy now defines the official builds (the Releases page), forbids presenting a paid copy as official or hiding that the official build is free, and the notice covers documentation and sample images. The three READMEs say that the GPL allows selling copies with their source but not under the name or logo.
 - Documentation: the architecture is drawn as mermaid diagrams (data path from folders to the screen, and the renderer / preload / main layers with storage) in `docs/ARCHITECTURE.md`, replacing `architecture.svg`; the Traditional Chinese README shows a simplified data-flow diagram and a three-layer diagram.
 - Documentation screenshots: `pnpm shot:docs` rebuilds the eight images in `docs/images/` from a generated sample library (flat covers drawn by the script, fictional titles, no personal paths). The Traditional Chinese README and user guide now use them.
 - Fix: a tag cell that is not in the first row of a card showed only a "+N" badge, because the tags were measured against the wrong box. The tag list now measures against itself.
