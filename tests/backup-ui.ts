@@ -38,21 +38,26 @@ try {
   await page.getByRole('button', { name: '應用程式設定', exact: true }).click()
   const settings = page.getByRole('dialog', { name: '應用程式設定', exact: true })
   await settings.getByRole('tab', { name: '備份', exact: true }).click()
-  await answer(out)
   await settings.getByRole('button', { name: '建立備份', exact: true }).click()
-  await page.waitForFunction(() => document.body.innerText.includes('已建立備份'))
-  const made = (await fs.readdir(out)).filter((name) => name.startsWith('M-orph-backup-'))
+  const row = settings.getByRole('listitem').filter({ hasText: '手動備份' })
+  await row.waitFor()
+  const kept = path.join(local, 'backups')
+  const made = (await fs.readdir(kept)).filter((name) => name.startsWith('M-orph-backup-'))
   assert.equal(made.length, 1, 'one backup folder was created')
-  const backup = path.join(out, made[0])
+  const backup = path.join(kept, made[0])
   const manifest = JSON.parse(await fs.readFile(path.join(backup, 'backup.json'), 'utf8'))
   assert.deepEqual(
     manifest.projects.map((p: { name: string }) => p.name),
     ['Portable']
   )
+  // Export copies the backup elsewhere (another disk).
+  await answer(out)
+  await row.getByRole('button', { name: /^匯出 / }).click()
+  await page.waitForFunction(() => document.body.innerText.includes('已匯出備份'))
+  assert.ok((await fs.readdir(out)).includes(made[0]))
 
-  // Restoring the project in place: the folder is found and existing info stays as it is.
-  await answer(backup)
-  await settings.getByRole('button', { name: '從備份還原', exact: true }).click()
+  // Restoring the project in place from the list: the folder is found and existing info stays as it is.
+  await row.getByRole('button', { name: /^還原 / }).click()
   const restore = settings.locator('.restore-preview')
   await restore.waitFor()
   await restore.getByText('找到資料夾').waitFor()
@@ -60,6 +65,13 @@ try {
   await restore.getByRole('button', { name: '還原勾選的項目', exact: true }).click()
   await page.waitForFunction(() => document.body.innerText.includes('已還原：Portable'))
   await restore.waitFor({ state: 'hidden' })
+  await settings.getByRole('listitem').filter({ hasText: '還原前自動備份' }).waitFor()
+  await page.evaluate(() => {
+    window.confirm = () => true
+  })
+  await row.getByRole('button', { name: /^刪除 / }).click()
+  await row.waitFor({ state: 'detached' })
+  assert.ok(!(await fs.readdir(kept)).includes(made[0]))
   assert.deepEqual(await fs.readFile(folderFile(path.join(media, 'Work'))), record)
   assert.equal(await fs.readFile(path.join(media, 'Work', 'page.txt'), 'utf8'), 'ORIGINAL')
   await page.keyboard.press('Escape')

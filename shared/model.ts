@@ -249,8 +249,9 @@ export type Request =
   | { action: 'open' | 'restore' | 'copyIdentity' | 'resume'; rowId: string }
   | { action: 'cleanupPreview'; rowId: string; scope: 'folder' | 'private' }
   | { action: 'cleanup'; token: string; restart: boolean }
-  | { action: 'createBackup' }
-  | { action: 'previewBackup' }
+  | { action: 'createBackup' | 'listBackups' }
+  | { action: 'deleteBackup' | 'exportBackup'; id: string }
+  | { action: 'previewBackup'; id?: string }
   | { action: 'locateBackup'; token: string; projectId: string }
   | { action: 'restoreBackup'; token: string; settings: boolean; projects: string[] }
 export interface Response {
@@ -263,7 +264,8 @@ export interface Response {
   fieldDeletionPreview?: FieldDeletionPreview
   recoveryPath?: string
   backup?: import('./backup').BackupPreview
-  restored?: { projects: string[]; failed: string[]; settings: boolean }
+  backups?: import('./backup').BackupEntry[]
+  restored?: { projects: string[]; failed: string[]; settings: boolean; source: string }
   notice?: Notice
   cancelled?: boolean
   rootSelection?: RootSelection

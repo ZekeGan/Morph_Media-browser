@@ -272,18 +272,11 @@ try {
   await page.keyboard.press('Escape')
   await button('應用程式設定').click()
   await settings().getByRole('tab', { name: '備份', exact: true }).click()
-  const backups = path.join(root, 'backups')
-  await fs.mkdir(backups)
-  const answer = (folder: string | undefined) =>
-    app.evaluate(({ dialog }, chosen) => {
-      dialog.showOpenDialog = (async () => ({
-        canceled: !chosen,
-        filePaths: chosen ? [chosen] : [],
-      })) as typeof dialog.showOpenDialog
-    }, folder)
-  await answer(backups)
+  // Backups are kept in the app's own folder; "Create backup" asks nothing.
+  const backups = path.join(local, 'backups')
   await settings().getByRole('button', { name: '建立備份', exact: true }).click()
-  await page.waitForFunction(() => document.body.innerText.includes('已建立備份'))
+  const list = settings().getByRole('list', { name: '備份清單', exact: true })
+  await list.getByText('手動備份', { exact: false }).waitFor()
   const made = path.join(
     backups,
     (await fs.readdir(backups)).find((name) => name.startsWith('M-orph-backup-'))!
@@ -292,14 +285,23 @@ try {
   assert.equal(exportedValue.kind, 'media-viewer.settings')
   assert.equal(exportedValue.prefs.browse, undefined)
   assert.equal(exportedValue.prefs.registry, undefined)
+  const answer = (folder: string | undefined) =>
+    app.evaluate(({ dialog }, chosen) => {
+      dialog.showOpenDialog = (async () => ({
+        canceled: !chosen,
+        filePaths: chosen ? [chosen] : [],
+      })) as typeof dialog.showOpenDialog
+    }, folder)
   // Cancelling the folder choice shows nothing.
   await answer(undefined)
-  await settings().getByRole('button', { name: '從備份還原', exact: true }).click()
+  await settings().getByRole('button', { name: '從檔案還原…', exact: true }).click()
   assert.equal(await settings().locator('.restore-preview').count(), 0)
-  // The backup's settings are replaced by other ones (paper theme) to see the restore take effect.
-  await fs.copyFile(incoming, path.join(made, 'settings.json'))
-  await answer(made)
-  await settings().getByRole('button', { name: '從備份還原', exact: true }).click()
+  // A backup from elsewhere carries other settings (paper theme), to see the restore take effect.
+  const elsewhere = path.join(root, 'from-elsewhere')
+  await fs.cp(made, elsewhere, { recursive: true })
+  await fs.copyFile(incoming, path.join(elsewhere, 'settings.json'))
+  await answer(elsewhere)
+  await settings().getByRole('button', { name: '從檔案還原…', exact: true }).click()
   const restore = settings().locator('.restore-preview')
   await restore.waitFor()
   assert.equal(
@@ -312,17 +314,16 @@ try {
   await restore.getByRole('button', { name: '還原勾選的項目', exact: true }).click()
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'paper')
   await page.getByRole('heading', { name: '你的資料夾，你的瀏覽方式' }).waitFor()
+  // The restore left an automatic backup of the state before it; restoring that one undoes it.
   await button('應用程式設定').click()
   await settings().getByRole('tab', { name: '備份', exact: true }).click()
-  await settings()
-    .getByRole('button', { name: /^回到之前的設定/ })
-    .click()
-  await settings().getByRole('button', { name: '復原此備份', exact: true }).first().waitFor()
+  const auto = settings().getByRole('listitem').filter({ hasText: '還原前自動備份' })
+  await auto.waitFor()
   await page.screenshot({ path: path.join(screens, 'settings-backup.png') })
-  await page.evaluate(() => {
-    window.confirm = () => true
-  })
-  await settings().getByRole('button', { name: '復原此備份', exact: true }).first().click()
+  await auto.getByRole('button', { name: /^還原 / }).click()
+  await restore.waitFor()
+  for (let index = 1; index < (await boxes.count()); index++) await boxes.nth(index).uncheck()
+  await restore.getByRole('button', { name: '還原勾選的項目', exact: true }).click()
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark')
   for (const [file, bytes] of originals) assert.deepEqual(await fs.readFile(file), bytes)
   const snapshot = (await page.evaluate(() => window.media.request({ action: 'snapshot' })))

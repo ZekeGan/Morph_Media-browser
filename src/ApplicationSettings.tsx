@@ -1,20 +1,9 @@
-import type { BackupPreview } from '../shared/backup'
+import { AUTO_BACKUPS_KEPT, type BackupEntry, type BackupPreview } from '../shared/backup'
 import type { Request, Response } from '../shared/model'
 import { t as tr, useLocale } from './i18n'
 import { HelpLabel, HelpTip } from './HelpTip'
 import { useEffect, useState } from 'react'
-import {
-  Accordion,
-  Alert,
-  Button,
-  Checkbox,
-  Group,
-  Modal,
-  Select,
-  Stack,
-  Tabs,
-  Text,
-} from '@mantine/core'
+import { Alert, Button, Checkbox, Group, Modal, Select, Stack, Tabs, Text } from '@mantine/core'
 import { localeOptions, type LocaleId } from '../shared/locales'
 import { themes, useAppTheme } from './themes/ThemeProvider'
 import type { ThemeId } from '../shared/themes'
@@ -42,7 +31,7 @@ export function ApplicationSettings({
   const [restorePreview, setRestorePreview] = useState<BackupPreview>(),
     [restoreSettings, setRestoreSettings] = useState(true),
     [restoreProjects, setRestoreProjects] = useState<string[]>([]),
-    [backups, setBackups] = useState<{ id: string; createdAt: string }[]>([])
+    [backups, setBackups] = useState<BackupEntry[]>([])
   const [applied, setApplied] = useState(false)
   useEffect(() => {
     onDirty(opened && !!restorePreview)
@@ -52,10 +41,7 @@ export function ApplicationSettings({
     if (opened) {
       setError('')
       setRestorePreview(undefined)
-      void window.desktop
-        .updateWorkspace({ action: 'listBackups' })
-        .then((state) => setBackups(state.backups ?? []))
-        .catch((reason) => setError(String(reason)))
+      void act({ action: 'listBackups' }).then((result) => setBackups(result?.backups ?? []))
       setApplied(false)
     }
   }, [opened])
@@ -85,11 +71,27 @@ export function ApplicationSettings({
     setRestoreSettings(preview.settings !== undefined)
     setRestoreProjects(preview.projects.filter((p) => p.state === 'ready').map((p) => p.projectId))
   }
-  const chooseBackup = async () => {
+  // Without an id the user picks a backup folder (one made on another computer, or exported).
+  const chooseBackup = async (id?: string) => {
     setError('')
-    const result = await act({ action: 'previewBackup' })
+    const result = await act({ action: 'previewBackup', id })
     if (result?.backup) showRestore(result.backup)
   }
+  const createBackup = async () => {
+    const result = await act({ action: 'createBackup' })
+    if (result?.backups) setBackups(result.backups)
+  }
+  const removeBackup = async (entry: BackupEntry) => {
+    if (!window.confirm(tr('刪除 {0} 的備份？刪除後無法復原。', when(entry.createdAt)))) return
+    const result = await act({ action: 'deleteBackup', id: entry.id })
+    if (result?.backups) setBackups(result.backups)
+  }
+  const when = (date: string) =>
+    new Date(date).toLocaleString(appearance.locale, { dateStyle: 'medium', timeStyle: 'short' })
+  const size = (bytes: number) =>
+    bytes >= 1024 * 1024
+      ? (bytes / 1024 / 1024).toFixed(1) + ' MB'
+      : Math.max(1, Math.round(bytes / 1024)) + ' KB'
   const locate = async (projectId: string) => {
     if (!restorePreview) return
     const result = await act({ action: 'locateBackup', token: restorePreview.token, projectId })
@@ -110,22 +112,10 @@ export function ApplicationSettings({
     // Restored settings change groups, theme and language: reload so every part of the window reads them again.
     flushSync(() => {
       setRestorePreview(undefined)
+      if (result.backups) setBackups(result.backups)
       onDirty(false)
     })
     if (result.restored.settings) window.location.reload()
-  }
-  const restore = async (backupId: string) => {
-    if (!window.confirm(tr('復原此設定備份？目前設定會先另存備份，媒體與專案連結保持原樣。')))
-      return
-    setSaving(true)
-    setError('')
-    try {
-      await window.desktop.updateWorkspace({ action: 'restorePackage', backupId })
-      window.location.reload()
-    } catch (reason) {
-      setError(String(reason))
-      setSaving(false)
-    }
   }
   return (
     <Modal
@@ -227,139 +217,160 @@ export function ApplicationSettings({
               <Text fw={600}>{tr('備份')}</Text>
               <Text size="sm" c="dimmed" mb="sm">
                 {tr(
-                  '把設定和所有專案的資訊（標籤、評分、封面）存成一個資料夾。你的檔案（漫畫、圖片、影片）不會被複製。'
+                  '把設定和所有專案的資訊（標籤、評分、封面）存一份。你的檔案（漫畫、圖片、影片）不會被複製。'
                 )}
               </Text>
-              <Stack>
-                <Group>
-                  <Button
-                    disabled={busy || !!restorePreview}
-                    onClick={() => void act({ action: 'createBackup' })}
-                  >
-                    {tr('建立備份')}
-                  </Button>
-                  <Button
-                    variant="default"
-                    disabled={busy || !!restorePreview}
-                    onClick={() => void chooseBackup()}
-                  >
-                    {tr('從備份還原')}
-                  </Button>
-                </Group>
-                {restorePreview && (
-                  <Stack gap="sm" className="restore-preview">
-                    <Text fw={600}>
-                      {tr(
-                        '從 {0} 的備份還原',
-                        new Date(restorePreview.createdAt).toLocaleString(appearance.locale)
-                      )}
-                    </Text>
-                    <Text size="sm" c="dimmed">
-                      {tr('勾選要還原的項目。已經有資訊的資料夾會保留現在的內容。')}
-                    </Text>
-                    {restorePreview.settings && (
-                      <Checkbox
-                        label={tr('設定（群組、最愛、主題、語言）')}
-                        description={tr('目前的設定會先另存一份，之後可以回到還原之前。')}
-                        checked={restoreSettings}
-                        disabled={busy}
-                        onChange={(event) => setRestoreSettings(event.currentTarget.checked)}
-                      />
+              <Group justify="space-between" gap="xs">
+                <Button disabled={busy || !!restorePreview} onClick={() => void createBackup()}>
+                  {tr('建立備份')}
+                </Button>
+                <Button
+                  variant="default"
+                  disabled={busy || !!restorePreview}
+                  onClick={() => void chooseBackup()}
+                >
+                  {tr('從檔案還原…')}
+                </Button>
+              </Group>
+              {restorePreview ? (
+                <Stack gap="sm" mt="md" className="restore-preview">
+                  <Text fw={600}>{tr('從 {0} 的備份還原', when(restorePreview.createdAt))}</Text>
+                  <Text size="sm" c="dimmed">
+                    {tr(
+                      '勾選要還原的項目。已經有資訊的資料夾會保留現在的內容；還原前會自動備份目前的狀態。'
                     )}
-                    {restorePreview.projects.map((item) => (
-                      <Group
-                        key={item.projectId}
-                        justify="space-between"
-                        wrap="nowrap"
-                        align="flex-start"
-                      >
-                        <Checkbox
-                          label={item.name}
-                          description={
-                            <>
-                              <span className="path">{item.root}</span>
-                              <br />
-                              {item.state === 'ready'
-                                ? tr('找到資料夾')
-                                : item.state === 'missing'
-                                  ? tr('找不到這個資料夾，請選擇它現在的位置或略過。')
-                                  : item.message}
-                            </>
-                          }
-                          checked={restoreProjects.includes(item.projectId)}
-                          disabled={busy || item.state !== 'ready'}
-                          onChange={(event) => {
-                            const on = event.currentTarget.checked
-                            setRestoreProjects((list) =>
-                              on
-                                ? [...list, item.projectId]
-                                : list.filter((id) => id !== item.projectId)
-                            )
-                          }}
-                        />
-                        {item.state !== 'ready' && (
-                          <Button
-                            size="xs"
-                            variant="default"
-                            disabled={busy}
-                            onClick={() => void locate(item.projectId)}
-                          >
-                            {tr('選擇新位置')}
-                          </Button>
-                        )}
-                      </Group>
-                    ))}
-                    <Group justify="flex-end">
-                      <Button
-                        variant="default"
-                        disabled={busy}
-                        onClick={() => setRestorePreview(undefined)}
-                      >
-                        {tr('取消')}
-                      </Button>
-                      <Button
-                        loading={busy}
-                        disabled={
-                          !restoreProjects.length &&
-                          !(restoreSettings && restorePreview.settings !== undefined)
+                  </Text>
+                  {restorePreview.settings && (
+                    <Checkbox
+                      label={tr('設定（群組、最愛、主題、語言）')}
+                      checked={restoreSettings}
+                      disabled={busy}
+                      onChange={(event) => setRestoreSettings(event.currentTarget.checked)}
+                    />
+                  )}
+                  {restorePreview.projects.map((item) => (
+                    <Group
+                      key={item.projectId}
+                      justify="space-between"
+                      wrap="nowrap"
+                      align="flex-start"
+                    >
+                      <Checkbox
+                        label={item.name}
+                        description={
+                          <>
+                            <span className="path">{item.root}</span>
+                            <br />
+                            {item.state === 'ready'
+                              ? tr('找到資料夾')
+                              : item.state === 'missing'
+                                ? tr('找不到這個資料夾，請選擇它現在的位置或略過。')
+                                : item.message}
+                          </>
                         }
-                        onClick={() => void applyRestore()}
-                      >
-                        {tr('還原勾選的項目')}
-                      </Button>
+                        checked={restoreProjects.includes(item.projectId)}
+                        disabled={busy || item.state !== 'ready'}
+                        onChange={(event) => {
+                          const on = event.currentTarget.checked
+                          setRestoreProjects((list) =>
+                            on
+                              ? [...list, item.projectId]
+                              : list.filter((id) => id !== item.projectId)
+                          )
+                        }}
+                      />
+                      {item.state !== 'ready' && (
+                        <Button
+                          size="xs"
+                          variant="default"
+                          disabled={busy}
+                          onClick={() => void locate(item.projectId)}
+                        >
+                          {tr('選擇新位置')}
+                        </Button>
+                      )}
                     </Group>
-                  </Stack>
+                  ))}
+                  <Group justify="flex-end">
+                    <Button
+                      variant="default"
+                      disabled={busy}
+                      onClick={() => setRestorePreview(undefined)}
+                    >
+                      {tr('取消')}
+                    </Button>
+                    <Button
+                      loading={busy}
+                      disabled={
+                        !restoreProjects.length &&
+                        !(restoreSettings && restorePreview.settings !== undefined)
+                      }
+                      onClick={() => void applyRestore()}
+                    >
+                      {tr('還原勾選的項目')}
+                    </Button>
+                  </Group>
+                </Stack>
+              ) : backups.length ? (
+                <ul className="backup-list" aria-label={tr('備份清單')}>
+                  {backups.map((entry) => (
+                    <li key={entry.id} className="backup-row">
+                      <div className="backup-row-text">
+                        <Text size="sm">{when(entry.createdAt)}</Text>
+                        <Text size="xs" c="dimmed">
+                          {entry.label === 'auto' ? tr('還原前自動備份') : tr('手動備份')} ·{' '}
+                          {tr('{0} 個專案', entry.projects)} · {size(entry.size)}
+                        </Text>
+                      </div>
+                      <Group gap={4} wrap="nowrap">
+                        <Button
+                          size="compact-sm"
+                          variant="default"
+                          aria-label={tr('還原 {0} 的備份', when(entry.createdAt))}
+                          disabled={busy}
+                          onClick={() => void chooseBackup(entry.id)}
+                        >
+                          {tr('還原')}
+                        </Button>
+                        <Button
+                          size="compact-sm"
+                          variant="subtle"
+                          aria-label={tr('匯出 {0} 的備份', when(entry.createdAt))}
+                          disabled={busy}
+                          onClick={() => void act({ action: 'exportBackup', id: entry.id })}
+                        >
+                          {tr('匯出…')}
+                        </Button>
+                        <Button
+                          size="compact-sm"
+                          variant="subtle"
+                          color="red"
+                          aria-label={tr('刪除 {0} 的備份', when(entry.createdAt))}
+                          disabled={busy}
+                          onClick={() => void removeBackup(entry)}
+                        >
+                          {tr('刪除')}
+                        </Button>
+                      </Group>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Text size="sm" c="dimmed" mt="md">
+                  {tr('還沒有備份。')}
+                </Text>
+              )}
+              {error && (
+                <Alert color="red" mt="md">
+                  {error}
+                </Alert>
+              )}
+              <Text size="xs" c="dimmed" mt="md">
+                {tr(
+                  '備份存在這台電腦裡。要防硬碟故障，請把備份匯出到其他磁碟。自動備份只保留最近 {0} 筆。',
+                  AUTO_BACKUPS_KEPT
                 )}
-                {error && <Alert color="red">{error}</Alert>}
-                {backups.length ? (
-                  <Accordion variant="separated">
-                    <Accordion.Item value="restore-points">
-                      <Accordion.Control>
-                        {tr('回到之前的設定')} ({backups.length})
-                      </Accordion.Control>
-                      <Accordion.Panel>
-                        <Stack gap="xs">
-                          {backups.map((backup) => (
-                            <Group key={backup.id} justify="space-between">
-                              <Text size="xs">
-                                {new Date(backup.createdAt).toLocaleString(appearance.locale)}
-                              </Text>
-                              <Button
-                                size="xs"
-                                variant="default"
-                                disabled={saving || busy || !!restorePreview}
-                                onClick={() => void restore(backup.id)}
-                              >
-                                {tr('復原此備份')}
-                              </Button>
-                            </Group>
-                          ))}
-                        </Stack>
-                      </Accordion.Panel>
-                    </Accordion.Item>
-                  </Accordion>
-                ) : null}
-              </Stack>
+              </Text>
             </section>
           </Stack>
         </Tabs.Panel>

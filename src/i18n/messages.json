@@ -3131,18 +3131,6 @@
     "en": "None",
     "es": "Ninguno"
   },
-  "復原此設定備份？目前設定會先另存備份，媒體與專案連結保持原樣。": {
-    "ja": "この設定バックアップを復元しますか？現在の設定は先にバックアップされ、メディアとプロジェクトのリンクは保持されます。",
-    "zh-CN": "恢复此设置备份？当前设置会先备份，媒体与项目链接保持原样。",
-    "en": "Restore this settings backup? Current settings will be backed up first. Media and project links will be preserved.",
-    "es": "¿Restaurar esta copia de ajustes? Se guardará una copia de los ajustes actuales. Se conservarán los medios y enlaces de proyectos."
-  },
-  "復原此備份": {
-    "ja": "このバックアップを復元",
-    "zh-CN": "恢复此备份",
-    "en": "Restore this backup",
-    "es": "Restaurar esta copia"
-  },
   "展示內容": {
     "ja": "表示内容",
     "zh-CN": "显示内容",
@@ -6605,23 +6593,11 @@
     "en": "Backup",
     "es": "Copia de seguridad"
   },
-  "把設定和所有專案的資訊（標籤、評分、封面）存成一個資料夾。你的檔案（漫畫、圖片、影片）不會被複製。": {
-    "ja": "設定とすべてのプロジェクトの情報（タグ、評価、カバー）を一つのフォルダーに保存します。あなたのファイル（マンガ、画像、動画）はコピーされません。",
-    "zh-CN": "把设定和所有项目的信息（标签、评分、封面）存成一个文件夹。你的文件（漫画、图片、视频）不会被复制。",
-    "en": "Saves your settings and the info of every project (tags, ratings, covers) as one folder. Your files (manga, images, videos) are not copied.",
-    "es": "Guarda tus ajustes y la información de todos los proyectos (etiquetas, valoraciones, portadas) en una carpeta. Tus archivos (mangas, imágenes, vídeos) no se copian."
-  },
   "建立備份": {
     "ja": "バックアップを作成",
     "zh-CN": "建立备份",
     "en": "Create backup",
     "es": "Crear copia"
-  },
-  "從備份還原": {
-    "ja": "バックアップから復元",
-    "zh-CN": "从备份还原",
-    "en": "Restore from backup",
-    "es": "Restaurar desde una copia"
   },
   "從 {0} 的備份還原": {
     "ja": "{0} のバックアップから復元",
@@ -6629,23 +6605,11 @@
     "en": "Restore from the backup of {0}",
     "es": "Restaurar la copia del {0}"
   },
-  "勾選要還原的項目。已經有資訊的資料夾會保留現在的內容。": {
-    "ja": "復元する項目にチェックを入れてください。すでに情報があるフォルダーは今の内容を残します。",
-    "zh-CN": "勾选要还原的项目。已经有信息的文件夹会保留现在的内容。",
-    "en": "Tick what to restore. Folders that already have info keep what they have now.",
-    "es": "Marca lo que quieres restaurar. Las carpetas que ya tienen información conservan la actual."
-  },
   "設定（群組、最愛、主題、語言）": {
     "ja": "設定（グループ、お気に入り、テーマ、言語）",
     "zh-CN": "设定（群组、最爱、主题、语言）",
     "en": "Settings (groups, favourites, theme, language)",
     "es": "Ajustes (grupos, favoritos, tema, idioma)"
-  },
-  "目前的設定會先另存一份，之後可以回到還原之前。": {
-    "ja": "今の設定を先に保存するので、あとで復元前に戻せます。",
-    "zh-CN": "目前的设定会先另存一份，之后可以回到还原之前。",
-    "en": "Your current settings are saved first, so you can go back to them later.",
-    "es": "Tus ajustes actuales se guardan antes, así que podrás volver a ellos."
   },
   "找到資料夾": {
     "ja": "フォルダーが見つかりました",
@@ -6670,12 +6634,6 @@
     "zh-CN": "还原勾选的项目",
     "en": "Restore ticked items",
     "es": "Restaurar lo marcado"
-  },
-  "回到之前的設定": {
-    "ja": "以前の設定に戻す",
-    "zh-CN": "回到之前的设定",
-    "en": "Go back to earlier settings",
-    "es": "Volver a ajustes anteriores"
   },
   "放棄尚未完成的還原？": {
     "ja": "未完了の復元を破棄しますか？",
@@ -6706,5 +6664,101 @@
     "zh-CN": "接回原本的项目",
     "en": "Bring back the project",
     "es": "Recuperar el proyecto"
+  },
+  "把設定和所有專案的資訊（標籤、評分、封面）存一份。你的檔案（漫畫、圖片、影片）不會被複製。": {
+    "ja": "設定とすべてのプロジェクトの情報（タグ、評価、カバー）のコピーを保存します。あなたのファイル（マンガ、画像、動画）はコピーされません。",
+    "zh-CN": "把设定和所有项目的信息（标签、评分、封面）存一份。你的文件（漫画、图片、视频）不会被复制。",
+    "en": "Keeps a copy of your settings and the info of every project (tags, ratings, covers). Your files (manga, images, videos) are not copied.",
+    "es": "Guarda una copia de tus ajustes y de la información de todos los proyectos (etiquetas, valoraciones, portadas). Tus archivos (mangas, imágenes, vídeos) no se copian."
+  },
+  "從檔案還原…": {
+    "ja": "フォルダーから復元…",
+    "zh-CN": "从文件还原…",
+    "en": "Restore from a folder…",
+    "es": "Restaurar desde una carpeta…"
+  },
+  "勾選要還原的項目。已經有資訊的資料夾會保留現在的內容；還原前會自動備份目前的狀態。": {
+    "ja": "復元する項目にチェックを入れてください。すでに情報があるフォルダーは今の内容を残します。復元の前に今の状態を自動でバックアップします。",
+    "zh-CN": "勾选要还原的项目。已经有信息的文件夹会保留现在的内容；还原前会自动备份目前的状态。",
+    "en": "Tick what to restore. Folders that already have info keep what they have now; the current state is backed up automatically first.",
+    "es": "Marca lo que quieres restaurar. Las carpetas que ya tienen información conservan la actual; antes se hace una copia automática del estado actual."
+  },
+  "備份清單": {
+    "ja": "バックアップ一覧",
+    "zh-CN": "备份列表",
+    "en": "Backups",
+    "es": "Copias guardadas"
+  },
+  "還原前自動備份": {
+    "ja": "復元前の自動バックアップ",
+    "zh-CN": "还原前自动备份",
+    "en": "Automatic, before a restore",
+    "es": "Automática, antes de restaurar"
+  },
+  "手動備份": {
+    "ja": "手動バックアップ",
+    "zh-CN": "手动备份",
+    "en": "Manual",
+    "es": "Manual"
+  },
+  "{0} 個專案": {
+    "ja": "{0} 個のプロジェクト",
+    "zh-CN": "{0} 个项目",
+    "en": "{0} projects",
+    "es": "{0} proyectos"
+  },
+  "還原 {0} 的備份": {
+    "ja": "{0} のバックアップを復元",
+    "zh-CN": "还原 {0} 的备份",
+    "en": "Restore the backup of {0}",
+    "es": "Restaurar la copia del {0}"
+  },
+  "匯出 {0} 的備份": {
+    "ja": "{0} のバックアップをエクスポート",
+    "zh-CN": "导出 {0} 的备份",
+    "en": "Export the backup of {0}",
+    "es": "Exportar la copia del {0}"
+  },
+  "刪除 {0} 的備份": {
+    "ja": "{0} のバックアップを削除",
+    "zh-CN": "删除 {0} 的备份",
+    "en": "Delete the backup of {0}",
+    "es": "Borrar la copia del {0}"
+  },
+  "刪除 {0} 的備份？刪除後無法復原。": {
+    "ja": "{0} のバックアップを削除しますか？元に戻せません。",
+    "zh-CN": "删除 {0} 的备份？删除后无法恢复。",
+    "en": "Delete the backup of {0}? This cannot be undone.",
+    "es": "¿Borrar la copia del {0}? No se puede deshacer."
+  },
+  "還原": {
+    "ja": "復元",
+    "zh-CN": "还原",
+    "en": "Restore",
+    "es": "Restaurar"
+  },
+  "匯出…": {
+    "ja": "エクスポート…",
+    "zh-CN": "导出…",
+    "en": "Export…",
+    "es": "Exportar…"
+  },
+  "刪除": {
+    "ja": "削除",
+    "zh-CN": "删除",
+    "en": "Delete",
+    "es": "Borrar"
+  },
+  "還沒有備份。": {
+    "ja": "まだバックアップはありません。",
+    "zh-CN": "还没有备份。",
+    "en": "No backups yet.",
+    "es": "Todavía no hay copias."
+  },
+  "備份存在這台電腦裡。要防硬碟故障，請把備份匯出到其他磁碟。自動備份只保留最近 {0} 筆。": {
+    "ja": "バックアップはこのパソコンに保存されます。ディスクの故障に備えるには、別のディスクにエクスポートしてください。自動バックアップは最新の {0} 件だけ残ります。",
+    "zh-CN": "备份存在这台电脑里。要防硬盘故障，请把备份导出到其他磁盘。自动备份只保留最近 {0} 笔。",
+    "en": "Backups are kept on this computer. To be safe from a disk failure, export a backup to another disk. Only the newest {0} automatic backups are kept.",
+    "es": "Las copias se guardan en este equipo. Para protegerte de un fallo del disco, exporta una copia a otro disco. Solo se conservan las {0} copias automáticas más recientes."
   }
 }

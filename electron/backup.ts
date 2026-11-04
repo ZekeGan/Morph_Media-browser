@@ -4,9 +4,12 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import {
+  AUTO_BACKUPS_KEPT,
+  BACKUP_ID,
   BACKUP_KIND,
   BACKUP_VERSION,
   checkBackupManifest,
+  type BackupEntry,
   type BackupManifest,
   type BackupPreview,
   type BackupProjectPreview,
@@ -33,23 +36,39 @@ export async function createBackup(
   workspace: WorkspaceStore,
   ids: string[],
   parent: string,
-  appVersion: string
+  appVersion: string,
+  label: 'manual' | 'auto' = 'manual'
 ) {
-  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13)
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)
   parent = await fs.realpath(parent)
   // Inside a project's folder the copied records would be scanned as that project's folders.
   for (const linked of library.snapshot().projects)
     if (within(linked.root, parent))
       throw new Error(`備份位置不能放在專案資料夾裡，請選擇其他位置：${linked.root}`)
-  const out = path.join(parent, `M-orph-backup-${stamp}`)
-  await fs.mkdir(out)
+  // Two backups in the same second get a counter instead of failing.
+  let out = path.join(parent, `M-orph-backup-${stamp}`)
+  for (let n = 2; ; n++)
+    try {
+      await fs.mkdir(out)
+      break
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST' || n > 99) throw error
+      out = path.join(parent, `M-orph-backup-${stamp}-${n}`)
+    }
   try {
-    const state = await workspace.update({ action: 'exportPackage' }, ids)
-    await writeSettingsFile(path.join(out, 'settings.json'), state.settingsPackage!)
-    const projectsDir = path.join(out, 'projects')
-    await fs.mkdir(projectsDir)
+    // A damaged settings file must not stop a backup (and so a restore) of the projects.
+    let settings: string | undefined = 'settings.json'
     const projects: BackupManifest['projects'] = [],
       skipped: string[] = []
+    try {
+      const state = await workspace.update({ action: 'exportPackage' }, ids)
+      await writeSettingsFile(path.join(out, 'settings.json'), state.settingsPackage!)
+    } catch (error) {
+      settings = undefined
+      skipped.push(`設定：${message(error)}`)
+    }
+    const projectsDir = path.join(out, 'projects')
+    await fs.mkdir(projectsDir)
     for (const linked of library.snapshot().projects) {
       const name = linked.project?.name ?? linked.root
       if (!linked.project || linked.error) {
@@ -73,13 +92,14 @@ export async function createBackup(
       schemaVersion: BACKUP_VERSION,
       createdAt: new Date().toISOString(),
       appVersion,
-      settings: 'settings.json',
+      label,
+      settings,
       projects,
     }
     await fs.writeFile(path.join(out, 'backup.json'), JSON.stringify(manifest, null, 2), {
       flag: 'wx',
     })
-    return { dir: out, projects: projects.length, skipped }
+    return { dir: out, id: path.basename(out), projects: projects.length, skipped }
   } catch (error) {
     await fs.rm(out, { recursive: true, force: true })
     throw error
@@ -238,5 +258,94 @@ export async function applyBackup(
     } catch (error) {
       failed.push(`設定：${message(error)}`)
     }
-  return { projects: restored, failed, settings: settingsDone }
+  return { projects: restored, failed, settings: settingsDone, source: path.basename(plan.dir) }
+}
+
+// Backups kept in the app's own data folder: one list for manual and automatic backups.
+export const backupsDir = (library: Library) => path.join(library.userData, 'backups')
+
+async function folderSize(dir: string): Promise<number> {
+  let total = 0
+  for (const entry of await fs.readdir(dir, { withFileTypes: true }))
+    if (entry.isFile()) total += (await fs.stat(path.join(dir, entry.name))).size
+    else if (entry.isDirectory() && !entry.isSymbolicLink())
+      total += await folderSize(path.join(dir, entry.name))
+  return total
+}
+
+// A kept backup by id; the id comes from the window, so it must look like one and stay inside the folder.
+export async function keptBackup(library: Library, id: string) {
+  if (typeof id !== 'string' || !BACKUP_ID.test(id)) throw new Error('備份不存在')
+  const dir = backupsDir(library),
+    target = path.join(dir, id)
+  await safePath(dir, target)
+  if (!(await exists(path.join(target, 'backup.json')))) throw new Error('備份不存在')
+  return target
+}
+
+export async function listBackups(library: Library): Promise<BackupEntry[]> {
+  const dir = backupsDir(library)
+  const names = await fs.readdir(dir).catch(() => [] as string[])
+  const entries: BackupEntry[] = []
+  for (const id of names.filter((name) => BACKUP_ID.test(name)))
+    try {
+      const target = await keptBackup(library, id)
+      const manifest = checkBackupManifest(await readJson(path.join(target, 'backup.json')))
+      entries.push({
+        id,
+        createdAt: manifest.createdAt,
+        label: manifest.label ?? 'manual',
+        size: await folderSize(target),
+        projects: manifest.projects.length,
+      })
+    } catch {
+      // A damaged or foreign folder is not listed and not touched.
+    }
+  return entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+}
+
+export async function deleteBackup(library: Library, id: string) {
+  await fs.rm(await keptBackup(library, id), { recursive: true })
+}
+
+// Only the newest automatic backups are kept; manual ones stay until the user deletes them.
+// `keep` is the backup just restored from: it stays even when it is an old automatic one.
+export async function pruneAutoBackups(library: Library, keep?: string) {
+  const autos = (await listBackups(library)).filter(
+    (entry) => entry.label === 'auto' && entry.id !== keep
+  )
+  for (const entry of autos.slice(AUTO_BACKUPS_KEPT)) await deleteBackup(library, entry.id)
+}
+
+// Copies a kept backup to another place (another disk, another computer).
+export async function exportBackup(library: Library, id: string, dest: string) {
+  const source = await keptBackup(library, id)
+  dest = await fs.realpath(dest)
+  for (const linked of library.snapshot().projects)
+    if (within(linked.root, dest))
+      throw new Error(`匯出位置不能放在專案資料夾裡，請選擇其他位置：${linked.root}`)
+  if (within(backupsDir(library), dest)) throw new Error('請選擇程式備份資料夾以外的位置')
+  const target = path.join(dest, id)
+  if (await exists(target)) throw new Error(`這個位置已經有同名的備份：${target}`)
+  try {
+    await fs.cp(source, target, { recursive: true, errorOnExist: true, force: false })
+  } catch (error) {
+    // An incomplete copy would look like a backup; only what this call created is removed.
+    await fs.rm(target, { recursive: true, force: true })
+    throw error
+  }
+  return target
+}
+
+// A backup in the app's own folder. Automatic ones are trimmed after the restore that made them.
+export async function createKeptBackup(
+  library: Library,
+  workspace: WorkspaceStore,
+  ids: string[],
+  appVersion: string,
+  label: 'manual' | 'auto'
+) {
+  await fs.mkdir(backupsDir(library), { recursive: true })
+  const result = await createBackup(library, workspace, ids, backupsDir(library), appVersion, label)
+  return result
 }

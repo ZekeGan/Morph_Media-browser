@@ -4,7 +4,17 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Library } from '../electron/library'
 import { WorkspaceStore } from '../electron/workspace'
-import { applyBackup, createBackup, locateBackupProject, previewBackup } from '../electron/backup'
+import {
+  applyBackup,
+  createBackup,
+  createKeptBackup,
+  deleteBackup,
+  exportBackup,
+  listBackups,
+  locateBackupProject,
+  previewBackup,
+  pruneAutoBackups,
+} from '../electron/backup'
 import { folderFile, readFolder, saveFolder } from '../electron/files'
 
 // Backup and restore on controlled folders only: create, restore in place, a moved root, a tampered list.
@@ -143,4 +153,31 @@ test('a folder offers its earlier project back, also after the folder moved', as
   await library.link(moved)
   assert.equal((await library.projectsAt(moved))[0].linked, true)
   assert.deepEqual(await library.projectsAt(path.join(root, 'nowhere')), [])
+})
+
+test('kept backups form one list; only the newest automatic ones stay, and ids cannot leave the folder', async (t) => {
+  const { media, out, library, workspace, ids } = await setup(t)
+  const manual = await createKeptBackup(library, workspace, ids(), '0.0.0-test', 'manual')
+  const autos: string[] = []
+  for (let n = 0; n < 7; n++)
+    autos.push((await createKeptBackup(library, workspace, ids(), '0.0.0-test', 'auto')).id)
+  // The backup just restored from stays even when it is the oldest automatic one.
+  await pruneAutoBackups(library, autos[0])
+  const kept = (await listBackups(library)).map((entry) => entry.id)
+  assert.ok(kept.includes(autos[0]) && !kept.includes(autos[1]))
+  await pruneAutoBackups(library)
+  const list = await listBackups(library)
+  assert.equal(list.filter((entry) => entry.label === 'auto').length, 5)
+  assert.ok(list.some((entry) => entry.id === manual.id && entry.label === 'manual'))
+  assert.ok(list.every((entry) => entry.size > 0 && entry.projects === 1))
+  for (const bad of ['..', '../local', 'M-orph-backup-x', path.join('..', manual.id)])
+    await assert.rejects(deleteBackup(library, bad), /備份不存在/)
+  await assert.rejects(exportBackup(library, manual.id, media), /不能放在專案資料夾裡/)
+  const exported = await exportBackup(library, manual.id, out)
+  assert.ok(
+    JSON.parse(await fs.readFile(path.join(exported, 'backup.json'), 'utf8')).projects.length
+  )
+  await assert.rejects(exportBackup(library, manual.id, out), /同名的備份/)
+  await deleteBackup(library, manual.id)
+  assert.ok(!(await listBackups(library)).some((entry) => entry.id === manual.id))
 })

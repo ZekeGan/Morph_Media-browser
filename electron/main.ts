@@ -29,7 +29,17 @@ import type { ExplorerRequest } from '../shared/explorer'
 import type { LocaleId } from '../shared/locales'
 import { nativeText } from '../shared/native-messages'
 import { completionNotice } from '../shared/notifications'
-import { applyBackup, createBackup, locateBackupProject, previewBackup } from './backup'
+import {
+  applyBackup,
+  createKeptBackup,
+  deleteBackup,
+  exportBackup,
+  keptBackup,
+  listBackups,
+  locateBackupProject,
+  previewBackup,
+  pruneAutoBackups,
+} from './backup'
 
 const directory = path.dirname(fileURLToPath(import.meta.url))
 // Taskbar and Alt+Tab icon; a build without the build/ folder simply keeps the default icon.
@@ -198,6 +208,28 @@ async function dispatch(request: Request): Promise<Response> {
       extra.cleanup = await library.cleanup(request.token, request.restart)
       break
     case 'createBackup': {
+      const ids = library.snapshot().projects.map((p) => p.projectId)
+      const result = await createKeptBackup(library, workspace, ids, app.getVersion(), 'manual')
+      extra.notice = completionNotice(
+        result.projects,
+        result.skipped.length,
+        '已建立備份' +
+          (result.skipped.length
+            ? `
+未備份：${result.skipped.join('、')}`
+            : '')
+      )
+      extra.backups = await listBackups(library)
+      break
+    }
+    case 'listBackups':
+      extra.backups = await listBackups(library)
+      break
+    case 'deleteBackup':
+      await deleteBackup(library, request.id)
+      extra.backups = await listBackups(library)
+      break
+    case 'exportBackup': {
       const chosen = await dialog.showOpenDialog(win!, {
         title: nt('選擇備份位置'),
         properties: ['openDirectory', 'createDirectory'],
@@ -206,33 +238,25 @@ async function dispatch(request: Request): Promise<Response> {
         extra.cancelled = true
         break
       }
-      const ids = library.snapshot().projects.map((p) => p.projectId)
-      const result = await createBackup(
-        library,
-        workspace,
-        ids,
-        chosen.filePaths[0],
-        app.getVersion()
-      )
-      extra.notice = completionNotice(
-        result.projects,
-        result.skipped.length,
-        `已建立備份：${result.dir}` +
-          (result.skipped.length ? `\n未備份：${result.skipped.join('、')}` : '')
-      )
+      const target = await exportBackup(library, request.id, chosen.filePaths[0])
+      extra.notice = completionNotice(1, 0, `已匯出備份：${target}`)
       break
     }
     case 'previewBackup': {
-      const chosen = await dialog.showOpenDialog(win!, {
-        title: nt('選擇備份資料夾'),
-        properties: ['openDirectory'],
-      })
-      if (chosen.canceled || !chosen.filePaths[0]) {
-        extra.cancelled = true
-        break
+      let dir = request.id ? await keptBackup(library, request.id) : undefined
+      if (!dir) {
+        const chosen = await dialog.showOpenDialog(win!, {
+          title: nt('選擇備份資料夾'),
+          properties: ['openDirectory'],
+        })
+        if (chosen.canceled || !chosen.filePaths[0]) {
+          extra.cancelled = true
+          break
+        }
+        dir = chosen.filePaths[0]
       }
       const ids = library.snapshot().projects.map((p) => p.projectId)
-      extra.backup = await previewBackup(library, workspace, ids, chosen.filePaths[0])
+      extra.backup = await previewBackup(library, workspace, ids, dir)
       break
     }
     case 'locateBackup': {
@@ -245,6 +269,17 @@ async function dispatch(request: Request): Promise<Response> {
       break
     }
     case 'restoreBackup': {
+      // What is there now is kept as an automatic backup first, so a restore can always be undone.
+      const undo =
+        request.settings || request.projects.length
+          ? await createKeptBackup(
+              library,
+              workspace,
+              library.snapshot().projects.map((p) => p.projectId),
+              app.getVersion(),
+              'auto'
+            )
+          : undefined
       const result = await applyBackup(
         library,
         workspace,
@@ -253,13 +288,16 @@ async function dispatch(request: Request): Promise<Response> {
         request.settings,
         request.projects
       )
+      await pruneAutoBackups(library, result.source)
       extra.restored = result
+      extra.backups = await listBackups(library)
       const done = result.projects.length + (result.settings ? 1 : 0)
       extra.notice = completionNotice(
         done,
         result.failed.length,
         `已還原：${[...(result.settings ? ['設定'] : []), ...result.projects].join('、') || '無'}` +
-          (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '')
+          (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '') +
+          (undo?.skipped.length ? `\n還原前的自動備份未包含：${undo.skipped.join('、')}` : '')
       )
       break
     }

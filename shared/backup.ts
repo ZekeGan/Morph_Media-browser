@@ -8,9 +8,21 @@ export interface BackupManifest {
   schemaVersion: number
   createdAt: string
   appVersion: string
+  // 'auto' backups are made by the app before a restore; only the newest few are kept.
+  label?: 'manual' | 'auto'
   settings?: string
   projects: { projectId: string; name: string; root: string; dir: string }[]
 }
+// One backup kept in the app's own data folder.
+export interface BackupEntry {
+  id: string
+  createdAt: string
+  label: 'manual' | 'auto'
+  size: number
+  projects: number
+}
+export const BACKUP_ID = /^M-orph-backup-[0-9T]{15}(-\d{1,3})?$/
+export const AUTO_BACKUPS_KEPT = 5
 export interface BackupProjectPreview {
   projectId: string
   name: string
@@ -43,6 +55,7 @@ export function checkBackupManifest(value: unknown): BackupManifest {
     v.schemaVersion! > BACKUP_VERSION ||
     typeof v.createdAt !== 'string' ||
     typeof v.appVersion !== 'string' ||
+    (v.label !== undefined && v.label !== 'manual' && v.label !== 'auto') ||
     (v.settings !== undefined && !relative(v.settings)) ||
     !Array.isArray(v.projects) ||
     v.projects.length > 500 ||
