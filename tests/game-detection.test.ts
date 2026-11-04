@@ -899,6 +899,33 @@ test('Japanese visual-novel engines are recognised from their runtime and archiv
       engines: ['LÖVE'],
     },
     { name: 'LoveDllOnly', names: ['Tool.exe', 'love.dll'] },
+    // Layouts from the second set of user samples (names only).
+    {
+      name: 'CircusGame',
+      names: [
+        'Suika.exe',
+        'AdvData/GRP/BLACK.CRX',
+        'AdvData/MES/00701_00.mes',
+        'AdvData/DAT/names.dat',
+      ],
+      engines: ['Circus'],
+    },
+    { name: 'AdvDataOnly', names: ['Tool.exe', 'AdvData/notes.txt'] },
+    {
+      name: 'LiveMakerGame',
+      names: ['game.exe', 'live.dll', 'Readme.txt'],
+      engines: ['LiveMaker'],
+    },
+    {
+      name: 'BakinGame',
+      names: ['Blade.exe', 'data/bakinplayer.exe', 'data/data.rbpack', 'data/bakinengine.dll'],
+      engines: ['RPG Developer Bakin'],
+    },
+    {
+      name: 'SgbGame',
+      names: ['sgb_rpgplayer.exe', 'data.sgbpack', 'kmyCore.dll'],
+      engines: ['SMILE GAME BUILDER'],
+    },
   ]
   for (const sample of samples) {
     const dir = path.join(media, sample.name)

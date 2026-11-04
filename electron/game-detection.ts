@@ -239,6 +239,19 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
       add('CatSystem2', '多個 .int 封包 + cs2conf.dll／config/startup.xml + EXE')
     if (countFiles(/\.pac$/i) >= 2 && ((await file('dll/Pal.dll')) || (await file('Pal.dll'))))
       add('SoftPal', '多個 .pac 封包 + Pal.dll + EXE')
+    // Circus keeps its data unpacked under AdvData: CRX images in GRP or MES scripts.
+    if (
+      (await folder('AdvData')) &&
+      ((await files('AdvData/GRP', /\.crx$/i)).length > 0 ||
+        (await files('AdvData/MES', /\.mes$/i)).length > 0)
+    )
+      add('Circus', 'AdvData 內的 CRX 圖片或 MES 腳本 + EXE')
+    // LiveMaker packs the game into the EXE; its runtime library sits next to it.
+    if (await file('live.dll')) add('LiveMaker', 'live.dll + EXE（遊戲資料包在 EXE 內）')
+    if ((await file('data/bakinplayer.exe')) || (await file('data/data.rbpack')))
+      add('RPG Developer Bakin', 'data/bakinplayer.exe 或 data/data.rbpack + EXE')
+    if ((await file('data.sgbpack')) || hasExe(/^sgb_rpgplayer/i))
+      add('SMILE GAME BUILDER', 'data.sgbpack 或 sgb_rpgplayer.exe')
     if (countFiles(/\.npk$/i) >= 3)
       add(undefined, 'EXE + 多個 .npk 資源封包：引擎未確認，請確認 ROOT／非遊戲')
     if (packedApp)

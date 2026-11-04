@@ -170,7 +170,7 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 
 ## 2026-11-04 新增規則（尚未用真實樣本驗證）
 
-依公開的部署結構補上：CRYENGINE（`CrySystem.dll`）、Adventure Game Studio（`acsetup.cfg`）、MonoGame／FNA／XNA（框架 DLL）、Source（`hl2.exe` 或 `bin/engine.dll`＋`tier0.dll`）、Source 2（`engine2.dll`）、Adobe AIR（`META-INF/AIR/application.xml`）、DOSBox 套件（`dosbox.exe` 或 `dosbox*.conf`＋EXE）、PC-98 模擬器（Neko Project II 類執行檔＋磁碟映像）。目前只用合成資料夾測試，真實遊戲樣本到手前一律視為候選，需以「確認 ROOT／這不是遊戲」人工把關；日本 galgame 的 Majiro、Circus、FVP、Live Maker、SMILE GAME BUILDER、RPG Developer Bakin 因缺少可信的部署特徵，等有樣本再補。
+依公開的部署結構補上：CRYENGINE（`CrySystem.dll`）、Adventure Game Studio（`acsetup.cfg`）、MonoGame／FNA／XNA（框架 DLL）、Source（`hl2.exe` 或 `bin/engine.dll`＋`tier0.dll`）、Source 2（`engine2.dll`）、Adobe AIR（`META-INF/AIR/application.xml`）、DOSBox 套件（`dosbox.exe` 或 `dosbox*.conf`＋EXE）、PC-98 模擬器（Neko Project II 類執行檔＋磁碟映像）。目前只用合成資料夾測試，真實遊戲樣本到手前一律視為候選，需以「確認 ROOT／這不是遊戲」人工把關；日本 galgame 的 Majiro、FVP 因缺少可信的部署特徵，等有樣本再補（Circus、Live Maker、SMILE GAME BUILDER、RPG Developer Bakin 已於同日依樣本補上，見下節）。
 
 ## 2026-11-04 依使用者樣本補上的規則
 
@@ -181,5 +181,9 @@ Apple 結構依據（2026-10-27 查閱）：[bundle 內容配置](https://develo
 | CatSystem2 | 至少兩個 `.int` 封包，加上 `cs2conf.dll` 或 `config/startup.xml`，且有 EXE | 灰色的果實（漢化版，根目錄只有補丁 EXE） |
 | SoftPal | 至少兩個 `.pac` 封包，加上 `Pal.dll`（根目錄或 `dll/`），且有 EXE | 夏色心跳日誌 |
 | LÖVE（合併 EXE） | `love.dll`＋`lua51.dll`，沒有 `.love` | Moonring |
+| Circus | 有 `AdvData` 資料夾，裡面 `GRP` 有 `.crx` 圖片或 `MES` 有 `.mes` 腳本，且有 EXE | 水夏 A.S.+（樣本資料夾標為 Ethornell，實際是 Circus） |
+| LiveMaker | `live.dll`＋EXE（遊戲資料包在 EXE 內） | 4gatsu_8ka |
+| RPG Developer Bakin | `data/bakinplayer.exe` 或 `data/data.rbpack`，且有 EXE | Blade of Zenna Demo |
+| SMILE GAME BUILDER | `data.sgbpack` 或 `sgb_rpgplayer.exe` | グランブーム国物語 |
 
-同批以樣本確認既有規則：Ren’Py、Godot（EXE＋同名 `.pck`）、Unity 照常辨識；Godot 單一 EXE 照規則不判遊戲。標為 Majiro 的「Narcissu」實際是 NScripter（`nscript.dat`＋`arc.nsa`），由既有規則辨識，Majiro 仍無真正樣本。反例 `.int`、`.pac` 單獨出現、`love.dll` 單獨出現都不判遊戲，已寫進測試。
+同批以樣本確認既有規則：Ren’Py、Godot（EXE＋同名 `.pck`）、Unity 照常辨識；Godot 單一 EXE 照規則不判遊戲。標為 Majiro 的「Narcissu」實際是 NScripter（`nscript.dat`＋`arc.nsa`），由既有規則辨識，Majiro 仍無真正樣本。標為 Ethornell 的「水夏 A.S.+」實際是 Circus（CRX 圖片是 Circus 的格式），Ethornell 仍以既有規則（`BGI*.exe`＋`.arc`）辨識。「RPG Developer BAKIN Multi Vignette System」樣本資料夾是空的，無法判斷。反例 `.int`、`.pac` 單獨出現、`love.dll` 單獨出現都不判遊戲，已寫進測試。
