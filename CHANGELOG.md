@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Documentation: clarify game launching, engine detection, portable records and search indexes in all three READMEs; improve English and Japanese wording and align the brand tagline with the homepage.
 - Game detection: a Godot single-file export is recognised by its `.console.exe` beside the EXE; an Electron-packed TyranoScript game is recognised by the top-level names (`tyrano`, `data`) in the file tree at the start of `resources/app.asar` (only that header is read, never file contents). Checked read-only on 37 sample games.
 - Game detection: LucaSystem, the engine of the Steam releases of Key titles (AIR, CLANNAD, Kanon, Summer Pockets), is recognised from `files/SCRIPT.PAK` with other `.PAK` packs; several `.npk` packs are now reported as Nitroplus NPK instead of an unknown engine. Checked read-only on 28 sample games.
 - Fix: after saving project settings the save bar stayed and a second save failed with a version conflict, because the draft kept the old revision. The draft now follows the saved project.

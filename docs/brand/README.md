@@ -1,6 +1,6 @@
 # M:orph brand assets
 
-M:orph is the product name; **Media Browser** is the subtitle and **Same data, any shape.** the tagline. The package is named `morph` (product name "Morph" for file names, because a colon cannot be used in them). The hidden `.media-viewer` folder inside managed folders is part of the portable data format, and the application's data folder in `%APPDATA%` is still `media-viewer`, so neither is renamed. The name and the artwork are covered by the [name and logo policy](../../TRADEMARK.md).
+M:orph is the product name; **Media Browser** is the subtitle and **The same collection, shown a different way.** is the tagline. The package is named `morph` (product name "Morph" for file names, because a colon cannot be used in them). The hidden `.media-viewer` folder inside managed folders is part of the portable data format, and the application's data folder in `%APPDATA%` is still `media-viewer`, so neither is renamed. The name and the artwork are covered by the [name and logo policy](../../TRADEMARK.md).
 
 ## The mark
 

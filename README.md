@@ -19,7 +19,7 @@ If you keep manga, albums, videos, music or games in folders, M:orph gives you a
 
 Choose the folder your collection lives in to create a project, add covers, tags, ratings and other information to your folders, and decide freely how they are shown.
 
-Unlike a file manager, M:orph manages **what your collection contains and how it is displayed separately**. You do not have to reorganise your existing files to get a browsing interface that suits you.
+Unlike a file manager, M:orph keeps **collection information separate from display settings**. You do not have to reorganise your existing files to get a browsing interface that suits you.
 
 ## Highlights
 
@@ -41,11 +41,11 @@ With a drag-and-drop editor you arrange covers, names, tags, ratings and other f
 
 **Information travels with the folder**
 
-The information you add about a work is stored in a portable record inside the folder. If you move the collection to another place or computer, keep those records and it can be relinked and read again.
+The information you add about an item is stored in a portable record inside its folder. If you move your collection to another location or computer, keep these records so M:orph can restore the information when you relink the collection.
 
 **Many kinds of media in one place**
 
-Besides managing your collection, you can read manga, view images, play audio and video, open documents, or launch the games in your collection, all inside M:orph.
+Besides managing your collection, you can read manga, view images, play audio and video, and view documents inside M:orph. You can also launch games from your collection through M:orph.
 
 **Your original file structure stays as it is**
 
@@ -65,7 +65,7 @@ You can browse by folder level and show the collection in different ways:
 
 When you select a folder, the right-hand panel shows its information and a preview of its contents, so you do not have to leave the collection list.
 
-Built-in search supports plain keywords, field conditions, AND / OR / exclude operators, and number and date comparisons. Frequently used searches can be saved for next time.
+Built-in search supports plain keywords, field conditions, AND / OR / exclude operators, and numeric and date comparisons. Frequently used searches can be saved for next time.
 
 ### 2. Custom card layouts
 
@@ -86,7 +86,7 @@ Each component can be adjusted in position, size, text style, colour, border and
 
 **Fallback fields**
 
-One component can point at several data sources. For example, it can show the name from Steam first, switch to the DLsite name when there is none, and finally use a name you entered yourself.
+One component can point at several data sources. For example, it can display the title from Steam, fall back to the title from DLsite if the Steam title is missing, and use your manually entered title if neither is available.
 
 **Several layouts**
 
@@ -96,7 +96,7 @@ While editing, you can preview with real data from your collection to check how 
 
 ### 3. Reading and playback
 
-M:orph does more than show information about a work; it can also open part of your collection's content.
+M:orph does more than show information about your collection; it also lets you view or play supported media directly.
 
 **Images and manga**
 
@@ -112,7 +112,7 @@ PDF, ZIP and CBZ files can be viewed inside the app.
 
 ### 4. Game collection management
 
-M:orph recognises some game folders, including many Japanese visual-novel engines.
+M:orph recognises some game folders, including those of games built with many Japanese visual-novel engines.
 
 You can set up launch actions for each game, such as running an EXE, passing launch arguments, or opening a file, folder, URL or shortcut.
 
@@ -122,7 +122,7 @@ To avoid disturbing the game, M:orph treats the inside of a game's root folder a
 
 ### 5. Fill in work information from websites
 
-If you do not want to type everything in by hand, paste the address of a work's page on a supported website.
+If you do not want to type everything in by hand, paste the URL of an item's page on a supported website.
 
 M:orph recognises the source, fetches the information available and shows a preview, and you choose which fields to import.
 
@@ -200,7 +200,7 @@ A project manages the scope of the collection, its field settings and its displa
 
 **Local search index**
 
-M:orph builds a local search index with SQLite. The index is not the only source of your collection data and can be rebuilt when needed.
+M:orph builds a local search index with SQLite from the portable records. The index can be rebuilt when needed.
 
 Application settings and the local index are kept in the user's `%APPDATA%\media-viewer`.
 
