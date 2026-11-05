@@ -44,7 +44,7 @@ YouTube 式控制列；「放大／縮小」只指進入／退出全螢幕，不
 | --- | --- |
 | MP4（H.264／AAC）、WebM（VP8／VP9／Opus／Vorbis） | 可播放 |
 | 外掛 SRT／WebVTT 字幕 | 支援：拖入、切換／關閉、時間調整、外觀；SRT 解析成播放用 cue，不改原檔 |
-| HEVC、AC3／DTS 音訊、10-bit H.264、AVI／WMV、多數 MKV | 不保證；失敗時見 [播放失敗說明](#播放失敗說明)，不轉檔（轉檔需附帶 FFmpeg，見需求清單 R-213） |
+| HEVC、AC3／DTS 音訊、10-bit H.264、AVI／WMV、多數 MKV | 不保證；失敗時見 [播放失敗說明](#播放失敗說明)，不轉檔，用外部播放器（[C-129](DECISIONS.md#c-129影片格式維持現狀播不了就用外部播放器2026-11-05)） |
 | ASS／SSA、內嵌字幕、圖形字幕、多音軌 | 不支援；沒有解析能力時標示未支援，不顯示成「沒有字幕」 |
 
 - 原始媒體透過 `media://file/<rowId>/<fileId>` 與 `Explorer.stream` 串流讀取（Range／206／416 與取消）；可攜資產用 `media://asset`。只用受控資料夾／檔案識別，驗證實體路徑、junction／越界與 MIME，renderer 不能讀任意絕對路徑；大檔不經 IPC 轉 Base64。
