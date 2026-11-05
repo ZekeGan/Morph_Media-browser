@@ -1,5 +1,7 @@
 # 外部資料預覽與匯入
 
+> 最後確認：2026-11-05。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`src/FolderSourceImport.tsx`；測試：`tests/metadata.test.ts`。
+
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
 ## 目前能力
@@ -14,7 +16,7 @@
 - 標籤是 `命名空間:名稱`。除完整的 `TAGS` 外，每個命名空間另成一個標籤欄位（`LANGUAGE`、`PARODY`、`CHARACTER`、`ARTIST`、`GROUP`、`COSPLAYER`、`FEMALE`、`MALE`、`MIXED`、`OTHER`、`RECLASS`），值不含命名空間前綴；沒有該命名空間的標籤就不產生欄位。未知命名空間只留在 `TAGS`。
 - 取得範圍與公開頁面相同（公開 API；未登入、不讀網頁），登入後才看得到的標籤不會取得。
 
-- **只貼網址（0.34.0）**：資料夾設定的「資料」分頁上方的「從網站補充資訊」（原獨立的「來源匯入」分頁，2026-11-03 併入）不再先選來源；由網址網域自動辨識（純數字視為 Steam App ID），辨識成功才可按「取得預覽」，未知網址就地顯示錯誤。不依分類限制來源。
+- **只貼網址**：資料夾設定的「資料」分頁上方的「從網站補充資訊」不再先選來源；由網址網域自動辨識（純數字視為 Steam App ID），辨識成功才可按「取得預覽」，未知網址就地顯示錯誤。不依分類限制來源。
 
 ## Steam
 
@@ -28,7 +30,7 @@
 
 ## 分類來源
 
-使用者已核定加入下列不需要 API 憑證的來源，選單依種類分組，並標示適合目前專案分類的網站。以精確作品網址預覽，不搜尋、模糊配對、合併跨站作品或下載作品內容。來源註冊在 shared/sources.ts；固定端點與映射在 electron/metadata.ts、electron/metadata-public.ts。
+已接入下列不需要 API 憑證的來源，選單依種類分組，並標示適合目前專案分類的網站。以精確作品網址預覽，不搜尋、模糊配對、合併跨站作品或下載作品內容。來源註冊在 shared/sources.ts；固定端點與映射在 electron/metadata.ts、electron/metadata-public.ts。
 
 | 選單分類 | 來源 | 讀取方式與限制 |
 | --- | --- | --- |
@@ -55,15 +57,15 @@ IGDB、TMDB 需要 API 憑證，本輪依使用者要求排除。沒有內建 ke
 - 再次匯入預設填空、預覽目前值並明確覆寫來源欄位，保護手填值；完整跨來源欄位映射、原始回應封存及批次匯入仍不在本輪範圍。
 - 只有來源及使用方式明確可用時保存圖片；不能假設所有網站提供同樣 API、欄位或授權。來源 adapter 彼此隔離，不為加一站重寫整個資料模型。
 
-## 後續候選
+## 未接入的來源
 
 日本同人收藏新增來源候選，先研究可行性再接入；不代表下列商店已有 adapter 或穩定公開 API：
 
 | 優先順序 | 來源 | 適用範圍與研究重點 |
 | --- | --- | --- |
 | 1 | 既有 VNDB、Bangumi、AniList | 先確認現有來源適用性；VNDB 著重視覺小說，Bangumi／AniList 補動畫、漫畫等作品資訊，不宣稱涵蓋全部同人作品 |
-| 2 | [DLsite](https://www.dlsite.com/home/) | **已接入（2026-11-01）**：使用者貼上精確作品網址，main 讀取 DLsite 未文件化的公開 /product/info/ajax JSON（robots.txt 未禁止，每次僅一次使用者觸發的請求，不帶 Cookie、不繞過年齡確認）；取得標題、社團代碼、作品類型、發售日、年齡分級、價格、下載數與評分，封面限 img.dlsite.jp。端點無官方文件，欄位可能變動，失敗只顯示錯誤、不改原資料。**FANZA 已移除**（官方 API 需 API ID／affiliate ID，與免憑證限制衝突） |
-| 3 | [BOOTH](https://booth.pm/)、[Melonbooks](https://www.melonbooks.co.jp/)、[虎之穴](https://ec.toranoana.jp/tora_r/ec)（2026-11-01 使用者決定不接入） | **本輪未接入**：BOOTH 的 JSON 端點無法於此環境驗證（測試商品回 404），待取得真實商品網址再查；Melonbooks 無 robots.txt 且需年齡確認 Cookie 才能取得商品頁，虎之穴只有 HTML，兩者皆無公開 API，不以程式送出年齡確認或解析 HTML，維持不接入直到條款與官方能力確認 |
+| 2 | [DLsite](https://www.dlsite.com/home/) | **已接入**：使用者貼上精確作品網址，main 讀取 DLsite 未文件化的公開 /product/info/ajax JSON（robots.txt 未禁止，每次僅一次使用者觸發的請求，不帶 Cookie、不繞過年齡確認）；取得標題、社團代碼、作品類型、發售日、年齡分級、價格、下載數與評分，封面限 img.dlsite.jp。端點無官方文件，欄位可能變動，失敗只顯示錯誤、不改原資料。**FANZA 已移除**（官方 API 需 API ID／affiliate ID，與免憑證限制衝突） |
+| 3 | [BOOTH](https://booth.pm/)、[Melonbooks](https://www.melonbooks.co.jp/)、[虎之穴](https://ec.toranoana.jp/tora_r/ec) | **不接入**：BOOTH 的 JSON 端點無法於此環境驗證（測試商品回 404），沒有真實商品網址前不接；Melonbooks 無 robots.txt 且需年齡確認 Cookie 才能取得商品頁，虎之穴只有 HTML，兩者皆無公開 API，不以程式送出年齡確認或解析 HTML，維持不接入直到條款與官方能力確認 |
 
 沿用精確作品網址 → 預覽 → 確認套用；同人動畫可優先查原販售頁，一般動畫／漫畫搭配作品資料庫。保留來源命名空間，區分原版／漢化版、單行本／單話及本體／DLC；不依同名自動合併、覆寫人工資料或下載作品內容。進度只記於 [S16](WORK_ITEMS.md#已交付)。
 

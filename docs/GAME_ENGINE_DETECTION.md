@@ -80,7 +80,7 @@
 
 ### Mac 封裝與多平台規則
 
-辨識與保護在 Windows 上就會執行；原生啟動 Mac App 尚未支援，契約見 [遊戲啟動條件](GAME_VIEWER_DESIGN.md#mac-遊戲執行條件待實作)。
+辨識與保護在 Windows 上就會執行；原生啟動 Mac App 尚未支援，契約見 [遊戲啟動條件](GAME_VIEWER_DESIGN.md#mac-遊戲執行條件未支援)。
 
 - Mac App 不以 `.exe` 為必要條件：`.app` 一律視為受保護的程式 bundle，不在根或 `Contents` 內建立 `.media-viewer`，遊戲記錄放在外層資料夾；不搬動、重包、改簽章。
 - 目前只有 Unity 有 Mac 規則（plist 指向的主執行檔＋`UnityPlayer.dylib`＋`Resources/Data`）；尚未解析 plist 內容或驗證主機能否啟動。其他引擎的 Mac 輸出需樣本，不套用 Windows 規則。

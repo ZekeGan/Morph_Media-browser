@@ -1,5 +1,7 @@
 # 資料格式參考
 
+> 最後確認：2026-11-05。可攜記錄與應用程式資料的格式；型別以 `shared/model.ts`、`shared/workspace.ts` 為準，升級在 `shared/upgrade.ts`。
+
 M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是可重建的副本。此頁列出各檔案的位置與欄位，讓其他工具或貢獻者能讀懂；設計理由見 [資料模型](FOLDER_PROJECT_MODEL.md) 與 [儲存安全](STORAGE_OPTIONS.md)，型別定義的原始碼是 [shared/model.ts](../shared/model.ts)、[shared/explorer.ts](../shared/explorer.ts)、[shared/workspace.ts](../shared/workspace.ts)，驗證在同檔的 `validate*` 函式。
 
 > 欄位以現行程式為準；`schemaVersion` 與應用程式版本號無關，目前都是 `1`。日後改格式時的自動升級規則見[格式升級與相容規則](#格式升級與相容規則)。
@@ -106,7 +108,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 
 ## 專案匯出資料夾
 
-備份裡的每個專案用這個格式（原本專案設定裡的「匯出專案資料」已併入備份）。資料夾名稱 `M-orph-export-<專案名>-<時間>/`，不改動專案本身，也不含媒體檔：
+備份裡的每個專案用這個格式。資料夾名稱 `M-orph-export-<專案名>-<時間>/`，不改動專案本身，也不含媒體檔：
 
 - `manifest.json`：`kind: "media-viewer.project-export"`、`schemaVersion`（目前 `1`）、`exportedAt`、`appVersion`、`projectId`、`projectName`，以及 `files`（相對路徑、`sha256`、大小）。
 - `files/<相對根資料夾的路徑>`：專案定義、各資料夾的 `folder.json`、圖片資產與字幕。`.bak` 與已移除專案的封存不匯出，只匯出根層的這個專案定義。
@@ -131,7 +133,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 
 使用者的目標：資料結構在版本之間改變時，使用者不必做任何多餘操作，`%APPDATA%` 與資料夾裡的私有資料都自動轉換。階段與承諾範圍見 [RELEASING](RELEASING.md#階段)：Alpha 不承諾相容，**Beta 起必須符合本節**。決策見 [DECISIONS C-119](DECISIONS.md#c-119版本階段打-tag-與資料自動升級2026-11-04)。
 
-> 實作狀態（2026-11-05）：已實作，入口是 `shared/upgrade.ts`（`FORMAT_VERSION`、`UPGRADE_STEPS`、`upgradeFormat`、`NewerFormatError`）；目前所有格式都還是 v1，所以還沒有任何升級步驟。驗證函式依 `FORMAT_VERSION` 檢查，較新版本丟出 `NewerFormatError`。資料夾與專案記錄（含 `.bak`）一律經 `electron/files.ts` 的 `readJson` 讀取，讀到就已是最新格式，新增讀取路徑不必自己呼叫升級。測試在 `tests/upgrade.test.ts`，以暫時把某格式當成 v2 的方式走完整條升級與唯讀路徑。
+> 實作：入口是 `shared/upgrade.ts`（`FORMAT_VERSION`、`UPGRADE_STEPS`、`upgradeFormat`、`NewerFormatError`）；目前所有格式都還是 v1，所以還沒有任何升級步驟。驗證函式依 `FORMAT_VERSION` 檢查，較新版本丟出 `NewerFormatError`。資料夾與專案記錄（含 `.bak`）一律經 `electron/files.ts` 的 `readJson` 讀取，讀到就已是最新格式，新增讀取路徑不必自己呼叫升級。測試在 `tests/upgrade.test.ts`，以暫時把某格式當成 v2 的方式走完整條升級與唯讀路徑。
 
 **什麼時候要升 `schemaVersion`**
 
