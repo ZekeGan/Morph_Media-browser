@@ -30,7 +30,7 @@ import {
   cellsWithoutField,
 } from '../shared/model'
 import { CellContent } from './Card'
-import { EditorInspector } from './EditorInspector'
+import { EditorInspector, type InspectorTab } from './EditorInspector'
 import { EditorPalette } from './EditorPalette'
 import { cellType, isFieldKind } from '../shared/explorer'
 import {
@@ -51,6 +51,7 @@ import { rowFieldAttributes } from './fieldSources'
 
 // Preview choices that are not a folder (row ids are hashes, so these cannot collide).
 const EXTREME = { longest: 'extreme:longest', shortest: 'extreme:shortest' }
+const TAB_KEY = 'editor.inspectorTab'
 export function Editor({
   project,
   rows,
@@ -145,7 +146,14 @@ export function Editor({
   const [selected, setSelected] = useState(''),
     [previewId, setPreviewId] = useState<string | undefined>(rows[0]?.rowId)
   const [error, setError] = useState('')
-  const [openSections, setOpenSections] = useState<string[]>(['content']),
+  const [tab, setTab] = useState<InspectorTab>(() => {
+      try {
+        const saved = localStorage.getItem(TAB_KEY)
+        return saved === 'style' || saved === 'condition' ? saved : 'content'
+      } catch {
+        return 'content'
+      }
+    }),
     [optionError, setOptionError] = useState(''),
     [renaming, setRenaming] = useState<{ id: string; name: string }>()
   const [schemeAction, setSchemeAction] = useState<'new' | 'copy' | 'rename'>(),
@@ -270,6 +278,8 @@ export function Editor({
   )
   // Components whose content is cut off in the current preview (hidden overflow; scrolling cells are fine).
   const [overflowing, setOverflowing] = useState<string[]>([])
+  const [floatAt, setFloatAt] = useState<{ left: number; top: number }>(),
+    [moving, setMoving] = useState(false)
   // Checked after every render and again whenever a component's size changes: the grid animates size changes
   // (about 200 ms), so a check right after "one row taller" would still see the old, too small height.
   useLayoutEffect(() => {
@@ -285,8 +295,11 @@ export function Editor({
     // Pictures arrive after the render; their real proportions are only known once loaded.
     const images = [...canvas.querySelectorAll<HTMLImageElement>('.editor-cell img')]
     for (const image of images) image.addEventListener('load', check)
+    // A component sliding into its new place (the grid animates moves) only settles after its transition.
+    canvas.addEventListener('transitionend', check)
     check()
     return () => {
+      canvas.removeEventListener('transitionend', check)
       observer.disconnect()
       for (const image of images) image.removeEventListener('load', check)
       cancelAnimationFrame(frame)
@@ -318,6 +331,21 @@ export function Editor({
         .filter((cell) => [cell, ...cell.querySelectorAll<HTMLElement>('*')].some(cut))
         .map((cell) => cell.dataset.cellId!)
       setOverflowing((now) => (now.join() === ids.join() ? now : ids))
+      // The selected component's copy/delete toolbar floats just above its top-right corner; at the very top of the
+      // canvas there is no room above, so it sits inside that corner instead of covering the component below.
+      const chosen = canvas.querySelector<HTMLElement>('.editor-cell.selected')
+      let at: { left: number; top: number } | undefined
+      if (chosen) {
+        const box = canvas.getBoundingClientRect(),
+          rect = chosen.getBoundingClientRect()
+        const top = rect.top - box.top
+        const above = top >= 32
+        at = {
+          left: Math.max(64, Math.round(rect.right - box.left - (above ? 0 : 4))),
+          top: Math.round(above ? top - 30 : top + 4),
+        }
+      }
+      setFloatAt((now) => (now?.left === at?.left && now?.top === at?.top ? now : at))
     }
   })
   const level = draft.cells
@@ -340,11 +368,15 @@ export function Editor({
   const optionUsage = (option: string) =>
     rows.filter((row) => fieldValue(row, selectedCell?.attributeId ?? '') === option).length
   useEffect(() => setOptionError(''), [selected])
-  // A component that has a display condition opens the condition section, so the reason it may be hidden is visible.
-  useEffect(() => {
-    if (selectedCell?.condition)
-      setOpenSections((open) => (open.includes('condition') ? open : [...open, 'condition']))
-  }, [selected])
+  // The last inspector tab is remembered for the next component and the next time the editor opens.
+  const chooseTab = (next: InspectorTab) => {
+    setTab(next)
+    try {
+      localStorage.setItem(TAB_KEY, next)
+    } catch {
+      // Storage may be unavailable; the tab is still remembered for this session.
+    }
+  }
   const renameError = (name: string, id: string) => {
     const alias = name.trim()
     if (!alias) return tr('請輸入欄位名稱')
@@ -556,7 +588,23 @@ export function Editor({
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (
-        event.key !== 'Delete' ||
+        event.key === 'Escape' &&
+        selected &&
+        !event.defaultPrevented &&
+        !(event.target as HTMLElement)?.closest(
+          'input,textarea,select,[role="combobox"],[role="menu"],.mantine-Modal-content'
+        )
+      ) {
+        setSelected('')
+        return
+      }
+      const copy =
+        (event.ctrlKey || event.metaKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        event.key.toLowerCase() === 'd'
+      if (
+        (event.key !== 'Delete' && !copy) ||
         event.isComposing ||
         event.defaultPrevented ||
         !selected ||
@@ -570,7 +618,8 @@ export function Editor({
       )
         return
       event.preventDefault()
-      removeSelected()
+      if (copy) duplicateSelected()
+      else removeSelected()
     }
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
@@ -596,6 +645,20 @@ export function Editor({
       setError(String(reason))
     }
   }
+  // Previous / next folder; from an extreme preview (not a folder) it starts at the first or last folder.
+  const step = (delta: number) => {
+    if (!rows.length) return
+    const at = rows.findIndex((r) => r.rowId === previewId)
+    const next =
+      at < 0 ? (delta > 0 ? 0 : rows.length - 1) : (at + delta + rows.length) % rows.length
+    setPreviewId(rows[next].rowId)
+  }
+  const usesFallback = (row: FolderRow) => !!selectedCell && cellField(selectedCell, row).index > 0
+  const findFallback = () =>
+    setPreviewId(
+      (rows.find((row) => row.rowId !== previewId && usesFallback(row)) ?? rows.find(usesFallback))
+        ?.rowId
+    )
   const leave = () => {
     if (!dirty || window.confirm(tr('放棄尚未保存的版面變更？'))) close()
   }
@@ -625,7 +688,7 @@ export function Editor({
               onChange={(id) => id && switchTo(id)}
             />
             <Button
-              variant="light"
+              variant="default"
               onClick={() => {
                 setSchemeName('')
                 setSchemeAction('new')
@@ -669,6 +732,56 @@ export function Editor({
             </Menu>
           </Group>
         )}
+        <Group className="editor-preview" gap={4} wrap="nowrap">
+          <Tooltip label={tr('上一個資料夾')}>
+            <ActionIcon
+              variant="subtle"
+              aria-label={tr('上一個資料夾')}
+              disabled={!rows.length}
+              onClick={() => step(-1)}
+            >
+              <Icon name="chevron-left" />
+            </ActionIcon>
+          </Tooltip>
+          <Select
+            size="sm"
+            aria-label={tr('使用真實資料預覽')}
+            title={tr('使用真實資料預覽')}
+            placeholder={tr('尚無資料夾')}
+            leftSection={<Icon name="eye" size={14} />}
+            data={[
+              ...(rows.length > 1
+                ? [
+                    {
+                      group: tr('極端情況'),
+                      items: [
+                        { value: EXTREME.longest, label: tr('各欄位最長的資料') },
+                        { value: EXTREME.shortest, label: tr('各欄位最短的資料') },
+                      ],
+                    },
+                  ]
+                : []),
+              {
+                group: tr('資料夾'),
+                items: rows.map((r) => ({ value: r.rowId, label: `${r.name} · ${r.path}` })),
+              },
+            ]}
+            searchable
+            comboboxProps={{ width: 360, position: 'bottom-start' }}
+            value={previewId ?? null}
+            onChange={(v) => setPreviewId(v ?? undefined)}
+          />
+          <Tooltip label={tr('下一個資料夾')}>
+            <ActionIcon
+              variant="subtle"
+              aria-label={tr('下一個資料夾')}
+              disabled={!rows.length}
+              onClick={() => step(1)}
+            >
+              <Icon name="chevron-right" />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
         <Group className="editor-history" gap="xs">
           <Tooltip label={tr('復原')}>
             <ActionIcon
@@ -709,7 +822,7 @@ export function Editor({
               if (await save(presets ? syncPresetDraft(draft) : draft)) close()
             }}
           >
-            {tr('儲存變更')}
+            {tr('儲存')}
           </Button>
         </Group>
       </header>
@@ -942,140 +1055,93 @@ export function Editor({
           setFieldDeletion={setFieldDeletion}
           setRenaming={setRenaming}
         />
-        <main className="canvas-wrap">
-          <Select
-            label={tr('使用真實資料預覽')}
-            placeholder={tr('尚無資料夾')}
-            data={[
-              ...(rows.length > 1
-                ? [
-                    { value: EXTREME.longest, label: tr('各欄位最長的資料') },
-                    { value: EXTREME.shortest, label: tr('各欄位最短的資料') },
-                  ]
-                : []),
-              ...rows.map((r) => ({ value: r.rowId, label: `${r.name} · ${r.path}` })),
-            ]}
-            searchable
-            value={previewId ?? null}
-            onChange={(v) => setPreviewId(v ?? undefined)}
-            mb="xs"
-          />
-          <Group gap="xs" mb="md">
-            <Tooltip label={tr('上一個資料夾')}>
-              <ActionIcon
-                variant="default"
-                aria-label={tr('上一個資料夾')}
-                disabled={!rows.length}
-                onClick={() =>
-                  setPreviewId(
-                    rows[
-                      (rows.findIndex((r) => r.rowId === previewId) - 1 + rows.length) % rows.length
-                    ].rowId
-                  )
-                }
-              >
-                <span aria-hidden>←</span>
-              </ActionIcon>
-            </Tooltip>
-            <Tooltip label={tr('下一個資料夾')}>
-              <ActionIcon
-                variant="default"
-                aria-label={tr('下一個資料夾')}
-                disabled={!rows.length}
-                onClick={() =>
-                  setPreviewId(
-                    rows[(rows.findIndex((r) => r.rowId === previewId) + 1) % rows.length].rowId
-                  )
-                }
-              >
-                <span aria-hidden>→</span>
-              </ActionIcon>
-            </Tooltip>
-            {!!selectedCell?.fallbackIds?.length && (
-              <Button
-                size="compact-xs"
-                variant="subtle"
-                disabled={!rows.some((row) => cellField(selectedCell, row).index > 0)}
-                onClick={() =>
-                  setPreviewId(
-                    (
-                      rows.find(
-                        (row) => row.rowId !== previewId && cellField(selectedCell, row).index > 0
-                      ) ?? rows.find((row) => cellField(selectedCell, row).index > 0)
-                    )?.rowId
-                  )
-                }
-              >
-                {tr('找使用備用欄位的資料夾')}
-              </Button>
-            )}
-          </Group>
-          {selectedCell && overflowing.includes(selectedCell.cellId) ? (
-            <Alert color="orange" variant="light" mb="sm" className="cell-overflow-fix">
-              <Text size="sm" mb={6}>
-                {['image', 'game-cover'].includes(selectedCell.kind)
-                  ? tr('這張圖片在預覽中被裁切')
-                  : tr('這個組件的內容在預覽中被截掉')}
-              </Text>
-              {['image', 'game-cover'].includes(selectedCell.kind) ? (
-                <Group gap="xs">
-                  <Button
-                    size="compact-xs"
-                    variant="default"
-                    onClick={() => updateCell({ imageFit: 'contain' })}
-                  >
-                    {tr('完整顯示')}
-                  </Button>
-                  <Button
-                    size="compact-xs"
-                    variant="default"
-                    onClick={() => updateCell({ imageFit: 'blur' })}
-                  >
-                    {tr('模糊填滿')}
-                  </Button>
-                </Group>
-              ) : (
-                <Group gap="xs">
-                  {['name', 'path', 'field-text'].includes(selectedCell.kind) &&
-                    !selectedCell.wrap &&
-                    !selectedCell.scroll && (
-                      <Button
-                        size="compact-xs"
-                        variant="default"
-                        onClick={() => updateCell({ wrap: true })}
-                      >
-                        {tr('換行')}
-                      </Button>
-                    )}
-                  {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) &&
-                    !selectedCell.scroll && (
-                      <Button
-                        size="compact-xs"
-                        variant="default"
-                        onClick={() => updateCell({ scroll: true })}
-                      >
-                        {tr('內容多時可捲動')}
-                      </Button>
-                    )}
-                  {selectedCell.grid.y + selectedCell.grid.h < 100 && (
+        <main
+          className="canvas-wrap"
+          onClick={(event) => {
+            // A click on the empty canvas (not on a component or a control) deselects, showing the whole card.
+            if (
+              !(event.target as HTMLElement).closest(
+                '.editor-cell, .cell-float-toolbar, .canvas-status, button, input'
+              )
+            )
+              setSelected('')
+          }}
+        >
+          <div className="canvas-status" role="status">
+            {selectedCell && overflowing.includes(selectedCell.cellId) ? (
+              <div className="cell-overflow-fix">
+                <Icon name="flag" size={14} />
+                <span>
+                  {['image', 'game-cover'].includes(selectedCell.kind)
+                    ? tr('這張圖片在預覽中被裁切')
+                    : tr('這個組件的內容在預覽中被截掉')}
+                </span>
+                {['image', 'game-cover'].includes(selectedCell.kind) ? (
+                  <>
                     <Button
                       size="compact-xs"
                       variant="default"
-                      onClick={() =>
-                        updateCell({ grid: { ...selectedCell.grid, h: selectedCell.grid.h + 1 } })
-                      }
+                      onClick={() => updateCell({ imageFit: 'contain' })}
                     >
-                      {tr('加高一格')}
+                      {tr('完整顯示')}
                     </Button>
-                  )}
-                </Group>
-              )}
-            </Alert>
-          ) : overflowing.length ? (
-            <Text size="xs" c="dimmed" mb="sm">
-              {tr('{0} 個組件在預覽中被截掉（橘框），點選組件可快速處理', overflowing.length)}
-            </Text>
-          ) : null}
+                    <Button
+                      size="compact-xs"
+                      variant="default"
+                      onClick={() => updateCell({ imageFit: 'blur' })}
+                    >
+                      {tr('模糊填滿')}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    {['name', 'path', 'field-text'].includes(selectedCell.kind) &&
+                      !selectedCell.wrap &&
+                      !selectedCell.scroll && (
+                        <Button
+                          size="compact-xs"
+                          variant="default"
+                          onClick={() => updateCell({ wrap: true })}
+                        >
+                          {tr('換行')}
+                        </Button>
+                      )}
+                    {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) &&
+                      !selectedCell.scroll && (
+                        <Button
+                          size="compact-xs"
+                          variant="default"
+                          onClick={() => updateCell({ scroll: true })}
+                        >
+                          {tr('內容多時可捲動')}
+                        </Button>
+                      )}
+                    {selectedCell.grid.y + selectedCell.grid.h < 100 && (
+                      <Button
+                        size="compact-xs"
+                        variant="default"
+                        onClick={() =>
+                          updateCell({ grid: { ...selectedCell.grid, h: selectedCell.grid.h + 1 } })
+                        }
+                      >
+                        {tr('加高一格')}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : overflowing.length ? (
+              <span className="canvas-status-warn">
+                <Icon name="flag" size={14} />
+                {tr('{0} 個組件在預覽中被截掉（橘框），點選組件可快速處理', overflowing.length)}
+              </span>
+            ) : level.length ? (
+              <span className="canvas-status-ok">
+                <Icon name="check" size={14} />
+                {tr('預覽中沒有內容被截掉')}
+              </span>
+            ) : null}
+          </div>
           <div ref={containerRef as React.RefObject<HTMLDivElement>} className="canvas">
             {!level.length && (
               <Stack
@@ -1180,8 +1246,16 @@ export function Editor({
                     y = Math.max(0, Math.round((drop.clientY - grid.top - 21) / (42 + 4)))
                   add(kind, { x, y, w, h: 1 }, layout, source)
                 }}
-                onDragStop={layoutChange}
-                onResizeStop={layoutChange}
+                onDragStart={() => setMoving(true)}
+                onResizeStart={() => setMoving(true)}
+                onDragStop={(layout) => {
+                  setMoving(false)
+                  layoutChange(layout)
+                }}
+                onResizeStop={(layout) => {
+                  setMoving(false)
+                  layoutChange(layout)
+                }}
               >
                 {level.map((cell) => (
                   <div
@@ -1200,6 +1274,36 @@ export function Editor({
                 ))}
               </GridLayout>
             )}
+            {selectedCell && floatAt && !moving && (
+              <div
+                className="cell-float-toolbar"
+                role="toolbar"
+                aria-label={tr('組件操作')}
+                style={{ left: floatAt.left, top: floatAt.top }}
+              >
+                <Tooltip label={tr('複製組件') + ' (Ctrl+D)'}>
+                  <ActionIcon
+                    size="sm"
+                    variant="subtle"
+                    aria-label={tr('複製組件')}
+                    onClick={duplicateSelected}
+                  >
+                    <Icon name="copy" size={14} />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={tr('移除組件') + ' (Delete)'}>
+                  <ActionIcon
+                    size="sm"
+                    variant="subtle"
+                    color="red"
+                    aria-label={tr('移除組件')}
+                    onClick={removeSelected}
+                  >
+                    <Icon name="close" size={14} />
+                  </ActionIcon>
+                </Tooltip>
+              </div>
+            )}
           </div>
         </main>
         <EditorInspector
@@ -1214,15 +1318,18 @@ export function Editor({
           hasContent={hasContent}
           hints={hints}
           labels={labels}
-          openSections={openSections}
-          setOpenSections={setOpenSections}
+          tab={tab}
+          setTab={chooseTab}
           optionError={optionError}
           setOptionError={setOptionError}
           optionUsage={optionUsage}
           change={change}
           updateCell={updateCell}
-          removeSelected={removeSelected}
-          duplicateSelected={duplicateSelected}
+          findFallback={findFallback}
+          canFindFallback={rows.some(usesFallback)}
+          cells={level}
+          overflowing={overflowing}
+          selectCell={setSelected}
           setRenaming={setRenaming}
         />
       </div>

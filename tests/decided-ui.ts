@@ -171,7 +171,10 @@ try {
   }
   await button('加入第一個組件').click()
   await page.getByLabel('版面文字內容', { exact: true }).fill('QA TEXT')
-  await page.getByRole('button', { name: '＋ 新增欄位', exact: true }).click()
+  await page
+    .locator('.project-field-palette')
+    .getByRole('button', { name: '新增欄位', exact: true })
+    .click()
   const form = page.getByRole('form', { name: '新增欄位' })
   await form.getByLabel('欄位名稱').fill('Verified flag')
   await choose('欄位型別', '是／否')
@@ -187,7 +190,7 @@ try {
     .getByRole('button', { name: '系統資訊', exact: true })
     .click()
   await choose('系統資訊', '檔案數')
-  await button('儲存變更').click()
+  await button('儲存').click()
   await page.locator('.center-pane').waitFor()
   let saved = (await page.evaluate(() => window.media.request({ action: 'snapshot' }))).snapshot
     .projects[0].project!

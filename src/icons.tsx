@@ -171,6 +171,7 @@ const paths = {
   'arrow-up': <path d="M10 17V3M4 9l6-6 6 6" />,
   'chevron-left': <path d="m12 4-6 6 6 6" />,
   'chevron-right': <path d="m8 4 6 6-6 6" />,
+  'chevron-down': <path d="m4 8 6 6 6-6" />,
   check: <path d="m4 10 4 4 8-8" />,
   focus: <path d="M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4" />,
   play: <path d="m7 3 10 7-10 7Z" />,

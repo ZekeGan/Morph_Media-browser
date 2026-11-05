@@ -1,20 +1,20 @@
-import { useState } from 'react'
-import { Icon } from './icons'
+import { useState, type ReactNode } from 'react'
+import { Icon, type IconName } from './icons'
 import { t as tr } from './i18n'
 import {
-  Accordion,
   ActionIcon,
   Badge,
   Button,
   Checkbox,
   Group,
+  Menu,
   Modal,
   Select,
-  Stack,
   Text,
   Textarea,
   TextInput,
   Tooltip,
+  UnstyledButton,
 } from '@mantine/core'
 import type { Layout } from 'react-grid-layout'
 import { fieldValue } from '../shared/model'
@@ -59,7 +59,32 @@ function FieldValuePreview({ value }: { value: unknown }) {
 type Binding = Project['fieldBindings'][number]
 type Source = ReturnType<typeof editorFields>[number]
 
-// The left-hand palette: basic components, project fields, existing fields and the new-field form.
+// Every palette row starts with a small picture: components use an icon, fields a short glyph of their type.
+const kindIcons: Partial<Record<CellKind, IconName>> = {
+  name: 'folder',
+  path: 'folder-go',
+  'system-info': 'sliders',
+  image: 'image',
+  'open-folder': 'external',
+  'static-text': 'edit',
+  spacer: 'maximize',
+  divider: 'minus',
+  'game-cover': 'image',
+  'game-launch': 'play',
+}
+const typeGlyphs: Record<string, string> = {
+  string: 'Aa',
+  tags: '#',
+  number: '12',
+  datetime: '⏱',
+  boolean: '✓',
+  enum: '◉',
+  url: '↗',
+  date: '▦',
+}
+
+// The left-hand materials panel: find something and put it on the card. Four sections share one heading style
+// (folder info, your fields, layout, game); every row looks the same and is added by a click or a drag.
 export type EditorPaletteProps = {
   project: Project
   draft: Project
@@ -75,7 +100,7 @@ export type EditorPaletteProps = {
   reference: (source: Binding) => void
   // The folder shown in the editor preview: each field lists its current value so the real data is visible.
   preview?: FolderRow
-  // Game components stay folded away unless a game is in the project or already used on the card.
+  // The game section is shown only in a project with games (or when game components are already on the card).
   hasGames: boolean
   dragImage: (event: React.DragEvent<HTMLDivElement>) => void
   act: (request: Request) => Promise<Response | undefined>
@@ -84,6 +109,42 @@ export type EditorPaletteProps = {
   setError: (message: string) => void
   setFieldDeletion: (preview: FieldDeletionPreview) => void
   setRenaming: (value: { id: string; name: string }) => void
+}
+
+function Section({
+  id,
+  title,
+  open,
+  toggle,
+  action,
+  className,
+  children,
+}: {
+  id: string
+  title: ReactNode
+  open: boolean
+  toggle: (id: string) => void
+  action?: ReactNode
+  className?: string
+  children: ReactNode
+}) {
+  return (
+    <section className={'palette-section' + (className ? ' ' + className : '')}>
+      <div className="palette-section-head">
+        <UnstyledButton
+          className="palette-section-toggle"
+          aria-expanded={open}
+          aria-controls={'palette-' + id}
+          onClick={() => toggle(id)}
+        >
+          <Icon name={open ? 'chevron-down' : 'chevron-right'} size={12} />
+          <h4>{title}</h4>
+        </UnstyledButton>
+        {action}
+      </div>
+      {open && <div id={'palette-' + id}>{children}</div>}
+    </section>
+  )
 }
 
 export function EditorPalette(props: EditorPaletteProps) {
@@ -115,52 +176,48 @@ export function EditorPalette(props: EditorPaletteProps) {
   const [newOptions, setNewOptions] = useState('')
   const [adding, setAdding] = useState(false)
   const [search, setSearch] = useState(''),
-    [provider, setProvider] = useState<string | null>(null),
     [onlyFilled, setOnlyFilled] = useState(false)
+  const [closed, setClosed] = useState<string[]>([])
+  const toggle = (id: string) =>
+    setClosed((now) => (now.includes(id) ? now.filter((x) => x !== id) : [...now, id]))
+  const query = search.trim().toLocaleLowerCase()
+  const bound = (attributeId: string) =>
+    draft.fieldBindings.some((f) => f.attributeId === attributeId)
   const matches = (binding: Binding, withEmpty = true) => {
     const origin = fieldSource(binding.attributeId, attributes)
     return (
-      (!provider || provider === origin) &&
-      `${binding.alias} ${origin}`
-        .toLocaleLowerCase()
-        .includes(search.trim().toLocaleLowerCase()) &&
+      `${binding.alias} ${origin}`.toLocaleLowerCase().includes(query) &&
       (!withEmpty || !onlyFilled || !preview || isFilled(fieldValue(preview, binding.attributeId)))
     )
   }
-  const hiddenCount = [
+  // Fields already in this project's configuration and fields that only exist in folder records are one list;
+  // whether a field is added is just the state of its row.
+  const allFields: Binding[] = [
     ...draft.fieldBindings,
-    ...availableFields.map((f) => ({ ...f, alias: f.key })),
-  ].filter((f) => matches(f, false) && !matches(f)).length
-  const grouped = (bindings: Binding[]) =>
-    fieldSourceGroups(
-      bindings.filter((f) => matches(f)),
-      attributes
-    ).map(({ source, fields }) => (
-      <details key={source} className="field-source-group" open>
-        <summary>
-          {source}{' '}
-          <Text component="span" size="xs" c="dimmed">
-            {tr(
-              '{0} 項有資料',
-              fields.filter((f) =>
-                preview
-                  ? isFilled(fieldValue(preview, f.attributeId))
-                  : sources.find((s) => s.attributeId === f.attributeId)?.hasData
-              ).length
-            )}
-          </Text>
-        </summary>
-        <Stack gap="xs">{fields.map(paletteField)}</Stack>
-      </details>
-    ))
-  const paletteField = (binding: Binding) => {
+    ...availableFields.map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type })),
+  ]
+  const shownFields = allFields.filter((f) => matches(f))
+  const hiddenCount = allFields.filter((f) => matches(f, false) && !matches(f)).length
+  const startNewField = (name = '') => {
+    setNewField(name)
+    setAdding(true)
+  }
+  const fieldRow = (binding: Binding) => {
     const source = sources.find((f) => f.attributeId === binding.attributeId),
-      kind = typeKinds[binding.type]
+      kind = typeKinds[binding.type],
+      added = bound(binding.attributeId)
     if (!kind) return null
+    const uses = draft.cells.filter(
+      (cell) =>
+        cell.attributeId === binding.attributeId || cell.fallbackIds?.includes(binding.attributeId)
+    ).length
+    const name = binding.alias || tr('未命名欄位')
+    const origin = fieldSource(binding.attributeId, attributes)
+    const scope = source?.shared === false && source.private ? tr('專案私有') : tr('共用')
     return (
       <div
         key={binding.attributeId}
-        className="palette-item palette-field"
+        className={'palette-item palette-row palette-field' + (added ? '' : ' is-unbound')}
         data-attribute-id={binding.attributeId}
         draggable={!source?.conflict}
         onDragStart={(e) => {
@@ -170,94 +227,98 @@ export function EditorPalette(props: EditorPaletteProps) {
           dragImage(e)
         }}
       >
-        <Button
-          fullWidth
-          variant="default"
+        <UnstyledButton
+          className="palette-row-main"
           disabled={source?.conflict}
-          title={source?.conflict ? tr('同一欄位的型別不一致，請先處理資料衝突') : binding.alias}
+          title={
+            source?.conflict
+              ? tr('同一欄位的型別不一致，請先處理資料衝突')
+              : `${name} · ${typeLabels[binding.type]} · ${origin} · ${scope}`
+          }
           onClick={() => add(kind, undefined, undefined, binding)}
         >
-          <span className="palette-field-name">{binding.alias || tr('未命名欄位')}</span>
-          {preview && <FieldValuePreview value={fieldValue(preview, binding.attributeId)} />}
-          <span className="palette-field-meta">
-            <Badge size="xs" color="gray">
-              {fieldSource(binding.attributeId, attributes)}
-            </Badge>
-            <span>{typeLabels[binding.type]}</span>
-            <span>
-              {tr(
-                '使用 {0} 次',
-                draft.cells.filter(
-                  (cell) =>
-                    cell.attributeId === binding.attributeId ||
-                    cell.fallbackIds?.includes(binding.attributeId)
-                ).length
-              )}
-            </span>
-            <Badge size="xs" color={source?.shared === false && source.private ? 'orange' : 'gray'}>
-              {source?.shared === false && source.private ? tr('專案私有') : tr('共用')}
-            </Badge>
-            {source?.shared && source.private && (
-              <Badge size="xs" color="orange">
-                {tr('有專案覆寫')}
-              </Badge>
+          <span className="palette-row-icon is-glyph" aria-hidden>
+            {typeGlyphs[binding.type] ?? '·'}
+          </span>
+          <span className="palette-row-text">
+            <span className="palette-field-name">{name}</span>
+            {preview ? (
+              <FieldValuePreview value={fieldValue(preview, binding.attributeId)} />
+            ) : (
+              <span className="palette-row-meta">{typeLabels[binding.type]}</span>
             )}
           </span>
-        </Button>
-        {!draft.fieldBindings.some((f) => f.attributeId === binding.attributeId) && (
-          <Button
-            size="compact-xs"
-            variant="light"
-            disabled={source?.conflict}
-            onClick={() => reference(binding)}
-          >
-            {tr('只引用欄位')}
-          </Button>
-        )}
-        <Tooltip label={tr('重新命名欄位')}>
-          <ActionIcon
-            className="field-rename"
-            variant="subtle"
-            color="gray"
-            aria-label={tr('重新命名欄位 {0}', binding.alias)}
-            disabled={
-              busy || !draft.fieldBindings.some((f) => f.attributeId === binding.attributeId)
-            }
-            onClick={() => setRenaming({ id: binding.attributeId, name: binding.alias })}
-          >
-            <Icon name="edit" size={14} />
-          </ActionIcon>
-        </Tooltip>
-        <Tooltip label={dirty ? tr('先保存版面後才能刪除欄位') : tr('刪除欄位及資料')}>
-          <ActionIcon
-            className="field-delete"
-            variant="subtle"
-            color="red"
-            aria-label={tr('刪除欄位 {0}', binding.alias)}
-            disabled={
-              busy ||
-              dirty ||
-              !draft.fieldBindings.some((f) => f.attributeId === binding.attributeId)
-            }
-            onClick={async () => {
-              const result = await act({
-                action: 'deleteFieldPreview',
-                projectId: project.projectId,
-                attributeId: binding.attributeId,
-              })
-              if (result?.fieldDeletionPreview) setFieldDeletion(result.fieldDeletionPreview)
-            }}
-          >
-            <Icon name="close" size={14} />
-          </ActionIcon>
-        </Tooltip>
+          {/* Shared is the usual case; only the exceptions get a mark (the full scope is in the tooltip). */}
+          {source?.shared === false && source.private && (
+            <Badge size="xs" color="orange" className="palette-row-scope">
+              {tr('專案私有')}
+            </Badge>
+          )}
+          {source?.shared && source.private && (
+            <Badge size="xs" color="orange" className="palette-row-scope">
+              {tr('有專案覆寫')}
+            </Badge>
+          )}
+          <span className={'palette-row-state' + (added ? '' : ' is-unbound')}>
+            {added ? tr('使用 {0} 次', uses) : tr('尚未加入')}
+          </span>
+        </UnstyledButton>
+        <Menu position="bottom-end" withinPortal>
+          <Menu.Target>
+            <Tooltip label={tr('欄位操作')} openDelay={300}>
+              <ActionIcon
+                className="palette-row-more"
+                variant="subtle"
+                color="gray"
+                size="sm"
+                aria-label={tr('欄位操作 {0}', name)}
+              >
+                <Icon name="more" size={14} />
+              </ActionIcon>
+            </Tooltip>
+          </Menu.Target>
+          <Menu.Dropdown>
+            {!added && (
+              <Menu.Item disabled={source?.conflict} onClick={() => reference(binding)}>
+                {tr('只引用欄位')}
+              </Menu.Item>
+            )}
+            <Menu.Item
+              leftSection={<Icon name="edit" size={14} />}
+              disabled={busy || !added}
+              onClick={() => setRenaming({ id: binding.attributeId, name: binding.alias })}
+            >
+              {tr('重新命名欄位')}
+            </Menu.Item>
+            <Menu.Item
+              color="red"
+              leftSection={<Icon name="close" size={14} />}
+              disabled={busy || dirty || !added}
+              onClick={async () => {
+                const result = await act({
+                  action: 'deleteFieldPreview',
+                  projectId: project.projectId,
+                  attributeId: binding.attributeId,
+                })
+                if (result?.fieldDeletionPreview) setFieldDeletion(result.fieldDeletionPreview)
+              }}
+            >
+              {tr('刪除欄位及資料')}
+            </Menu.Item>
+            {added && dirty && (
+              <Menu.Label className="palette-menu-note">
+                {tr('先保存版面後才能刪除欄位')}
+              </Menu.Label>
+            )}
+          </Menu.Dropdown>
+        </Menu>
       </div>
     )
   }
-  const paletteItem = (kind: CellKind) => (
+  const componentRow = (kind: CellKind) => (
     <div
       key={kind}
-      className="palette-item"
+      className="palette-item palette-row"
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData('text/plain', kind)
@@ -265,157 +326,144 @@ export function EditorPalette(props: EditorPaletteProps) {
         dragImage(e)
       }}
     >
-      <Tooltip label={hints[kind]} openDelay={300} multiline maw={220}>
-        <Button fullWidth size="xs" variant="default" onClick={() => add(kind)}>
-          {labels[kind]}
-        </Button>
-      </Tooltip>
+      <UnstyledButton
+        className="palette-row-main"
+        aria-label={labels[kind]}
+        title={hints[kind]}
+        onClick={() => add(kind)}
+      >
+        <span className="palette-row-icon" aria-hidden>
+          <Icon name={kindIcons[kind] ?? 'grid'} size={14} />
+        </span>
+        <span className="palette-row-text">
+          <span className="palette-field-name">{labels[kind]}</span>
+          <span className="palette-row-meta">{hints[kind]}</span>
+        </span>
+      </UnstyledButton>
     </div>
   )
+  const components = (kinds: CellKind[]) =>
+    kinds.filter((kind) => `${labels[kind]} ${hints[kind]}`.toLocaleLowerCase().includes(query))
+  const componentSection = (id: string, title: string, kinds: CellKind[]) => {
+    const shown = components(kinds)
+    return (
+      (!query || shown.length > 0) && (
+        <Section id={id} title={title} open={!closed.includes(id)} toggle={toggle}>
+          <div className="basic-palette">{shown.map(componentRow)}</div>
+        </Section>
+      )
+    )
+  }
   return (
-    <aside className="editor-palette" aria-label={tr('拖入組件')}>
-      <h3>{tr('組件')}</h3>
-      <section className="palette-section">
-        <h4>{tr('要顯示的資訊')}</h4>
-        <div className="basic-palette">
-          {(['name', 'path', 'system-info', 'image', 'open-folder'] as CellKind[]).map(paletteItem)}
-        </div>
-      </section>
-      <section className="palette-section">
-        <h4>{tr('排版輔助')}</h4>
-        <div className="basic-palette">
-          {(['static-text', 'spacer', 'divider'] as CellKind[]).map(paletteItem)}
-        </div>
-      </section>
-      <Accordion
-        variant="separated"
-        defaultValue={hasGames ? 'game' : null}
-        className="game-palette"
-      >
-        <Accordion.Item value="game">
-          <Accordion.Control>{tr('遊戲專用')}</Accordion.Control>
-          <Accordion.Panel>
-            <div className="basic-palette">
-              {(['game-cover', 'game-launch'] as CellKind[]).map(paletteItem)}
-            </div>
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
-      <section className="project-field-palette">
-        <Group justify="space-between" align="center" mb={6}>
-          <h4 style={{ margin: 0 }}>{tr('專案欄位')}</h4>
-          <Button size="compact-xs" variant="light" onClick={() => setAdding(true)}>
-            {tr('＋ 新增欄位')}
-          </Button>
-        </Group>
-        {!draft.fieldBindings.length && (
-          <Text size="xs" c="dimmed" mb={6}>
-            {tr('還沒有欄位。按「＋ 新增欄位」建立，再拖到畫布。')}
-          </Text>
-        )}
-        {!draft.fieldBindings.length && (
-          <Button
-            size="compact-xs"
-            variant="filled"
-            mb={6}
-            onClick={() => change(addCommonFields(draft, commonFieldNames()))}
-          >
-            {tr('加入常用欄位')}
-          </Button>
-        )}
-        <Stack gap="xs" mb="sm">
-          <TextInput
-            size="xs"
-            aria-label={tr('搜尋欄位')}
-            placeholder={tr('搜尋名稱或來源')}
-            value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
-          />
-          <Select
-            size="xs"
-            aria-label={tr('篩選來源')}
-            placeholder={tr('全部來源')}
-            clearable
-            value={provider}
-            onChange={setProvider}
-            data={[
-              ...new Set(
-                [...draft.fieldBindings, ...availableFields].map((f) =>
-                  fieldSource(f.attributeId, attributes)
-                )
-              ),
-            ]}
-          />
+    <aside className="editor-palette" aria-label={tr('素材')}>
+      <div className="palette-search">
+        <TextInput
+          size="xs"
+          aria-label={tr('搜尋組件與欄位')}
+          placeholder={tr('搜尋組件、欄位或來源')}
+          leftSection={<Icon name="search" size={14} />}
+          value={search}
+          onChange={(e) => setSearch(e.currentTarget.value)}
+        />
+        <Tooltip label={tr('只看預覽資料夾有值的欄位')} openDelay={300}>
           <Checkbox
             size="xs"
-            label={tr('只看預覽資料夾有值的欄位')}
+            label={tr('只看有值')}
             disabled={!preview}
             checked={onlyFilled}
             onChange={(e) => setOnlyFilled(e.currentTarget.checked)}
           />
-          {hiddenCount > 0 && (
-            <Group gap={4}>
-              <Text size="xs" c="dimmed">
-                {tr('已隱藏 {0} 個未填欄位', hiddenCount)}
+        </Tooltip>
+        {hiddenCount > 0 && (
+          <Group gap={4}>
+            <Text size="xs" c="dimmed">
+              {tr('已隱藏 {0} 個未填欄位', hiddenCount)}
+            </Text>
+            <Button size="compact-xs" variant="subtle" onClick={() => setOnlyFilled(false)}>
+              {tr('顯示全部')}
+            </Button>
+          </Group>
+        )}
+      </div>
+      {componentSection('info', tr('資料夾資訊'), [
+        'name',
+        'path',
+        'system-info',
+        'image',
+        'open-folder',
+      ])}
+      <Section
+        id="fields"
+        title={tr('你的欄位')}
+        className="project-field-palette"
+        open={!closed.includes('fields')}
+        toggle={toggle}
+        action={
+          <Tooltip label={tr('新增欄位')}>
+            <ActionIcon
+              variant="subtle"
+              size="sm"
+              aria-label={tr('新增欄位')}
+              onClick={() => startNewField()}
+            >
+              <Icon name="plus" size={14} />
+            </ActionIcon>
+          </Tooltip>
+        }
+      >
+        {!allFields.length && (
+          <>
+            <Text size="xs" c="dimmed" mb={6}>
+              {tr('還沒有欄位。按「＋」建立，再拖到畫布。')}
+            </Text>
+            <Button
+              size="compact-xs"
+              variant="light"
+              mb={6}
+              onClick={() => change(addCommonFields(draft, commonFieldNames()))}
+            >
+              {tr('加入常用欄位')}
+            </Button>
+          </>
+        )}
+        {/* Field combinations (R-226) will be the first group here, above the source groups. */}
+        {fieldSourceGroups(shownFields, attributes).map(({ source, fields }) => (
+          <details key={source} className="field-source-group" open>
+            <summary>
+              {source}{' '}
+              <Text component="span" size="xs" c="dimmed">
+                {tr(
+                  '{0} 項有資料',
+                  fields.filter((f) =>
+                    preview
+                      ? isFilled(fieldValue(preview, f.attributeId))
+                      : sources.find((s) => s.attributeId === f.attributeId)?.hasData
+                  ).length
+                )}
               </Text>
-              <Button size="compact-xs" variant="subtle" onClick={() => setOnlyFilled(false)}>
-                {tr('顯示全部')}
-              </Button>
-            </Group>
-          )}
-        </Stack>
-        {grouped(draft.fieldBindings)}
-        {draft.fieldBindings.length > 0 && !draft.fieldBindings.some((f) => matches(f)) && (
+            </summary>
+            <div className="palette-rows">{fields.map(fieldRow)}</div>
+          </details>
+        ))}
+        {allFields.length > 0 && !shownFields.length && !query && (
           <Text size="xs" c="dimmed">
             {tr('沒有符合的欄位')}
           </Text>
         )}
-      </section>
-      <Accordion variant="separated" className="existing-fields">
-        <Accordion.Item value="existing">
-          <Accordion.Control>
-            {tr('引用資料夾既有欄位')}
-            <Badge size="xs" color="gray">
-              {availableFields.length}
-            </Badge>
-          </Accordion.Control>
-          <Accordion.Panel>
-            {availableFields.some((f) => f.shared) && (
-              <>
-                <Text size="sm" fw={600} mb="xs">
-                  {tr('共用欄位')}
-                </Text>
-                <Stack gap="xs" mb="sm">
-                  {grouped(
-                    availableFields
-                      .filter((f) => f.shared)
-                      .map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type }))
-                  )}
-                </Stack>
-              </>
-            )}
-            {availableFields.some((f) => !f.shared && f.private) && (
-              <>
-                <Text size="sm" fw={600} mb="xs">
-                  {tr('本專案私有欄位')}
-                </Text>
-                <Stack gap="xs">
-                  {grouped(
-                    availableFields
-                      .filter((f) => !f.shared && f.private)
-                      .map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type }))
-                  )}
-                </Stack>
-              </>
-            )}
-            {!availableFields.length && (
-              <Text size="xs" c="dimmed">
-                {tr('沒有尚未引用的既有欄位。')}
-              </Text>
-            )}
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
+        {query && !shownFields.length && (
+          <Button
+            size="compact-sm"
+            variant="light"
+            fullWidth
+            className="palette-create"
+            onClick={() => startNewField(search.trim())}
+          >
+            {tr('＋ 建立欄位「{0}」', search.trim())}
+          </Button>
+        )}
+      </Section>
+      {componentSection('layout', tr('排版'), ['static-text', 'spacer', 'divider'])}
+      {hasGames && componentSection('game', tr('遊戲'), ['game-cover', 'game-launch'])}
       <Modal opened={adding} onClose={() => setAdding(false)} title={tr('新增欄位')} size="sm">
         <form
           className="new-field-form"
@@ -458,10 +506,12 @@ export function EditorPalette(props: EditorPaletteProps) {
             setNewField('')
             setNewOptions('')
             setAdding(false)
+            setSearch('')
             setError('')
           }}
         >
           <TextInput
+            data-autofocus
             label={tr('欄位名稱')}
             placeholder={tr('例如：作者、評分')}
             value={newField}

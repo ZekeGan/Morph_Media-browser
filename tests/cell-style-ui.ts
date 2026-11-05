@@ -167,8 +167,7 @@ try {
   await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.locator('.editor-cell').first().click()
   const inspector = page.getByRole('complementary', { name: '組件設定', exact: true })
-  const section = inspector.getByRole('button', { name: '樣式', exact: true })
-  if ((await section.getAttribute('aria-expanded')) !== 'true') await section.click()
+  await inspector.getByRole('tab', { name: '樣式', exact: true }).click()
   await inspector.getByRole('button', { name: '底線', exact: true }).waitFor()
   // The "title" preset makes it bold and large, and clears the other optional styles.
   await inspector.getByRole('textbox', { name: '套用預設樣式', exact: true }).click()
@@ -202,7 +201,6 @@ try {
   await page.getByRole('textbox', { name: '樣式名稱', exact: true }).fill('QA style')
   await page.getByRole('button', { name: '儲存樣式', exact: true }).click()
   await page.locator('.editor-cell').nth(1).click()
-  if ((await section.getAttribute('aria-expanded')) !== 'true') await section.click()
   await inspector.getByRole('textbox', { name: '套用預設樣式', exact: true }).click()
   await page.getByRole('option', { name: 'QA style', exact: true }).click()
   await page.waitForFunction(() => {
@@ -212,11 +210,15 @@ try {
       getComputedStyle(node).borderTopLeftRadius === '14px'
     )
   })
-  await page.getByRole('button', { name: '儲存變更', exact: true }).click()
+  await page.getByRole('button', { name: '儲存', exact: true }).click()
   await page.locator('.editor-page').waitFor({ state: 'hidden' })
   await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.locator('.editor-cell').first().click()
-  if ((await section.getAttribute('aria-expanded')) !== 'true') await section.click()
+  // The style tab is remembered after reopening the editor.
+  assert.equal(
+    await inspector.getByRole('tab', { name: '樣式', exact: true }).getAttribute('aria-selected'),
+    'true'
+  )
   await inspector.getByRole('textbox', { name: '套用預設樣式', exact: true }).click()
   await page.getByRole('option', { name: 'QA style', exact: true }).waitFor()
   await page.keyboard.press('Escape')

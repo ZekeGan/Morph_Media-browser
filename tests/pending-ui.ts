@@ -171,22 +171,25 @@ try {
   await toolbar.getByText('資料夾', { exact: true }).click()
   await button('編輯版面').click()
   await page.locator('.editor-toolbar').waitFor()
-  const saveBox = (await button('儲存變更').boundingBox())!,
+  const saveBox = (await button('儲存').boundingBox())!,
     undoBox = (await button('復原').boundingBox())!
   assert.ok(Math.abs(saveBox.y - undoBox.y) < 12)
   await page.screenshot({ path: path.join(root, 'editor.png') })
   await page.getByRole('button', { name: /^(放棄變更|關閉)$/ }).click()
   await button('編輯版面').click()
-  await button('刪除欄位 Flag').click()
+  const deleteField = async () => {
+    await button('欄位操作 Flag').click()
+    await page.getByRole('menuitem', { name: '刪除欄位及資料', exact: true }).click()
+  }
+  await deleteField()
   const deletion = page.getByRole('dialog', { name: '刪除自訂欄位', exact: true })
   await deletion.waitFor()
   assert.ok((await deletion.textContent())!.includes('受影響欄位：1'))
   await deletion.getByRole('button', { name: '取消', exact: true }).click()
-  assert.equal(await button('刪除欄位 Flag').count(), 1)
-  await button('刪除欄位 Flag').click()
+  await deleteField()
   await button('確認刪除欄位及資料').click()
   await deletion.waitFor({ state: 'hidden' })
-  assert.equal(await button('刪除欄位 Flag').count(), 0)
+  assert.equal(await button('欄位操作 Flag').count(), 0)
   await page.getByRole('button', { name: /^(放棄變更|關閉)$/ }).click()
   await button('開啟專案 Pending Manga').first().click()
   await page.locator('.media-subfolders').getByRole('button', { name: 'a', exact: true }).click()

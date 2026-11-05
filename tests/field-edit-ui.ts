@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { Library } from '../electron/library'
 import { closeApp, launchApp, removeTestRoot, reportFailure } from './support/app'
 
-// Field rename, enum condition dropdown and the grouped inspector in the CELL editor.
+// Field rename, enum condition dropdown and the tabbed inspector (content / style / condition) in the CELL editor.
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
 const root = await fs.mkdtemp(path.join(base, 'field-edit-ui-')),
@@ -65,8 +65,11 @@ try {
   await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.locator('.editor-page').waitFor()
 
-  // The component with a display condition opens its condition section and offers the enum's options.
+  // A component with a display condition marks its condition tab; the tab offers the enum's options.
   await page.locator('.editor-cell').nth(-2).click()
+  const conditionTab = page.getByRole('tab', { name: /^條件/ })
+  await conditionTab.getByRole('img', { name: '已啟用', exact: true }).waitFor()
+  await conditionTab.click()
   const compare = page.getByRole('textbox', { name: '比較值', exact: true })
   await compare.waitFor()
   await compare.click()
@@ -74,8 +77,9 @@ try {
   assert.deepEqual(options, ['進行中', '已完成'], 'enum comparison offers the field options')
   await page.getByRole('option', { name: '已完成', exact: true }).click()
 
-  // Rename from the palette: duplicates are refused inline, a free name is applied.
-  await page.getByRole('button', { name: '重新命名欄位 備註', exact: true }).click()
+  // Rename from the palette row's "⋯" menu: duplicates are refused inline, a free name is applied.
+  await page.getByRole('button', { name: '欄位操作 備註', exact: true }).click()
+  await page.getByRole('menuitem', { name: '重新命名欄位', exact: true }).click()
   const dialog = page.getByRole('dialog', { name: '重新命名欄位', exact: true })
   await dialog.getByLabel('欄位名稱').fill('狀態')
   await dialog.getByText('已有同名欄位').waitFor()
@@ -86,8 +90,15 @@ try {
   await page.locator('.palette-field').filter({ hasText: '作者' }).waitFor()
   assert.equal(await page.locator('.palette-field').filter({ hasText: '備註' }).count(), 0)
 
-  // Rename also works from the inspector next to the bound field.
+  // Rename also works from the inspector next to the bound field. The condition tab is remembered, so go back to
+  // the content tab first.
   await page.locator('.editor-cell').last().click()
+  assert.equal(
+    await conditionTab.getAttribute('aria-selected'),
+    'true',
+    'the last tab is remembered'
+  )
+  await page.getByRole('tab', { name: '內容', exact: true }).click()
   await page.getByRole('button', { name: '重新命名此欄位', exact: true }).click()
   await dialog.getByLabel('欄位名稱').fill('創作者')
   await dialog.getByRole('button', { name: '確認', exact: true }).click()
@@ -95,7 +106,7 @@ try {
 
   // Text style, wrapping and number settings.
   await page.locator('.editor-cell').nth(-2).click()
-  await page.getByRole('button', { name: '樣式', exact: true }).click()
+  await page.getByRole('tab', { name: '樣式', exact: true }).click()
   const textCell = page.locator('.editor-cell').nth(-2)
   const size = () =>
     textCell
@@ -120,7 +131,15 @@ try {
       .evaluate((node) => getComputedStyle(node).whiteSpace),
     'pre-wrap'
   )
-  await page.getByRole('button', { name: '樣式', exact: true }).click()
+  // Position and size live under "Advanced" in the style tab.
+  await page.getByRole('button', { name: '進階：位置與大小', exact: true }).click()
+  await page.getByLabel('寬度', { exact: true }).fill('6')
+  await page.waitForFunction(
+    () =>
+      document.querySelector<HTMLElement>('.editor-cell')!.getBoundingClientRect().width <
+      document.querySelector<HTMLElement>('.react-grid-layout')!.getBoundingClientRect().width * 0.6
+  )
+  await page.getByRole('tab', { name: '內容', exact: true }).click()
 
   await page.locator('.editor-cell').last().click()
   await page.getByLabel('小數位數').fill('2')
@@ -128,6 +147,7 @@ try {
   await page.getByRole('radiogroup', { name: '單位位置' }).waitFor()
 
   // Greater/less conditions are offered for number fields only.
+  await conditionTab.click()
   await page.getByRole('textbox', { name: '顯示條件欄位' }).click()
   await page.getByRole('option', { name: '創作者', exact: true }).click()
   await page.getByRole('textbox', { name: '顯示條件', exact: true }).click()
@@ -135,16 +155,24 @@ try {
   assert.ok(operators.includes('大於') && operators.includes('小於'))
   await page.keyboard.press('Escape')
 
-  // Sections collapse and expand.
-  const style_ = page.getByRole('button', { name: '樣式', exact: true })
-  await style_.click()
+  // Tabs switch between the groups of settings.
+  await page.getByRole('tab', { name: '樣式', exact: true }).click()
   await page.getByLabel('文字顏色').waitFor()
-  await style_.click()
+  await page.getByRole('tab', { name: '內容', exact: true }).click()
   await page.getByLabel('文字顏色').waitFor({ state: 'hidden' })
+
+  // Clicking the empty canvas (or pressing Escape) deselects: the inspector shows the whole card.
+  const area = (await page.locator('.canvas-wrap').boundingBox())!
+  await page.mouse.click(area.x + area.width / 2, area.y + area.height - 10)
+  await page.getByRole('heading', { name: '整張卡片', exact: true }).waitFor()
+  await page.locator('.editor-cell').first().click()
+  await page.getByRole('heading', { name: '整張卡片', exact: true }).waitFor({ state: 'hidden' })
+  await page.keyboard.press('Escape')
+  await page.getByRole('heading', { name: '整張卡片', exact: true }).waitFor()
 
   assert.deepEqual(errors, [])
   passed = true
-  console.log('PASS field rename, enum condition options, inspector sections. ' + root)
+  console.log('PASS field rename, enum condition options, inspector tabs. ' + root)
 } catch (error) {
   await reportFailure(page, root)
   throw error

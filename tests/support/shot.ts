@@ -186,12 +186,20 @@ try {
   if (child)
     await page.locator('.media-subfolder').getByRole('button', { name: child, exact: true }).click()
   if (args.includes('--editor')) {
+    // In a narrow window the open folder panel overlays the toolbar; close it first.
+    const closePanel = page.getByRole('button', { name: '關閉資料夾內容', exact: true })
+    if (await closePanel.isVisible()) await closePanel.click()
     await page.getByRole('button', { name: '編輯版面', exact: true }).click()
     await page.locator('.editor-page').waitFor()
     const select = option('select')
     if (select) await page.locator('.editor-cell').nth(Number(select)).click()
     const section = option('section')
-    if (section) await page.getByRole('button', { name: section, exact: true }).click()
+    if (section)
+      await page
+        .getByRole('tab', { name: section, exact: true })
+        .or(page.getByRole('button', { name: section, exact: true }))
+        .first()
+        .click()
   }
   if (args.includes('--settings'))
     await page.getByRole('tab', { name: '設定', exact: true }).click()

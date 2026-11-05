@@ -327,7 +327,7 @@ try {
   await page.getByRole('button', { name: '新增方案', exact: true }).click()
   await page.getByLabel('方案名稱', { exact: true }).fill('第二方案')
   await page.getByRole('button', { name: '確認', exact: true }).click()
-  await page.getByRole('button', { name: '儲存變更', exact: true }).click()
+  await page.getByRole('button', { name: '儲存', exact: true }).click()
   await page.locator('.center-pane').waitFor()
   assert.equal(
     await page.evaluate(

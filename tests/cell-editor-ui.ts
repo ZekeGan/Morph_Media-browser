@@ -189,6 +189,10 @@ try {
     )
   }
   await page.locator('.editor-cell').last().click()
+  // With nothing selected the inspector shows the whole card; a selected component gets the three tabs and a
+  // floating copy/delete toolbar.
+  await page.getByRole('toolbar', { name: '組件操作', exact: true }).waitFor()
+  await page.getByRole('tab', { name: /^條件/ }).click()
   await page.getByRole('textbox', { name: '比較值', exact: true }).click()
   await page.getByRole('option', { name: '是', exact: true }).click()
   await page.locator('.cell-condition-hidden').waitFor()
@@ -294,12 +298,27 @@ try {
     if (await fits()) break
   }
   await marked.waitFor({ state: 'detached', timeout: 2000 })
+  // Ctrl+D copies the selected component and Delete removes it (both undoable).
+  {
+    const count = await page.locator('.editor-cell').count()
+    await page.locator('.editor-cell').first().click()
+    await page.keyboard.press('Control+d')
+    await page.waitForFunction(
+      (n) => document.querySelectorAll('.editor-cell').length === n + 1,
+      count
+    )
+    await page.keyboard.press('Delete')
+    await page.waitForFunction((n) => document.querySelectorAll('.editor-cell').length === n, count)
+    await button('復原').click()
+    await button('復原').click()
+  }
   await page.locator('.editor-cell').first().click()
+  await page.getByRole('tab', { name: '內容', exact: true }).click()
   await page.getByRole('textbox', { name: '顯示方式', exact: true }).click()
   await page.getByRole('option', { name: '進度', exact: true }).click()
   await page.getByRole('textbox', { name: '滿分／總量', exact: true }).fill('10')
   await page.getByLabel('顯示複製按鈕', { exact: true }).check()
-  await button('儲存變更').click()
+  await button('儲存').click()
   await page.locator('.editor-page').waitFor({ state: 'hidden' })
   const saved = (await readJson(projectFile(media, project.projectId))) as Project
   assert.equal(saved.cells[0].presentation, 'progress')

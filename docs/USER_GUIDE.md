@@ -46,11 +46,11 @@ If the folder already holds an earlier project (a new computer, a moved folder, 
 ## 5. Design the card (block editor)
 
 1. Press **Edit layout** in the toolbar.
-2. Drag **components** from the left onto the canvas: name, path, text, tags, number, rating, date, choice, link, image, divider; game projects also have **Game cover** and **Launch game**. Create a new field with "+ New field"; fields already imported are under "Reference existing folder fields".
-3. Select a component and adjust it on the right: **Content** (which field it shows), **Visibility condition**, **Position and size**, **Style** (size, weight, colours, border, corners, presets, colour tags by category…).
+2. Click or drag items from the materials panel on the left onto the canvas: **Folder info** (name, path, system info, image, open folder), **Your fields** (grouped by source, including fields in the folders that are not added yet) and **Layout** (layout text, spacer, divider); game projects also have **Game** (game cover, launch game). When the search box finds nothing, use "+ Create field"; renaming and deleting a field are in each row's "⋯".
+3. Select a component and adjust it in the three tabs on the right: **Content** (which field it shows), **Style** (size, weight, colours, border, corners, presets…; position and size are under "Advanced") and **Condition** (when it is shown). Copy and remove buttons float above the selected component, or use Ctrl+D / Delete; click an empty part of the canvas to see the whole card.
 4. **Fallback fields**: one component can list several fields and shows the first one that has a value, for example "Steam name → DLsite name → my own note". Search follows the same order.
-5. "Preview with actual data" at the top lets you pick a real folder and see the components filled with its data. When content is long, choose scrolling, wrapping, or the tag "+N" badge.
-6. Press **Save changes**, or **Cancel** to drop them. A project can have several named layouts.
+5. The preview menu in the toolbar lets you pick a real folder (or "Longest/Shortest value of each field"), with arrows for the previous/next folder, and see the components filled with its data; a line above the canvas says whether anything is cut off. When content is long, choose scrolling, wrapping, or the tag "+N" badge.
+6. Press **Save**, or **Discard changes** to drop them. A project can have several named layouts.
 
 ![The layout editor: components on the left, the canvas with a real-data preview in the middle, component settings on the right](images/04-editor.png)
 

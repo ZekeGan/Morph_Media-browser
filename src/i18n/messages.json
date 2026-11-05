@@ -1169,41 +1169,11 @@
     "en": "Preset name",
     "es": "Nombre del diseño"
   },
-  "拖入組件": {
-    "ja": "コンポーネントをドラッグ",
-    "zh-CN": "拖入组件",
-    "en": "Drag components",
-    "es": "Arrastrar componentes"
-  },
   "尚無資料": {
     "ja": "データなし",
     "zh-CN": "尚无数据",
     "en": "Without data",
     "es": "Sin datos"
-  },
-  "引用資料夾既有欄位": {
-    "ja": "既存のフォルダー項目を参照",
-    "zh-CN": "引用文件夹既有栏位",
-    "en": "Reference existing folder fields",
-    "es": "Referenciar campos de carpeta existentes"
-  },
-  "共用欄位": {
-    "ja": "共有項目",
-    "zh-CN": "共用栏位",
-    "en": "Shared fields",
-    "es": "Campos compartidos"
-  },
-  "本專案私有欄位": {
-    "ja": "このプロジェクトの非共有項目",
-    "zh-CN": "本项目私有栏位",
-    "en": "Private fields for this project",
-    "es": "Campos privados de este proyecto"
-  },
-  "沒有尚未引用的既有欄位。": {
-    "ja": "未参照の既存項目はありません。",
-    "zh-CN": "没有尚未引用的既有栏位。",
-    "en": "No unreferenced existing fields.",
-    "es": "No hay campos existentes sin referenciar."
   },
   "新增欄位": {
     "ja": "項目を追加",
@@ -1312,12 +1282,6 @@
     "zh-CN": "移除组件",
     "en": "Remove component",
     "es": "Eliminar componente"
-  },
-  "選擇畫布上的組件": {
-    "ja": "キャンバスのコンポーネントを選択",
-    "zh-CN": "选择画布上的组件",
-    "en": "Select a component on the canvas",
-    "es": "Selecciona un componente del lienzo"
   },
   "無法取得資料夾內容": {
     "ja": "フォルダーの内容を取得できません",
@@ -3059,12 +3023,6 @@
     "en": "Used {0} times",
     "es": "Se usa {0} veces"
   },
-  "儲存變更": {
-    "ja": "変更を保存",
-    "zh-CN": "保存更改",
-    "en": "Save changes",
-    "es": "Guardar cambios"
-  },
   "卡片外觀": {
     "ja": "カードの見た目",
     "zh-CN": "卡片外观",
@@ -3136,12 +3094,6 @@
     "zh-CN": "组件",
     "en": "Components",
     "es": "Componentes"
-  },
-  "專案欄位": {
-    "ja": "プロジェクトのフィールド",
-    "zh-CN": "项目字段",
-    "en": "Project fields",
-    "es": "Campos del proyecto"
   },
   "選項（逗號或換行分隔）": {
     "ja": "選択肢（カンマまたは改行区切り）",
@@ -3448,12 +3400,6 @@
     "ja": "フィールドとデータを削除",
     "zh-CN": "删除字段及数据",
     "es": "Eliminar campo y datos"
-  },
-  "刪除欄位 {0}": {
-    "en": "Delete field {0}",
-    "ja": "フィールド {0} を削除",
-    "zh-CN": "删除字段 {0}",
-    "es": "Eliminar campo {0}"
   },
   "刪除自訂欄位": {
     "en": "Delete custom field",
@@ -4313,12 +4259,6 @@
     "ja": "項目名を変更",
     "es": "Renombrar campo"
   },
-  "重新命名欄位 {0}": {
-    "zh-CN": "重命名字段 {0}",
-    "en": "Rename field {0}",
-    "ja": "項目「{0}」の名前を変更",
-    "es": "Renombrar campo {0}"
-  },
   "重新命名此欄位": {
     "zh-CN": "重命名此字段",
     "en": "Rename this field",
@@ -4384,18 +4324,6 @@
     "en": "On",
     "ja": "有効",
     "es": "Activa"
-  },
-  "點選畫布上的組件，就能在這裡調整內容、條件、位置與樣式。": {
-    "zh-CN": "点选画布上的组件，就能在这里调整内容、条件、位置与样式。",
-    "en": "Click a component on the canvas to adjust its content, condition, position and style here.",
-    "ja": "キャンバス上のコンポーネントをクリックすると、ここで内容・条件・位置・スタイルを調整できます。",
-    "es": "Haz clic en un componente del lienzo para ajustar aquí su contenido, condición, posición y estilo."
-  },
-  "拖曳移動、拉邊角縮放；按 Delete 可移除。": {
-    "zh-CN": "拖动移动、拉边角缩放；按 Delete 可移除。",
-    "en": "Drag to move, pull a corner to resize, press Delete to remove.",
-    "ja": "ドラッグで移動、角を引いてサイズ変更、Delete キーで削除します。",
-    "es": "Arrastra para mover, tira de una esquina para redimensionar, pulsa Supr para quitar."
   },
   "要加入新組件或欄位，請從左側拖入畫布，或直接點選。": {
     "zh-CN": "要添加新组件或字段，请从左侧拖入画布，或直接点选。",
@@ -4714,18 +4642,6 @@
     "en": "Set the launch file",
     "ja": "設定で起動ファイルを指定",
     "es": "Indicar el archivo de inicio"
-  },
-  "＋ 新增欄位": {
-    "zh-CN": "＋ 新增字段",
-    "en": "+ New field",
-    "ja": "＋ 項目を追加",
-    "es": "+ Nuevo campo"
-  },
-  "還沒有欄位。按「＋ 新增欄位」建立，再拖到畫布。": {
-    "zh-CN": "还没有字段。点“＋ 新增字段”创建，再拖到画布。",
-    "en": "No fields yet. Use \"+ New field\" to create one, then drag it onto the canvas.",
-    "ja": "項目がまだありません。「＋ 項目を追加」で作成し、キャンバスへドラッグします。",
-    "es": "Aún no hay campos. Crea uno con \"+ Nuevo campo\" y arrástralo al lienzo."
   },
   "尚無最愛": {
     "zh-CN": "尚无收藏",
@@ -6185,24 +6101,6 @@
     "ja": "カバー、名前、ゲーム起動",
     "es": "Portada, nombre, iniciar juego"
   },
-  "要顯示的資訊": {
-    "zh-CN": "要显示的信息",
-    "en": "Information to show",
-    "ja": "表示する情報",
-    "es": "Información que mostrar"
-  },
-  "排版輔助": {
-    "zh-CN": "排版辅助",
-    "en": "Layout helpers",
-    "ja": "レイアウト補助",
-    "es": "Ayudas de diseño"
-  },
-  "遊戲專用": {
-    "zh-CN": "游戏专用",
-    "en": "Game only",
-    "ja": "ゲーム専用",
-    "es": "Solo juegos"
-  },
   "遊戲資料夾的保護提示": {
     "zh-CN": "游戏文件夹的保护提示",
     "en": "Game folder protection notes",
@@ -6707,24 +6605,6 @@
     "ja": "フィールドのみ参照",
     "es": "Solo referenciar campo"
   },
-  "搜尋名稱或來源": {
-    "zh-CN": "搜索名称或来源",
-    "en": "Search name or source",
-    "ja": "名前またはソースを検索",
-    "es": "Buscar nombre u origen"
-  },
-  "篩選來源": {
-    "zh-CN": "筛选来源",
-    "en": "Filter source",
-    "ja": "ソースで絞り込む",
-    "es": "Filtrar origen"
-  },
-  "全部來源": {
-    "zh-CN": "全部来源",
-    "en": "All sources",
-    "ja": "すべてのソース",
-    "es": "Todos los orígenes"
-  },
   "只看預覽資料夾有值的欄位": {
     "zh-CN": "只看预览文件夹有值的字段",
     "en": "Only fields with values in the preview folder",
@@ -6820,5 +6700,149 @@
     "en": "Fallback fields must exist and have compatible display types.",
     "ja": "代替フィールドが存在し、表示形式に互換性がある必要があります。",
     "es": "Los campos alternativos deben existir y tener tipos de visualización compatibles."
+  },
+  "極端情況": {
+    "ja": "極端なケース",
+    "zh-CN": "极端情况",
+    "en": "Extremes",
+    "es": "Casos extremos"
+  },
+  "儲存": {
+    "ja": "保存",
+    "zh-CN": "保存",
+    "en": "Save",
+    "es": "Guardar"
+  },
+  "預覽中沒有內容被截掉": {
+    "ja": "プレビューで切れている内容はありません",
+    "zh-CN": "预览中没有内容被截断",
+    "en": "Nothing is cut off in the preview",
+    "es": "No se corta nada en la vista previa"
+  },
+  "組件操作": {
+    "ja": "コンポーネントの操作",
+    "zh-CN": "组件操作",
+    "en": "Component actions",
+    "es": "Acciones del componente"
+  },
+  "尚未加入": {
+    "ja": "未追加",
+    "zh-CN": "尚未加入",
+    "en": "Not added",
+    "es": "Sin añadir"
+  },
+  "欄位操作": {
+    "ja": "フィールドの操作",
+    "zh-CN": "字段操作",
+    "en": "Field actions",
+    "es": "Acciones del campo"
+  },
+  "欄位操作 {0}": {
+    "ja": "フィールドの操作 {0}",
+    "zh-CN": "字段操作 {0}",
+    "en": "Field actions {0}",
+    "es": "Acciones del campo {0}"
+  },
+  "素材": {
+    "ja": "素材",
+    "zh-CN": "素材",
+    "en": "Materials",
+    "es": "Materiales"
+  },
+  "搜尋組件與欄位": {
+    "ja": "コンポーネントとフィールドを検索",
+    "zh-CN": "搜索组件与字段",
+    "en": "Search components and fields",
+    "es": "Buscar componentes y campos"
+  },
+  "搜尋組件、欄位或來源": {
+    "ja": "コンポーネント・フィールド・取得元を検索",
+    "zh-CN": "搜索组件、字段或来源",
+    "en": "Search components, fields or sources",
+    "es": "Buscar componentes, campos u orígenes"
+  },
+  "只看有值": {
+    "ja": "値ありのみ",
+    "zh-CN": "只看有值",
+    "en": "Only with values",
+    "es": "Solo con valor"
+  },
+  "資料夾資訊": {
+    "ja": "フォルダー情報",
+    "zh-CN": "文件夹信息",
+    "en": "Folder info",
+    "es": "Información de la carpeta"
+  },
+  "你的欄位": {
+    "ja": "あなたのフィールド",
+    "zh-CN": "你的字段",
+    "en": "Your fields",
+    "es": "Tus campos"
+  },
+  "還沒有欄位。按「＋」建立，再拖到畫布。": {
+    "ja": "フィールドはまだありません。「＋」で作成して、キャンバスへドラッグしてください。",
+    "zh-CN": "还没有字段。按“＋”创建，再拖到画布。",
+    "en": "No fields yet. Press “+” to create one, then drag it onto the canvas.",
+    "es": "Aún no hay campos. Pulsa «+» para crear uno y arrástralo al lienzo."
+  },
+  "＋ 建立欄位「{0}」": {
+    "ja": "＋ フィールド「{0}」を作成",
+    "zh-CN": "＋ 创建字段“{0}”",
+    "en": "+ Create field “{0}”",
+    "es": "+ Crear el campo «{0}»"
+  },
+  "排版": {
+    "ja": "レイアウト",
+    "zh-CN": "排版",
+    "en": "Layout",
+    "es": "Maquetación"
+  },
+  "條件": {
+    "ja": "条件",
+    "zh-CN": "条件",
+    "en": "Condition",
+    "es": "Condición"
+  },
+  "這個組件沒有內容設定，可到「樣式」調整外觀。": {
+    "ja": "このコンポーネントには内容の設定がありません。見た目は「スタイル」で調整できます。",
+    "zh-CN": "这个组件没有内容设置，可到“样式”调整外观。",
+    "en": "This component has no content settings; adjust its look under “Style”.",
+    "es": "Este componente no tiene ajustes de contenido; ajusta su aspecto en «Estilo»."
+  },
+  "進階：位置與大小": {
+    "ja": "詳細：位置とサイズ",
+    "zh-CN": "高级：位置与大小",
+    "en": "Advanced: position and size",
+    "es": "Avanzado: posición y tamaño"
+  },
+  "整張卡片": {
+    "ja": "カード全体",
+    "zh-CN": "整张卡片",
+    "en": "Whole card",
+    "es": "Toda la tarjeta"
+  },
+  "{0} 個組件": {
+    "ja": "コンポーネント {0} 個",
+    "zh-CN": "{0} 个组件",
+    "en": "{0} components",
+    "es": "{0} componentes"
+  },
+  "在預覽中被截掉的組件（點一下選取並處理）：": {
+    "ja": "プレビューで切れているコンポーネント（クリックで選択して対処）：",
+    "zh-CN": "在预览中被截断的组件（点一下选取并处理）：",
+    "en": "Components cut off in the preview (click one to select and fix it):",
+    "es": "Componentes cortados en la vista previa (haz clic para seleccionarlo y corregirlo):"
+  },
+  "點選畫布上的組件，就能在這裡調整內容、樣式與條件。": {
+    "ja": "キャンバス上のコンポーネントをクリックすると、ここで内容・スタイル・条件を調整できます。",
+    "zh-CN": "点选画布上的组件，就能在这里调整内容、样式与条件。",
+    "en": "Click a component on the canvas to adjust its content, style and condition here.",
+    "es": "Haz clic en un componente del lienzo para ajustar aquí su contenido, estilo y condición."
+  },
+  "拖曳移動、拉邊角縮放；Delete 移除、Ctrl+D 複製。": {
+    "ja": "ドラッグで移動、角を引いてサイズ変更。Delete で削除、Ctrl+D で複製。",
+    "zh-CN": "拖拽移动、拉边角缩放；Delete 移除、Ctrl+D 复制。",
+    "en": "Drag to move, drag a corner to resize; Delete removes, Ctrl+D duplicates.",
+    "es": "Arrastra para mover y desde una esquina para cambiar el tamaño; Supr elimina, Ctrl+D duplica."
   }
 }
