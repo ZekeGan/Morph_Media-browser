@@ -137,6 +137,18 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .existing-fields .mantine-Accordion-control { padding:10px; }.existing-fields .mantine-Accordion-label { font-size:12px; }.existing-fields .mantine-Accordion-content { padding:10px; }
 @container editor (max-width:1100px) { .editor { grid-template-columns:280px minmax(0,1fr); }.editor-palette { grid-column:1; grid-row:1 / span 2; }.editor .canvas-wrap { grid-column:2; grid-row:1; }.editor > .editor-inspector { grid-column:2; grid-row:2; position:static; max-height:none; } }
 @container editor (max-width:740px) { .editor { grid-template-columns:minmax(0,1fr); }.editor .canvas-wrap { grid-column:1; grid-row:1; }.editor > .editor-palette { grid-column:1; grid-row:2; position:static; max-height:none; }.editor > .editor-inspector { grid-column:1; grid-row:3; }.display-density { grid-template-columns:1fr; } }
+/* Wide editor: the three columns fill the height left in the window and scroll on their own, so the component list
+   and the settings always reach the bottom and a long canvas scrolls only itself. Narrower layouts keep page scroll. */
+.editor-page { display:flex; flex-direction:column; min-height:0; }
+@container editor (min-width:1101px) { .editor { flex:1; height:0; min-height:320px; align-items:stretch; }.editor > aside { position:static; max-height:none; height:100%; }.editor .canvas-wrap { height:100%; min-height:0; overflow:auto; } }
+/* An empty canvas shows its template choices over the grid, so a drop can land anywhere; they step aside while a
+   drag is over the canvas and come back when it leaves. Only the buttons take clicks. */
+.canvas { position:relative; }
+.canvas-empty { position:absolute; inset:0; justify-content:center; pointer-events:none; z-index:3; transition:opacity .15s ease; }
+.canvas-empty button { pointer-events:auto; }
+.canvas-empty.stepped-aside { opacity:0; }
+.canvas-empty.stepped-aside button { pointer-events:none; }
+@media (prefers-reduced-motion: reduce) { .canvas-empty { transition:none; } }
 @media(max-width:500px) { .display-density { grid-template-columns:1fr; } }
 
 /* Optional CELL elements and focused folder settings */

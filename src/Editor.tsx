@@ -170,12 +170,13 @@ export function Editor({
       cancelGridDrop.current = false
     }
   }
+  // While a drag is over the canvas, the empty canvas's template choices step aside so the whole canvas takes drops.
+  const [dragOverCanvas, setDragOverCanvas] = useState(false)
   const trackGridPointer = (x: number, y: number) => {
-    const rect = containerRef.current
-      ?.querySelector<HTMLElement>('.react-grid-layout')
-      ?.getBoundingClientRect()
+    const rect = containerRef.current?.getBoundingClientRect()
     const inside = !!rect && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
     if (overGrid.current && !inside) clearDropPlaceholder()
+    if (overGrid.current !== inside) setDragOverCanvas(inside)
     overGrid.current = inside
   }
   // The browser's own drag picture is positioned by the OS and can land away from the cursor, so it is replaced by
@@ -208,6 +209,7 @@ export function Editor({
     const leave = (e: DragEvent) => {
       if (!e.relatedTarget && overGrid.current) {
         overGrid.current = false
+        setDragOverCanvas(false)
         clearDropPlaceholder()
       }
     }
@@ -219,6 +221,8 @@ export function Editor({
         document.removeEventListener(name, move as EventListener, true)
       document.removeEventListener('dragleave', leave as EventListener, true)
       for (const name of ['dragend', 'drop']) document.removeEventListener(name, end, true)
+      overGrid.current = false
+      setDragOverCanvas(false)
       // A drag that ends anywhere but on the canvas (Esc, released outside) leaves no placeholder behind.
       if (e.type === 'dragend') clearDropPlaceholder()
     }
@@ -872,7 +876,11 @@ export function Editor({
           />
           <div ref={containerRef as React.RefObject<HTMLDivElement>} className="canvas">
             {!level.length && (
-              <Stack gap={10} align="center" className="canvas-empty">
+              <Stack
+                gap={10}
+                align="center"
+                className={'canvas-empty' + (dragOverCanvas ? ' stepped-aside' : '')}
+              >
                 <Text fw={600}>{tr('從範本開始')}</Text>
                 <Group gap="sm" justify="center">
                   {(

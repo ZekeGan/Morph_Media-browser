@@ -138,6 +138,37 @@ try {
   await button('新增方案').click()
   await page.getByLabel('方案名稱', { exact: true }).fill('空白 QA')
   await button('確認').click()
+  // The empty canvas's templates step aside while a component is dragged over the canvas and come back when it
+  // leaves; a drop near the top lands there instead of below the templates.
+  {
+    const empty = page.locator('.canvas-empty'),
+      canvas = (await page.locator('.canvas').boundingBox())!,
+      palette = page.locator('.basic-palette .palette-item').first(),
+      transfer = await page.evaluateHandle(() => new DataTransfer())
+    const over = (x: number, y: number) =>
+      page
+        .locator('body')
+        .dispatchEvent('dragover', { clientX: x, clientY: y, dataTransfer: transfer })
+    assert.equal(await empty.evaluate((node) => node.classList.contains('stepped-aside')), false)
+    await palette.dispatchEvent('dragstart', { dataTransfer: transfer })
+    await over(canvas.x + canvas.width / 2, canvas.y + 40)
+    await page.locator('.canvas-empty.stepped-aside').waitFor({ state: 'attached' })
+    await over(5, 5)
+    await page.locator('.canvas-empty:not(.stepped-aside)').waitFor({ state: 'attached' })
+    await over(canvas.x + canvas.width / 2, canvas.y + 40)
+    const top = {
+      clientX: canvas.x + canvas.width / 2,
+      clientY: canvas.y + 30,
+      dataTransfer: transfer,
+    }
+    await page.locator('.react-grid-layout').dispatchEvent('dragenter', top)
+    await page.locator('.react-grid-layout').dispatchEvent('drop', top)
+    await palette.dispatchEvent('dragend', { dataTransfer: transfer })
+    await page.locator('.editor-cell').first().waitFor()
+    assert.equal(await empty.count(), 0, 'the templates go once something is placed')
+    await button('復原').click()
+    await empty.waitFor()
+  }
   await button('加入第一個組件').click()
   await page.getByLabel('版面文字內容', { exact: true }).fill('QA TEXT')
   await page.getByRole('button', { name: '＋ 新增欄位', exact: true }).click()
