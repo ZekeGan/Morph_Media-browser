@@ -5,7 +5,6 @@ import {
   ActionIcon,
   Badge,
   Button,
-  Checkbox,
   Group,
   Menu,
   Modal,
@@ -365,25 +364,6 @@ export function EditorPalette(props: EditorPaletteProps) {
           value={search}
           onChange={(e) => setSearch(e.currentTarget.value)}
         />
-        <Tooltip label={tr('只看預覽資料夾有值的欄位')} openDelay={300}>
-          <Checkbox
-            size="xs"
-            label={tr('只看有值')}
-            disabled={!preview}
-            checked={onlyFilled}
-            onChange={(e) => setOnlyFilled(e.currentTarget.checked)}
-          />
-        </Tooltip>
-        {hiddenCount > 0 && (
-          <Group gap={4}>
-            <Text size="xs" c="dimmed">
-              {tr('已隱藏 {0} 個未填欄位', hiddenCount)}
-            </Text>
-            <Button size="compact-xs" variant="subtle" onClick={() => setOnlyFilled(false)}>
-              {tr('顯示全部')}
-            </Button>
-          </Group>
-        )}
       </div>
       {componentSection('info', tr('資料夾資訊'), [
         'name',
@@ -399,18 +379,45 @@ export function EditorPalette(props: EditorPaletteProps) {
         open={!closed.includes('fields')}
         toggle={toggle}
         action={
-          <Tooltip label={tr('新增欄位')}>
-            <ActionIcon
-              variant="subtle"
-              size="sm"
-              aria-label={tr('新增欄位')}
-              onClick={() => startNewField()}
-            >
-              <Icon name="plus" size={14} />
-            </ActionIcon>
-          </Tooltip>
+          <>
+            {/* The value filter only applies to fields, so it sits on this section's heading. */}
+            <Tooltip label={tr('只看預覽資料夾有值的欄位')} openDelay={300}>
+              <Button
+                size="compact-xs"
+                variant={onlyFilled ? 'light' : 'subtle'}
+                color={onlyFilled ? undefined : 'gray'}
+                className="palette-value-filter"
+                aria-pressed={onlyFilled}
+                disabled={!preview}
+                leftSection={<Icon name={onlyFilled ? 'check' : 'eye'} size={12} />}
+                onClick={() => setOnlyFilled(!onlyFilled)}
+              >
+                {tr('只看有值')}
+              </Button>
+            </Tooltip>
+            <Tooltip label={tr('新增欄位')}>
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                aria-label={tr('新增欄位')}
+                onClick={() => startNewField()}
+              >
+                <Icon name="plus" size={14} />
+              </ActionIcon>
+            </Tooltip>
+          </>
         }
       >
+        {hiddenCount > 0 && (
+          <Group gap={4} mb={4} className="palette-hidden-note">
+            <Text size="xs" c="dimmed">
+              {tr('已隱藏 {0} 個未填欄位', hiddenCount)}
+            </Text>
+            <Button size="compact-xs" variant="subtle" onClick={() => setOnlyFilled(false)}>
+              {tr('顯示全部')}
+            </Button>
+          </Group>
+        )}
         {!allFields.length && (
           <>
             <Text size="xs" c="dimmed" mb={6}>
@@ -445,7 +452,7 @@ export function EditorPalette(props: EditorPaletteProps) {
             <div className="palette-rows">{fields.map(fieldRow)}</div>
           </details>
         ))}
-        {allFields.length > 0 && !shownFields.length && !query && (
+        {allFields.length > 0 && !shownFields.length && !query && !hiddenCount && (
           <Text size="xs" c="dimmed">
             {tr('沒有符合的欄位')}
           </Text>
