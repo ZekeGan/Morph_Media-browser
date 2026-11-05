@@ -132,7 +132,7 @@ export interface Project {
   contentCells?: Record<string, Cell[]>
   actionTemplates?: ActionTemplate[]
   layoutPresets?: { id: string; name: string; cells: Cell[] }[]
-  // Styles saved by name in this project (R-208, provisional): applied to a component they replace its whole style.
+  // Styles saved by name in this project: applied to a component they replace its whole style.
   stylePresets?: { id: string; name: string; style: Cell['style'] }[]
   activeLayoutId?: string
   folderLayouts?: Record<string, string>

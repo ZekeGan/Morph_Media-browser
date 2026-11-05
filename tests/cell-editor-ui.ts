@@ -268,18 +268,32 @@ try {
   await app.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].setBounds({ width: 1500, height: 900 })
   )
-  // A component whose content is cut off is outlined; selecting it offers quick fixes, and scrolling clears it.
-  await page
-    .locator('.editor-cell.cell-overflow[data-cell-id="overflow"]')
-    .waitFor({ state: 'attached' })
+  // A component whose content is cut off is outlined; selecting it offers quick fixes. "One row taller" until the
+  // wrapped text fits clears the outline by itself (the check also runs after the grid's resize animation).
+  const marked = page.locator('.editor-cell.cell-overflow[data-cell-id="overflow"]')
+  await marked.waitFor({ state: 'attached' })
   await page.locator('.editor-cell[data-cell-id="overflow"]').click()
-  await page
+  const taller = page
     .locator('.cell-overflow-fix')
-    .getByRole('button', { name: '內容多時可捲動', exact: true })
-    .click()
-  await page
-    .locator('.editor-cell.cell-overflow[data-cell-id="overflow"]')
-    .waitFor({ state: 'detached' })
+    .getByRole('button', { name: '加高一格', exact: true })
+  // Stop as soon as the text really fits, then the outline must go without any further click or render.
+  const fits = () =>
+    page
+      .waitForFunction(
+        () => {
+          const cell = document.querySelector<HTMLElement>('.editor-cell[data-cell-id="overflow"]')!
+          return cell.scrollHeight <= cell.clientHeight + 1
+        },
+        undefined,
+        { timeout: 1000 }
+      )
+      .then(() => true)
+      .catch(() => false)
+  for (let step = 0; step < 10; step++) {
+    await taller.click()
+    if (await fits()) break
+  }
+  await marked.waitFor({ state: 'detached', timeout: 2000 })
   await page.locator('.editor-cell').first().click()
   await page.getByRole('textbox', { name: '顯示方式', exact: true }).click()
   await page.getByRole('option', { name: '進度', exact: true }).click()

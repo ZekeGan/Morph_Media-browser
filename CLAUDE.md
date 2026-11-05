@@ -26,6 +26,7 @@ M:orph：Windows 優先的資料夾檢視器（Electron＋React＋Vite，pnpm）
 - 最小必要修改、沿用現有風格；不加未要求的功能或抽象，不順手重構（另登記需求）。修錯先重現並找根因。
 - 規格寫目標，程式是現況，差距進需求清單；規格只寫現行規則，日期與理由寫進決策紀錄，未決選項寫 [OPEN_DECISIONS](docs/OPEN_DECISIONS.md)。新 UI 測試用 `tests/support/app.ts`。
 - 新增或修改的介面：同批補齊五種語系；沿用三主題、圖示、控制尺寸與焦點樣式；純圖示控制要有 tooltip 與 `aria-label`。用 `pnpm shot` 看暗色寬窗與寬 900 窄窗；動到版型或樣式再加 `--theme glass`、`--theme paper`。
+- **長時間工作不能無聲卡住**：UI 測試一律經執行器（`pnpm test:ui:*`，或 `node scripts/run-ui-tests.mjs <名稱> [--repeat N]` 量偶發失敗），不直接用 `tsx` 跑 UI 測試；其他可能很久的指令加 `timeout`。拆成小步驟、每步完成就回報，先說大概要多久；背景工作超過預估約兩倍（或 10 分鐘）還沒結束，就主動看輸出、回報卡在哪並停掉。驗證新測試在舊程式會失敗用 `pnpm verify:old <測試>`（在另一個 worktree 跑），不在工作目錄換回舊檔。
 - 含反斜線或跳脫字元的內容用檔案編輯工具或腳本檔寫入，不用 heredoc 或命令列拼接；格式化工具改到無關檔案時加進 `.prettierignore`。
 
 ## 每批收尾（不必詢問，做完再回報）

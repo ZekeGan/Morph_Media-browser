@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix: after "One row taller" the orange cut-off outline stayed until the component was dragged; the check now also runs when a component finishes resizing (the grid animates size changes).
+- Tests (development only): `node scripts/run-ui-tests.mjs <name> --repeat N` runs a test N times without retries to measure flakiness, keeping the timeout and Electron cleanup; `pnpm verify:old <test>` runs today's test against the last commit in a separate worktree, to show a new test catches the old bug without touching the working tree.
 - Table: a card component with fallback fields gets its own column, "<field> (with fallbacks)", which shows and sorts by the first field in the component's order that has a value.
 - Layout editor: the preview can use "Longest value of each field" or "Shortest value of each field" across all folders. Components whose content is cut off are outlined in orange, and selecting one offers quick fixes (wrap, scroll when long, one row taller).
 - Layout editor: a component's whole style can be saved by name ("Save as style…") and applied to other components of the same project from the style menu; saved with the layout, up to 20, not shared across projects. New optional `stylePresets` field in the project record (provisional).

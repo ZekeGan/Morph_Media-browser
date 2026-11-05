@@ -268,9 +268,24 @@ export function Editor({
   )
   // Components whose content is cut off in the current preview (hidden overflow; scrolling cells are fine).
   const [overflowing, setOverflowing] = useState<string[]>([])
+  // Checked after every render and again whenever a component's size changes: the grid animates size changes
+  // (about 200 ms), so a check right after "one row taller" would still see the old, too small height.
   useLayoutEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      const canvas = containerRef.current
+    const canvas = containerRef.current
+    if (!canvas) return
+    let frame = 0
+    const check = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(measure)
+    }
+    const observer = new ResizeObserver(check)
+    for (const cell of canvas.querySelectorAll<HTMLElement>('.editor-cell')) observer.observe(cell)
+    check()
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(frame)
+    }
+    function measure() {
       if (!canvas) return
       const cut = (node: HTMLElement) => {
         const style = getComputedStyle(node)
@@ -283,8 +298,7 @@ export function Editor({
         .filter((cell) => [cell, ...cell.querySelectorAll<HTMLElement>('*')].some(cut))
         .map((cell) => cell.dataset.cellId!)
       setOverflowing((now) => (now.join() === ids.join() ? now : ids))
-    })
-    return () => cancelAnimationFrame(frame)
+    }
   })
   const level = draft.cells
   const withLevel = (cells: Cell[]): Project => ({ ...draft, cells })

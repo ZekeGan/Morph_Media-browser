@@ -3,6 +3,9 @@
 //   node scripts/run-ui-tests.mjs --smoke         the fast core set (~1-2 min)
 //   node scripts/run-ui-tests.mjs --changed       tests mapped from files changed vs origin/main (+ working tree)
 //   node scripts/run-ui-tests.mjs video media     tests whose file name contains any of the words
+//   node scripts/run-ui-tests.mjs game --repeat 8 run each chosen test 8 times (no retry) to measure flakiness;
+//                                                 always use this instead of looping `tsx tests/x-ui.ts` by hand,
+//                                                 so every run keeps the timeout and the stray-Electron cleanup
 import { existsSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -69,6 +72,11 @@ if (!builtAt || buildInputs.some((path) => newestMtime(path) > builtAt)) {
 console.log('Build time:', new Date(newestMtime('out')).toLocaleString())
 
 const args = process.argv.slice(2)
+const repeatAt = args.indexOf('--repeat'),
+  repeat = repeatAt >= 0 ? Math.max(1, Math.min(50, Number(args[repeatAt + 1]) || 1)) : 1
+const words = args.filter(
+  (word, index) => !word.startsWith('--') && (repeatAt < 0 || index !== repeatAt + 1)
+)
 let chosen
 if (args.includes('--smoke')) chosen = smoke
 else if (args.includes('--changed')) {
@@ -91,7 +99,7 @@ else if (args.includes('--changed')) {
         unmapped.join('\n  ')
     )
   console.log('Changed files:', files.length, '-> tests:', chosen.join(', ') || '(none)')
-} else if (args.length) chosen = all.filter((name) => args.some((word) => name.includes(word)))
+} else if (words.length) chosen = all.filter((name) => words.some((word) => name.includes(word)))
 else chosen = all
 
 // Test runs leave their working folders in .test-output. When everything passes the new ones are removed again;
@@ -116,7 +124,26 @@ const execute = (name) => {
   if (timedOut) stopStrayElectron()
   return { ...run, stdout: run.stdout ?? '', stderr: run.stderr ?? '', timedOut }
 }
-for (const name of files) {
+// Repeat mode: every run counts, nothing is retried, so the pass count shows how flaky a test really is.
+for (const name of repeat > 1 ? files : []) {
+  const started = Date.now()
+  let passed = 0,
+    firstFailure
+  for (let round = 1; round <= repeat; round++) {
+    const run = execute(name)
+    const verdict = run.status === 0 ? 'PASS' : run.timedOut ? 'TIMEOUT' : 'FAIL'
+    console.log(`  ${name} run ${round}/${repeat}: ${verdict}`)
+    if (run.status === 0) passed++
+    else firstFailure ??= (run.stdout + run.stderr).split('\n').slice(-12).join('\n')
+  }
+  const seconds = Math.round((Date.now() - started) / 1000)
+  results.push({ name, ok: passed === repeat, seconds, flaky: false })
+  console.log(
+    `${passed === repeat ? 'PASS' : 'FAIL'} ${name}: ${passed}/${repeat} runs passed (${seconds}s)`
+  )
+  if (firstFailure) console.log('First failure:\n' + firstFailure)
+}
+for (const name of repeat > 1 ? [] : files) {
   const started = Date.now()
   let run = execute(name),
     flaky = false

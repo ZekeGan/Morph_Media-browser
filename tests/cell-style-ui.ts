@@ -197,6 +197,29 @@ try {
     () => getComputedStyle(document.querySelector('.editor-cell')!).borderTopLeftRadius === '14px'
   )
   await page.screenshot({ path: path.join(root, 'style-editor.png') })
+  // A style saved by name in this project applies the whole look to another component and is kept with the layout.
+  await inspector.getByRole('button', { name: '存成樣式…', exact: true }).click()
+  await page.getByRole('textbox', { name: '樣式名稱', exact: true }).fill('QA style')
+  await page.getByRole('button', { name: '儲存樣式', exact: true }).click()
+  await page.locator('.editor-cell').nth(1).click()
+  if ((await section.getAttribute('aria-expanded')) !== 'true') await section.click()
+  await inspector.getByRole('textbox', { name: '套用預設樣式', exact: true }).click()
+  await page.getByRole('option', { name: 'QA style', exact: true }).click()
+  await page.waitForFunction(() => {
+    const node = document.querySelectorAll<HTMLElement>('.editor-cell')[1]
+    return (
+      getComputedStyle(node).fontStyle === 'italic' &&
+      getComputedStyle(node).borderTopLeftRadius === '14px'
+    )
+  })
+  await page.getByRole('button', { name: '儲存變更', exact: true }).click()
+  await page.locator('.editor-page').waitFor({ state: 'hidden' })
+  await page.getByRole('button', { name: '編輯版面', exact: true }).click()
+  await page.locator('.editor-cell').first().click()
+  if ((await section.getAttribute('aria-expanded')) !== 'true') await section.click()
+  await inspector.getByRole('textbox', { name: '套用預設樣式', exact: true }).click()
+  await page.getByRole('option', { name: 'QA style', exact: true }).waitFor()
+  await page.keyboard.press('Escape')
   assert.deepEqual(errors, [])
   passed = true
   console.log(
