@@ -19,6 +19,8 @@
 
 ## 進行中
 
+- **R-220** 讓程式能在 Mac 上執行（不含 Mac 遊戲啟動，見 C-130）｜大｜安全邊界｜無｜領域：core、files、storage
+  步驟：①CI 在 macOS 跑資料測試，找出預設 Windows 的程式（進行中）；②處理 Windows 專屬處：`process.platform` 判斷 6 處、隱藏屬性（`attrib`）、在檔案總管開啟、`.lnk` 捷徑與 Locale Emulator、以 EXE 為主的遊戲辨識；③electron-builder 產出 `.dmg`（未簽章會被 Gatekeeper 擋，正式簽章與公證需 Apple 開發者帳號）；④需要實機 Mac 查收。
 
 ## 已核定（未做）
 
