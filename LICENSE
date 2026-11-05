@@ -20,15 +20,36 @@ When distributing the software, keep this license and the copyright notices,
 mark modified versions as such, and provide recipients with the corresponding
 source code under this license, including your modifications and the build
 instructions. Do not present a modified version as the official M:orph.
-The name and logo are governed separately by TRADEMARK.md.
+The name and logo follow section 4 below.
 
-4. Scope and earlier versions
+4. Name and logo
+The M:orph name (with the subtitle Media Browser), mark and app icons identify
+the official project; the code permission does not grant their unrestricted
+use. You may use them to discuss, review, link to or teach M:orph, show
+screenshots of the official app, and share unchanged official builds free
+of charge. You may describe a fork as "based on M:orph" or "a fork of M:orph".
+Without written permission, do not use the name, logo or confusingly similar
+branding for your own product, package, repository, domain or account, and
+do not imply that the author makes, supports, approves or endorses your work.
+Publish modified versions with their own name and logo, not merely recolored
+or cropped copies of ours. These rules cover the artwork in docs/brand/,
+build/icon.*, build/icons/ and the mark drawn by src/BrandMark.tsx.
+Official builds are those published on this repository's Releases page.
+When sharing an unchanged official build, identify it as a third-party copy
+and link to the official download. Sales must also comply with section 2.
+
+5. Scope, third parties and earlier versions
 This license applies to project-owned code, documentation and sample assets
 distributed under it. Third-party materials retain their own licenses.
+Preserve the notices required by those licenses; their texts are available
+in the installed dependency packages (pnpm licenses list). Electron includes
+Chromium and Node.js under their own licenses. M:orph is not affiliated with
+or endorsed by the websites it can fetch information from; their names and
+trademarks belong to their owners.
 Versions previously distributed under the GNU GPL retain that license;
 this license does not withdraw any rights already granted for those versions.
 
-5. No warranty
+6. No warranty
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED. TO THE EXTENT PERMITTED BY LAW, THE AUTHORS AND COPYRIGHT HOLDERS
 ARE NOT LIABLE FOR CLAIMS, DAMAGES OR OTHER LIABILITY ARISING FROM THE

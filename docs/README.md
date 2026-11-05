@@ -36,7 +36,7 @@
 <!-- areas:end -->
 
 其他（不屬於程式領域）：
-- 文件截圖重拍、授權與名稱：[IMPLEMENTATION](IMPLEMENTATION.md) 的 `pnpm shot:docs`、[TRADEMARK](../TRADEMARK.md)、[NOTICE](../NOTICE.md)
+- 文件截圖重拍、授權與名稱：[IMPLEMENTATION](IMPLEMENTATION.md) 的 `pnpm shot:docs`、[LICENSE](../LICENSE)
 - 版本階段、tag、發布：[RELEASING](RELEASING.md)、[CHANGELOG](../CHANGELOG.md)
 - 需求清單與狀態：[WORK_ITEMS](WORK_ITEMS.md)，`pnpm status` 印出狀態區塊
 

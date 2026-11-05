@@ -262,23 +262,9 @@ Before contributing, please read [CLAUDE.md](CLAUDE.md) or [AGENTS.md](AGENTS.md
 
 Copyright (C) 2024–2026 Zeke Gan.
 
-The source code of M:orph is provided under the **M:orph Source-Available License 1.0**.
+M:orph uses a custom source-available licence: you may use, modify and share it free of charge; selling unchanged or superficially changed copies requires the author's written permission, while substantively modified versions may be sold.
 
-You may use, study, modify and share the software free of charge. Selling unchanged copies, or copies with only superficial changes such as a new name or logo, requires the author's written permission. Versions with substantive changes to functionality or behavior may be sold. When distributing any version, keep the licence notices and provide recipients with the corresponding source code under the same terms.
-
-For the full licence see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
-
-**The name and logo have separate usage restrictions.**
-
-The M:orph name and brand logo are not covered by the code licence above. When you publish a modified version, please use your own name and logo and make clear how it differs from the official version.
-
-You may say that your work is based on M:orph, but you may not pass a modified version off as the official one or suggest that the original author endorses it.
-
-This custom license is source-available rather than a standard open-source license. Earlier versions distributed under the GNU GPL retain their original terms. The official builds are the files published on this repository's Releases page.
-
-For the detailed rules see the [name and logo policy](TRADEMARK.md).
-
-M:orph is not affiliated with, or partnered with, the third-party websites it can read data from.
+See [LICENSE](LICENSE) for the full terms, including source-code distribution, name and logo use, third-party notices and earlier GPL versions.
 
 ## Author
 

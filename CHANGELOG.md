@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Licensing documents: consolidate the licence, brand rules and third-party notice into LICENSE; shorten the three README summaries and contribution terms, and remove NOTICE.md and TRADEMARK.md from the repository and packaging.
 - Documentation: every spec now opens with a "last confirmed" date and its code and test entry points, and states only current rules: dated notes, version tags, "first round / later" plans and old research were rewritten or removed (the video spec lost its player-selection history and the cancelled clip-preview section). Found while checking: the video settings panel still shows two switches (autoplay on entering a folder, play next) that no longer do anything — logged as R-216.
 - Documentation: the workspace spec is split in two — the frame, the three modes and the right panel stay in WORKSPACE_REVISION, while the file overview, hidden files and the unified media page move to MEDIA_WORKSPACE; dated notes in them are rewritten as current rules and all links follow the move.
 - Layout editor: with the three columns side by side, they fill the window height and scroll on their own, so the component list and the settings always reach the bottom and a long canvas scrolls only itself (narrower layouts keep scrolling the page). On an empty canvas, "Start from a template" sits over the grid instead of above it, fades while a component is dragged over the canvas and comes back when it leaves, so a component can be dropped anywhere.

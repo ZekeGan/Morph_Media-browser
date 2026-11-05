@@ -121,14 +121,6 @@
       {
         "from": "LICENSE",
         "to": "LICENSE.txt"
-      },
-      {
-        "from": "NOTICE.md",
-        "to": "NOTICE.md"
-      },
-      {
-        "from": "TRADEMARK.md",
-        "to": "TRADEMARK.md"
       }
     ]
   }

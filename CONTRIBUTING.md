@@ -19,7 +19,7 @@ The project is **human-led and AI-built**: the maintainer decides direction, req
 
 ## Licence of contributions
 
-By submitting code, documentation, translations or artwork for inclusion, you license your original contribution under the [M:orph Source-Available License 1.0](LICENSE). It permits free use and sharing, and sales of substantively modified versions; selling unchanged or superficially changed copies requires the author's written permission. You also grant Zeke Gan a worldwide, non-exclusive, perpetual, royalty-free right to use, modify, distribute and sublicense your original contribution under other terms, including commercial terms. You retain your copyright. This grant does not cover third-party material you do not own; identify that material and its license when contributing. The [name and logo policy](TRADEMARK.md) remains separate.
+By submitting code, documentation, translations or artwork for inclusion, you license your original contribution under [LICENSE](LICENSE). You also grant Zeke Gan a worldwide, non-exclusive, perpetual, royalty-free right to use, modify, distribute and sublicense it under other terms, including commercial terms. This grant covers only your original work; identify any third-party material and its license.
 
 You keep the copyright of what you write, and you must only send work you have the right to share (not code copied from a project under an incompatible licence).
 
