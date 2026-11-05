@@ -45,6 +45,10 @@ export function FolderFieldInput({
   onChange: (value: unknown) => void
   onAddOption: (option: string) => void
 }) {
+  // R-223 stage 1: switching a text field's "multiple values" / "fixed options" does not rewrite saved values, so
+  // a folder may still hold the old type; it is edited in that type and the note says why.
+  if (binding && binding.type !== f.type && ['string', 'tags', 'enum'].includes(binding.type))
+    note = [note, tr('這個資料夾的值仍以原本的格式保存，編輯時沿用')].filter(Boolean).join(' · ')
   if (f.type === 'boolean')
     return (
       <Select
@@ -134,7 +138,7 @@ export function FolderFieldInput({
         value={Array.isArray(value) ? (value as string[]) : []}
         disabled={disabled}
         onChange={(v) => onChange(v)}
-        splitChars={[',']}
+        splitChars={[',', '，']}
       />
     )
   if (f.type === 'number')

@@ -358,3 +358,7 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .inspector-tab-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent); }
 .find-fallback { align-self:flex-start; }
 .palette-row .palette-field-value { margin-top:1px; font-size:11px; color:var(--muted); }.palette-row .palette-field-value.is-empty { opacity:.8; }
+/* Field management window (R-225). */
+.field-manager-list { display:grid; gap:8px; max-height:min(60dvh,560px); overflow:auto; padding-right:4px; }
+.field-manager-row { padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius,8px); background:var(--surface); min-width:0; }
+.field-manager-name { min-width:0; overflow-wrap:anywhere; }

@@ -9,6 +9,7 @@ import {
   Menu,
   Modal,
   Select,
+  Switch,
   Text,
   Textarea,
   TextInput,
@@ -32,6 +33,8 @@ import { commonFieldNames } from './commonFields'
 import { typeKinds } from './editorKinds'
 import { isFilled } from '../shared/cells'
 import { fieldSource, fieldSourceGroups } from './fieldSources'
+import { FieldManager } from './FieldManager'
+import { textType } from './fieldTypes'
 
 // One line of the previewed folder's value for a field; long values are cut with "…" and shown whole on hover.
 function FieldValuePreview({ value }: { value: unknown }) {
@@ -108,6 +111,10 @@ export type EditorPaletteProps = {
   setError: (message: string) => void
   setFieldDeletion: (preview: FieldDeletionPreview) => void
   setRenaming: (value: { id: string; name: string }) => void
+  // The values a field holds in the project's folders (use counts and options taken from the data).
+  values: (attributeId: string) => unknown[]
+  // Text type switches are offered only in the card layout editor.
+  switchable: boolean
 }
 
 function Section({
@@ -169,9 +176,24 @@ export function EditorPalette(props: EditorPaletteProps) {
     setError,
     setFieldDeletion,
     setRenaming,
+    values,
+    switchable,
   } = props
   const [newField, setNewField] = useState('')
-  const [newType, setNewType] = useState('string')
+  // New field: a base type; "text" also takes the two switches of R-223 (multiple values / fixed options).
+  const [newType, setNewType] = useState('string'),
+    [newMultiple, setNewMultiple] = useState(false),
+    [newFixed, setNewFixed] = useState(false)
+  const createdType = newType === 'string' ? textType(newMultiple, newFixed) : newType
+  const [managing, setManaging] = useState(false)
+  const requestDelete = async (binding: Binding) => {
+    const result = await act({
+      action: 'deleteFieldPreview',
+      projectId: project.projectId,
+      attributeId: binding.attributeId,
+    })
+    if (result?.fieldDeletionPreview) setFieldDeletion(result.fieldDeletionPreview)
+  }
   const [newOptions, setNewOptions] = useState('')
   const [adding, setAdding] = useState(false)
   const [search, setSearch] = useState(''),
@@ -293,14 +315,7 @@ export function EditorPalette(props: EditorPaletteProps) {
               color="red"
               leftSection={<Icon name="close" size={14} />}
               disabled={busy || dirty || !added}
-              onClick={async () => {
-                const result = await act({
-                  action: 'deleteFieldPreview',
-                  projectId: project.projectId,
-                  attributeId: binding.attributeId,
-                })
-                if (result?.fieldDeletionPreview) setFieldDeletion(result.fieldDeletionPreview)
-              }}
+              onClick={() => void requestDelete(binding)}
             >
               {tr('刪除欄位及資料')}
             </Menu.Item>
@@ -395,6 +410,17 @@ export function EditorPalette(props: EditorPaletteProps) {
                 {tr('只看有值')}
               </Button>
             </Tooltip>
+            <Tooltip label={tr('管理欄位')}>
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="sm"
+                aria-label={tr('管理欄位')}
+                onClick={() => setManaging(true)}
+              >
+                <Icon name="settings" size={14} />
+              </ActionIcon>
+            </Tooltip>
             <Tooltip label={tr('新增欄位')}>
               <ActionIcon
                 variant="subtle"
@@ -471,7 +497,13 @@ export function EditorPalette(props: EditorPaletteProps) {
       </Section>
       {componentSection('layout', tr('排版'), ['static-text', 'spacer', 'divider'])}
       {hasGames && componentSection('game', tr('遊戲'), ['game-cover', 'game-launch'])}
-      <Modal opened={adding} onClose={() => setAdding(false)} title={tr('新增欄位')} size="sm">
+      <Modal
+        opened={adding}
+        onClose={() => setAdding(false)}
+        title={tr('新增欄位')}
+        size="sm"
+        zIndex={400}
+      >
         <form
           className="new-field-form"
           aria-label={tr('新增欄位')}
@@ -494,8 +526,8 @@ export function EditorPalette(props: EditorPaletteProps) {
                 {
                   alias,
                   attributeId: crypto.randomUUID(),
-                  type: newType,
-                  ...(newType === 'enum'
+                  type: createdType,
+                  ...(createdType === 'enum'
                     ? {
                         options: [
                           ...new Set(
@@ -512,6 +544,8 @@ export function EditorPalette(props: EditorPaletteProps) {
             })
             setNewField('')
             setNewOptions('')
+            setNewMultiple(false)
+            setNewFixed(false)
             setAdding(false)
             setSearch('')
             setError('')
@@ -529,12 +563,34 @@ export function EditorPalette(props: EditorPaletteProps) {
           <Select
             label={tr('欄位型別')}
             allowDeselect={false}
+            comboboxProps={{ zIndex: 410 }}
             value={newType}
             onChange={(v) => v && setNewType(v)}
-            description={typeHints[newType]}
-            data={Object.entries(typeLabels).map(([value, label]) => ({ value, label }))}
+            description={newType === 'string' ? undefined : typeHints[newType]}
+            data={['string', 'number', 'datetime', 'date', 'boolean', 'url'].map((value) => ({
+              value,
+              label: typeLabels[value],
+            }))}
           />
-          {newType === 'enum' && (
+          {newType === 'string' && (
+            <>
+              <Switch
+                label={tr('多個值')}
+                description={tr('例如類型、角色；輸入時以逗號分隔')}
+                checked={newMultiple}
+                disabled={newFixed}
+                onChange={(event) => setNewMultiple(event.currentTarget.checked)}
+              />
+              <Switch
+                label={tr('限定選項')}
+                description={tr('從固定選項中選一個，例如狀態')}
+                checked={newFixed}
+                disabled={newMultiple}
+                onChange={(event) => setNewFixed(event.currentTarget.checked)}
+              />
+            </>
+          )}
+          {createdType === 'enum' && (
             <Textarea
               label={tr('選項（逗號或換行分隔）')}
               value={newOptions}
@@ -545,12 +601,31 @@ export function EditorPalette(props: EditorPaletteProps) {
             type="submit"
             fullWidth
             variant="default"
-            disabled={!newField.trim() || (newType === 'enum' && !newOptions.trim())}
+            disabled={!newField.trim() || (createdType === 'enum' && !newOptions.trim())}
           >
             {tr('新增欄位')}
           </Button>
         </form>
       </Modal>
+      <FieldManager
+        opened={managing}
+        onClose={() => setManaging(false)}
+        draft={draft}
+        busy={busy}
+        dirty={dirty}
+        sources={sources}
+        availableFields={availableFields}
+        attributes={attributes}
+        typeLabels={typeLabels}
+        typeHints={typeHints}
+        values={values}
+        change={change}
+        onNewField={() => startNewField()}
+        reference={reference}
+        requestDelete={(binding) => void requestDelete(binding)}
+        setRenaming={setRenaming}
+        switchable={switchable}
+      />
     </aside>
   )
 }

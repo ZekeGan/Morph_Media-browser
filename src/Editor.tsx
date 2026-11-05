@@ -126,11 +126,11 @@ export function Editor({
   }
   const typeLabels: Record<string, string> = {
     string: tr('文字'),
-    tags: tr('標籤'),
+    tags: tr('文字 · 多個值'),
     number: tr('數字'),
     datetime: tr('日期時間'),
     boolean: tr('是／否'),
-    enum: tr('單選'),
+    enum: tr('文字 · 限定選項'),
     url: tr('網址'),
     date: tr('日期'),
   }
@@ -831,6 +831,7 @@ export function Editor({
         opened={!!fieldDeletion}
         onClose={() => !busy && setFieldDeletion(undefined)}
         title={tr('刪除自訂欄位')}
+        zIndex={400}
       >
         <Stack>
           {fieldDeletion && (
@@ -986,6 +987,7 @@ export function Editor({
         onClose={() => setRenaming(undefined)}
         title={tr('重新命名欄位')}
         size="sm"
+        zIndex={400}
       >
         {renaming && (
           <form
@@ -1055,6 +1057,13 @@ export function Editor({
           setError={setError}
           setFieldDeletion={setFieldDeletion}
           setRenaming={setRenaming}
+          values={(attributeId) =>
+            rows
+              .filter((row) => row.projectId === project.projectId)
+              .map((row) => fieldValue(row, attributeId))
+              .filter((value) => value != null)
+          }
+          switchable={presets}
         />
         <main
           className="canvas-wrap"

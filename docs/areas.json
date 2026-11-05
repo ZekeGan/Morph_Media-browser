@@ -183,10 +183,12 @@
         "src/commonFields*",
         "src/importedFieldLabels*",
         "src/fieldSources*",
+        "src/FieldManager*",
+        "src/fieldTypes*",
         "shared/layouts*"
       ],
       "ui": ["cell-editor-ui", "field-edit-ui", "editor-fields-ui", "decided-ui"],
-      "tests": ["decided.test.ts"]
+      "tests": ["decided.test.ts", "field-types.test.ts"]
     },
     {
       "id": "cells",

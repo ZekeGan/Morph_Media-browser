@@ -6844,5 +6844,119 @@
     "zh-CN": "拖拽移动、拉边角缩放；Delete 移除、Ctrl+D 复制。",
     "en": "Drag to move, drag a corner to resize; Delete removes, Ctrl+D duplicates.",
     "es": "Arrastra para mover y desde una esquina para cambiar el tamaño; Supr elimina, Ctrl+D duplica."
+  },
+  "文字 · 多個值": {
+    "ja": "テキスト · 複数の値",
+    "zh-CN": "文字 · 多个值",
+    "en": "Text · multiple values",
+    "es": "Texto · varios valores"
+  },
+  "文字 · 限定選項": {
+    "ja": "テキスト · 選択肢のみ",
+    "zh-CN": "文字 · 限定选项",
+    "en": "Text · fixed options",
+    "es": "Texto · opciones fijas"
+  },
+  "管理欄位": {
+    "ja": "フィールドを管理",
+    "zh-CN": "管理字段",
+    "en": "Manage fields",
+    "es": "Gestionar campos"
+  },
+  "多個值": {
+    "ja": "複数の値",
+    "zh-CN": "多个值",
+    "en": "Multiple values",
+    "es": "Varios valores"
+  },
+  "例如類型、角色；輸入時以逗號分隔": {
+    "ja": "例：ジャンル、キャラクター。入力時はカンマで区切ります",
+    "zh-CN": "例如类型、角色；输入时以逗号分隔",
+    "en": "For example genres or characters; separate them with commas",
+    "es": "Por ejemplo géneros o personajes; sepáralos con comas"
+  },
+  "限定選項": {
+    "ja": "選択肢のみ",
+    "zh-CN": "限定选项",
+    "en": "Fixed options",
+    "es": "Opciones fijas"
+  },
+  "這個欄位用在備用來源，請先移除備用來源再切換「限定選項」。": {
+    "ja": "このフィールドは予備の取得元で使われています。「選択肢のみ」を切り替える前に予備の取得元を外してください。",
+    "zh-CN": "这个字段用在备用来源，请先移除备用来源再切换“限定选项”。",
+    "en": "This field is used in fallback sources; remove them before switching “Fixed options”.",
+    "es": "Este campo se usa en orígenes de respaldo; quítalos antes de cambiar «Opciones fijas»."
+  },
+  "這個欄位用在「等於／不等於」顯示條件，請先改條件再開啟「多個值」。": {
+    "ja": "このフィールドは「等しい／等しくない」の表示条件で使われています。「複数の値」をオンにする前に条件を変更してください。",
+    "zh-CN": "这个字段用在“等于／不等于”显示条件，请先改条件再开启“多个值”。",
+    "en": "This field is used in an “equals / not equals” display condition; change it before turning on “Multiple values”.",
+    "es": "Este campo se usa en una condición «igual a / distinto de»; cámbiala antes de activar «Varios valores»."
+  },
+  "還沒有可用的值，請先輸入至少一個選項。": {
+    "ja": "使える値がまだありません。選択肢を 1 つ以上入力してください。",
+    "zh-CN": "还没有可用的值，请先输入至少一个选项。",
+    "en": "There are no values to use yet; enter at least one option first.",
+    "es": "Todavía no hay valores que usar; introduce al menos una opción."
+  },
+  "這個欄位有超過 100 種不同的值，不適合限定選項。": {
+    "ja": "このフィールドには 100 種類を超える値があるため、選択肢のみには向きません。",
+    "zh-CN": "这个字段有超过 100 种不同的值，不适合限定选项。",
+    "en": "This field has more than 100 different values, too many for fixed options.",
+    "es": "Este campo tiene más de 100 valores distintos, demasiados para opciones fijas."
+  },
+  "輸入選項後按 Enter": {
+    "ja": "選択肢を入力して Enter",
+    "zh-CN": "输入选项后按 Enter",
+    "en": "Type an option and press Enter",
+    "es": "Escribe una opción y pulsa Intro"
+  },
+  "開啟限定選項": {
+    "ja": "選択肢のみをオン",
+    "zh-CN": "开启限定选项",
+    "en": "Turn on fixed options",
+    "es": "Activar opciones fijas"
+  },
+  "搜尋名稱、型別或來源": {
+    "ja": "名前・型・取得元を検索",
+    "zh-CN": "搜索名称、类型或来源",
+    "en": "Search names, types or sources",
+    "es": "Buscar nombres, tipos u orígenes"
+  },
+  "切換「多個值」「限定選項」只改欄位設定；資料夾裡已存的值不會改寫，顯示時自動轉換。": {
+    "ja": "「複数の値」「選択肢のみ」の切り替えはフィールド設定だけを変えます。フォルダーに保存済みの値は書き換えず、表示時に自動で変換します。",
+    "zh-CN": "切换“多个值”“限定选项”只改字段设置；文件夹里已存的值不会改写，显示时自动转换。",
+    "en": "Switching “Multiple values” or “Fixed options” only changes the field setting; values saved in folders are not rewritten and are converted when shown.",
+    "es": "Cambiar «Varios valores» u «Opciones fijas» solo cambia el ajuste del campo; los valores guardados en las carpetas no se reescriben y se convierten al mostrarse."
+  },
+  "{0} 個欄位": {
+    "ja": "フィールド {0} 個",
+    "zh-CN": "{0} 个字段",
+    "en": "{0} fields",
+    "es": "{0} campos"
+  },
+  "這個資料夾的值仍以原本的格式保存，編輯時沿用": {
+    "ja": "このフォルダーの値は元の形式のまま保存されており、編集もその形式で行います",
+    "zh-CN": "这个文件夹的值仍以原本的格式保存，编辑时沿用",
+    "en": "This folder’s value is still saved in its original format and is edited in it",
+    "es": "El valor de esta carpeta sigue guardado en su formato original y se edita en él"
+  },
+  "這個欄位用在「等於／不等於」顯示條件，比較值不在選項內，請先改條件。": {
+    "ja": "このフィールドは「等しい／等しくない」の表示条件で使われ、比較値が選択肢にありません。先に条件を変更してください。",
+    "zh-CN": "这个字段用在“等于／不等于”显示条件，比较值不在选项内，请先改条件。",
+    "en": "This field is used in an “equals / not equals” condition whose value is not one of the options; change the condition first.",
+    "es": "Este campo se usa en una condición «igual a / distinto de» cuyo valor no está entre las opciones; cambia la condición primero."
+  },
+  "每個選項最多 100 個字": {
+    "ja": "選択肢は 1 つにつき 100 文字まで",
+    "zh-CN": "每个选项最多 100 个字",
+    "en": "Each option can have at most 100 characters",
+    "es": "Cada opción puede tener como máximo 100 caracteres"
+  },
+  "「多個值」「限定選項」請在卡片版面編輯器切換。": {
+    "ja": "「複数の値」「選択肢のみ」はカードのレイアウトエディターで切り替えてください。",
+    "zh-CN": "“多个值”“限定选项”请在卡片版面编辑器切换。",
+    "en": "Switch “Multiple values” and “Fixed options” in the card layout editor.",
+    "es": "Cambia «Varios valores» y «Opciones fijas» en el editor de diseño de la tarjeta."
   }
 }

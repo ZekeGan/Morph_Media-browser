@@ -155,8 +155,62 @@ try {
     await page.getByRole('textbox', { name: '綁定欄位', exact: true }).inputValue(),
     /^Genre/
   )
-  await page.getByRole('button', { name: /^(放棄變更|關閉)$/ }).click()
+
+  // Field management window (R-225) with the text switches of R-223.
+  await button('管理欄位').click()
+  const manager = page.getByRole('dialog', { name: '管理欄位', exact: true })
+  const managed = (name: string) =>
+    manager.locator('.field-manager-row').filter({ has: page.getByText(name, { exact: true }) })
+  await manager.getByRole('textbox', { name: '搜尋欄位', exact: true }).fill('DLsite')
+  assert.equal(await manager.locator('.field-manager-row').count(), 1, 'search matches the source')
+  await manager.getByRole('textbox', { name: '搜尋欄位', exact: true }).fill('')
+  // Turning on fixed options takes the options from the stored values; the components follow.
+  await managed('Note').getByRole('switch', { name: '限定選項' }).check({ force: true })
+  await managed('Note')
+    .getByText(/^文字 · 限定選項 · /)
+    .waitFor()
+  assert.equal(await managed('Note').getByRole('switch', { name: '多個值' }).isDisabled(), true)
+  await managed('Note').locator('.mantine-Pill-label').filter({ hasText: 'hello' }).waitFor()
+  // Multiple values on a plain text field.
+  await managed('Zzz').getByRole('switch', { name: '多個值' }).check({ force: true })
+  await managed('Zzz')
+    .getByText(/^文字 · 多個值 · /)
+    .waitFor()
+  // A field in a fallback chain cannot become a choice field; the reason is shown.
+  await managed('NAME').getByRole('switch', { name: '限定選項' }).click({ force: true })
+  await managed('NAME').getByRole('alert').filter({ hasText: '備用來源' }).waitFor()
+  assert.equal(await managed('NAME').getByRole('switch', { name: '限定選項' }).isChecked(), false)
+  // A new text field with "multiple values" is a tag field.
+  await manager.getByRole('button', { name: '新增欄位', exact: true }).click()
+  await form.getByLabel('欄位名稱').fill('Cast')
+  await form.getByRole('switch', { name: '多個值' }).check({ force: true })
+  assert.equal(await form.getByRole('switch', { name: '限定選項' }).isDisabled(), true)
+  await form.getByRole('button', { name: '新增欄位', exact: true }).click()
+  await managed('Cast')
+    .getByText(/^文字 · 多個值 · /)
+    .waitFor()
+  // Rename from the window opens the same rename dialog.
+  await manager.getByRole('button', { name: '重新命名欄位 Cast', exact: true }).click()
+  const rename = page.getByRole('dialog', { name: '重新命名欄位', exact: true })
+  await rename.getByLabel('欄位名稱').fill('Cast list')
+  await rename.getByRole('button', { name: '確認', exact: true }).click()
+  await managed('Cast list').waitFor()
+  await page.keyboard.press('Escape')
+  await manager.waitFor({ state: 'hidden' })
+  await button('儲存').click()
   await page.locator('.editor-page').waitFor({ state: 'hidden' })
+  const typed = (await readJson(projectFile(media, project.projectId))) as Project
+  const binding = (id: string) => typed.fieldBindings.find((f) => f.attributeId === id)!
+  assert.equal(binding('note').type, 'enum')
+  assert.deepEqual(binding('note').options, ['hello'])
+  assert.equal(typed.fieldBindings.find((f) => f.alias === 'Zzz')!.type, 'tags')
+  assert.equal(typed.fieldBindings.find((f) => f.alias === 'Cast list')!.type, 'tags')
+  assert.equal(binding('steam-name').type, 'string')
+  assert.deepEqual(
+    await records(),
+    originalRecords,
+    'switching types does not rewrite folder records'
+  )
 
   // Folder settings: 0 and false are values (shown without "show empty fields"); a field being cleared stays.
   await button('目前資料夾設定').click()
@@ -164,6 +218,8 @@ try {
   await drawer.waitFor()
   assert.equal(await drawer.getByLabel('Score', { exact: true }).inputValue(), '0')
   assert.equal(await drawer.getByRole('textbox', { name: 'Flag', exact: true }).inputValue(), '否')
+  // Note is now a choice field but this folder saved it as text: it is edited as text, with a note why.
+  await drawer.getByText('這個資料夾的值仍以原本的格式保存，編輯時沿用').waitFor()
   const note = drawer.getByLabel('Note', { exact: true })
   await note.fill('')
   await page.waitForTimeout(200)
@@ -172,7 +228,7 @@ try {
   assert.deepEqual(errors, [])
   passed = true
   console.log(
-    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, text with tags fallback order; folder settings keep 0/false and a cleared field. ' +
+    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, text with tags fallback order, field manager (search, text switches, refused switch, new tag field, rename); folder settings keep 0/false, a cleared field and the old-type note. ' +
       root
   )
 } catch (error) {
