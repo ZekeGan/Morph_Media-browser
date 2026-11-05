@@ -199,6 +199,7 @@ try {
   await button('目前資料夾設定').click()
   const drawer = page.getByRole('region', { name: '資料夾設定 · Library', exact: true })
   await drawer.waitFor()
+  await drawer.getByRole('checkbox', { name: /顯示未填欄位/ }).check()
   await choose('Verified flag', '否')
   await drawer.getByRole('button', { name: '保存欄位資料', exact: true }).click()
   await page.waitForFunction(async () => {

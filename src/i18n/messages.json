@@ -4367,12 +4367,6 @@
     "ja": "使用中：{0}",
     "es": "En uso: {0}"
   },
-  "這個組件顯示哪一個欄位的值": {
-    "zh-CN": "这个组件显示哪一个字段的值",
-    "en": "Which field this component shows",
-    "ja": "このコンポーネントが表示する項目",
-    "es": "Qué campo muestra este componente"
-  },
   "只在所選欄位符合條件時顯示這個組件；不符合時保留空位。": {
     "zh-CN": "只在所选字段符合条件时显示这个组件；不符合时保留空位。",
     "en": "Shown only when the chosen field matches; otherwise the space stays empty.",
@@ -5008,12 +5002,6 @@
     "en": "Add fallback field",
     "ja": "代替フィールドを追加",
     "es": "Añadir campo alternativo"
-  },
-  "沒有其他同型別欄位。先在左側欄位清單新增或匯入。": {
-    "zh-CN": "没有其他同类型字段。请先在左侧字段列表中添加或导入。",
-    "en": "No other fields of the same type. Add or import one in the field list on the left first.",
-    "ja": "同じ型のフィールドがほかにありません。先に左のフィールド一覧で追加またはインポートしてください。",
-    "es": "No hay otros campos del mismo tipo. Añade o importa uno primero en la lista de campos de la izquierda."
   },
   "預覽中的「{0}」顯示：{1}": {
     "zh-CN": "预览中的“{0}”显示：{1}",
@@ -6700,5 +6688,137 @@
     "en": "Blur fill",
     "ja": "ぼかしで埋める",
     "es": "Relleno difuminado"
+  },
+  "自建": {
+    "zh-CN": "自建",
+    "en": "Custom",
+    "ja": "自作",
+    "es": "Propio"
+  },
+  "{0} 項有資料": {
+    "zh-CN": "{0} 项有数据",
+    "en": "{0} with data",
+    "ja": "{0} 件にデータあり",
+    "es": "{0} con datos"
+  },
+  "只引用欄位": {
+    "zh-CN": "仅引用字段",
+    "en": "Reference field only",
+    "ja": "フィールドのみ参照",
+    "es": "Solo referenciar campo"
+  },
+  "搜尋名稱或來源": {
+    "zh-CN": "搜索名称或来源",
+    "en": "Search name or source",
+    "ja": "名前またはソースを検索",
+    "es": "Buscar nombre u origen"
+  },
+  "篩選來源": {
+    "zh-CN": "筛选来源",
+    "en": "Filter source",
+    "ja": "ソースで絞り込む",
+    "es": "Filtrar origen"
+  },
+  "全部來源": {
+    "zh-CN": "全部来源",
+    "en": "All sources",
+    "ja": "すべてのソース",
+    "es": "Todos los orígenes"
+  },
+  "只看預覽資料夾有值的欄位": {
+    "zh-CN": "只看预览文件夹有值的字段",
+    "en": "Only fields with values in the preview folder",
+    "ja": "プレビュー中のフォルダーに値があるフィールドのみ",
+    "es": "Solo campos con valores en la carpeta de vista previa"
+  },
+  "已隱藏 {0} 個未填欄位": {
+    "zh-CN": "已隐藏 {0} 个未填字段",
+    "en": "{0} empty fields hidden",
+    "ja": "未入力の {0} フィールドを非表示",
+    "es": "{0} campos vacíos ocultos"
+  },
+  "顯示全部": {
+    "zh-CN": "显示全部",
+    "en": "Show all",
+    "ja": "すべて表示",
+    "es": "Mostrar todos"
+  },
+  "沒有符合的欄位": {
+    "zh-CN": "没有符合的字段",
+    "en": "No matching fields",
+    "ja": "一致するフィールドがありません",
+    "es": "No hay campos coincidentes"
+  },
+  "標籤 → 文字": {
+    "zh-CN": "标签 → 文字",
+    "en": "Tags → text",
+    "ja": "タグ → テキスト",
+    "es": "Etiquetas → texto"
+  },
+  "文字 → 標籤": {
+    "zh-CN": "文字 → 标签",
+    "en": "Text → tags",
+    "ja": "テキスト → タグ",
+    "es": "Texto → etiquetas"
+  },
+  "使用中": {
+    "zh-CN": "使用中",
+    "en": "In use",
+    "ja": "使用中",
+    "es": "En uso"
+  },
+  "沒有其他相容欄位。先在左側欄位清單新增或匯入。": {
+    "zh-CN": "没有其他兼容字段。先在左侧字段列表新增或导入。",
+    "en": "No other compatible fields. Add or import one in the field list on the left.",
+    "ja": "ほかに互換性のあるフィールドはありません。左の一覧で追加またはインポートしてください。",
+    "es": "No hay otros campos compatibles. Añade o importa uno en la lista de la izquierda."
+  },
+  "標籤合併成文字，原始資料不變。": {
+    "zh-CN": "标签合并成文字，原始数据不变。",
+    "en": "Tags are joined as text; source data stays unchanged.",
+    "ja": "タグをテキストにまとめます。元のデータは変更しません。",
+    "es": "Las etiquetas se unen como texto; los datos originales no cambian."
+  },
+  "文字整段顯示為一個標籤，不自動拆分。": {
+    "zh-CN": "整段文字显示为一个标签，不自动拆分。",
+    "en": "The entire text becomes one tag, without automatic splitting.",
+    "ja": "テキスト全体を1つのタグとして表示し、自動分割しません。",
+    "es": "El texto completo se muestra como una etiqueta, sin dividirse automáticamente."
+  },
+  "上一個資料夾": {
+    "zh-CN": "上一个文件夹",
+    "en": "Previous folder",
+    "ja": "前のフォルダー",
+    "es": "Carpeta anterior"
+  },
+  "下一個資料夾": {
+    "zh-CN": "下一个文件夹",
+    "en": "Next folder",
+    "ja": "次のフォルダー",
+    "es": "Carpeta siguiente"
+  },
+  "找使用備用欄位的資料夾": {
+    "zh-CN": "查找使用备用字段的文件夹",
+    "en": "Find a folder using a fallback",
+    "ja": "代替フィールドを使用するフォルダーを探す",
+    "es": "Buscar carpeta que use un campo alternativo"
+  },
+  "已手動修改": {
+    "zh-CN": "已手动修改",
+    "en": "Edited manually",
+    "ja": "手動で変更済み",
+    "es": "Editado manualmente"
+  },
+  "顯示未填欄位（{0}）": {
+    "zh-CN": "显示未填字段（{0}）",
+    "en": "Show empty fields ({0})",
+    "ja": "未入力のフィールドを表示（{0}）",
+    "es": "Mostrar campos vacíos ({0})"
+  },
+  "備用欄位必須存在且型別可相容顯示": {
+    "zh-CN": "备用字段必须存在且类型兼容",
+    "en": "Fallback fields must exist and have compatible display types.",
+    "ja": "代替フィールドが存在し、表示形式に互換性がある必要があります。",
+    "es": "Los campos alternativos deben existir y tener tipos de visualización compatibles."
   }
 }

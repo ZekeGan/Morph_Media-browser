@@ -89,7 +89,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 | `list`、`cardView`、`excludedRelativePaths`、`scanAll`、`traversal` | 列表、顯示範圍、排除與掃描設定 |
 | `savedSearches` | 儲存的搜尋 |
 
-**組件 `Cell`**：`cellId`、`kind`（`name`、`path`、`field-text`、`field-tags`、`field-number`、`field-date`、`field-boolean`、`field-enum`、`field-url`、`field-date-only`、`static-text`、`spacer`、`system-info`、`image`、`divider`、`open-folder`、`game-cover`、`game-launch`）、`grid`（12 欄、最多 100 列，組件不能重疊）、`style`，以及依型別的選用欄位：`attributeId`、`fallbackIds`（備用欄位，最多 5 個、同型別）、`condition`（顯示條件）、`wrap`／`scroll`、`unit`／`decimals`／`maximum`、`presentation`、`imageFit`、`imageIndex`、`actionId`／`fallbackActionIds`、`tagColors`／`tagPrefix`。完整樣式欄位見 [CELL 目錄](CELL_CATALOG.md#組件樣式2026-11-02-新增)。
+**組件 `Cell`**：`cellId`、`kind`（`name`、`path`、`field-text`、`field-tags`、`field-number`、`field-date`、`field-boolean`、`field-enum`、`field-url`、`field-date-only`、`static-text`、`spacer`、`system-info`、`image`、`divider`、`open-folder`、`game-cover`、`game-launch`）、`grid`（12 欄、最多 100 列，組件不能重疊）、`style`，以及依型別的選用欄位：`attributeId`、`fallbackIds`（備用欄位，最多 5 個、同型別或文字／標籤相容顯示）、`condition`（顯示條件）、`wrap`／`scroll`、`unit`／`decimals`／`maximum`、`presentation`、`imageFit`、`imageIndex`、`actionId`／`fallbackActionIds`、`tagColors`／`tagPrefix`。完整樣式欄位見 [CELL 目錄](CELL_CATALOG.md#組件樣式2026-11-02-新增)。
 
 ## 設定包
 

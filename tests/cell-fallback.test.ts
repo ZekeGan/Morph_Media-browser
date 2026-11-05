@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { cellField } from '../shared/cells'
+import { cellField, isFilled } from '../shared/cells'
 import { columnValue, fallbackColumns, sortRows } from '../shared/browse'
 import { addCommonFields, extremePreviewRow, rowCells } from '../shared/layouts'
 import {
@@ -12,6 +12,7 @@ import {
   type Project,
 } from '../shared/model'
 import { modelProject } from './support/model-fixtures'
+import { fieldSource, fieldSourceGroups, rowFieldAttributes } from '../src/fieldSources'
 
 const row = (values: Record<string, unknown>): FolderRow =>
   ({
@@ -72,6 +73,7 @@ test('fallback fields are validated and follow field deletion', () => {
   const other = { alias: 'OTHER', attributeId: 'other', type: 'string' },
     count = { alias: 'COUNT', attributeId: 'count', type: 'number' }
   assert.doesNotThrow(() => validateProject(project(['other'], [other])))
+  assert.doesNotThrow(() => validateProject(project(['other'], [{ ...other, type: 'tags' }])))
   assert.throws(() => validateProject(project(['other'], [count, { ...other, type: 'number' }])))
   assert.throws(() => validateProject(project(['missing'], [other])), /備用欄位/)
   assert.throws(() => validateProject(project(['title'], [other])), 'the main field cannot repeat')
@@ -89,6 +91,89 @@ test('fallback fields are validated and follow field deletion', () => {
   )
   assert.equal(cellsWithoutField([cell({ fallbackIds: undefined })], 'steam').length, 0)
   assert.equal(cellsWithoutField([full], 'unrelated')[0], full)
+})
+
+test('text and tags share fallback displays without changing source values', () => {
+  const values = { steam: ['甲, 工作室', '乙'], dlsite: '完整文字, 不拆分' },
+    original = row(values),
+    text = cell({ fallbackIds: ['dlsite'] }),
+    tags = cell({ kind: 'field-tags', attributeId: 'dlsite', fallbackIds: ['steam'] })
+  assert.equal(cellField(text, original).value, '甲, 工作室, 乙')
+  assert.deepEqual(cellField(tags, original).value, ['完整文字, 不拆分'])
+  assert.deepEqual(fieldValue(original, 'steam'), values.steam)
+  assert.equal(fieldValue(original, 'dlsite'), values.dlsite)
+  assert.equal(columnValue({ cells: [text] } as Project, original, 'cell:c'), '甲, 工作室, 乙')
+  assert.equal(isFilled(['', '  ']), false)
+  assert.equal(cellField(text, row({ steam: ['  ', '  '] })).value, undefined)
+  assert.deepEqual(cellField(tags, row({ dlsite: '  ', steam: [] })).value, [])
+  assert.equal(isFilled(0), true)
+  assert.equal(isFilled(false), true)
+  assert.equal(cellField(text, row({ steam: ['  '], dlsite: '備用' })).attributeId, 'dlsite')
+  const base = modelProject(),
+    project = {
+      ...base,
+      layoutPresets: undefined,
+      activeLayoutId: undefined,
+      contentCells: undefined,
+      fieldBindings: [
+        { alias: '文字', attributeId: 'dlsite', type: 'string' },
+        { alias: '標籤', attributeId: 'steam', type: 'tags' },
+      ],
+      cells: [text],
+    }
+  validateProject(project)
+  assert.throws(
+    () => validateProject({ ...project, cells: [{ ...text, attributeId: 'missing' }] }),
+    /備用欄位/
+  )
+  assert.throws(
+    () =>
+      validateProject({
+        ...project,
+        fieldBindings: project.fieldBindings.map((f) =>
+          f.attributeId === 'steam' ? { ...f, type: 'number' } : f
+        ),
+      }),
+    /備用欄位/
+  )
+  validateProject({ ...project, cells: [tags] })
+  const promoted = cellsWithoutField([tags], 'dlsite')
+  validateProject({ ...project, cells: promoted })
+  assert.deepEqual(cellField(promoted[0], original).value, values.steam)
+})
+
+test('field website identity survives manual editing and stays separate from private scope', () => {
+  const attributes = rowFieldAttributes([
+    {
+      projectId: 'project',
+      record: {
+        attributes: [
+          {
+            attributeId: 'dlsite-artist',
+            key: 'ARTIST',
+            type: 'string',
+            value: '手填',
+            source: 'manual',
+          },
+        ],
+        projectOverrides: {
+          project: [
+            {
+              attributeId: 'steam-developers',
+              key: 'DEVELOPERS',
+              type: 'tags',
+              value: ['工作室'],
+              source: 'manual',
+            },
+          ],
+        },
+      },
+    },
+  ])
+  assert.equal(fieldSource('dlsite-artist', attributes), 'DLsite')
+  assert.equal(fieldSource('steam-developers', attributes), 'Steam')
+  assert.equal(fieldSourceGroups(attributes, attributes).length, 2)
+  assert.equal(fieldSource('manual-id'), fieldSource('other-manual-id'))
 })
 
 test('launch cells validate their fallback actions', () => {

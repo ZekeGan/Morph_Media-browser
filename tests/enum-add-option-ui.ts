@@ -33,6 +33,7 @@ let passed = false
 try {
   await page.getByRole('button', { name: '開啟專案 Choices', exact: true }).first().click()
   await page.getByRole('button', { name: '目前資料夾設定', exact: true }).click()
+  await page.getByRole('checkbox', { name: /顯示未填欄位/ }).check()
   const input = page.getByRole('textbox', { name: '新增選項 狀態', exact: true })
   await input.fill('暫停')
   await page.getByRole('button', { name: '新增選項', exact: true }).click()

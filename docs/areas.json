@@ -72,6 +72,7 @@
         "src/FolderContent*",
         "src/FolderAdvanced*",
         "src/FolderFieldInput*",
+        "src/fieldSources*",
         "src/FolderImages*",
         "src/FolderSourceImport*",
         "src/PanelSkeleton*"
@@ -181,6 +182,7 @@
         "src/editorKinds*",
         "src/commonFields*",
         "src/importedFieldLabels*",
+        "src/fieldSources*",
         "shared/layouts*"
       ],
       "ui": ["cell-editor-ui", "field-edit-ui", "decided-ui"],

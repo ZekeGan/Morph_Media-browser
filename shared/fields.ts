@@ -8,6 +8,16 @@ export const fieldTypes = [
   'url',
   'date',
 ] as const
+
+// Text and tag lists can share a display component without rewriting either field's stored value.
+export function compatibleFieldTypes(display: string | undefined, source: string | undefined) {
+  return (
+    !!display &&
+    !!source &&
+    (display === source ||
+      (['string', 'tags'].includes(display) && ['string', 'tags'].includes(source)))
+  )
+}
 export function httpUrl(value: unknown): value is string {
   if (typeof value !== 'string' || value.length > 10000) return false
   try {

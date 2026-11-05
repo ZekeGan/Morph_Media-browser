@@ -1,7 +1,7 @@
 import type { ActionTemplate, FolderDetails } from './explorer'
 import type { Notice } from './notifications'
 import { imageTypes } from './images'
-import { httpUrl, validFieldValue } from './fields'
+import { compatibleFieldTypes, httpUrl, validFieldValue } from './fields'
 import { validStableQuery, type StableQuery } from './query'
 import { checkNotNewer, FORMAT_VERSION } from './upgrade'
 export const DATA_DIR = '.media-viewer'
@@ -651,15 +651,19 @@ export function validateProject(v: unknown): asserts v is Project {
     throw new Error('組件 ID 或欄位別名重複')
   for (const cell of v.cells)
     if (cell.fallbackIds) {
-      const type = v.fieldBindings.find((f) => f.attributeId === cell.attributeId)?.type
+      const type = v.fieldBindings.find((f) => f.attributeId === cell.attributeId)?.type,
+        display = cell.kind === 'field-text' ? 'string' : cell.kind === 'field-tags' ? 'tags' : type
       if (
+        !compatibleFieldTypes(display, type) ||
         cell.fallbackIds.some(
           (fallback: string) =>
-            v.fieldBindings.find((f: { attributeId: string }) => f.attributeId === fallback)
-              ?.type !== type
+            !compatibleFieldTypes(
+              display,
+              v.fieldBindings.find((f: { attributeId: string }) => f.attributeId === fallback)?.type
+            )
         )
       )
-        throw new Error('備用欄位必須存在且與主要欄位同型別')
+        throw new Error('備用欄位必須存在且型別可相容顯示')
     }
   for (const cell of v.cells)
     if (cell.condition) {

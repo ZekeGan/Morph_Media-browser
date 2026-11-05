@@ -17,8 +17,8 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core'
-import type { Cell, CellKind, FolderRow, Project } from '../shared/model'
-import { cellType, isFieldKind, launchTemplates } from '../shared/explorer'
+import type { Attribute, Cell, CellKind, FolderRow, Project } from '../shared/model'
+import { isFieldKind, launchTemplates } from '../shared/explorer'
 import { typeKinds } from './editorKinds'
 import { FallbackFields } from './FallbackFields'
 import { CellStyleEditor } from './CellStyleEditor'
@@ -34,7 +34,8 @@ export type EditorInspectorProps = {
   conditionField?: Binding
   preview?: FolderRow
   fieldSources: { attributeId: string; key: string; type: string }[]
-  setFallbackIds: (ids: string[], newSource?: string) => void
+  attributes: Attribute[]
+  setFieldIds: (ids: string[], newSource?: string) => void
   enumOptions: string[]
   hasContent: boolean
   hints: Record<CellKind, string>
@@ -58,7 +59,8 @@ export function EditorInspector(props: EditorInspectorProps) {
     conditionField,
     preview,
     fieldSources,
-    setFallbackIds,
+    attributes,
+    setFieldIds,
     enumOptions,
     hasContent,
     hints,
@@ -110,47 +112,34 @@ export function EditorInspector(props: EditorInspectorProps) {
                 <Accordion.Control>{tr('內容')}</Accordion.Control>
                 <Accordion.Panel>
                   <Stack gap="sm">
-                    {isFieldKind(selectedCell.kind) && (
-                      <Group gap="xs" align="flex-end" wrap="nowrap">
-                        <Select
-                          style={{ flex: 1 }}
-                          label={
-                            <HelpLabel
-                              label={tr('綁定欄位')}
-                              help={tr('這個組件顯示哪一個欄位的值')}
-                            />
+                    {isFieldKind(selectedCell.kind) &&
+                      ['field-text', 'field-tags'].includes(selectedCell.kind) && (
+                        <SegmentedControl
+                          aria-label={tr('顯示方式')}
+                          value={selectedCell.kind}
+                          data={[
+                            { value: 'field-text', label: tr('文字') },
+                            { value: 'field-tags', label: tr('標籤') },
+                          ]}
+                          onChange={(kind) =>
+                            updateCell({
+                              kind: kind as CellKind,
+                              wrap: undefined,
+                              tagColors: undefined,
+                              tagPrefix: undefined,
+                            })
                           }
-                          value={selectedCell.attributeId}
-                          data={draft.fieldBindings
-                            .filter((f) => f.type === cellType(selectedCell.kind))
-                            .map((f) => ({ value: f.attributeId, label: f.alias }))}
-                          onChange={(v) => v && updateCell({ attributeId: v })}
                         />
-                        <Tooltip label={tr('重新命名此欄位')}>
-                          <ActionIcon
-                            variant="default"
-                            size="lg"
-                            aria-label={tr('重新命名此欄位')}
-                            disabled={!selectedCell.attributeId}
-                            onClick={() => {
-                              const field = draft.fieldBindings.find(
-                                (f) => f.attributeId === selectedCell.attributeId
-                              )
-                              if (field) setRenaming({ id: field.attributeId, name: field.alias })
-                            }}
-                          >
-                            <Icon name="edit" size={16} />
-                          </ActionIcon>
-                        </Tooltip>
-                      </Group>
-                    )}
+                      )}
                     {isFieldKind(selectedCell.kind) && (
                       <FallbackFields
                         cell={selectedCell}
                         draft={draft}
                         preview={preview}
                         sources={fieldSources}
-                        setFallbackIds={setFallbackIds}
+                        attributes={attributes}
+                        setFieldIds={setFieldIds}
+                        setRenaming={setRenaming}
                       />
                     )}
                     {(selectedCell.kind === 'static-text' || selectedCell.kind === 'field-url') && (

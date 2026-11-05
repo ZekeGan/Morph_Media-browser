@@ -147,6 +147,14 @@ for (const [w, h] of [
       await flagged.waitFor({ state: 'attached' })
       await page
         .locator('.cell-overflow-fix')
+        .getByRole('button', { name: '模糊填滿', exact: true })
+        .click()
+      await flagged.waitFor({ state: 'detached' })
+      await page.getByRole('textbox', { name: '圖片填滿方式', exact: true }).click()
+      await page.getByRole('option', { name: '填滿容器（裁切多餘部分）', exact: true }).click()
+      await flagged.waitFor({ state: 'attached' })
+      await page
+        .locator('.cell-overflow-fix')
         .getByRole('button', { name: '完整顯示', exact: true })
         .click()
       await flagged.waitFor({ state: 'detached' })

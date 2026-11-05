@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { ActionIcon, Button, Tooltip } from '@mantine/core'
 import { fieldValue, type FolderRow, type Project } from '../shared/model'
 import { Icon } from './icons'
 import { importSources } from './importSource'
+import { isFilled } from '../shared/cells'
+import { fieldSourceGroups, rowFieldAttributes } from './fieldSources'
 import { t as tr, useLocale } from './i18n'
 
 // Filled values only; 0 and false are real values, empty strings and arrays are not.
 const shown = (value: unknown) =>
-  value == null || value === '' || (Array.isArray(value) && !value.length)
+  !isFilled(value)
     ? undefined
     : typeof value === 'boolean'
       ? tr(value ? '是' : '否')
@@ -38,7 +40,9 @@ export function FolderDetails({
     sources = importSources(row),
     fields = project.fieldBindings.flatMap((field) => {
       const text = shown(fieldValue(row, field.attributeId))
-      return text === undefined ? [] : [{ id: field.attributeId, label: field.alias, text }]
+      return text === undefined
+        ? []
+        : [{ attributeId: field.attributeId, label: field.alias, text }]
     })
   return (
     <details className="folder-details">
@@ -113,13 +117,21 @@ export function FolderDetails({
             </dd>
           </div>
         )}
-        {fields.map((field) => (
-          <div className="folder-details-row" key={field.id}>
-            <dt title={field.label}>{field.label}</dt>
-            <dd>
-              <span>{field.text}</span>
-            </dd>
-          </div>
+        {fieldSourceGroups(fields, rowFieldAttributes([row])).map(({ source, fields }) => (
+          <Fragment key={source}>
+            <div className="folder-details-row field-source-heading">
+              <dt>{source}</dt>
+              <dd />
+            </div>
+            {fields.map((field) => (
+              <div className="folder-details-row" key={field.attributeId}>
+                <dt title={field.label}>{field.label}</dt>
+                <dd>
+                  <span>{field.text}</span>
+                </dd>
+              </div>
+            ))}
+          </Fragment>
         ))}
       </dl>
       {copyError && <small role="alert">{copyError}</small>}

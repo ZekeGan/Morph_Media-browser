@@ -23,6 +23,7 @@ import {
   Alert,
   Badge,
   Button,
+  Checkbox,
   Divider,
   Group,
   Modal,
@@ -44,6 +45,8 @@ import {
   type ExplorerResponse,
 } from '../shared/explorer'
 import type { Attribute, FolderRow, Project, Request, Response } from '../shared/model'
+import { isFilled } from '../shared/cells'
+import { fieldSource, fieldSourceGroups, rowFieldAttributes } from './fieldSources'
 type Act = (request: Request) => Promise<Response | undefined>
 type Run = (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
 // The tab you were on stays when you move to another folder.
@@ -76,6 +79,9 @@ export function FolderPanel({
     [privateValues, setPrivate] = useState(false),
     [values, setValues] = useState<Record<string, unknown>>({}),
     [newOptions, setNewOptions] = useState<Record<string, string>>({})
+  const [showEmpty, setShowEmpty] = useState(false),
+    [editedFields, setEditedFields] = useState<string[]>([])
+  useEffect(() => setEditedFields([]), [row.rowId, privateValues])
   const [tab, setTab] = useState<string | null>(
       initialTab === 'source'
         ? 'fields'
@@ -199,8 +205,15 @@ export function FolderPanel({
     if (!fieldDirty) setValues({})
   }, [row.record?.revision])
   const disabled = busy || row.readonly || row.stopped || !!row.error || !row.record
-  const edit = (id: string, value: unknown) => setValues((v) => ({ ...v, [id]: value }))
+  const edit = (id: string, value: unknown) => {
+    setEditedFields((ids) => (ids.includes(id) ? ids : [...ids, id]))
+    setValues((v) => ({ ...v, [id]: value }))
+  }
   const effective = (id: string) => (Object.hasOwn(values, id) ? values[id] : original[id])
+  const attributes = rowFieldAttributes([row])
+  const visibleField = (f: { attributeId: string }) =>
+    showEmpty || isFilled(effective(f.attributeId)) || editedFields.includes(f.attributeId)
+  const hiddenFields = fields.filter((f) => !visibleField(f)).length
   const save = async () => {
     const changed: Attribute[] = fields
       .filter(
@@ -244,12 +257,14 @@ export function FolderPanel({
   }
   // Where an imported value came from, shown under its label until the value is edited.
   const fieldNote = (attributeId: string) => {
-    if (Object.hasOwn(values, attributeId)) return undefined
+    const origin = fieldSource(attributeId, attributes)
     const attribute =
       (privateValues
         ? row.record?.projectOverrides[row.projectId]?.find((a) => a.attributeId === attributeId)
         : undefined) ?? row.record?.attributes.find((a) => a.attributeId === attributeId)
-    if (!attribute || attribute.source === 'manual') return undefined
+    if (Object.hasOwn(values, attributeId) || attribute?.source === 'manual')
+      return origin === tr('自建') ? undefined : `${origin} · ${tr('已手動修改')}`
+    if (!attribute) return origin === tr('自建') ? undefined : origin
     const provider = attribute.sourceRecord?.provider,
       name = metadataSources.find((item) => item.id === provider)?.name
     return name ? tr('來自 {0}', name) : tr('來自網站匯入')
@@ -269,6 +284,18 @@ export function FolderPanel({
       onAddOption={(option) => void addOption(f.attributeId, option)}
     />
   )
+  const renderGroups = (items: typeof fields) =>
+    fieldSourceGroups(items.filter(visibleField), attributes).map(({ source, fields }) => (
+      <details key={source} className="field-source-group" open>
+        <summary>
+          {source}{' '}
+          <Text component="span" size="xs" c="dimmed">
+            {tr('{0} 項有資料', fields.filter((f) => isFilled(effective(f.attributeId))).length)}
+          </Text>
+        </summary>
+        <Stack>{fields.map(renderField)}</Stack>
+      </details>
+    ))
   const boundary = (state: 'root' | 'not-game' | 'candidate', traverse = false) => {
     if (!row.record || (fieldDirty && !window.confirm(tr('套用邊界前放棄欄位草稿？')))) return
     void run({
@@ -527,7 +554,21 @@ export function FolderPanel({
                 <Divider />
               </>
             )}
-            {mainFields.map(renderField)}
+            <Checkbox
+              size="xs"
+              label={tr(
+                '顯示未填欄位（{0}）',
+                fields.filter((f) => !isFilled(effective(f.attributeId))).length
+              )}
+              checked={showEmpty}
+              onChange={(event) => setShowEmpty(event.currentTarget.checked)}
+            />
+            {hiddenFields > 0 && (
+              <Text size="xs" c="dimmed">
+                {tr('已隱藏 {0} 個未填欄位', hiddenFields)}
+              </Text>
+            )}
+            {renderGroups(mainFields)}
             {!mainFields.length && (
               <Group justify="space-between" wrap="nowrap" gap="xs">
                 <Text c="dimmed" size="sm">
@@ -565,7 +606,7 @@ export function FolderPanel({
                     {otherFields.length}）
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <Stack>{otherFields.map(renderField)}</Stack>
+                    <Stack>{renderGroups(otherFields)}</Stack>
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>

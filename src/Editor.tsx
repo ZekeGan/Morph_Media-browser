@@ -46,6 +46,8 @@ import {
 } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
 import { isGameFolder } from '../shared/media'
+import { cellField } from '../shared/cells'
+import { rowFieldAttributes } from './fieldSources'
 
 // Preview choices that are not a folder (row ids are hashes, so these cannot collide).
 const EXTREME = { longest: 'extreme:longest', shortest: 'extreme:shortest' }
@@ -303,6 +305,8 @@ export function Editor({
         return Math.abs(Math.log(ratio)) > Math.log(1.2)
       }
       const cut = (node: HTMLElement) => {
+        // Blur-fill deliberately clips an oversized decorative background; only its foreground is content.
+        if (node.matches('.cell-blur, .cell-blur-bg')) return false
         const style = getComputedStyle(node)
         return (
           cropped(node) ||
@@ -364,6 +368,10 @@ export function Editor({
     setRenaming(undefined)
   }
   const sources = useMemo(() => editorFields(rows, project.projectId), [rows, project.projectId])
+  const attributes = useMemo(
+    () => rowFieldAttributes(rows.filter((row) => row.projectId === project.projectId)),
+    [rows, project.projectId]
+  )
   const availableFields = sources.filter(
     (a) => !draft.fieldBindings.some((f) => f.attributeId === a.attributeId)
   )
@@ -373,12 +381,14 @@ export function Editor({
     setFuture([])
     setDraft(next)
   }
-  const setFallbackIds = (ids: string[], newSource?: string) => {
+  const setFieldIds = (ids: string[], newSource?: string) => {
     const source = newSource ? availableFields.find((f) => f.attributeId === newSource) : undefined
     change({
       ...withLevel(
         level.map((c) =>
-          c.cellId === selected ? { ...c, fallbackIds: ids.length ? ids : undefined } : c
+          c.cellId === selected
+            ? { ...c, attributeId: ids[0], fallbackIds: ids.length > 1 ? ids.slice(1) : undefined }
+            : c
         )
       ),
       fieldBindings: source
@@ -915,6 +925,10 @@ export function Editor({
           typeHints={typeHints}
           sources={sources}
           availableFields={availableFields}
+          attributes={attributes}
+          reference={(source) =>
+            change({ ...draft, fieldBindings: withSourceBinding(draft.fieldBindings, source) })
+          }
           preview={preview}
           hasGames={
             rows.some(isGameFolder) ||
@@ -944,8 +958,58 @@ export function Editor({
             searchable
             value={previewId ?? null}
             onChange={(v) => setPreviewId(v ?? undefined)}
-            mb="md"
+            mb="xs"
           />
+          <Group gap="xs" mb="md">
+            <Tooltip label={tr('上一個資料夾')}>
+              <ActionIcon
+                variant="default"
+                aria-label={tr('上一個資料夾')}
+                disabled={!rows.length}
+                onClick={() =>
+                  setPreviewId(
+                    rows[
+                      (rows.findIndex((r) => r.rowId === previewId) - 1 + rows.length) % rows.length
+                    ].rowId
+                  )
+                }
+              >
+                <span aria-hidden>←</span>
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip label={tr('下一個資料夾')}>
+              <ActionIcon
+                variant="default"
+                aria-label={tr('下一個資料夾')}
+                disabled={!rows.length}
+                onClick={() =>
+                  setPreviewId(
+                    rows[(rows.findIndex((r) => r.rowId === previewId) + 1) % rows.length].rowId
+                  )
+                }
+              >
+                <span aria-hidden>→</span>
+              </ActionIcon>
+            </Tooltip>
+            {!!selectedCell?.fallbackIds?.length && (
+              <Button
+                size="compact-xs"
+                variant="subtle"
+                disabled={!rows.some((row) => cellField(selectedCell, row).index > 0)}
+                onClick={() =>
+                  setPreviewId(
+                    (
+                      rows.find(
+                        (row) => row.rowId !== previewId && cellField(selectedCell, row).index > 0
+                      ) ?? rows.find((row) => cellField(selectedCell, row).index > 0)
+                    )?.rowId
+                  )
+                }
+              >
+                {tr('找使用備用欄位的資料夾')}
+              </Button>
+            )}
+          </Group>
           {selectedCell && overflowing.includes(selectedCell.cellId) ? (
             <Alert color="orange" variant="light" mb="sm" className="cell-overflow-fix">
               <Text size="sm" mb={6}>
@@ -1144,7 +1208,8 @@ export function Editor({
           conditionField={conditionField}
           preview={preview}
           fieldSources={availableFields.filter((f) => !f.conflict)}
-          setFallbackIds={setFallbackIds}
+          attributes={attributes}
+          setFieldIds={setFieldIds}
           enumOptions={enumOptions}
           hasContent={hasContent}
           hints={hints}

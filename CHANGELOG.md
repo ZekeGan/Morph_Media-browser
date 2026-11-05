@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Field UX: keep the existing editor style and layout; group shared and project fields by website, retain source labels after referencing, and add search/source/value filters. Folder settings hide empty fields while keeping cleared inputs available during editing. Main and fallback sources share one ordered list; text and tags can display each other's values without rewriting source data. Fix the cropped-picture outline incorrectly including blur-fill backgrounds.
 - Revert R-219 after review: cards use the fixed 12-column layout again, and the editor canvas follows its own available width. Remove the provisional `trimColumns` setting and card-width controls.
 - Layout editor: a picture that fills its frame by cropping, with proportions more than 20% off the frame, is flagged like cut-off text and offers "Show whole" or "Blur fill".
 - Tests (development only): `closeApp` answers the app's native unsaved-changes box itself; tests that left the editor unsaved used to hang the main process on it.

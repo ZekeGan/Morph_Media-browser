@@ -6,6 +6,7 @@ import {
   ActionIcon,
   Badge,
   Button,
+  Checkbox,
   Group,
   Modal,
   Select,
@@ -19,6 +20,7 @@ import type { Layout } from 'react-grid-layout'
 import { fieldValue } from '../shared/model'
 import type {
   Cell,
+  Attribute,
   CellKind,
   FieldDeletionPreview,
   FolderRow,
@@ -29,6 +31,8 @@ import type {
 import { addCommonFields, editorFields } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
 import { typeKinds } from './editorKinds'
+import { isFilled } from '../shared/cells'
+import { fieldSource, fieldSourceGroups } from './fieldSources'
 
 // One line of the previewed folder's value for a field; long values are cut with "…" and shown whole on hover.
 function FieldValuePreview({ value }: { value: unknown }) {
@@ -67,6 +71,8 @@ export type EditorPaletteProps = {
   typeHints: Record<string, string>
   sources: Source[]
   availableFields: Source[]
+  attributes: Attribute[]
+  reference: (source: Binding) => void
   // The folder shown in the editor preview: each field lists its current value so the real data is visible.
   preview?: FolderRow
   // Game components stay folded away unless a game is in the project or already used on the card.
@@ -92,6 +98,8 @@ export function EditorPalette(props: EditorPaletteProps) {
     typeHints,
     sources,
     availableFields,
+    attributes,
+    reference,
     preview,
     hasGames,
     dragImage,
@@ -106,6 +114,45 @@ export function EditorPalette(props: EditorPaletteProps) {
   const [newType, setNewType] = useState('string')
   const [newOptions, setNewOptions] = useState('')
   const [adding, setAdding] = useState(false)
+  const [search, setSearch] = useState(''),
+    [provider, setProvider] = useState<string | null>(null),
+    [onlyFilled, setOnlyFilled] = useState(false)
+  const matches = (binding: Binding, withEmpty = true) => {
+    const origin = fieldSource(binding.attributeId, attributes)
+    return (
+      (!provider || provider === origin) &&
+      `${binding.alias} ${origin}`
+        .toLocaleLowerCase()
+        .includes(search.trim().toLocaleLowerCase()) &&
+      (!withEmpty || !onlyFilled || !preview || isFilled(fieldValue(preview, binding.attributeId)))
+    )
+  }
+  const hiddenCount = [
+    ...draft.fieldBindings,
+    ...availableFields.map((f) => ({ ...f, alias: f.key })),
+  ].filter((f) => matches(f, false) && !matches(f)).length
+  const grouped = (bindings: Binding[]) =>
+    fieldSourceGroups(
+      bindings.filter((f) => matches(f)),
+      attributes
+    ).map(({ source, fields }) => (
+      <details key={source} className="field-source-group" open>
+        <summary>
+          {source}{' '}
+          <Text component="span" size="xs" c="dimmed">
+            {tr(
+              '{0} 項有資料',
+              fields.filter((f) =>
+                preview
+                  ? isFilled(fieldValue(preview, f.attributeId))
+                  : sources.find((s) => s.attributeId === f.attributeId)?.hasData
+              ).length
+            )}
+          </Text>
+        </summary>
+        <Stack gap="xs">{fields.map(paletteField)}</Stack>
+      </details>
+    ))
   const paletteField = (binding: Binding) => {
     const source = sources.find((f) => f.attributeId === binding.attributeId),
       kind = typeKinds[binding.type]
@@ -133,6 +180,9 @@ export function EditorPalette(props: EditorPaletteProps) {
           <span className="palette-field-name">{binding.alias || tr('未命名欄位')}</span>
           {preview && <FieldValuePreview value={fieldValue(preview, binding.attributeId)} />}
           <span className="palette-field-meta">
+            <Badge size="xs" color="gray">
+              {fieldSource(binding.attributeId, attributes)}
+            </Badge>
             <span>{typeLabels[binding.type]}</span>
             <span>
               {tr(
@@ -154,13 +204,25 @@ export function EditorPalette(props: EditorPaletteProps) {
             )}
           </span>
         </Button>
+        {!draft.fieldBindings.some((f) => f.attributeId === binding.attributeId) && (
+          <Button
+            size="compact-xs"
+            variant="light"
+            disabled={source?.conflict}
+            onClick={() => reference(binding)}
+          >
+            {tr('只引用欄位')}
+          </Button>
+        )}
         <Tooltip label={tr('重新命名欄位')}>
           <ActionIcon
             className="field-rename"
             variant="subtle"
             color="gray"
             aria-label={tr('重新命名欄位 {0}', binding.alias)}
-            disabled={busy}
+            disabled={
+              busy || !draft.fieldBindings.some((f) => f.attributeId === binding.attributeId)
+            }
             onClick={() => setRenaming({ id: binding.attributeId, name: binding.alias })}
           >
             <Icon name="edit" size={14} />
@@ -172,7 +234,11 @@ export function EditorPalette(props: EditorPaletteProps) {
             variant="subtle"
             color="red"
             aria-label={tr('刪除欄位 {0}', binding.alias)}
-            disabled={busy || dirty}
+            disabled={
+              busy ||
+              dirty ||
+              !draft.fieldBindings.some((f) => f.attributeId === binding.attributeId)
+            }
             onClick={async () => {
               const result = await act({
                 action: 'deleteFieldPreview',
@@ -257,7 +323,53 @@ export function EditorPalette(props: EditorPaletteProps) {
             {tr('加入常用欄位')}
           </Button>
         )}
-        <Stack gap="xs">{draft.fieldBindings.map((binding) => paletteField(binding))}</Stack>
+        <Stack gap="xs" mb="sm">
+          <TextInput
+            size="xs"
+            aria-label={tr('搜尋欄位')}
+            placeholder={tr('搜尋名稱或來源')}
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
+          <Select
+            size="xs"
+            aria-label={tr('篩選來源')}
+            placeholder={tr('全部來源')}
+            clearable
+            value={provider}
+            onChange={setProvider}
+            data={[
+              ...new Set(
+                [...draft.fieldBindings, ...availableFields].map((f) =>
+                  fieldSource(f.attributeId, attributes)
+                )
+              ),
+            ]}
+          />
+          <Checkbox
+            size="xs"
+            label={tr('只看預覽資料夾有值的欄位')}
+            disabled={!preview}
+            checked={onlyFilled}
+            onChange={(e) => setOnlyFilled(e.currentTarget.checked)}
+          />
+          {hiddenCount > 0 && (
+            <Group gap={4}>
+              <Text size="xs" c="dimmed">
+                {tr('已隱藏 {0} 個未填欄位', hiddenCount)}
+              </Text>
+              <Button size="compact-xs" variant="subtle" onClick={() => setOnlyFilled(false)}>
+                {tr('顯示全部')}
+              </Button>
+            </Group>
+          )}
+        </Stack>
+        {grouped(draft.fieldBindings)}
+        {draft.fieldBindings.length > 0 && !draft.fieldBindings.some((f) => matches(f)) && (
+          <Text size="xs" c="dimmed">
+            {tr('沒有符合的欄位')}
+          </Text>
+        )}
       </section>
       <Accordion variant="separated" className="existing-fields">
         <Accordion.Item value="existing">
@@ -274,11 +386,11 @@ export function EditorPalette(props: EditorPaletteProps) {
                   {tr('共用欄位')}
                 </Text>
                 <Stack gap="xs" mb="sm">
-                  {availableFields
-                    .filter((f) => f.shared)
-                    .map((f) =>
-                      paletteField({ attributeId: f.attributeId, alias: f.key, type: f.type })
-                    )}
+                  {grouped(
+                    availableFields
+                      .filter((f) => f.shared)
+                      .map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type }))
+                  )}
                 </Stack>
               </>
             )}
@@ -288,11 +400,11 @@ export function EditorPalette(props: EditorPaletteProps) {
                   {tr('本專案私有欄位')}
                 </Text>
                 <Stack gap="xs">
-                  {availableFields
-                    .filter((f) => !f.shared && f.private)
-                    .map((f) =>
-                      paletteField({ attributeId: f.attributeId, alias: f.key, type: f.type })
-                    )}
+                  {grouped(
+                    availableFields
+                      .filter((f) => !f.shared && f.private)
+                      .map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type }))
+                  )}
                 </Stack>
               </>
             )}

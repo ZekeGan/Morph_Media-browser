@@ -335,3 +335,8 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .backup-row-text { min-width: 0; }
 /* A component whose content is cut off in the current preview (R-207); the selected one keeps the accent outline. */
 .editor-cell.cell-overflow:not(.selected) { outline:2px dashed var(--warning); outline-offset:-2px; }
+.field-source-group { margin-block:10px; min-width:0; }
+.field-source-group > summary { margin-bottom:8px; font-weight:600; cursor:pointer; overflow-wrap:anywhere; }
+.field-source-group > summary > span { margin-left:6px; font-weight:400; }
+.field-source-heading th { color:var(--muted); font-weight:600; padding-top:14px; }
+.field-source-row { min-width:0; }

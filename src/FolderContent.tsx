@@ -12,7 +12,9 @@ import { cacheFolderStats } from './folderStats'
 import { t as tr, useLocale } from './i18n'
 import { Icon } from './icons'
 import { useRefreshNonce } from './refresh'
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Fragment, lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { isFilled } from '../shared/cells'
+import { fieldSourceGroups, rowFieldAttributes } from './fieldSources'
 import { ActionIcon, Button, Group, Menu, Tooltip } from '@mantine/core'
 import { Card } from './Card'
 import { FolderDetails, FolderHeader } from './FolderParts'
@@ -513,34 +515,44 @@ export function FolderContent({
               <td>{row.path}</td>
               <td>{tr('檔案系統')}</td>
             </tr>
-            {fields.map((f) => {
-              const value = fieldValue(row, f.attributeId),
-                attribute =
-                  row.record?.projectOverrides[row.projectId]?.find(
-                    (a) => a.attributeId === f.attributeId
-                  ) ?? row.record?.attributes.find((a) => a.attributeId === f.attributeId)
-              const alias = project.fieldBindings.find(
-                  (b) => b.attributeId === f.attributeId
-                )?.alias,
-                plain = importedLabels[f.key]
-              return (
-                <tr key={f.attributeId}>
-                  <td title={!alias && plain ? f.key : undefined}>{alias ?? plain ?? f.key}</td>
-                  <td>
-                    {value == null
-                      ? '—'
-                      : Array.isArray(value)
-                        ? value.join(', ')
-                        : typeof value === 'object'
-                          ? JSON.stringify(value)
-                          : String(value)}
-                  </td>
-                  <td title={isUrl(attribute?.source) ? attribute?.source : undefined}>
-                    {describeSource(attribute?.source)}
-                  </td>
+            {fieldSourceGroups(
+              fields.filter((f) => isFilled(fieldValue(row, f.attributeId))),
+              rowFieldAttributes([row])
+            ).map(({ source, fields }) => (
+              <Fragment key={source}>
+                <tr className="field-source-heading">
+                  <th colSpan={3}>{source}</th>
                 </tr>
-              )
-            })}
+                {fields.map((f) => {
+                  const value = fieldValue(row, f.attributeId),
+                    attribute =
+                      row.record?.projectOverrides[row.projectId]?.find(
+                        (a) => a.attributeId === f.attributeId
+                      ) ?? row.record?.attributes.find((a) => a.attributeId === f.attributeId)
+                  const alias = project.fieldBindings.find(
+                      (b) => b.attributeId === f.attributeId
+                    )?.alias,
+                    plain = importedLabels[f.key]
+                  return (
+                    <tr key={f.attributeId}>
+                      <td title={!alias && plain ? f.key : undefined}>{alias ?? plain ?? f.key}</td>
+                      <td>
+                        {value == null
+                          ? '—'
+                          : Array.isArray(value)
+                            ? value.join(', ')
+                            : typeof value === 'object'
+                              ? JSON.stringify(value)
+                              : String(value)}
+                      </td>
+                      <td title={isUrl(attribute?.source) ? attribute?.source : undefined}>
+                        {describeSource(attribute?.source)}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </Fragment>
+            ))}
           </tbody>
         </table>
       </div>
