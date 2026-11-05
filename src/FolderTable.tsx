@@ -145,6 +145,7 @@ export function FolderTable({
                 }}
               >
                 <button
+                  className="column-head"
                   disabled={busy}
                   draggable={!busy}
                   title={tr('點擊排序；拖曳調整欄位順序（Alt+←／→）')}

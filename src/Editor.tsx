@@ -907,8 +907,27 @@ export function Editor({
                     setError(tr('欄位已變更或型別衝突，請重新選擇'))
                     return
                   }
-                  if (item && kind in labels)
+                  if (!(kind in labels)) return
+                  if (item) {
                     add(kind, { x: item.x, y: item.y, w: item.w, h: item.h }, layout, source)
+                    return
+                  }
+                  // A quick throw can drop before the grid has rendered its placeholder (it is added on dragover
+                  // through state), and the grid then reports no item. Place it under the pointer ourselves.
+                  const grid = containerRef.current
+                    ?.querySelector<HTMLElement>('.react-grid-layout')
+                    ?.getBoundingClientRect()
+                  const drop = event as DragEvent
+                  if (!grid) {
+                    add(kind, undefined, layout, source)
+                    return
+                  }
+                  const column = (width - 4 * 11) / 12,
+                    w = 6,
+                    left = drop.clientX - grid.left - (column * w + 4 * (w - 1)) / 2,
+                    x = Math.min(12 - w, Math.max(0, Math.round(left / (column + 4)))),
+                    y = Math.max(0, Math.round((drop.clientY - grid.top - 21) / (42 + 4)))
+                  add(kind, { x, y, w, h: 1 }, layout, source)
                 }}
                 onDragStop={layoutChange}
                 onResizeStop={layoutChange}

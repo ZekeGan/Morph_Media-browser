@@ -187,7 +187,8 @@ try {
   await button('復原').click()
   assert.equal(await page.locator('.cell-condition-hidden').count(), 0)
   const initial = await page.locator('.editor-cell').count()
-  // A synthetic HTML5 drop can miss on a busy machine; retry until the cell lands.
+  // Playwright's native drag sometimes never starts (about 1 in 10); retry that. A drop that the editor itself loses
+  // is checked separately below, without retries.
   for (
     let attempt = 0;
     attempt < 3 && (await page.locator('.editor-cell').count()) === initial;
@@ -201,6 +202,24 @@ try {
   }
   assert.equal(await page.locator('.editor-cell').count(), initial + 1)
   await button('復原').click()
+  // A quick throw: the drop arrives with no dragover before it, so the grid has no placeholder yet. The component must
+  // still land under the pointer (it used to vanish).
+  {
+    const transfer = await page.evaluateHandle(() => new DataTransfer())
+    const grid = (await page.locator('.react-grid-layout').boundingBox())!
+    const at = { clientX: grid.x + 90, clientY: grid.y + 120, dataTransfer: transfer }
+    await palette.dispatchEvent('dragstart', { dataTransfer: transfer })
+    await page.locator('.react-grid-layout').dispatchEvent('dragenter', at)
+    await page.locator('.react-grid-layout').dispatchEvent('drop', at)
+    await palette.dispatchEvent('dragend', { dataTransfer: transfer })
+    await page.locator('.editor-cell').nth(initial).waitFor({ timeout: 3000 })
+    assert.equal(
+      await page.locator('.editor-cell').count(),
+      initial + 1,
+      'a thrown component lands'
+    )
+    await button('復原').click()
+  }
   await verifyCanvasDrag()
   await app.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].webContents.setZoomFactor(1.25)

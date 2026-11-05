@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix: a component thrown quickly from the editor palette onto the canvas could vanish: the grid only places its drop placeholder on dragover (through state), so a drop arriving first reported no item and nothing was added. The editor now places it under the pointer itself. The editor test had been retrying exactly this miss; a throw without dragover is now tested on its own.
+- Table columns can be picked up anywhere on their header, not only on the column name.
 - Fix: dragging a game toolbar button, a sidebar project or group, or a table column quickly could silently do nothing, because the drop target only accepted the drag after the next re-render. The targets now accept it at once. This was also why `game-actions-ui` failed about 1 run in 4; the test now sends the drag events itself, so it checks exactly this.
 - Fix: pressing Esc (or picking a project) while the pointer rested on the left edge closed the hidden project sidebar and reopened it at once, where it then stayed open. It now stays closed until the pointer moves away from the edge. `sidebar-peek-ui` failed on every run because of this.
 - Code: `FolderPanel.tsx` (1,207 → 670 lines) and `BrowseWorkspace.tsx` (1,095 → about 900 lines) are split: website import, field inputs and the Images tab, and the path bar, card grid, card display saving and table columns now live in their own files; row sorting is `sortRows` in `shared/browse.ts` with its own test. Behaviour is unchanged.
