@@ -632,6 +632,13 @@ export function EditorInspector(props: EditorInspectorProps) {
                   key={selectedCell.cellId}
                   cell={selectedCell}
                   updateCell={updateCell}
+                  saved={draft.stylePresets}
+                  onSaved={(stylePresets) =>
+                    change({
+                      ...draft,
+                      stylePresets: stylePresets.length ? stylePresets : undefined,
+                    })
+                  }
                   extra={
                     <>
                       {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) && (

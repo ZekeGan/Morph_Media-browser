@@ -1,9 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cellField } from '../shared/cells'
-import { addCommonFields, rowCells } from '../shared/layouts'
+import { columnValue, fallbackColumns, sortRows } from '../shared/browse'
+import { addCommonFields, extremePreviewRow, rowCells } from '../shared/layouts'
 import {
   cellsWithoutField,
+  fieldValue,
   validateProject,
   type Cell,
   type FolderRow,
@@ -255,4 +257,53 @@ test('common fields are added with matching cells, skipping names already in use
   const again = addCommonFields({ ...next, cells: [] } as Project, names)
   assert.equal(again.fieldBindings.length, 4, 'existing names are not duplicated')
   assert.equal(again.cells.length, 0)
+})
+
+test('a component with fallback fields gets a table column that shows and sorts by its first filled field', () => {
+  const project: Project = {
+    ...modelProject(),
+    cells: [cell(), cell({ cellId: 'plain', fallbackIds: undefined })],
+  }
+  assert.deepEqual(fallbackColumns(project), [{ id: 'cell:c', attributeId: 'steam' }])
+  const rows = [
+    { ...row({ dlsite: 'B title' }), rowId: 'b', name: 'b' },
+    { ...row({ steam: 'A title' }), rowId: 'a', name: 'a' },
+    { ...row({}), rowId: 'z', name: 'z' },
+  ] as FolderRow[]
+  assert.equal(columnValue(project, rows[0], 'cell:c'), 'B title', 'falls back to DLsite')
+  assert.equal(
+    columnValue(project, rows[1], 'steam'),
+    'A title',
+    'plain field columns are unchanged'
+  )
+  const sorted = sortRows(rows, { field: 'cell:c', asc: true }, 'en', (r, id) =>
+    columnValue(project, r, id)
+  )
+  assert.deepEqual(
+    sorted.map((r) => r.rowId),
+    ['a', 'b', 'z'],
+    'an empty chain goes last'
+  )
+})
+
+test("the editor preview can use each field's longest or shortest value across folders", () => {
+  const fields = [
+    { attributeId: 'title', alias: 'Title', type: 'string' },
+    { attributeId: 'tags', alias: 'Tags', type: 'tags' },
+  ] as Project['fieldBindings']
+  const make = (name: string, values: Record<string, unknown>) =>
+    ({ ...row(values), rowId: name, name, path: 'C:/lib/' + name }) as FolderRow
+  const rows = [
+    make('a', { title: 'Short', tags: ['x', 'y', 'z'] }),
+    make('a much longer folder', { title: 'A very long title indeed', tags: ['x'] }),
+    make('c', { title: '' }),
+  ]
+  const longest = extremePreviewRow(rows, fields, 'longest')!
+  assert.equal(fieldValue(longest, 'title'), 'A very long title indeed')
+  assert.deepEqual(fieldValue(longest, 'tags'), ['x', 'y', 'z'])
+  assert.equal(longest.name, 'a much longer folder')
+  const shortest = extremePreviewRow(rows, fields, 'shortest')!
+  assert.equal(fieldValue(shortest, 'title'), 'Short', 'an empty value is never the shortest')
+  assert.deepEqual(fieldValue(shortest, 'tags'), ['x'])
+  assert.equal(shortest.name, 'a')
 })

@@ -67,8 +67,7 @@ export function VideoViewer({
   const [subtitleSection, setSubtitleSection] = useState<string | null>(null),
     [audioDragging, setAudioDragging] = useState(false),
     [menuOpen, setMenuOpen] = useState(false),
-    [subtitleExpanded, setSubtitleExpanded] = useState(false),
-    [nextSaving, setNextSaving] = useState(false)
+    [subtitleExpanded, setSubtitleExpanded] = useState(false)
 
   const [paused, setPaused] = useState(true),
     [time, setTime] = useState(0),
@@ -313,19 +312,6 @@ export function VideoViewer({
       if (mounted.current) showControls()
     } catch (reason) {
       if (mounted.current) setError(tr('全螢幕切換失敗：') + String(reason))
-    }
-  }
-
-  const changePlaybackPreference = async (change: () => Promise<boolean>) => {
-    if (nextSaving || busy) return
-
-    countdown()
-    setNextSaving(true)
-
-    try {
-      await change()
-    } finally {
-      if (mounted.current) setNextSaving(false)
     }
   }
 
@@ -804,7 +790,6 @@ export function VideoViewer({
               const next = videos[index + 1]
               if (
                 autoNext &&
-                !nextSaving &&
                 !menuOpen &&
                 !(!background && document.hidden) &&
                 windowVisible.current &&
@@ -896,9 +881,6 @@ export function VideoViewer({
           panelHeight={Math.max(80, Math.min(440, stageSize.height - controlHeight - 20))}
           panelWidth={Math.max(200, Math.min(360, stageSize.width - 24))}
           interacting={setAudioDragging}
-          showAutoplay={!hideStrip}
-          autoplay={autoplay}
-          autoplayToggle={() => void changePlaybackPreference(() => changeAutoplay(!autoplay))}
           visible={controlsVisible}
           paused={paused}
           time={time}
@@ -908,8 +890,6 @@ export function VideoViewer({
           muted={audio.muted}
           rate={rate}
           audioReady={audio.ready}
-          autoNext={autoNext}
-          nextSaving={nextSaving || busy}
           fullscreen={fullscreen}
           canPrevious={index > 0}
           canNext={index >= 0 && index < videos.length - 1}
@@ -925,7 +905,6 @@ export function VideoViewer({
           seek={seek}
           audio={changeAudio}
           speed={changeRate}
-          nextToggle={() => void changePlaybackPreference(() => changeAutoNext(!autoNext))}
           previous={() => {
             const previous = videos[index - 1]
             if (previous) selectVideo(previous)

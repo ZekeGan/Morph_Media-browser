@@ -83,6 +83,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 | `fieldBindings` | 專案的欄位清單：`{ alias, attributeId, type, options?, optionColors? }` |
 | `cells` | 預設卡片版面：組件陣列，見下 |
 | `layoutPresets`、`activeLayoutId`、`folderLayouts` | 多個命名版面、目前使用的版面、各資料夾指定的版面 |
+| `stylePresets`（選用，**暫定**） | 此專案的命名樣式：`{ id, name, style }`，最多 20 個、名稱不分大小寫不可重複；`style` 與組件的 `style` 同規則。畫面查收通過前可能改名或調整 |
 | `contentCells` | 依內容類型的右側版面 |
 | `actionTemplates` | 遊戲動作版型 `{ id, label, kind, color }` |
 | `list`、`cardView`、`excludedRelativePaths`、`scanAll`、`traversal` | 列表、顯示範圍、排除與掃描設定 |

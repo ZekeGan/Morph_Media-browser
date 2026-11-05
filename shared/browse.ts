@@ -1,4 +1,5 @@
 import { fieldValue, type FolderRow, type Project } from './model'
+import { cellField } from './cells'
 import type { BrowseMode } from './explorer'
 export const pathKey = (p: string) => p.replace(/\\/g, '/').replace(/\/$/, '').toLocaleLowerCase()
 export const parentPath = (p: string) => p.replace(/[\\/][^\\/]+[\\/]?$/, '')
@@ -95,7 +96,12 @@ export function visibleTreeRows(rows: FolderRow[], collapsed: string[]) {
 }
 
 // Sorts by name, path, depth or a field; empty values go last, ties keep a stable order by row identity.
-export function sortRows(rows: FolderRow[], sort: { field: string; asc: boolean }, locale: string) {
+export function sortRows(
+  rows: FolderRow[],
+  sort: { field: string; asc: boolean },
+  locale: string,
+  value: (row: FolderRow, field: string) => unknown = fieldValue
+) {
   const get = (r: FolderRow) =>
     sort.field === 'name'
       ? r.name
@@ -103,7 +109,7 @@ export function sortRows(rows: FolderRow[], sort: { field: string; asc: boolean 
         ? r.path
         : sort.field === 'depth'
           ? r.depth
-          : fieldValue(r, sort.field)
+          : value(r, sort.field)
   return [...rows].sort((a, b) => {
     const av = get(a),
       bv = get(b)
@@ -116,4 +122,18 @@ export function sortRows(rows: FolderRow[], sort: { field: string; asc: boolean 
       a.rowId.localeCompare(b.rowId)
     )
   })
+}
+
+// A card component with fallback fields also gets a table column: it shows, and sorts by, the first field in the
+// component's order that has a value (so a title from DLsite fills in where the Steam title is missing).
+const FALLBACK_COLUMN = 'cell:'
+export function fallbackColumns(project: Project) {
+  return project.cells
+    .filter((cell) => cell.attributeId && cell.fallbackIds?.length)
+    .map((cell) => ({ id: FALLBACK_COLUMN + cell.cellId, attributeId: cell.attributeId! }))
+}
+export function columnValue(project: Project, row: FolderRow, id: string): unknown {
+  if (!id.startsWith(FALLBACK_COLUMN)) return fieldValue(row, id)
+  const cell = project.cells.find((c) => FALLBACK_COLUMN + c.cellId === id)
+  return cell ? cellField(cell, row).value : undefined
 }

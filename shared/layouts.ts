@@ -1,4 +1,4 @@
-import type { Cell, FolderRow, Project } from './model'
+import { fieldValue, type Attribute, type Cell, type FolderRow, type Project } from './model'
 import { effectiveKind } from './kind'
 export function projectImageCells(project: Project): Cell[] {
   return [
@@ -241,4 +241,53 @@ export function addCommonFields(project: Project, names: CommonFieldNames): Proj
     y += 1
   }
   return { ...project, fieldBindings: bindings, cells }
+}
+
+// Editor preview with the longest (or shortest non-empty) value of every field across the folders, plus the longest
+// or shortest name and path, so a layout can be checked against its worst case instead of one chosen folder.
+export type PreviewExtreme = 'longest' | 'shortest'
+const sizeOf = (value: unknown) =>
+  Array.isArray(value)
+    ? value.map(String).join('、').length
+    : value == null || value === ''
+      ? 0
+      : String(value).length
+export function extremePreviewRow(
+  rows: FolderRow[],
+  fields: Project['fieldBindings'],
+  mode: PreviewExtreme
+): FolderRow | undefined {
+  const base = rows.find((row) => row.record)
+  if (!base?.record) return undefined
+  const better = (a: number, b: number) => (mode === 'longest' ? a > b : a < b)
+  const pick = <T>(items: T[], size: (item: T) => number) =>
+    items
+      .filter((item) => size(item) > 0)
+      .reduce<T | undefined>(
+        (best, item) => (!best || better(size(item), size(best)) ? item : best),
+        undefined
+      )
+  const attributes: Attribute[] = fields.flatMap((field) => {
+    const value = pick(
+      rows.map((row) => fieldValue(row, field.attributeId)),
+      sizeOf
+    )
+    return value === undefined
+      ? []
+      : [
+          {
+            attributeId: field.attributeId,
+            key: field.alias,
+            type: field.type,
+            value,
+            source: 'manual',
+          },
+        ]
+  })
+  return {
+    ...base,
+    name: pick(rows, (row) => row.name.length)?.name ?? base.name,
+    path: pick(rows, (row) => row.path.length)?.path ?? base.path,
+    record: { ...base.record, attributes, projectOverrides: {} },
+  }
 }

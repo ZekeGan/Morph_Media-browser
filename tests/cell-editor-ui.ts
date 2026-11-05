@@ -59,6 +59,14 @@ const cells: Cell[] = [
     grid: { x: 0, y: 3, w: 12, h: 1 },
     style,
   },
+  // Deliberately too narrow for its text: the editor marks it as cut off.
+  {
+    cellId: 'overflow',
+    kind: 'static-text',
+    text: 'This layout text is far too long to fit into such a narrow component on the card',
+    grid: { x: 0, y: 5, w: 2, h: 1 },
+    style,
+  },
   {
     cellId: 'condition',
     kind: 'static-text',
@@ -260,6 +268,18 @@ try {
   await app.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].setBounds({ width: 1500, height: 900 })
   )
+  // A component whose content is cut off is outlined; selecting it offers quick fixes, and scrolling clears it.
+  await page
+    .locator('.editor-cell.cell-overflow[data-cell-id="overflow"]')
+    .waitFor({ state: 'attached' })
+  await page.locator('.editor-cell[data-cell-id="overflow"]').click()
+  await page
+    .locator('.cell-overflow-fix')
+    .getByRole('button', { name: '內容多時可捲動', exact: true })
+    .click()
+  await page
+    .locator('.editor-cell.cell-overflow[data-cell-id="overflow"]')
+    .waitFor({ state: 'detached' })
   await page.locator('.editor-cell').first().click()
   await page.getByRole('textbox', { name: '顯示方式', exact: true }).click()
   await page.getByRole('option', { name: '進度', exact: true }).click()

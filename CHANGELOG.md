@@ -17,6 +17,10 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Table: a card component with fallback fields gets its own column, "<field> (with fallbacks)", which shows and sorts by the first field in the component's order that has a value.
+- Layout editor: the preview can use "Longest value of each field" or "Shortest value of each field" across all folders. Components whose content is cut off are outlined in orange, and selecting one offers quick fixes (wrap, scroll when long, one row taller).
+- Layout editor: a component's whole style can be saved by name ("Save as style…") and applied to other components of the same project from the style menu; saved with the layout, up to 20, not shared across projects. New optional `stylePresets` field in the project record (provisional).
+- Video player: the "autoplay on entering a folder" and "play next" switches, which no longer did anything, are gone from the settings panel.
 - Licensing documents: consolidate the licence, brand rules and third-party notice into LICENSE; shorten the three README summaries and contribution terms, and remove NOTICE.md and TRADEMARK.md from the repository and packaging.
 - Documentation: every spec now opens with a "last confirmed" date and its code and test entry points, and states only current rules: dated notes, version tags, "first round / later" plans and old research were rewritten or removed (the video spec lost its player-selection history and the cancelled clip-preview section). Found while checking: the video settings panel still shows two switches (autoplay on entering a folder, play next) that no longer do anything — logged as R-216.
 - Documentation: the workspace spec is split in two — the frame, the three modes and the right panel stay in WORKSPACE_REVISION, while the file overview, hidden files and the unified media page move to MEDIA_WORKSPACE; dated notes in them are rewritten as current rules and all links follow the move.

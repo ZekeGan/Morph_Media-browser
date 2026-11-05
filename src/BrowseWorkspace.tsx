@@ -26,7 +26,14 @@ import { useTableColumns } from './useTableColumns'
 import { FolderTable } from './FolderTable'
 import { KindBatchBar } from './KindBatchBar'
 import { cardPresets } from '../shared/layouts'
-import { browserRows, folderBreadcrumbs, maxBrowseDepth, pathKey, sortRows } from '../shared/browse'
+import {
+  browserRows,
+  columnValue,
+  folderBreadcrumbs,
+  maxBrowseDepth,
+  pathKey,
+  sortRows,
+} from '../shared/browse'
 import type { FolderRow, Project, Request, Response } from '../shared/model'
 import type { BrowseMode, BrowseState, ExplorerRequest, ExplorerResponse } from '../shared/explorer'
 const FolderPanel = lazy(() => import('./FolderPanel').then((m) => ({ default: m.FolderPanel })))
@@ -230,7 +237,11 @@ export function BrowseWorkspace({
       ).filter((row) => !boundariesOnly || browse.mode === 'TREE' || isGameFolder(row)),
     [all, project, root, browse.mode, location, display, density, boundariesOnly]
   )
-  const filtered = useMemo(() => sortRows(base, sort, currentLocale()), [base, sort, locale])
+  const valueOf = (row: FolderRow, id: string) => columnValue(project, row, id)
+  const filtered = useMemo(
+    () => sortRows(base, sort, currentLocale(), valueOf),
+    [base, sort, locale, project.cells]
+  )
   const pageSize = browse.mode === 'CARD' ? liveList.pageSize : 100,
     pages = Math.max(1, Math.ceil(filtered.length / pageSize)),
     current = filtered.slice(
@@ -817,6 +828,7 @@ export function BrowseWorkspace({
               busy={busy}
               dragColumn={dragColumn}
               draggingColumn={draggingColumn}
+              valueOf={valueOf}
               setDragColumn={setDragColumn}
               columnDrop={columnDrop}
               setColumnDrop={setColumnDrop}

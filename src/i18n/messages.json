@@ -2831,12 +2831,6 @@
     "en": "Load subtitles",
     "es": "Cargar subtítulos"
   },
-  "播完接下一部": {
-    "ja": "終了後に次の動画を再生",
-    "zh-CN": "播完接下一部",
-    "en": "Play next automatically",
-    "es": "Reproducir el siguiente automáticamente"
-  },
   "開啟": {
     "ja": "オン",
     "zh-CN": "开启",
@@ -2932,12 +2926,6 @@
     "zh-CN": "关闭播放设置",
     "en": "Close playback settings",
     "es": "Cerrar ajustes de reproducción"
-  },
-  "進入資料夾時自動播放": {
-    "ja": "フォルダーを開いたときに自動再生",
-    "zh-CN": "进入文件夹时自动播放",
-    "en": "Autoplay when opening a folder",
-    "es": "Reproducir al abrir una carpeta"
   },
   "字幕來源": {
     "ja": "字幕ソース",
@@ -6592,5 +6580,107 @@
     "en": "Please update the app. Until then it can only be viewed; nothing is written, restored or cleaned up.",
     "ja": "アプリを更新してください。それまでは表示のみで、書き込み・復元・削除は行いません。",
     "es": "Actualiza la aplicación. Hasta entonces solo se puede ver; no se escribe, restaura ni limpia nada."
+  },
+  "{0}（含備用）": {
+    "zh-CN": "{0}（含备用）",
+    "en": "{0} (with fallbacks)",
+    "ja": "{0}（予備を含む）",
+    "es": "{0} (con alternativos)"
+  },
+  "各欄位最長的資料": {
+    "zh-CN": "各字段最长的数据",
+    "en": "Longest value of each field",
+    "ja": "各フィールドの最長データ",
+    "es": "Valor más largo de cada campo"
+  },
+  "各欄位最短的資料": {
+    "zh-CN": "各字段最短的数据",
+    "en": "Shortest value of each field",
+    "ja": "各フィールドの最短データ",
+    "es": "Valor más corto de cada campo"
+  },
+  "這個組件的內容在預覽中被截掉": {
+    "zh-CN": "这个组件的内容在预览中被截断",
+    "en": "This component's content is cut off in the preview",
+    "ja": "このコンポーネントの内容はプレビューで切れています",
+    "es": "El contenido de este componente se corta en la vista previa"
+  },
+  "加高一格": {
+    "zh-CN": "加高一格",
+    "en": "One row taller",
+    "ja": "1 マス高くする",
+    "es": "Una fila más alto"
+  },
+  "{0} 個組件在預覽中被截掉（橘框），點選組件可快速處理": {
+    "zh-CN": "{0} 个组件在预览中被截断（橙框），点选组件可快速处理",
+    "en": "{0} components are cut off in the preview (orange outline); select one for quick fixes",
+    "ja": "{0} 個のコンポーネントがプレビューで切れています（オレンジ枠）。選択するとすぐに直せます",
+    "es": "{0} componentes se cortan en la vista previa (borde naranja); selecciona uno para corregirlo"
+  },
+  "內容被截掉": {
+    "zh-CN": "内容被截断",
+    "en": "Content is cut off",
+    "ja": "内容が切れています",
+    "es": "El contenido se corta"
+  },
+  "內建": {
+    "zh-CN": "内置",
+    "en": "Built-in",
+    "ja": "組み込み",
+    "es": "Predefinidos"
+  },
+  "此專案的樣式": {
+    "zh-CN": "此项目的样式",
+    "en": "This project's styles",
+    "ja": "このプロジェクトのスタイル",
+    "es": "Estilos de este proyecto"
+  },
+  "最多 20 個自訂樣式": {
+    "zh-CN": "最多 20 个自定义样式",
+    "en": "Up to 20 custom styles",
+    "ja": "カスタムスタイルは最大 20 個",
+    "es": "Hasta 20 estilos personalizados"
+  },
+  "存成樣式…": {
+    "zh-CN": "存为样式…",
+    "en": "Save as style…",
+    "ja": "スタイルとして保存…",
+    "es": "Guardar como estilo…"
+  },
+  "樣式名稱": {
+    "zh-CN": "样式名称",
+    "en": "Style name",
+    "ja": "スタイル名",
+    "es": "Nombre del estilo"
+  },
+  "已有同名的樣式": {
+    "zh-CN": "已有同名的样式",
+    "en": "A style with this name already exists",
+    "ja": "同じ名前のスタイルがあります",
+    "es": "Ya existe un estilo con este nombre"
+  },
+  "只存在這個專案，套用時會取代組件的整個樣式。": {
+    "zh-CN": "只保存在这个项目，套用时会取代组件的整个样式。",
+    "en": "Kept in this project only; applying it replaces the component's whole style.",
+    "ja": "このプロジェクトだけに保存されます。適用するとコンポーネントのスタイル全体が置き換わります。",
+    "es": "Solo se guarda en este proyecto; al aplicarlo reemplaza todo el estilo del componente."
+  },
+  "儲存樣式": {
+    "zh-CN": "保存样式",
+    "en": "Save style",
+    "ja": "スタイルを保存",
+    "es": "Guardar estilo"
+  },
+  "刪除樣式…": {
+    "zh-CN": "删除样式…",
+    "en": "Delete style…",
+    "ja": "スタイルを削除…",
+    "es": "Eliminar estilo…"
+  },
+  "換行": {
+    "zh-CN": "换行",
+    "en": "Wrap text",
+    "ja": "折り返す",
+    "es": "Ajustar texto"
   }
 }

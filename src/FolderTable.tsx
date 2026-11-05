@@ -9,7 +9,7 @@ import {
 import { t as tr } from './i18n'
 import { Icon } from './icons'
 import { BoundaryFlag } from './BoundaryFlag'
-import { fieldValue, type FolderRow } from '../shared/model'
+import type { FolderRow } from '../shared/model'
 import type { BrowseState } from '../shared/explorer'
 
 // The folders TABLE view: sortable, draggable and resizable columns, one row per folder.
@@ -22,6 +22,7 @@ export function FolderTable({
   busy,
   dragColumn,
   draggingColumn,
+  valueOf,
   setDragColumn,
   columnDrop,
   setColumnDrop,
@@ -48,6 +49,8 @@ export function FolderTable({
   dragColumn: string
   // The column being dragged, read at once (state may lag one render behind dragover).
   draggingColumn: () => string
+  // A row's value in a column (a field, or a card component's fallback chain).
+  valueOf: (row: FolderRow, columnId: string) => unknown
   setDragColumn: (id: string) => void
   columnDrop?: { id: string; after: boolean }
   setColumnDrop: Dispatch<SetStateAction<{ id: string; after: boolean } | undefined>>
@@ -251,16 +254,16 @@ export function FolderTable({
                     r.path
                   ) : c.id === 'depth' ? (
                     r.depth
-                  ) : Array.isArray(fieldValue(r, c.id)) ? (
-                    (fieldValue(r, c.id) as unknown[]).join(', ')
-                  ) : typeof fieldValue(r, c.id) === 'boolean' ? (
-                    fieldValue(r, c.id) ? (
+                  ) : Array.isArray(valueOf(r, c.id)) ? (
+                    (valueOf(r, c.id) as unknown[]).join(', ')
+                  ) : typeof valueOf(r, c.id) === 'boolean' ? (
+                    valueOf(r, c.id) ? (
                       tr('是')
                     ) : (
                       tr('否')
                     )
                   ) : (
-                    String(fieldValue(r, c.id) ?? '')
+                    String(valueOf(r, c.id) ?? '')
                   )}
                 </td>
               ))}

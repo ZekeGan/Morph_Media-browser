@@ -132,6 +132,8 @@ export interface Project {
   contentCells?: Record<string, Cell[]>
   actionTemplates?: ActionTemplate[]
   layoutPresets?: { id: string; name: string; cells: Cell[] }[]
+  // Styles saved by name in this project (R-208, provisional): applied to a component they replace its whole style.
+  stylePresets?: { id: string; name: string; style: Cell['style'] }[]
   activeLayoutId?: string
   folderLayouts?: Record<string, string>
   // Card layout preset applied to every folder of a kind (book, game, media, general) unless the folder picks its own.
@@ -431,27 +433,33 @@ function validCell(c: unknown): boolean {
     integer(c.grid.h, 1, 100) &&
     c.grid.x + c.grid.w <= 12 &&
     c.grid.y + c.grid.h <= 100 &&
-    obj(c.style) &&
-    /^#[0-9a-f]{6}$/i.test(c.style.textColor) &&
-    (c.style.backgroundColor === 'transparent' ||
-      /^#[0-9a-f]{6}$/i.test(c.style.backgroundColor)) &&
-    (c.style.fontSize === undefined ||
-      ['xsmall', 'small', 'medium', 'large', 'xlarge'].includes(c.style.fontSize)) &&
-    (c.style.align === undefined || ['left', 'center', 'right'].includes(c.style.align)) &&
-    (c.style.valign === undefined || ['top', 'center', 'bottom'].includes(c.style.valign)) &&
-    (c.style.weight === undefined || ['light', 'normal', 'bold'].includes(c.style.weight)) &&
-    ['italic', 'underline', 'strike'].every(
-      (flag) => c.style[flag] === undefined || typeof c.style[flag] === 'boolean'
-    ) &&
-    (c.style.lineHeight === undefined || ['tight', 'loose'].includes(c.style.lineHeight)) &&
-    (c.style.letterSpacing === undefined || c.style.letterSpacing === 'wide') &&
-    (c.style.padding === undefined || ['compact', 'roomy'].includes(c.style.padding)) &&
-    (c.style.radius === undefined || ['small', 'large'].includes(c.style.radius)) &&
-    (c.style.borderColor === undefined || /^#[0-9a-f]{6}$/i.test(c.style.borderColor)) &&
-    (c.style.borderWidth === undefined || ['thin', 'thick'].includes(c.style.borderWidth)) &&
-    (c.style.opacity === undefined || ['soft', 'faint'].includes(c.style.opacity)) &&
+    validStyle(c.style) &&
     (c.tagColors === undefined || (c.tagColors === 'namespace' && c.kind === 'field-tags')) &&
     (c.tagPrefix === undefined || (typeof c.tagPrefix === 'boolean' && c.kind === 'field-tags'))
+  )
+}
+
+// A component style: shared by cells and the project's saved styles.
+function validStyle(style: any): boolean {
+  return (
+    obj(style) &&
+    /^#[0-9a-f]{6}$/i.test(style.textColor) &&
+    (style.backgroundColor === 'transparent' || /^#[0-9a-f]{6}$/i.test(style.backgroundColor)) &&
+    (style.fontSize === undefined ||
+      ['xsmall', 'small', 'medium', 'large', 'xlarge'].includes(style.fontSize)) &&
+    (style.align === undefined || ['left', 'center', 'right'].includes(style.align)) &&
+    (style.valign === undefined || ['top', 'center', 'bottom'].includes(style.valign)) &&
+    (style.weight === undefined || ['light', 'normal', 'bold'].includes(style.weight)) &&
+    ['italic', 'underline', 'strike'].every(
+      (flag) => style[flag] === undefined || typeof style[flag] === 'boolean'
+    ) &&
+    (style.lineHeight === undefined || ['tight', 'loose'].includes(style.lineHeight)) &&
+    (style.letterSpacing === undefined || style.letterSpacing === 'wide') &&
+    (style.padding === undefined || ['compact', 'roomy'].includes(style.padding)) &&
+    (style.radius === undefined || ['small', 'large'].includes(style.radius)) &&
+    (style.borderColor === undefined || /^#[0-9a-f]{6}$/i.test(style.borderColor)) &&
+    (style.borderWidth === undefined || ['thin', 'thick'].includes(style.borderWidth)) &&
+    (style.opacity === undefined || ['soft', 'faint'].includes(style.opacity))
   )
 }
 
@@ -689,6 +697,21 @@ export function validateProject(v: unknown): asserts v is Project {
       ))
   )
     throw new Error('類型版面指定不合法')
+  if (
+    v.stylePresets !== undefined &&
+    (!Array.isArray(v.stylePresets) ||
+      v.stylePresets.length > 20 ||
+      new Set(v.stylePresets.map((p) => p?.id)).size !== v.stylePresets.length ||
+      new Set(
+        v.stylePresets.map((p) =>
+          typeof p?.name === 'string' ? p.name.trim().toLocaleLowerCase() : p
+        )
+      ).size !== v.stylePresets.length ||
+      !v.stylePresets.every(
+        (p) => obj(p) && id(p.id) && text(p.name, 40) && p.name.trim() && validStyle(p.style)
+      ))
+  )
+    throw new Error('自訂樣式不合法或名稱重複')
   if (v.layoutPresets !== undefined) {
     if (
       !Array.isArray(v.layoutPresets) ||

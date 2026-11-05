@@ -333,3 +333,5 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .backup-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; flex-wrap: wrap; }
 .backup-row + .backup-row { border-top: 1px solid var(--line); }
 .backup-row-text { min-width: 0; }
+/* A component whose content is cut off in the current preview (R-207); the selected one keeps the accent outline. */
+.editor-cell.cell-overflow:not(.selected) { outline:2px dashed var(--warning); outline-offset:-2px; }

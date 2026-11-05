@@ -527,9 +527,11 @@ async function runGroup(group: Group, fixture: string) {
     await page.locator('video').evaluate((element) => (element as HTMLVideoElement).pause())
 
     await openSettings()
+    // Autoplay and play-next are not player settings any more (play-next belongs to the play queue).
+    assert.equal(await settingsPanel.getByRole('switch', { name: '播完接下一部' }).count(), 0) // ui-names: ignore (must be absent)
     assert.equal(
-      await settingsPanel.getByRole('switch', { name: '播完接下一部', exact: true }).isChecked(),
-      false
+      await settingsPanel.getByRole('switch', { name: '進入資料夾時自動播放' }).count(), // ui-names: ignore (must be absent)
+      0
     )
     await settingsPanel.getByRole('button', { name: '關閉播放設定', exact: true }).click()
     await settingsPanel.waitFor({ state: 'hidden' })

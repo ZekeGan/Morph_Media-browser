@@ -6,15 +6,18 @@ import {
   Collapse,
   ColorInput,
   Group,
+  Menu,
+  Popover,
   SegmentedControl,
   Select,
   Stack,
   Text,
+  TextInput,
   Tooltip,
 } from '@mantine/core'
 import { Icon } from './icons'
 import { t as tr } from './i18n'
-import type { Cell } from '../shared/model'
+import type { Cell, Project } from '../shared/model'
 
 type Style = Cell['style']
 const advancedKeys: (keyof Style)[] = [
@@ -80,11 +83,29 @@ export function CellStyleEditor({
   cell,
   updateCell,
   extra,
+  saved = [],
+  onSaved,
 }: {
   cell: Cell
   updateCell: (update: Partial<Cell>) => void
   extra?: ReactNode
+  // This project's own named styles; changing them edits the layout draft, saved with the layout.
+  saved?: NonNullable<Project['stylePresets']>
+  onSaved?: (presets: NonNullable<Project['stylePresets']>) => void
 }) {
+  const [naming, setNaming] = useState(false),
+    [name, setName] = useState('')
+  const trimmed = name.trim(),
+    duplicate = saved.some((p) => p.name.trim().toLocaleLowerCase() === trimmed.toLocaleLowerCase())
+  const saveCurrent = () => {
+    if (!onSaved || !trimmed || duplicate || saved.length >= 20) return
+    onSaved([
+      ...saved,
+      { id: crypto.randomUUID(), name: trimmed, style: structuredClone(cell.style) },
+    ])
+    setName('')
+    setNaming(false)
+  }
   const style = cell.style,
     [more, setMore] = useState(() => advancedKeys.some((key) => style[key] !== undefined))
   const patch = (changes: Partial<Style>) => {
@@ -107,19 +128,105 @@ export function CellStyleEditor({
         placeholder={tr('套用預設樣式…')}
         value={null}
         data={[
-          { value: 'title', label: tr('標題') },
-          { value: 'note', label: tr('次要說明') },
-          { value: 'highlight', label: tr('強調') },
-          { value: 'reset', label: tr('清除樣式（保留顏色）') },
+          {
+            group: tr('內建'),
+            items: [
+              { value: 'title', label: tr('標題') },
+              { value: 'note', label: tr('次要說明') },
+              { value: 'highlight', label: tr('強調') },
+              { value: 'reset', label: tr('清除樣式（保留顏色）') },
+            ],
+          },
+          ...(saved.length
+            ? [
+                {
+                  group: tr('此專案的樣式'),
+                  items: saved.map((p) => ({ value: 'saved:' + p.id, label: p.name })),
+                },
+              ]
+            : []),
         ]}
         onChange={(value) => {
           if (!value) return
+          // A saved style replaces the whole look, colours included.
+          const own = saved.find((p) => 'saved:' + p.id === value)
+          if (own) {
+            updateCell({ style: structuredClone(own.style) })
+            return
+          }
           const { textColor, backgroundColor } = style
           updateCell({
             style: { textColor, backgroundColor, ...(value === 'reset' ? {} : presets[value]) },
           })
         }}
       />
+      {onSaved && (
+        <Group gap="xs">
+          <Popover
+            opened={naming}
+            onChange={setNaming}
+            position="bottom-start"
+            withinPortal
+            trapFocus
+          >
+            <Popover.Target>
+              <Button
+                size="compact-xs"
+                variant="default"
+                disabled={saved.length >= 20}
+                title={saved.length >= 20 ? tr('最多 20 個自訂樣式') : undefined}
+                onClick={() => setNaming((open) => !open)}
+              >
+                {tr('存成樣式…')}
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Stack gap="xs" w={220}>
+                <TextInput
+                  size="xs"
+                  label={tr('樣式名稱')}
+                  maxLength={40}
+                  value={name}
+                  error={duplicate ? tr('已有同名的樣式') : undefined}
+                  onChange={(event) => setName(event.currentTarget.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault()
+                      saveCurrent()
+                    }
+                  }}
+                />
+                <Text size="xs" c="dimmed">
+                  {tr('只存在這個專案，套用時會取代組件的整個樣式。')}
+                </Text>
+                <Button size="xs" disabled={!trimmed || duplicate} onClick={saveCurrent}>
+                  {tr('儲存樣式')}
+                </Button>
+              </Stack>
+            </Popover.Dropdown>
+          </Popover>
+          {saved.length > 0 && (
+            <Menu position="bottom-start" withinPortal>
+              <Menu.Target>
+                <Button size="compact-xs" variant="subtle" color="gray">
+                  {tr('刪除樣式…')}
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {saved.map((p) => (
+                  <Menu.Item
+                    key={p.id}
+                    color="red"
+                    onClick={() => onSaved(saved.filter((other) => other.id !== p.id))}
+                  >
+                    {p.name}
+                  </Menu.Item>
+                ))}
+              </Menu.Dropdown>
+            </Menu>
+          )}
+        </Group>
+      )}
       <Segments
         label={tr('字級')}
         value={style.fontSize}

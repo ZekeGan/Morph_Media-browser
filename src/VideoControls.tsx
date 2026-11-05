@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
-import { Popover, Switch } from '@mantine/core'
+import { Popover } from '@mantine/core'
 import { Icon, type IconName } from './icons'
 import { t as tr, useLocale } from './i18n'
 
@@ -28,10 +28,6 @@ interface Props {
   rate: number
   audioReady: boolean
 
-  autoNext: boolean
-  showAutoplay?: boolean
-  autoplay: boolean
-  nextSaving: boolean
   fullscreen: boolean
   canPrevious: boolean
   canNext: boolean
@@ -43,9 +39,7 @@ interface Props {
   audio: (volume: number, muted: boolean) => void
 
   speed: (value: number) => void
-  autoplayToggle: () => void
   interacting: (value: boolean) => void
-  nextToggle: () => void
   previous: () => void
   next: () => void
   full: () => void
@@ -261,20 +255,6 @@ export function VideoControls(p: Props) {
                   <Icon name="close" size={18} />
                 </button>
               </div>
-              {p.showAutoplay !== false && (
-                <Switch
-                  label={tr('進入資料夾時自動播放')}
-                  checked={p.autoplay}
-                  disabled={p.nextSaving}
-                  onChange={p.autoplayToggle}
-                />
-              )}
-              <Switch
-                label={tr('播完接下一部')}
-                checked={p.autoNext}
-                disabled={p.nextSaving}
-                onChange={p.nextToggle}
-              />
               <label className="player-speed-label">
                 {tr('播放速度')}
                 <select

@@ -366,3 +366,20 @@ test('shortcut targets stay inside the game folder, take no arguments, and launc
     })
   )
 })
+
+test('a project keeps named styles; bad, duplicate or too many styles are rejected', () => {
+  const style = { textColor: '#ffffff', backgroundColor: 'transparent', weight: 'bold' as const }
+  const project = (stylePresets: unknown) => ({ ...modelProject(), stylePresets })
+  validateProject(project([{ id: 'a', name: 'Title', style }]))
+  validateProject(project(undefined))
+  for (const bad of [
+    [
+      { id: 'a', name: 'Title', style },
+      { id: 'b', name: ' title ', style },
+    ],
+    [{ id: 'a', name: 'Title', style: { ...style, textColor: 'red' } }],
+    [{ id: 'a', name: '   ', style }],
+    Array.from({ length: 21 }, (_, i) => ({ id: 'p' + i, name: 'S' + i, style })),
+  ])
+    assert.throws(() => validateProject(project(bad)), /自訂樣式不合法或名稱重複/)
+})

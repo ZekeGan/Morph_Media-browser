@@ -42,10 +42,13 @@ import {
   renamePreset,
   removePreset,
   addCommonFields,
+  extremePreviewRow,
 } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
 import { isGameFolder } from '../shared/media'
 
+// Preview choices that are not a folder (row ids are hashes, so these cannot collide).
+const EXTREME = { longest: 'extreme:longest', shortest: 'extreme:shortest' }
 export function Editor({
   project,
   rows,
@@ -252,10 +255,41 @@ export function Editor({
     }),
     [containerRef]
   )
+  const extremePreview = useMemo(
+    () =>
+      previewId === EXTREME.longest || previewId === EXTREME.shortest
+        ? extremePreviewRow(
+            rows,
+            draft.fieldBindings,
+            previewId === EXTREME.longest ? 'longest' : 'shortest'
+          )
+        : undefined,
+    [previewId, rows, draft.fieldBindings]
+  )
+  // Components whose content is cut off in the current preview (hidden overflow; scrolling cells are fine).
+  const [overflowing, setOverflowing] = useState<string[]>([])
+  useLayoutEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const canvas = containerRef.current
+      if (!canvas) return
+      const cut = (node: HTMLElement) => {
+        const style = getComputedStyle(node)
+        return (
+          (node.scrollWidth > node.clientWidth + 1 && /hidden|clip/.test(style.overflowX)) ||
+          (node.scrollHeight > node.clientHeight + 1 && /hidden|clip/.test(style.overflowY))
+        )
+      }
+      const ids = [...canvas.querySelectorAll<HTMLElement>('.editor-cell[data-cell-id]')]
+        .filter((cell) => [cell, ...cell.querySelectorAll<HTMLElement>('*')].some(cut))
+        .map((cell) => cell.dataset.cellId!)
+      setOverflowing((now) => (now.join() === ids.join() ? now : ids))
+    })
+    return () => cancelAnimationFrame(frame)
+  })
   const level = draft.cells
   const withLevel = (cells: Cell[]): Project => ({ ...draft, cells })
   const selectedCell = level.find((c) => c.cellId === selected),
-    preview = rows.find((r) => r.rowId === previewId)
+    preview = extremePreview ?? rows.find((r) => r.rowId === previewId)
   const conditionField = draft.fieldBindings.find(
     (field) => field.attributeId === selectedCell?.condition?.attributeId
   )
@@ -868,12 +902,65 @@ export function Editor({
           <Select
             label={tr('使用真實資料預覽')}
             placeholder={tr('尚無資料夾')}
-            data={rows.map((r) => ({ value: r.rowId, label: `${r.name} · ${r.path}` }))}
+            data={[
+              ...(rows.length > 1
+                ? [
+                    { value: EXTREME.longest, label: tr('各欄位最長的資料') },
+                    { value: EXTREME.shortest, label: tr('各欄位最短的資料') },
+                  ]
+                : []),
+              ...rows.map((r) => ({ value: r.rowId, label: `${r.name} · ${r.path}` })),
+            ]}
             searchable
             value={previewId ?? null}
             onChange={(v) => setPreviewId(v ?? undefined)}
             mb="md"
           />
+          {selectedCell && overflowing.includes(selectedCell.cellId) ? (
+            <Alert color="orange" variant="light" mb="sm" className="cell-overflow-fix">
+              <Text size="sm" mb={6}>
+                {tr('這個組件的內容在預覽中被截掉')}
+              </Text>
+              <Group gap="xs">
+                {['name', 'path', 'field-text'].includes(selectedCell.kind) &&
+                  !selectedCell.wrap &&
+                  !selectedCell.scroll && (
+                    <Button
+                      size="compact-xs"
+                      variant="default"
+                      onClick={() => updateCell({ wrap: true })}
+                    >
+                      {tr('換行')}
+                    </Button>
+                  )}
+                {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) &&
+                  !selectedCell.scroll && (
+                    <Button
+                      size="compact-xs"
+                      variant="default"
+                      onClick={() => updateCell({ scroll: true })}
+                    >
+                      {tr('內容多時可捲動')}
+                    </Button>
+                  )}
+                {selectedCell.grid.y + selectedCell.grid.h < 100 && (
+                  <Button
+                    size="compact-xs"
+                    variant="default"
+                    onClick={() =>
+                      updateCell({ grid: { ...selectedCell.grid, h: selectedCell.grid.h + 1 } })
+                    }
+                  >
+                    {tr('加高一格')}
+                  </Button>
+                )}
+              </Group>
+            </Alert>
+          ) : overflowing.length ? (
+            <Text size="xs" c="dimmed" mb="sm">
+              {tr('{0} 個組件在預覽中被截掉（橘框），點選組件可快速處理', overflowing.length)}
+            </Text>
+          ) : null}
           <div ref={containerRef as React.RefObject<HTMLDivElement>} className="canvas">
             {!level.length && (
               <Stack
@@ -985,7 +1072,9 @@ export function Editor({
                   <div
                     key={cell.cellId}
                     onDragStart={(event) => event.preventDefault()}
-                    className={`editor-cell ${selected === cell.cellId ? 'selected' : ''}`}
+                    data-cell-id={cell.cellId}
+                    title={overflowing.includes(cell.cellId) ? tr('內容被截掉') : undefined}
+                    className={`editor-cell ${selected === cell.cellId ? 'selected' : ''} ${overflowing.includes(cell.cellId) ? 'cell-overflow' : ''}`}
                     style={{ ...cellColors(cell) }}
                     tabIndex={0}
                     onFocus={() => setSelected(cell.cellId)}
