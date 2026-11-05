@@ -21,7 +21,7 @@ S 編號包含區域／彈窗／覆蓋層，不是獨立頁面數量，也不是
 | S-15 | 圖片瀑布流／列表 | MediaBrowser、Gallery | [相簿](ALBUM_VIEWER_DESIGN.md) |
 | S-16 | 圖片檢視覆蓋層 | MediaViewer、Reader | [相簿](ALBUM_VIEWER_DESIGN.md) |
 | S-17 | 影片／字幕設定 | Playback、VideoViewer、Explorer | [影片](VIDEO_VIEWER_DESIGN.md) |
-| S-18 | 共用媒體瀏覽／來源分組 | MediaBrowser、Gallery | [工作區](WORKSPACE_REVISION.md#統一媒體工作區) |
-| S-19 | 跨專案影音佇列／迷你播放器 | Playback、AudioViewer、VideoViewer | [影音播放](WORKSPACE_REVISION.md#跨專案影音佇列與迷你播放器) |
+| S-18 | 共用媒體瀏覽／來源分組 | MediaBrowser、Gallery | [工作區](MEDIA_WORKSPACE.md#統一媒體工作區) |
+| S-19 | 跨專案影音佇列／迷你播放器 | Playback、AudioViewer、VideoViewer | [影音播放](MEDIA_WORKSPACE.md#跨專案影音佇列與迷你播放器) |
 
 實際檔案連結見 [架構](ARCHITECTURE.md)。原 ASCII 線框與當時狀態見 [封存原稿](history/agent-docs-before-cleanup.md#ui-screen-catalog)；不要拿舊建立順序、CARD 設定位置或點擊行為覆蓋現行工作區。

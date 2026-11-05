@@ -62,8 +62,8 @@
       "name": "右側面板與資料夾設定",
       "docs": [
         "WORKSPACE_REVISION.md#右側內容與覆蓋層",
-        "WORKSPACE_REVISION.md#右側組件共用邊界",
-        "WORKSPACE_REVISION.md#資料夾詳情"
+        "MEDIA_WORKSPACE.md#右側組件共用邊界",
+        "MEDIA_WORKSPACE.md#資料夾詳情"
       ],
       "code": [
         "src/RightPanel*",
@@ -89,7 +89,7 @@
     {
       "id": "files",
       "name": "檔案總覽、隱藏檔",
-      "docs": ["WORKSPACE_REVISION.md#檔案總覽", "WORKSPACE_REVISION.md#檔案顯示與隱藏規則"],
+      "docs": ["MEDIA_WORKSPACE.md#檔案總覽", "MEDIA_WORKSPACE.md#檔案顯示與隱藏規則"],
       "code": [
         "src/FileOverview*",
         "src/useFileVisibility*",
@@ -103,9 +103,9 @@
       "id": "media",
       "name": "統一媒體頁、播放佇列、音樂",
       "docs": [
-        "WORKSPACE_REVISION.md#統一媒體工作區",
-        "WORKSPACE_REVISION.md#跨專案影音佇列與迷你播放器",
-        "WORKSPACE_REVISION.md#音樂播放故障與選型"
+        "MEDIA_WORKSPACE.md#統一媒體工作區",
+        "MEDIA_WORKSPACE.md#跨專案影音佇列與迷你播放器",
+        "MEDIA_WORKSPACE.md#音樂播放故障與選型"
       ],
       "code": [
         "src/MediaBrowser*",
