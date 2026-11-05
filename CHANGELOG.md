@@ -17,7 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
-- Cards use only the columns their components reach, stretched across the whole card, so a layout drawn on the left half no longer leaves the right half empty (can be turned off in the layout editor). The editor canvas follows the real card width from the last time cards were shown, so a column on the canvas is as wide as on the card. New optional `trimColumns` in the project record (provisional).
+- Revert R-219 after review: cards use the fixed 12-column layout again, and the editor canvas follows its own available width. Remove the provisional `trimColumns` setting and card-width controls.
 - Layout editor: a picture that fills its frame by cropping, with proportions more than 20% off the frame, is flagged like cut-off text and offers "Show whole" or "Blur fill".
 - Tests (development only): `closeApp` answers the app's native unsaved-changes box itself; tests that left the editor unsaved used to hang the main process on it.
 - Fix: after "One row taller" the orange cut-off outline stayed until the component was dragged; the check now also runs when a component finishes resizing (the grid animates size changes).

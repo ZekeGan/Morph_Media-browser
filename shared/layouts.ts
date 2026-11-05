@@ -291,10 +291,3 @@ export function extremePreviewRow(
     record: { ...base.record, attributes, projectOverrides: {} },
   }
 }
-
-// The columns a card shows: with trimming on (the default) only up to the rightmost component, stretched over the
-// whole card, so a layout drawn on the left half does not leave the card's right half empty.
-export function cardColumns(project: Pick<Project, 'trimColumns'>, cells: Cell[]): number {
-  if (project.trimColumns === false || !cells.length) return 12
-  return Math.max(1, Math.min(12, Math.max(...cells.map((cell) => cell.grid.x + cell.grid.w))))
-}

@@ -335,5 +335,3 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .backup-row-text { min-width: 0; }
 /* A component whose content is cut off in the current preview (R-207); the selected one keeps the accent outline. */
 .editor-cell.cell-overflow:not(.selected) { outline:2px dashed var(--warning); outline-offset:-2px; }
-/* The canvas follows the real card width (R-219) and may be wider than its column: scroll it sideways. */
-.editor .canvas-wrap { overflow-x:auto; }

@@ -6,7 +6,6 @@ import {
   ActionIcon,
   Alert,
   Button,
-  Checkbox,
   Group,
   Menu,
   Modal,
@@ -19,7 +18,6 @@ import {
 import GridLayout, { useContainerWidth, type Layout } from 'react-grid-layout'
 import { transformStrategy } from 'react-grid-layout/core'
 import { localDragPosition } from './editorDrag'
-import { lastCardWidth } from './cardWidth'
 import {
   type Cell,
   type CellKind,
@@ -44,7 +42,6 @@ import {
   renamePreset,
   removePreset,
   addCommonFields,
-  cardColumns,
   extremePreviewRow,
 } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
@@ -320,10 +317,6 @@ export function Editor({
     }
   })
   const level = draft.cells
-  // A canvas column is as wide as a column on the real card: the card's last shown width spread over the columns it
-  // shows (all 12, or only up to the rightmost component when trimming). Unknown until cards have been shown.
-  const realCardWidth = lastCardWidth(project.projectId),
-    gridWidth = realCardWidth ? Math.round((realCardWidth * 12) / cardColumns(draft, level)) : width
   const withLevel = (cells: Cell[]): Project => ({ ...draft, cells })
   const selectedCell = level.find((c) => c.cellId === selected),
     preview = extremePreview ?? rows.find((r) => r.rowId === previewId)
@@ -951,23 +944,8 @@ export function Editor({
             searchable
             value={previewId ?? null}
             onChange={(v) => setPreviewId(v ?? undefined)}
-            mb="xs"
+            mb="md"
           />
-          <Group gap="md" mb="md">
-            <Checkbox
-              size="xs"
-              label={tr('卡片只用到組件所在的欄（撐滿整張卡）')}
-              checked={draft.trimColumns !== false}
-              onChange={(event) =>
-                change({ ...draft, trimColumns: event.currentTarget.checked ? undefined : false })
-              }
-            />
-            <Text size="xs" c="dimmed">
-              {realCardWidth
-                ? tr('畫布依瀏覽時的卡片寬度顯示')
-                : tr('先瀏覽一次卡片，畫布就會照實際卡片寬度顯示')}
-            </Text>
-          </Group>
           {selectedCell && overflowing.includes(selectedCell.cellId) ? (
             <Alert color="orange" variant="light" mb="sm" className="cell-overflow-fix">
               <Text size="sm" mb={6}>
@@ -1076,8 +1054,8 @@ export function Editor({
             {mounted && (
               <GridLayout
                 positionStrategy={gridPosition}
-                width={gridWidth}
-                style={{ minHeight: 320, width: gridWidth }}
+                width={width}
+                style={{ minHeight: 320 }}
                 layout={level.map((c) => ({
                   i: c.cellId,
                   ...c.grid,
@@ -1131,7 +1109,7 @@ export function Editor({
                     add(kind, undefined, layout, source)
                     return
                   }
-                  const column = (gridWidth - 4 * 11) / 12,
+                  const column = (width - 4 * 11) / 12,
                     w = 6,
                     left = drop.clientX - grid.left - (column * w + 4 * (w - 1)) / 2,
                     x = Math.min(12 - w, Math.max(0, Math.round(left / (column + 4)))),

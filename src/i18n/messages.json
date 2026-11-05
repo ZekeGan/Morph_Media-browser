@@ -6700,23 +6700,5 @@
     "en": "Blur fill",
     "ja": "ぼかしで埋める",
     "es": "Relleno difuminado"
-  },
-  "卡片只用到組件所在的欄（撐滿整張卡）": {
-    "zh-CN": "卡片只用到组件所在的列（撑满整张卡）",
-    "en": "Cards use only the columns with components (stretched across the card)",
-    "ja": "カードはコンポーネントのある列だけを使う（カード全体に広げる）",
-    "es": "Las tarjetas usan solo las columnas con componentes (estiradas a lo ancho)"
-  },
-  "畫布依瀏覽時的卡片寬度顯示": {
-    "zh-CN": "画布按浏览时的卡片宽度显示",
-    "en": "The canvas follows the card width while browsing",
-    "ja": "キャンバスは閲覧時のカード幅で表示",
-    "es": "El lienzo sigue el ancho de la tarjeta al navegar"
-  },
-  "先瀏覽一次卡片，畫布就會照實際卡片寬度顯示": {
-    "zh-CN": "先浏览一次卡片，画布就会按实际卡片宽度显示",
-    "en": "Browse the cards once and the canvas will follow their real width",
-    "ja": "一度カードを表示すると、キャンバスが実際のカード幅になります",
-    "es": "Muestra las tarjetas una vez y el lienzo seguirá su ancho real"
   }
 }

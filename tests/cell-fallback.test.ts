@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cellField } from '../shared/cells'
 import { columnValue, fallbackColumns, sortRows } from '../shared/browse'
-import { addCommonFields, cardColumns, extremePreviewRow, rowCells } from '../shared/layouts'
+import { addCommonFields, extremePreviewRow, rowCells } from '../shared/layouts'
 import {
   cellsWithoutField,
   fieldValue,
@@ -306,15 +306,4 @@ test("the editor preview can use each field's longest or shortest value across f
   assert.equal(fieldValue(shortest, 'title'), 'Short', 'an empty value is never the shortest')
   assert.deepEqual(fieldValue(shortest, 'tags'), ['x'])
   assert.equal(shortest.name, 'a')
-})
-
-test('a card shows only the columns its components reach unless trimming is turned off', () => {
-  const at = (x: number, w: number) => cell({ cellId: 'c' + x, grid: { x, y: 0, w, h: 1 } })
-  assert.equal(cardColumns({}, [at(0, 3), at(3, 3)]), 6, 'two components on the left half')
-  assert.equal(cardColumns({ trimColumns: false }, [at(0, 3)]), 12)
-  assert.equal(cardColumns({}, []), 12, 'an empty layout keeps the full grid')
-  validateProject({ ...modelProject(), trimColumns: false })
-  assert.throws(() =>
-    validateProject({ ...modelProject(), trimColumns: 'no' as unknown as boolean })
-  )
 })

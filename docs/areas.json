@@ -192,7 +192,6 @@
       "docs": ["CELL_CATALOG.md#現行契約", "CELL_CATALOG.md#新增組件與型別"],
       "code": [
         "src/Card*",
-        "src/cardWidth*",
         "src/CellStyleEditor*",
         "src/TagList*",
         "src/EnumColors*",

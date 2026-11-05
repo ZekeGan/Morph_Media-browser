@@ -1,5 +1,4 @@
-import { useEffect, useRef, type CSSProperties, type KeyboardEvent, type MouseEvent } from 'react'
-import { rememberCardWidth } from './cardWidth'
+import type { CSSProperties, KeyboardEvent, MouseEvent } from 'react'
 import { ActionIcon, Tooltip } from '@mantine/core'
 import type { FolderRow, Project, Request, Response } from '../shared/model'
 import { BoundaryFlag } from './BoundaryFlag'
@@ -37,19 +36,8 @@ export function FolderCards({
   showPanelFor: (id: string) => void
   act: Act
 }) {
-  // The real card width, for the layout editor's canvas.
-  const grid = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const first = grid.current?.querySelector<HTMLElement>('.card-grid')
-    if (!first) return
-    const observer = new ResizeObserver(() =>
-      rememberCardWidth(project.projectId, first.clientWidth)
-    )
-    observer.observe(first)
-    return () => observer.disconnect()
-  }, [project.projectId, rows.length, itemsPerRow])
   return (
-    <div ref={grid} className="cards" style={{ '--columns': itemsPerRow } as CSSProperties}>
+    <div className="cards" style={{ '--columns': itemsPerRow } as CSSProperties}>
       {rows.map((row) => (
         <article
           key={row.rowId}

@@ -134,8 +134,6 @@ export interface Project {
   layoutPresets?: { id: string; name: string; cells: Cell[] }[]
   // Styles saved by name in this project: applied to a component they replace its whole style.
   stylePresets?: { id: string; name: string; style: Cell['style'] }[]
-  // Cards use only the columns their components reach, stretched over the whole card (absent = on; provisional).
-  trimColumns?: boolean
   activeLayoutId?: string
   folderLayouts?: Record<string, string>
   // Card layout preset applied to every folder of a kind (book, game, media, general) unless the folder picks its own.
@@ -699,8 +697,6 @@ export function validateProject(v: unknown): asserts v is Project {
       ))
   )
     throw new Error('類型版面指定不合法')
-  if (v.trimColumns !== undefined && typeof v.trimColumns !== 'boolean')
-    throw new Error('卡片欄寬設定不合法')
   if (
     v.stylePresets !== undefined &&
     (!Array.isArray(v.stylePresets) ||

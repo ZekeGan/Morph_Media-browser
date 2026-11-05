@@ -64,7 +64,7 @@ const cells: Cell[] = [
     cellId: 'overflow',
     kind: 'static-text',
     text: 'This layout text is far too long to fit into such a narrow component on the card',
-    grid: { x: 0, y: 5, w: 12, h: 1 },
+    grid: { x: 0, y: 5, w: 2, h: 1 },
     style,
   },
   {
