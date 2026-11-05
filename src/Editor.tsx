@@ -6,6 +6,7 @@ import {
   ActionIcon,
   Alert,
   Button,
+  Checkbox,
   Group,
   Menu,
   Modal,
@@ -18,6 +19,7 @@ import {
 import GridLayout, { useContainerWidth, type Layout } from 'react-grid-layout'
 import { transformStrategy } from 'react-grid-layout/core'
 import { localDragPosition } from './editorDrag'
+import { lastCardWidth } from './cardWidth'
 import {
   type Cell,
   type CellKind,
@@ -42,6 +44,7 @@ import {
   renamePreset,
   removePreset,
   addCommonFields,
+  cardColumns,
   extremePreviewRow,
 } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
@@ -280,16 +283,32 @@ export function Editor({
     }
     const observer = new ResizeObserver(check)
     for (const cell of canvas.querySelectorAll<HTMLElement>('.editor-cell')) observer.observe(cell)
+    // Pictures arrive after the render; their real proportions are only known once loaded.
+    const images = [...canvas.querySelectorAll<HTMLImageElement>('.editor-cell img')]
+    for (const image of images) image.addEventListener('load', check)
     check()
     return () => {
       observer.disconnect()
+      for (const image of images) image.removeEventListener('load', check)
       cancelAnimationFrame(frame)
     }
     function measure() {
       if (!canvas) return
+      // A picture filling its frame by cropping counts as cut off when its proportions differ from the frame's by
+      // more than 20% (a little cropping is what "fill" is for).
+      const cropped = (node: HTMLElement) => {
+        if (!(node instanceof HTMLImageElement) || getComputedStyle(node).objectFit !== 'cover')
+          return false
+        if (!node.naturalWidth || !node.naturalHeight || !node.clientWidth || !node.clientHeight)
+          return false
+        const ratio =
+          node.naturalWidth / node.naturalHeight / (node.clientWidth / node.clientHeight)
+        return Math.abs(Math.log(ratio)) > Math.log(1.2)
+      }
       const cut = (node: HTMLElement) => {
         const style = getComputedStyle(node)
         return (
+          cropped(node) ||
           (node.scrollWidth > node.clientWidth + 1 && /hidden|clip/.test(style.overflowX)) ||
           (node.scrollHeight > node.clientHeight + 1 && /hidden|clip/.test(style.overflowY))
         )
@@ -301,6 +320,10 @@ export function Editor({
     }
   })
   const level = draft.cells
+  // A canvas column is as wide as a column on the real card: the card's last shown width spread over the columns it
+  // shows (all 12, or only up to the rightmost component when trimming). Unknown until cards have been shown.
+  const realCardWidth = lastCardWidth(project.projectId),
+    gridWidth = realCardWidth ? Math.round((realCardWidth * 12) / cardColumns(draft, level)) : width
   const withLevel = (cells: Cell[]): Project => ({ ...draft, cells })
   const selectedCell = level.find((c) => c.cellId === selected),
     preview = extremePreview ?? rows.find((r) => r.rowId === previewId)
@@ -928,47 +951,83 @@ export function Editor({
             searchable
             value={previewId ?? null}
             onChange={(v) => setPreviewId(v ?? undefined)}
-            mb="md"
+            mb="xs"
           />
+          <Group gap="md" mb="md">
+            <Checkbox
+              size="xs"
+              label={tr('卡片只用到組件所在的欄（撐滿整張卡）')}
+              checked={draft.trimColumns !== false}
+              onChange={(event) =>
+                change({ ...draft, trimColumns: event.currentTarget.checked ? undefined : false })
+              }
+            />
+            <Text size="xs" c="dimmed">
+              {realCardWidth
+                ? tr('畫布依瀏覽時的卡片寬度顯示')
+                : tr('先瀏覽一次卡片，畫布就會照實際卡片寬度顯示')}
+            </Text>
+          </Group>
           {selectedCell && overflowing.includes(selectedCell.cellId) ? (
             <Alert color="orange" variant="light" mb="sm" className="cell-overflow-fix">
               <Text size="sm" mb={6}>
-                {tr('這個組件的內容在預覽中被截掉')}
+                {['image', 'game-cover'].includes(selectedCell.kind)
+                  ? tr('這張圖片在預覽中被裁切')
+                  : tr('這個組件的內容在預覽中被截掉')}
               </Text>
-              <Group gap="xs">
-                {['name', 'path', 'field-text'].includes(selectedCell.kind) &&
-                  !selectedCell.wrap &&
-                  !selectedCell.scroll && (
-                    <Button
-                      size="compact-xs"
-                      variant="default"
-                      onClick={() => updateCell({ wrap: true })}
-                    >
-                      {tr('換行')}
-                    </Button>
-                  )}
-                {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) &&
-                  !selectedCell.scroll && (
-                    <Button
-                      size="compact-xs"
-                      variant="default"
-                      onClick={() => updateCell({ scroll: true })}
-                    >
-                      {tr('內容多時可捲動')}
-                    </Button>
-                  )}
-                {selectedCell.grid.y + selectedCell.grid.h < 100 && (
+              {['image', 'game-cover'].includes(selectedCell.kind) ? (
+                <Group gap="xs">
                   <Button
                     size="compact-xs"
                     variant="default"
-                    onClick={() =>
-                      updateCell({ grid: { ...selectedCell.grid, h: selectedCell.grid.h + 1 } })
-                    }
+                    onClick={() => updateCell({ imageFit: 'contain' })}
                   >
-                    {tr('加高一格')}
+                    {tr('完整顯示')}
                   </Button>
-                )}
-              </Group>
+                  <Button
+                    size="compact-xs"
+                    variant="default"
+                    onClick={() => updateCell({ imageFit: 'blur' })}
+                  >
+                    {tr('模糊填滿')}
+                  </Button>
+                </Group>
+              ) : (
+                <Group gap="xs">
+                  {['name', 'path', 'field-text'].includes(selectedCell.kind) &&
+                    !selectedCell.wrap &&
+                    !selectedCell.scroll && (
+                      <Button
+                        size="compact-xs"
+                        variant="default"
+                        onClick={() => updateCell({ wrap: true })}
+                      >
+                        {tr('換行')}
+                      </Button>
+                    )}
+                  {['field-text', 'field-tags', 'static-text'].includes(selectedCell.kind) &&
+                    !selectedCell.scroll && (
+                      <Button
+                        size="compact-xs"
+                        variant="default"
+                        onClick={() => updateCell({ scroll: true })}
+                      >
+                        {tr('內容多時可捲動')}
+                      </Button>
+                    )}
+                  {selectedCell.grid.y + selectedCell.grid.h < 100 && (
+                    <Button
+                      size="compact-xs"
+                      variant="default"
+                      onClick={() =>
+                        updateCell({ grid: { ...selectedCell.grid, h: selectedCell.grid.h + 1 } })
+                      }
+                    >
+                      {tr('加高一格')}
+                    </Button>
+                  )}
+                </Group>
+              )}
             </Alert>
           ) : overflowing.length ? (
             <Text size="xs" c="dimmed" mb="sm">
@@ -1017,8 +1076,8 @@ export function Editor({
             {mounted && (
               <GridLayout
                 positionStrategy={gridPosition}
-                width={width}
-                style={{ minHeight: 320 }}
+                width={gridWidth}
+                style={{ minHeight: 320, width: gridWidth }}
                 layout={level.map((c) => ({
                   i: c.cellId,
                   ...c.grid,
@@ -1072,7 +1131,7 @@ export function Editor({
                     add(kind, undefined, layout, source)
                     return
                   }
-                  const column = (width - 4 * 11) / 12,
+                  const column = (gridWidth - 4 * 11) / 12,
                     w = 6,
                     left = drop.clientX - grid.left - (column * w + 4 * (w - 1)) / 2,
                     x = Math.min(12 - w, Math.max(0, Math.round(left / (column + 4)))),

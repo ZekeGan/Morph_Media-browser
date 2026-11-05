@@ -5,7 +5,7 @@ import { type Cell, type FolderRow, type Project } from '../shared/model'
 import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared/cells'
 import { describeError } from './errors'
 import { launchChoice } from '../shared/explorer'
-import { rowCells } from '../shared/layouts'
+import { cardColumns, rowCells } from '../shared/layouts'
 import { effectiveKind } from '../shared/kind'
 import { useEffect, useState } from 'react'
 import { httpUrl } from '../shared/fields'
@@ -406,9 +406,13 @@ export function Card({
 }) {
   useLocale()
 
+  const cells = rowCells(project, row)
   return (
-    <div className="card-grid">
-      {rowCells(project, row).map((cell) => (
+    <div
+      className="card-grid"
+      style={{ gridTemplateColumns: `repeat(${cardColumns(project, cells)}, minmax(0, 1fr))` }}
+    >
+      {cells.map((cell) => (
         <div
           key={cell.cellId}
           className="card-cell"

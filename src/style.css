@@ -140,7 +140,7 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 /* Wide editor: the three columns fill the height left in the window and scroll on their own, so the component list
    and the settings always reach the bottom and a long canvas scrolls only itself. Narrower layouts keep page scroll. */
 .editor-page { display:flex; flex-direction:column; min-height:0; }
-@container editor (min-width:1101px) { .editor { flex:1; height:0; min-height:320px; align-items:stretch; }.editor > aside { position:static; max-height:none; height:100%; }.editor .canvas-wrap { height:100%; min-height:0; overflow:auto; } }
+@container editor (min-width:1101px) { .editor { flex:1; height:0; min-height:320px; align-items:stretch; }.editor > aside { position:static; max-height:none; height:100%; }.editor .canvas-wrap { height:100%; min-height:0; overflow:auto; scrollbar-gutter:stable; } }
 /* An empty canvas shows its template choices over the grid, so a drop can land anywhere; they step aside while a
    drag is over the canvas and come back when it leaves. Only the buttons take clicks. */
 .canvas { position:relative; }
@@ -335,3 +335,5 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .backup-row-text { min-width: 0; }
 /* A component whose content is cut off in the current preview (R-207); the selected one keeps the accent outline. */
 .editor-cell.cell-overflow:not(.selected) { outline:2px dashed var(--warning); outline-offset:-2px; }
+/* The canvas follows the real card width (R-219) and may be wider than its column: scroll it sideways. */
+.editor .canvas-wrap { overflow-x:auto; }

@@ -137,6 +137,20 @@ for (const [w, h] of [
       'contain'
     )
     await page.screenshot({ path: path.join(root, 'editor-' + w + 'x' + h + '.png') })
+    if (w === 12) {
+      // Filling a wide frame with a square picture crops most of it: the editor flags it and offers to show it
+      // whole instead.
+      const flagged = page.locator('.editor-cell.cell-overflow[data-cell-id="cover"]')
+      await page.locator('.editor-cell[data-cell-id="cover"]').click()
+      await page.getByRole('textbox', { name: '圖片填滿方式', exact: true }).click()
+      await page.getByRole('option', { name: '填滿容器（裁切多餘部分）', exact: true }).click()
+      await flagged.waitFor({ state: 'attached' })
+      await page
+        .locator('.cell-overflow-fix')
+        .getByRole('button', { name: '完整顯示', exact: true })
+        .click()
+      await flagged.waitFor({ state: 'detached' })
+    }
   } catch (error) {
     await page.screenshot({ path: path.join(root, 'failure.png') }).catch(() => {})
     console.error('Artifacts: ' + root)

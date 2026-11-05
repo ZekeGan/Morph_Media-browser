@@ -41,9 +41,18 @@ export async function launchApp(
 }
 
 export async function closeApp(app: ElectronApplication) {
-  await app.evaluate(({ BrowserWindow }) => {
+  await app.evaluate(({ BrowserWindow, dialog }) => {
+    // The app's own unsaved-changes handler shows a native message box on unload; in a test nobody answers it and
+    // the main process would wait forever. Answer every box at once and let the window go (tests that never went
+    // through launchApp have no stub of their own).
+    dialog.showMessageBoxSync = (() => 1) as typeof dialog.showMessageBoxSync
+    dialog.showMessageBox = (async () => ({
+      response: 1,
+      checkboxChecked: false,
+    })) as typeof dialog.showMessageBox
     for (const win of BrowserWindow.getAllWindows()) {
       win.removeAllListeners('close')
+      win.webContents.removeAllListeners('will-prevent-unload')
       win.webContents.on('will-prevent-unload', (event) => event.preventDefault())
     }
   })

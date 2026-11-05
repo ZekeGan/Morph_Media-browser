@@ -97,7 +97,7 @@ C-80 採特徵候選＋人工修正與集中處理；純手動仍作無法辨識
 
 ### Mac 遊戲執行條件（未支援）
 
-尚未支援（需求清單 R-212）：`bindTarget`／`runTarget` 只支援 EXE／資料夾，以下是 Mac 啟動的條件，不是現有能力。辨識與 bundle 保護見 [Mac 與多平台規則](GAME_ENGINE_DETECTION.md#mac-封裝與多平台規則)。
+不支援（[C-130](DECISIONS.md#c-130不支援-mac-原生遊戲啟動2026-11-05)）：`bindTarget`／`runTarget` 只支援 EXE／資料夾，以下是 Mac 啟動的條件，不是現有能力。辨識與 bundle 保護見 [Mac 與多平台規則](GAME_ENGINE_DETECTION.md#mac-封裝與多平台規則)。
 
 - 新增明確的 macOS App 目標／平台資訊，與 Windows EXE 分開保存及驗證，不以「開啟資料夾」繞過 EXE 限制。綁定實際 `.app`，保存相對於合法外層遊戲 ROOT 的位置；App 內不寫可攜記錄，也不改既有 EXE 綁定的語意。
 - 啟動前核對主機平台、App／plist／對應主執行檔、路徑範圍與連結；macOS 另核對最低系統版本、CPU 架構／可用相容層及可執行權限。相容性未知顯示未驗證，不把檔案存在視為保證能跑；Windows 不從檔案權限推定 macOS 實機結果，也不嘗試原生執行 `.app`。

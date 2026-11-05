@@ -17,6 +17,9 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Cards use only the columns their components reach, stretched across the whole card, so a layout drawn on the left half no longer leaves the right half empty (can be turned off in the layout editor). The editor canvas follows the real card width from the last time cards were shown, so a column on the canvas is as wide as on the card. New optional `trimColumns` in the project record (provisional).
+- Layout editor: a picture that fills its frame by cropping, with proportions more than 20% off the frame, is flagged like cut-off text and offers "Show whole" or "Blur fill".
+- Tests (development only): `closeApp` answers the app's native unsaved-changes box itself; tests that left the editor unsaved used to hang the main process on it.
 - Fix: after "One row taller" the orange cut-off outline stayed until the component was dragged; the check now also runs when a component finishes resizing (the grid animates size changes).
 - Tests (development only): `node scripts/run-ui-tests.mjs <name> --repeat N` runs a test N times without retries to measure flakiness, keeping the timeout and Electron cleanup; `pnpm verify:old <test>` runs today's test against the last commit in a separate worktree, to show a new test catches the old bug without touching the working tree.
 - Table: a card component with fallback fields gets its own column, "<field> (with fallbacks)", which shows and sorts by the first field in the component's order that has a value.
