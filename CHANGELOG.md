@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix: dragging a component over the editor canvas and then away without dropping (or ending the drag elsewhere) could leave its shadow on the canvas. The grid only clears it when its own enter/leave count returns to zero, which misses when an element moves mid-drag; the editor now clears it whenever the pointer leaves the canvas or the drag ends.
 - Fix: a component thrown quickly from the editor palette onto the canvas could vanish: the grid only places its drop placeholder on dragover (through state), so a drop arriving first reported no item and nothing was added. The editor now places it under the pointer itself. The editor test had been retrying exactly this miss; a throw without dragover is now tested on its own.
 - Table columns can be picked up anywhere on their header, not only on the column name.
 - Fix: dragging a game toolbar button, a sidebar project or group, or a table column quickly could silently do nothing, because the drop target only accepted the drag after the next re-render. The targets now accept it at once. This was also why `game-actions-ui` failed about 1 run in 4; the test now sends the drag events itself, so it checks exactly this.

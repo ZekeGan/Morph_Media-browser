@@ -155,6 +155,29 @@ export function Editor({
   }, [dirty, onDirty])
   const { width, containerRef, mounted } = useContainerWidth()
   const dragGrab = useRef({ x: 0, y: 0 })
+  // The grid removes its drop placeholder only when its own enter/leave count returns to zero, which misses when an
+  // element entered mid-drag is moved or replaced (the placeholder itself moves). So the editor clears it whenever
+  // the pointer is outside the canvas or the drag ends: a drop sent to the grid removes it, and is ignored here.
+  const cancelGridDrop = useRef(false),
+    overGrid = useRef(false)
+  const clearDropPlaceholder = () => {
+    const grid = containerRef.current?.querySelector<HTMLElement>('.react-grid-layout')
+    if (!grid) return
+    cancelGridDrop.current = true
+    try {
+      grid.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true }))
+    } finally {
+      cancelGridDrop.current = false
+    }
+  }
+  const trackGridPointer = (x: number, y: number) => {
+    const rect = containerRef.current
+      ?.querySelector<HTMLElement>('.react-grid-layout')
+      ?.getBoundingClientRect()
+    const inside = !!rect && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
+    if (overGrid.current && !inside) clearDropPlaceholder()
+    overGrid.current = inside
+  }
   // The browser's own drag picture is positioned by the OS and can land away from the cursor, so it is replaced by
   // a transparent one and a copy of the item that follows the cursor with its middle under the pointer.
   const dragImage = (event: React.DragEvent<HTMLDivElement>) => {
@@ -173,18 +196,35 @@ export function Editor({
     }
     place(event.clientX, event.clientY)
     document.body.append(ghost)
+    overGrid.current = false
     const move = (e: DragEvent) => {
       // Some drag events report 0,0 while leaving the window; keep the last known place.
-      if (e.clientX || e.clientY) place(e.clientX, e.clientY)
+      if (e.clientX || e.clientY) {
+        place(e.clientX, e.clientY)
+        if (e.type === 'dragover') trackGridPointer(e.clientX, e.clientY)
+      }
     }
-    const end = () => {
+    // Leaving the window entirely: no more dragover arrives, so treat it as leaving the canvas.
+    const leave = (e: DragEvent) => {
+      if (!e.relatedTarget && overGrid.current) {
+        overGrid.current = false
+        clearDropPlaceholder()
+      }
+    }
+    const end = (e: Event) => {
+      // The drop sent to clear the placeholder is not the end of the drag.
+      if (cancelGridDrop.current) return
       ghost.remove()
       for (const name of ['dragover', 'drag'])
         document.removeEventListener(name, move as EventListener, true)
+      document.removeEventListener('dragleave', leave as EventListener, true)
       for (const name of ['dragend', 'drop']) document.removeEventListener(name, end, true)
+      // A drag that ends anywhere but on the canvas (Esc, released outside) leaves no placeholder behind.
+      if (e.type === 'dragend') clearDropPlaceholder()
     }
     for (const name of ['dragover', 'drag'])
       document.addEventListener(name, move as EventListener, true)
+    document.addEventListener('dragleave', leave as EventListener, true)
     for (const name of ['dragend', 'drop']) document.addEventListener(name, end, true)
   }
   const gridPosition = useMemo(
@@ -893,6 +933,7 @@ export function Editor({
                   }),
                 }}
                 onDrop={(layout, item, event) => {
+                  if (cancelGridDrop.current) return
                   const transfer = (event as DragEvent).dataTransfer,
                     kind = transfer?.getData('text/plain') as CellKind,
                     id = transfer?.getData('application/x-media-viewer-field'),

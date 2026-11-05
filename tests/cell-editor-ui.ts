@@ -220,6 +220,32 @@ try {
     )
     await button('復原').click()
   }
+  // Dragging over the canvas and then away without dropping leaves no shadow behind, even when the grid's own
+  // enter/leave count is off by one (an entered element moved mid-drag and never sent its leave).
+  for (const finish of ['leave', 'dragend'] as const) {
+    const transfer = await page.evaluateHandle(() => new DataTransfer())
+    const gridBox = (await page.locator('.react-grid-layout').boundingBox())!
+    const inside = { clientX: gridBox.x + 90, clientY: gridBox.y + 120, dataTransfer: transfer }
+    await palette.dispatchEvent('dragstart', { dataTransfer: transfer })
+    await page.locator('.react-grid-layout').dispatchEvent('dragenter', inside)
+    await page.locator('.react-grid-layout').dispatchEvent('dragenter', inside)
+    await page.locator('.react-grid-layout').dispatchEvent('dragover', inside)
+    await page.locator('.react-grid-layout .dropping').waitFor({ state: 'attached', timeout: 3000 })
+    await page.locator('.react-grid-layout').dispatchEvent('dragleave', inside)
+    if (finish === 'leave')
+      await page
+        .locator('body')
+        .dispatchEvent('dragover', { clientX: 5, clientY: 5, dataTransfer: transfer })
+    else await palette.dispatchEvent('dragend', { dataTransfer: transfer })
+    await page.locator('.react-grid-layout .dropping').waitFor({ state: 'detached', timeout: 3000 })
+    if (finish === 'leave') await palette.dispatchEvent('dragend', { dataTransfer: transfer })
+    assert.equal(
+      await page.locator('.editor-cell').count(),
+      initial,
+      'nothing was added: ' + finish
+    )
+    assert.equal(await page.locator('.palette-drag-ghost').count(), 0, 'the drag picture is gone')
+  }
   await verifyCanvasDrag()
   await app.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].webContents.setZoomFactor(1.25)
