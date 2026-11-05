@@ -767,6 +767,7 @@ export function Editor({
               },
             ]}
             searchable
+            allowDeselect={false}
             comboboxProps={{ width: 360, position: 'bottom-start' }}
             value={previewId ?? null}
             onChange={(v) => setPreviewId(v ?? undefined)}
