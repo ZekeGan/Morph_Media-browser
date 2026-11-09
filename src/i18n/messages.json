@@ -1199,12 +1199,6 @@
     "en": "e.g. Author, Rating",
     "es": "p. ej., Autor, Puntuación"
   },
-  "欄位型別": {
-    "ja": "項目の型",
-    "zh-CN": "栏位型别",
-    "en": "Field type",
-    "es": "Tipo de campo"
-  },
   "使用真實資料預覽": {
     "ja": "実データでプレビュー",
     "zh-CN": "使用真实数据预览",
@@ -4187,54 +4181,6 @@
     "ja": "このゲームフォルダーのカバーを表示します",
     "es": "Muestra la portada de esta carpeta de juego"
   },
-  "一般文字，例如備註、作者": {
-    "zh-CN": "普通文本，例如备注、作者",
-    "en": "Plain text, e.g. notes or author",
-    "ja": "通常のテキスト（例：メモ、作者）",
-    "es": "Texto simple, p. ej. notas o autor"
-  },
-  "多個標籤，例如類型、角色": {
-    "zh-CN": "多个标签，例如类型、角色",
-    "en": "Several tags, e.g. genre or characters",
-    "ja": "複数のタグ（例：ジャンル、キャラクター）",
-    "es": "Varias etiquetas, p. ej. género o personajes"
-  },
-  "數字，組件可呈現為評分或進度": {
-    "zh-CN": "数字，组件可呈现为评分或进度",
-    "en": "A number; the component can show it as a rating or progress",
-    "ja": "数値。コンポーネントで評価や進捗として表示できます",
-    "es": "Un número; el componente puede mostrarlo como valoración o progreso"
-  },
-  "日期加時間": {
-    "zh-CN": "日期加时间",
-    "en": "Date and time",
-    "ja": "日付と時刻",
-    "es": "Fecha y hora"
-  },
-  "是／否／未填": {
-    "zh-CN": "是／否／未填",
-    "en": "Yes / no / not set",
-    "ja": "はい／いいえ／未入力",
-    "es": "Sí / no / sin definir"
-  },
-  "從固定選項中選一個，例如狀態": {
-    "zh-CN": "从固定选项中选一个，例如状态",
-    "en": "Pick one from fixed options, e.g. status",
-    "ja": "固定の選択肢から1つ選びます（例：状態）",
-    "es": "Elige una de varias opciones fijas, p. ej. estado"
-  },
-  "網址，可自訂連結文字": {
-    "zh-CN": "网址，可自定义链接文字",
-    "en": "A URL with optional link text",
-    "ja": "URL。リンク文字を指定できます",
-    "es": "Una URL con texto de enlace opcional"
-  },
-  "只有日期，例如發售日": {
-    "zh-CN": "只有日期，例如发售日",
-    "en": "A date only, e.g. release date",
-    "ja": "日付のみ（例：発売日）",
-    "es": "Solo fecha, p. ej. fecha de lanzamiento"
-  },
   "文字欄位": {
     "zh-CN": "文本字段",
     "en": "Text field",
@@ -6845,95 +6791,17 @@
     "en": "Drag to move, drag a corner to resize; Delete removes, Ctrl+D duplicates.",
     "es": "Arrastra para mover y desde una esquina para cambiar el tamaño; Supr elimina, Ctrl+D duplica."
   },
-  "文字 · 多個值": {
-    "ja": "テキスト · 複数の値",
-    "zh-CN": "文字 · 多个值",
-    "en": "Text · multiple values",
-    "es": "Texto · varios valores"
-  },
-  "文字 · 限定選項": {
-    "ja": "テキスト · 選択肢のみ",
-    "zh-CN": "文字 · 限定选项",
-    "en": "Text · fixed options",
-    "es": "Texto · opciones fijas"
-  },
   "管理欄位": {
     "ja": "フィールドを管理",
     "zh-CN": "管理字段",
     "en": "Manage fields",
     "es": "Gestionar campos"
   },
-  "多個值": {
-    "ja": "複数の値",
-    "zh-CN": "多个值",
-    "en": "Multiple values",
-    "es": "Varios valores"
-  },
-  "例如類型、角色；輸入時以逗號分隔": {
-    "ja": "例：ジャンル、キャラクター。入力時はカンマで区切ります",
-    "zh-CN": "例如类型、角色；输入时以逗号分隔",
-    "en": "For example genres or characters; separate them with commas",
-    "es": "Por ejemplo géneros o personajes; sepáralos con comas"
-  },
-  "限定選項": {
-    "ja": "選択肢のみ",
-    "zh-CN": "限定选项",
-    "en": "Fixed options",
-    "es": "Opciones fijas"
-  },
-  "這個欄位用在備用來源，請先移除備用來源再切換「限定選項」。": {
-    "ja": "このフィールドは予備の取得元で使われています。「選択肢のみ」を切り替える前に予備の取得元を外してください。",
-    "zh-CN": "这个字段用在备用来源，请先移除备用来源再切换“限定选项”。",
-    "en": "This field is used in fallback sources; remove them before switching “Fixed options”.",
-    "es": "Este campo se usa en orígenes de respaldo; quítalos antes de cambiar «Opciones fijas»."
-  },
-  "這個欄位用在「等於／不等於」顯示條件，請先改條件再開啟「多個值」。": {
-    "ja": "このフィールドは「等しい／等しくない」の表示条件で使われています。「複数の値」をオンにする前に条件を変更してください。",
-    "zh-CN": "这个字段用在“等于／不等于”显示条件，请先改条件再开启“多个值”。",
-    "en": "This field is used in an “equals / not equals” display condition; change it before turning on “Multiple values”.",
-    "es": "Este campo se usa en una condición «igual a / distinto de»; cámbiala antes de activar «Varios valores»."
-  },
-  "還沒有可用的值，請先輸入至少一個選項。": {
-    "ja": "使える値がまだありません。選択肢を 1 つ以上入力してください。",
-    "zh-CN": "还没有可用的值，请先输入至少一个选项。",
-    "en": "There are no values to use yet; enter at least one option first.",
-    "es": "Todavía no hay valores que usar; introduce al menos una opción."
-  },
-  "這個欄位有超過 100 種不同的值，不適合限定選項。": {
-    "ja": "このフィールドには 100 種類を超える値があるため、選択肢のみには向きません。",
-    "zh-CN": "这个字段有超过 100 种不同的值，不适合限定选项。",
-    "en": "This field has more than 100 different values, too many for fixed options.",
-    "es": "Este campo tiene más de 100 valores distintos, demasiados para opciones fijas."
-  },
   "輸入選項後按 Enter": {
     "ja": "選択肢を入力して Enter",
     "zh-CN": "输入选项后按 Enter",
     "en": "Type an option and press Enter",
     "es": "Escribe una opción y pulsa Intro"
-  },
-  "開啟限定選項": {
-    "ja": "選択肢のみをオン",
-    "zh-CN": "开启限定选项",
-    "en": "Turn on fixed options",
-    "es": "Activar opciones fijas"
-  },
-  "搜尋名稱、型別或來源": {
-    "ja": "名前・型・取得元を検索",
-    "zh-CN": "搜索名称、类型或来源",
-    "en": "Search names, types or sources",
-    "es": "Buscar nombres, tipos u orígenes"
-  },
-  "切換「多個值」「限定選項」只改欄位設定；資料夾裡已存的值不會改寫，顯示時自動轉換。": {
-    "ja": "「複数の値」「選択肢のみ」の切り替えはフィールド設定だけを変えます。フォルダーに保存済みの値は書き換えず、表示時に自動で変換します。",
-    "zh-CN": "切换“多个值”“限定选项”只改字段设置；文件夹里已存的值不会改写，显示时自动转换。",
-    "en": "Switching “Multiple values” or “Fixed options” only changes the field setting; values saved in folders are not rewritten and are converted when shown.",
-    "es": "Cambiar «Varios valores» u «Opciones fijas» solo cambia el ajuste del campo; los valores guardados en las carpetas no se reescriben y se convierten al mostrarse."
-  },
-  "{0} 個欄位": {
-    "ja": "フィールド {0} 個",
-    "zh-CN": "{0} 个字段",
-    "en": "{0} fields",
-    "es": "{0} campos"
   },
   "這個資料夾的值仍以原本的格式保存，編輯時沿用": {
     "ja": "このフォルダーの値は元の形式のまま保存されており、編集もその形式で行います",
@@ -6953,10 +6821,274 @@
     "en": "Each option can have at most 100 characters",
     "es": "Cada opción puede tener como máximo 100 caracteres"
   },
-  "「多個值」「限定選項」請在卡片版面編輯器切換。": {
-    "ja": "「複数の値」「選択肢のみ」はカードのレイアウトエディターで切り替えてください。",
-    "zh-CN": "“多个值”“限定选项”请在卡片版面编辑器切换。",
-    "en": "Switch “Multiple values” and “Fixed options” in the card layout editor.",
-    "es": "Cambia «Varios valores» y «Opciones fijas» en el editor de diseño de la tarjeta."
+  "欄位設定…": {
+    "ja": "フィールド設定…",
+    "zh-CN": "字段设置…",
+    "en": "Field settings…",
+    "es": "Ajustes del campo…"
+  },
+  "＋ {0} 個尚未加入": {
+    "ja": "＋ 未追加 {0} 個",
+    "zh-CN": "＋ {0} 个尚未加入",
+    "en": "+ {0} not added",
+    "es": "+ {0} sin añadir"
+  },
+  "這個欄位要記什麼？": {
+    "ja": "このフィールドに何を記録しますか？",
+    "zh-CN": "这个字段要记什么？",
+    "en": "What will this field hold?",
+    "es": "¿Qué guardará este campo?"
+  },
+  "這個欄位用在備用來源，請先移除備用來源。": {
+    "ja": "このフィールドは予備の取得元で使われています。先に予備の取得元を外してください。",
+    "zh-CN": "这个字段用在备用来源，请先移除备用来源。",
+    "en": "This field is used in fallback sources; remove them first.",
+    "es": "Este campo se usa en orígenes de respaldo; quítalos primero."
+  },
+  "這個欄位用在「等於／不等於」顯示條件，請先改條件。": {
+    "ja": "このフィールドは「等しい／等しくない」の表示条件で使われています。先に条件を変更してください。",
+    "zh-CN": "这个字段用在“等于／不等于”显示条件，请先改条件。",
+    "en": "This field is used in an “equals / not equals” display condition; change it first.",
+    "es": "Este campo se usa en una condición «igual a / distinto de»; cámbiala primero."
+  },
+  "這個欄位有超過 100 種不同的值，不適合從清單選一個。": {
+    "ja": "このフィールドには 100 種類を超える値があるため、リストから選ぶ形式には向きません。",
+    "zh-CN": "这个字段有超过 100 种不同的值，不适合从列表选一个。",
+    "en": "This field has more than 100 different values, too many to pick from a list.",
+    "es": "Este campo tiene más de 100 valores distintos, demasiados para elegir de una lista."
+  },
+  "至少需要一個選項": {
+    "ja": "選択肢が 1 つ以上必要です",
+    "zh-CN": "至少需要一个选项",
+    "en": "At least one option is needed",
+    "es": "Se necesita al menos una opción"
+  },
+  "目前版面": {
+    "ja": "現在のレイアウト",
+    "zh-CN": "当前版面",
+    "en": "Current layout",
+    "es": "Diseño actual"
+  },
+  "備用來源": {
+    "ja": "予備の取得元",
+    "zh-CN": "备用来源",
+    "en": "Fallback source",
+    "es": "Origen de respaldo"
+  },
+  "用途": {
+    "ja": "用途",
+    "zh-CN": "用途",
+    "en": "Purpose",
+    "es": "Uso"
+  },
+  "改成…": {
+    "ja": "変更…",
+    "zh-CN": "改成…",
+    "en": "Change to…",
+    "es": "Cambiar a…"
+  },
+  "只看這個來源": {
+    "ja": "この取得元だけを表示",
+    "zh-CN": "只看这个来源",
+    "en": "Show only this source",
+    "es": "Ver solo este origen"
+  },
+  "{0} 個資料夾有值，例如：{1}": {
+    "ja": "{0} 個のフォルダーに値があります。例：{1}",
+    "zh-CN": "{0} 个文件夹有值，例如：{1}",
+    "en": "{0} folders have a value, for example: {1}",
+    "es": "{0} carpetas tienen valor, por ejemplo: {1}"
+  },
+  "目前沒有資料夾有值": {
+    "ja": "値のあるフォルダーはまだありません",
+    "zh-CN": "目前没有文件夹有值",
+    "en": "No folder has a value yet",
+    "es": "Ninguna carpeta tiene valor todavía"
+  },
+  "改用途請到卡片版面編輯器。": {
+    "ja": "用途の変更はカードのレイアウトエディターで行います。",
+    "zh-CN": "改用途请到卡片版面编辑器。",
+    "en": "Change the purpose in the card layout editor.",
+    "es": "Cambia el uso en el editor de diseño de la tarjeta."
+  },
+  "改成「{0}」": {
+    "ja": "「{0}」に変更",
+    "zh-CN": "改成“{0}”",
+    "en": "Change to “{0}”",
+    "es": "Cambiar a «{0}»"
+  },
+  "卡片上 {0} 個組件會換成新的呈現": {
+    "ja": "カード上の {0} 個のコンポーネントが新しい表示に変わります",
+    "zh-CN": "卡片上 {0} 个组件会换成新的呈现",
+    "en": "{0} components on cards will change to the new display",
+    "es": "{0} componentes de las tarjetas cambiarán a la nueva presentación"
+  },
+  "卡片上的組件保留原本的呈現": {
+    "ja": "カード上のコンポーネントは今の表示のままです",
+    "zh-CN": "卡片上的组件保留原本的呈现",
+    "en": "Components on cards keep their current display",
+    "es": "Los componentes de las tarjetas conservan su presentación"
+  },
+  "資料夾裡已存的值不會改寫，顯示時自動轉換": {
+    "ja": "フォルダーに保存済みの値は書き換えず、表示時に自動で変換します",
+    "zh-CN": "文件夹里已存的值不会改写，显示时自动转换",
+    "en": "Values saved in folders are not rewritten; they are converted when shown",
+    "es": "Los valores guardados en las carpetas no se reescriben; se convierten al mostrarse"
+  },
+  "選項顏色會被移除": {
+    "ja": "選択肢の色は削除されます",
+    "zh-CN": "选项颜色会被移除",
+    "en": "Option colours will be removed",
+    "es": "Se quitarán los colores de las opciones"
+  },
+  "選項：{0}": {
+    "ja": "選択肢：{0}",
+    "zh-CN": "选项：{0}",
+    "en": "Options: {0}",
+    "es": "Opciones: {0}"
+  },
+  "還沒有可用的值，請先輸入選項": {
+    "ja": "使える値がまだありません。選択肢を入力してください",
+    "zh-CN": "还没有可用的值，请先输入选项",
+    "en": "There are no values to use yet; enter the options first",
+    "es": "Todavía no hay valores que usar; introduce las opciones primero"
+  },
+  "確認改用途": {
+    "ja": "用途を変更",
+    "zh-CN": "确认改用途",
+    "en": "Confirm change",
+    "es": "Confirmar el cambio"
+  },
+  "這個欄位還沒加入本專案。": {
+    "ja": "このフィールドはまだプロジェクトに追加されていません。",
+    "zh-CN": "这个字段还没加入本项目。",
+    "en": "This field is not in this project yet.",
+    "es": "Este campo aún no está en este proyecto."
+  },
+  "用在哪裡": {
+    "ja": "使用場所",
+    "zh-CN": "用在哪里",
+    "en": "Used in",
+    "es": "Dónde se usa"
+  },
+  "還沒有用在任何組件": {
+    "ja": "まだどのコンポーネントにも使われていません",
+    "zh-CN": "还没有用在任何组件",
+    "en": "Not used by any component yet",
+    "es": "Aún no lo usa ningún componente"
+  },
+  "這裡整理欄位本身：名稱、用途與選項。要放上卡片，請用左側清單。": {
+    "ja": "ここではフィールドそのもの（名前・用途・選択肢）を整理します。カードに置くには左のリストを使います。",
+    "zh-CN": "这里整理字段本身：名称、用途与选项。要放上卡片，请用左侧列表。",
+    "en": "Organise the fields themselves here: name, purpose and options. To put one on the card, use the list on the left.",
+    "es": "Aquí organizas los campos: nombre, uso y opciones. Para ponerlos en la tarjeta, usa la lista de la izquierda."
+  },
+  "搜尋名稱、用途或來源": {
+    "ja": "名前・用途・取得元を検索",
+    "zh-CN": "搜索名称、用途或来源",
+    "en": "Search names, purposes or sources",
+    "es": "Buscar nombres, usos u orígenes"
+  },
+  "{0} 個欄位 · 已加入 {1}": {
+    "ja": "{0} 個 · 追加済み {1}",
+    "zh-CN": "{0} 个字段 · 已加入 {1}",
+    "en": "{0} fields · {1} added",
+    "es": "{0} campos · {1} añadidos"
+  },
+  "返回欄位清單": {
+    "ja": "フィールド一覧に戻る",
+    "zh-CN": "返回字段列表",
+    "en": "Back to the field list",
+    "es": "Volver a la lista de campos"
+  },
+  "選擇左邊的欄位，就能在這裡查看與設定。": {
+    "ja": "左のフィールドを選ぶと、ここで確認と設定ができます。",
+    "zh-CN": "选择左边的字段，就能在这里查看与设置。",
+    "en": "Choose a field on the left to see and change it here.",
+    "es": "Elige un campo de la izquierda para verlo y ajustarlo aquí."
+  },
+  "一段文字": {
+    "ja": "テキスト",
+    "zh-CN": "一段文字",
+    "en": "A piece of text",
+    "es": "Un texto"
+  },
+  "備註、作者、原名": {
+    "ja": "メモ、作者、原題",
+    "zh-CN": "备注、作者、原名",
+    "en": "Notes, author, original title",
+    "es": "Notas, autor, título original"
+  },
+  "多個標籤": {
+    "ja": "複数のタグ",
+    "zh-CN": "多个标签",
+    "en": "Several tags",
+    "es": "Varias etiquetas"
+  },
+  "類型、角色": {
+    "ja": "ジャンル、キャラクター",
+    "zh-CN": "类型、角色",
+    "en": "Genres, characters",
+    "es": "Géneros, personajes"
+  },
+  "從清單選一個": {
+    "ja": "リストから 1 つ選ぶ",
+    "zh-CN": "从列表选一个",
+    "en": "One from a list",
+    "es": "Una opción de una lista"
+  },
+  "狀態：進行中／已完成": {
+    "ja": "状態：進行中／完了",
+    "zh-CN": "状态：进行中／已完成",
+    "en": "Status: in progress / done",
+    "es": "Estado: en curso / terminado"
+  },
+  "評分、集數": {
+    "ja": "評価、話数",
+    "zh-CN": "评分、集数",
+    "en": "Rating, episodes",
+    "es": "Puntuación, episodios"
+  },
+  "發售日": {
+    "ja": "発売日",
+    "zh-CN": "发售日",
+    "en": "Release date",
+    "es": "Fecha de lanzamiento"
+  },
+  "日期和時間": {
+    "ja": "日付と時刻",
+    "zh-CN": "日期和时间",
+    "en": "Date and time",
+    "es": "Fecha y hora"
+  },
+  "最後遊玩": {
+    "ja": "最後に遊んだ日時",
+    "zh-CN": "最后游玩",
+    "en": "Last played",
+    "es": "Última partida"
+  },
+  "已收藏": {
+    "ja": "お気に入り済み",
+    "zh-CN": "已收藏",
+    "en": "In collection",
+    "es": "En la colección"
+  },
+  "官網": {
+    "ja": "公式サイト",
+    "zh-CN": "官网",
+    "en": "Official site",
+    "es": "Sitio oficial"
+  },
+  "清單選一個": {
+    "ja": "リストから選択",
+    "zh-CN": "列表选一个",
+    "en": "From a list",
+    "es": "De una lista"
+  },
+  "最多 100 個選項": {
+    "ja": "選択肢は 100 個まで",
+    "zh-CN": "最多 100 个选项",
+    "en": "At most 100 options",
+    "es": "Como máximo 100 opciones"
   }
 }

@@ -114,26 +114,6 @@ export function Editor({
     'game-cover': tr('顯示這個遊戲資料夾的封面'),
     'game-launch': tr('一鍵啟動這個遊戲（使用資料夾綁定的啟動檔）'),
   }
-  const typeHints: Record<string, string> = {
-    string: tr('一般文字，例如備註、作者'),
-    tags: tr('多個標籤，例如類型、角色'),
-    number: tr('數字，組件可呈現為評分或進度'),
-    datetime: tr('日期加時間'),
-    boolean: tr('是／否／未填'),
-    enum: tr('從固定選項中選一個，例如狀態'),
-    url: tr('網址，可自訂連結文字'),
-    date: tr('只有日期，例如發售日'),
-  }
-  const typeLabels: Record<string, string> = {
-    string: tr('文字'),
-    tags: tr('文字 · 多個值'),
-    number: tr('數字'),
-    datetime: tr('日期時間'),
-    boolean: tr('是／否'),
-    enum: tr('文字 · 限定選項'),
-    url: tr('網址'),
-    date: tr('日期'),
-  }
 
   useLocale()
 
@@ -1037,8 +1017,6 @@ export function Editor({
           dirty={dirty}
           hints={hints}
           labels={labels}
-          typeLabels={typeLabels}
-          typeHints={typeHints}
           sources={sources}
           availableFields={availableFields}
           attributes={attributes}
@@ -1063,7 +1041,8 @@ export function Editor({
               .map((row) => fieldValue(row, attributeId))
               .filter((value) => value != null)
           }
-          switchable={presets}
+          cardEditor={presets}
+          selectCell={setSelected}
         />
         <main
           className="canvas-wrap"

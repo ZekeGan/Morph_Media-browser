@@ -62,13 +62,25 @@ try {
     fields.locator('.palette-field').filter({ has: page.getByText(name, { exact: true }) })
   const cells = () => page.locator('.editor-cell').count()
 
-  // Fields are grouped by source; fields only in folder records are rows marked "not added yet".
+  // Fields are grouped by source in a fixed order: own fields first, then websites by name. A source with nothing
+  // added starts folded, and fields not added yet fold into one line.
   const groups = await fields.locator('.field-source-group > summary').allInnerTexts()
-  for (const source of ['DLsite', 'Steam', '自建'])
-    assert.ok(
-      groups.some((text) => text.startsWith(source)),
-      source + ' group: ' + groups
-    )
+  assert.deepEqual(
+    groups.map((text) => text.split(/\s/)[0]),
+    ['自建', 'DLsite', 'Steam']
+  )
+  const source = (name: string) =>
+    fields
+      .locator('.field-source-group')
+      .filter({ has: page.locator('summary', { hasText: name }) })
+  const unfold = async (name: string) => {
+    await source(name).locator('summary').click()
+    await source(name)
+      .getByRole('button', { name: /個尚未加入$/ })
+      .click()
+  }
+  assert.equal(await row('TITLE').count(), 0, 'folded until asked')
+  await unfold('DLsite')
   await row('TITLE').getByText('尚未加入', { exact: true }).waitFor()
   assert.match((await row('Note').getAttribute('class'))!, /palette-field(?! is-unbound)/)
 
@@ -98,7 +110,7 @@ try {
   assert.equal(await row('NAME').count(), 0)
   assert.equal(await row('TITLE').count(), 1)
   await fields.getByRole('button', { name: '顯示全部', exact: true }).click()
-  await row('NAME').waitFor()
+  await fields.getByText(/^已隱藏 \d+ 個未填欄位$/).waitFor({ state: 'hidden' })
   assert.equal(await button('只看有值').getAttribute('aria-pressed'), 'false')
 
   // "Reference only" adds the field to the project without putting it on the card.
@@ -107,8 +119,10 @@ try {
   await page.getByRole('menuitem', { name: '只引用欄位', exact: true }).click()
   await row('TITLE').getByText('使用 0 次', { exact: true }).waitFor()
   assert.equal(await cells(), before)
+  await row('TITLE').waitFor()
 
   // A click on a not-yet-added field adds it and puts it on the card, selected.
+  await unfold('Steam')
   await row('NAME').locator('.palette-row-main').click()
   await page.waitForFunction(
     (n) => document.querySelectorAll('.editor-cell').length === n + 1,
@@ -156,45 +170,97 @@ try {
     /^Genre/
   )
 
-  // Field management window (R-225) with the text switches of R-223.
+  // Field management window (R-225): the same source groups, one field's details beside the list.
   await button('管理欄位').click()
   const manager = page.getByRole('dialog', { name: '管理欄位', exact: true })
   const managed = (name: string) =>
     manager.locator('.field-manager-row').filter({ has: page.getByText(name, { exact: true }) })
-  await manager.getByRole('textbox', { name: '搜尋欄位', exact: true }).fill('DLsite')
+  const heading = (name: string) => manager.getByRole('heading', { name, exact: true })
+  const search2 = manager.getByRole('textbox', { name: '搜尋欄位', exact: true })
+  await search2.fill('DLsite')
   assert.equal(await manager.locator('.field-manager-row').count(), 1, 'search matches the source')
-  await manager.getByRole('textbox', { name: '搜尋欄位', exact: true }).fill('')
-  // Turning on fixed options takes the options from the stored values; the components follow.
-  await managed('Note').getByRole('switch', { name: '限定選項' }).check({ force: true })
-  await managed('Note')
-    .getByText(/^文字 · 限定選項 · /)
-    .waitFor()
-  assert.equal(await managed('Note').getByRole('switch', { name: '多個值' }).isDisabled(), true)
-  await managed('Note').locator('.mantine-Pill-label').filter({ hasText: 'hello' }).waitFor()
-  // Multiple values on a plain text field.
-  await managed('Zzz').getByRole('switch', { name: '多個值' }).check({ force: true })
-  await managed('Zzz')
-    .getByText(/^文字 · 多個值 · /)
-    .waitFor()
-  // A field in a fallback chain cannot become a choice field; the reason is shown.
-  await managed('NAME').getByRole('switch', { name: '限定選項' }).click({ force: true })
-  await managed('NAME').getByRole('alert').filter({ hasText: '備用來源' }).waitFor()
-  assert.equal(await managed('NAME').getByRole('switch', { name: '限定選項' }).isChecked(), false)
-  // A new text field with "multiple values" is a tag field.
+  await search2.fill('')
+  await managed('Note').click()
+  await heading('Note').waitFor()
+  await manager.getByText('1 個資料夾有值，例如：hello').waitFor()
+  await managed('Note').getByText('一段文字 · 使用 0 次', { exact: true }).waitFor()
+  // Changing the purpose says what will happen first, and only happens after confirming (R-223).
+  const changeTo = async (purpose: string) => {
+    await manager.getByRole('button', { name: '改成…', exact: true }).click()
+    await page.getByRole('menuitem', { name: purpose, exact: true }).click()
+  }
+  const confirm = manager.getByRole('button', { name: '確認改用途', exact: true })
+  await changeTo('清單選一個')
+  await manager.getByText('選項：hello', { exact: true }).waitFor()
+  await managed('Note').getByText('一段文字 · 使用 0 次', { exact: true }).waitFor()
+  await confirm.click()
+  await managed('Note').getByText('清單選一個 · 使用 0 次', { exact: true }).waitFor()
+  await manager.locator('.mantine-Pill-label').filter({ hasText: 'hello' }).waitFor()
+  await managed('Zzz').click()
+  await changeTo('多個標籤')
+  await manager.getByText('卡片上的組件保留原本的呈現', { exact: true }).waitFor()
+  await confirm.click()
+  await managed('Zzz').getByText('多個標籤 · 使用 0 次', { exact: true }).waitFor()
+  // A field in a fallback chain cannot become a choice from a list; the reason is shown.
+  await managed('NAME').click()
+  await changeTo('清單選一個')
+  await manager.getByRole('alert').filter({ hasText: '備用來源' }).waitFor()
+  assert.equal(await confirm.isDisabled(), true)
+  await manager.getByRole('button', { name: '取消', exact: true }).click()
+  // A new field is chosen by purpose and shown right away.
   await manager.getByRole('button', { name: '新增欄位', exact: true }).click()
   await form.getByLabel('欄位名稱').fill('Cast')
-  await form.getByRole('switch', { name: '多個值' }).check({ force: true })
-  assert.equal(await form.getByRole('switch', { name: '限定選項' }).isDisabled(), true)
+  await form.getByRole('radio', { name: /^多個標籤/ }).check()
+  assert.equal(await form.getByLabel('選項（逗號或換行分隔）').count(), 0)
+  await form.getByRole('radio', { name: /^從清單選一個/ }).check()
+  await form.getByLabel('選項（逗號或換行分隔）').waitFor()
+  await form.getByLabel('選項（逗號或換行分隔）').fill(', ，')
+  await form.getByLabel('欄位名稱').fill('Cast')
+  assert.equal(
+    await form.getByRole('button', { name: '新增欄位', exact: true }).isDisabled(),
+    true,
+    'separators alone are not options'
+  )
+  await form.getByLabel('選項（逗號或換行分隔）').fill('')
+  await form.getByRole('radio', { name: /^多個標籤/ }).check()
   await form.getByRole('button', { name: '新增欄位', exact: true }).click()
-  await managed('Cast')
-    .getByText(/^文字 · 多個值 · /)
-    .waitFor()
-  // Rename from the window opens the same rename dialog.
+  await heading('Cast').waitFor()
+  await managed('Cast').getByText('多個標籤 · 使用 0 次', { exact: true }).waitFor()
+  // With no values to take options from, they are typed in first.
+  await changeTo('清單選一個')
+  assert.equal(await confirm.isDisabled(), true)
+  const typedOption = manager.getByRole('textbox', { name: '還沒有可用的值，請先輸入選項' })
+  await typedOption.fill('A')
+  await typedOption.press('Enter')
+  await manager.getByText('選項：A', { exact: true }).waitFor()
+  await manager.getByRole('button', { name: '取消', exact: true }).click()
+  // Rename from the details opens the same rename dialog.
   await manager.getByRole('button', { name: '重新命名欄位 Cast', exact: true }).click()
   const rename = page.getByRole('dialog', { name: '重新命名欄位', exact: true })
   await rename.getByLabel('欄位名稱').fill('Cast list')
   await rename.getByRole('button', { name: '確認', exact: true }).click()
-  await managed('Cast list').waitFor()
+  await heading('Cast list').waitFor()
+  // A narrow window shows the list or the details, with a way back.
+  await app.evaluate(({ BrowserWindow }) =>
+    BrowserWindow.getAllWindows()[0].setBounds({ width: 900, height: 950 })
+  )
+  const list = manager.locator('.field-manager-list')
+  await list.waitFor({ state: 'hidden' })
+  await manager.getByRole('button', { name: '返回欄位清單', exact: true }).click()
+  await list.waitFor()
+  assert.equal(await manager.locator('.field-manager-detail').isVisible(), false)
+  await app.evaluate(({ BrowserWindow }) =>
+    BrowserWindow.getAllWindows()[0].setBounds({ width: 1500, height: 950 })
+  )
+  // "Used in" selects the component on the canvas and closes the window.
+  await managed('NAME').click()
+  await manager.locator('.field-detail-uses').getByRole('button').first().click()
+  await manager.waitFor({ state: 'hidden' })
+  await page.locator(`.editor-cell.selected[data-cell-id="${cellId}"]`).waitFor()
+  // The row's menu opens the same details directly.
+  await button('欄位操作 Note').click()
+  await page.getByRole('menuitem', { name: '欄位設定…', exact: true }).click()
+  await heading('Note').waitFor()
   await page.keyboard.press('Escape')
   await manager.waitFor({ state: 'hidden' })
   await button('儲存').click()
@@ -228,7 +294,7 @@ try {
   assert.deepEqual(errors, [])
   passed = true
   console.log(
-    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, text with tags fallback order, field manager (search, text switches, refused switch, new tag field, rename); folder settings keep 0/false, a cleared field and the old-type note. ' +
+    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, text with tags fallback order, field manager (list and details, search, purpose change with impact, refused change, new field by purpose, rename, narrow view, used in, row menu); folder settings keep 0/false, a cleared field and the old-type note. ' +
       root
   )
 } catch (error) {

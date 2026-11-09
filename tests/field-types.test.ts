@@ -1,8 +1,17 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { fieldTypes } from '../shared/fields'
 import { validateProject, type Cell, type Project } from '../shared/model'
 import { modelProject } from './support/model-fixtures'
-import { optionsFromValues, switchTextType, textType } from '../src/fieldTypes'
+import {
+  fieldPurposes,
+  fieldUses,
+  optionsFromValues,
+  purposeChangeImpact,
+  switchTextType,
+} from '../src/fieldTypes'
+import { orderedFieldSourceGroups } from '../src/fieldSources'
+import { t as tr } from '../src/i18n'
 
 const style = { textColor: '#ffffff', backgroundColor: 'transparent' }
 const cell = (patch: Partial<Cell>): Cell => ({
@@ -26,12 +35,6 @@ const switched = (result: ReturnType<typeof switchTextType>) => {
   validateProject(result.project)
   return result.project
 }
-
-test('the two switches map to the existing types, with fixed options winning', () => {
-  assert.equal(textType(false, false), 'string')
-  assert.equal(textType(true, false), 'tags')
-  assert.equal(textType(false, true), 'enum')
-})
 
 test('multiple values only changes the field type; components keep their display', () => {
   const p = switched(switchTextType(project([cell({ wrap: true })]), 'note', 'tags', []))
@@ -149,4 +152,75 @@ test('fixed options keep earlier options, add newer values and respect equals co
     error: 'condition-option',
   })
   switched(switchTextType(condition('Ready'), 'note', 'enum', ['Ready']))
+})
+
+test('all eight field types have a purpose with an example', () => {
+  const purposes = fieldPurposes()
+  assert.deepEqual(purposes.map((purpose) => purpose.type).sort(), [...fieldTypes].sort())
+  assert.ok(purposes.every((purpose) => purpose.label && purpose.example && purpose.glyph))
+})
+
+test('source groups are ordered: own fields first, then websites by name', () => {
+  const field = (attributeId: string) => ({ attributeId })
+  const groups = orderedFieldSourceGroups([
+    field('steam-name'),
+    field('note'),
+    field('dlsite-title'),
+    field('steam-other'),
+  ])
+  assert.deepEqual(
+    groups.map((group) => group.source),
+    [tr('自建'), 'DLsite', 'Steam']
+  )
+  assert.deepEqual(
+    groups[2].fields.map((f) => f.attributeId),
+    ['steam-name', 'steam-other'],
+    'fields keep their order inside a group'
+  )
+})
+
+test('a field lists its uses once per layout, and only choice changes alter components', () => {
+  const main = cell({ cellId: 'main' })
+  const start: Project = {
+    ...project([main, cell({ cellId: 'fall', attributeId: 'other', fallbackIds: ['note'] })]),
+    layoutPresets: [
+      { id: 'preset', name: 'Default', cells: [main] },
+      { id: 'second', name: 'Second', cells: [cell({ cellId: 'second' })] },
+    ],
+    contentCells: {
+      book: [
+        cell({
+          cellId: 'when',
+          kind: 'static-text',
+          attributeId: undefined,
+          condition: { attributeId: 'note', operator: 'set' },
+        }),
+      ],
+    },
+  }
+  assert.deepEqual(
+    fieldUses(start, 'note', true).map((use) => [use.where, use.name, use.role, use.cell.cellId]),
+    [
+      ['current', undefined, 'main', 'main'],
+      ['current', undefined, 'fallback', 'fall'],
+      ['preset', 'Second', 'main', 'second'],
+      ['content', 'book', 'condition', 'when'],
+    ]
+  )
+  // A content template editor has its own list as the draft and sees every saved layout and other template.
+  assert.deepEqual(
+    fieldUses(start, 'note', false).map((use) => use.cell.cellId),
+    ['main', 'fall', 'main', 'second', 'when']
+  )
+  assert.deepEqual(
+    fieldUses(
+      { ...start, cells: [start.contentCells!.book[0]], layoutPresets: undefined },
+      'note',
+      false
+    ).map((use) => [use.where, use.cell.cellId]),
+    [['current', 'when']],
+    'the template being edited is not counted twice'
+  )
+  assert.equal(purposeChangeImpact(start, 'note', 'tags'), 0)
+  assert.equal(purposeChangeImpact(start, 'note', 'enum'), 2)
 })

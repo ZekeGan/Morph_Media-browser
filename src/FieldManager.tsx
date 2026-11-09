@@ -1,146 +1,133 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   ActionIcon,
-  Badge,
   Button,
   Group,
+  Menu,
   Modal,
-  Stack,
-  Switch,
   TagsInput,
   Text,
   TextInput,
   Tooltip,
+  UnstyledButton,
 } from '@mantine/core'
 import { Icon } from './icons'
 import { t as tr } from './i18n'
-import type { Attribute, Project } from '../shared/model'
+import type { Attribute, Cell, CellKind, Project } from '../shared/model'
 import type { editorFields } from '../shared/layouts'
-import { fieldSource } from './fieldSources'
+import { copyableValue, isFilled } from '../shared/cells'
+import { fieldSource, orderedFieldSourceGroups, useSourceFolding } from './fieldSources'
 import { EnumColors } from './EnumColors'
-import { isTextType, switchTextType, textType, type SwitchResult } from './fieldTypes'
+import {
+  fieldUses,
+  isTextType,
+  purposeChangeImpact,
+  purposeGlyph,
+  purposeLabel,
+  switchTextType,
+  textTypes,
+  type FieldUse,
+  type TextType,
+} from './fieldTypes'
 
 type Binding = Project['fieldBindings'][number]
 type Source = ReturnType<typeof editorFields>[number]
 
-// The field management window (R-225), opened from the "Your fields" heading: every field with its type,
-// source, use count and meaning; rename, delete (with the impact preview), the text switches of R-223 and the
-// options of a fixed-options field. Field combinations (R-226) will get their own part here.
-export function FieldManager({
-  opened,
-  onClose,
+const tooLong = (options: string[]) => options.some((option) => option.length > 100)
+
+// One field's details: what it is, its real data, where it is used, and what can be done with it. Keyed by field, so
+// a half-finished purpose change never carries over to another field.
+function FieldDetail({
+  binding,
+  added,
+  source,
+  attributes,
   draft,
   busy,
   dirty,
-  sources,
-  availableFields,
-  attributes,
-  typeLabels,
-  typeHints,
+  cardEditor,
+  labels,
   values,
   change,
-  onNewField,
   reference,
   requestDelete,
   setRenaming,
-  switchable,
+  showSource,
+  selectCell,
 }: {
-  opened: boolean
-  onClose: () => void
+  binding: Binding
+  added: boolean
+  source?: Source
+  attributes: Attribute[]
   draft: Project
   busy: boolean
   dirty: boolean
-  sources: Source[]
-  availableFields: Source[]
-  attributes: Attribute[]
-  typeLabels: Record<string, string>
-  typeHints: Record<string, string>
-  // The values this field holds in the project's folders (for use counts and options taken from the data).
-  values: (attributeId: string) => unknown[]
+  cardEditor: boolean
+  labels: Record<CellKind, string>
+  values: unknown[]
   change: (next: Project) => void
-  onNewField: () => void
   reference: (binding: Binding) => void
   requestDelete: (binding: Binding) => void
   setRenaming: (value: { id: string; name: string }) => void
-  // Type switches convert every layout's components, so they are offered only in the card layout editor
-  // (a content template editor saves its own cells only).
-  switchable: boolean
+  showSource: (source: string) => void
+  selectCell: (cellId: string) => void
 }) {
-  const [search, setSearch] = useState('')
-  // Per field: why a switch was refused, and options typed in before fixed options can be turned on.
-  const [problems, setProblems] = useState<Record<string, string>>({})
-  const [pending, setPending] = useState<Record<string, string[]>>({})
-  const query = search.trim().toLocaleLowerCase()
-  const fields: { binding: Binding; added: boolean }[] = [
-    ...draft.fieldBindings.map((binding) => ({ binding, added: true })),
-    ...availableFields.map((f) => ({
-      binding: { attributeId: f.attributeId, alias: f.key, type: f.type },
-      added: false,
-    })),
-  ].filter(({ binding }) =>
-    `${binding.alias} ${fieldSource(binding.attributeId, attributes)} ${typeLabels[binding.type] ?? ''}`
-      .toLocaleLowerCase()
-      .includes(query)
-  )
-  const uses = (id: string) =>
-    [
-      ...draft.cells,
-      ...(draft.layoutPresets ?? [])
-        .filter((preset) => preset.id !== draft.activeLayoutId)
-        .flatMap((preset) => preset.cells),
-    ].filter((cell) => cell.attributeId === id || cell.fallbackIds?.includes(id)).length
+  const id = binding.attributeId,
+    name = binding.alias || tr('未命名欄位'),
+    origin = fieldSource(id, attributes)
+  const [target, setTarget] = useState<TextType>(),
+    [typed, setTyped] = useState<string[]>([]),
+    [typedProblem, setTypedProblem] = useState(''),
+    [optionProblem, setOptionProblem] = useState('')
   const reasons: Record<string, string> = {
-    fallback: tr('這個欄位用在備用來源，請先移除備用來源再切換「限定選項」。'),
-    condition: tr('這個欄位用在「等於／不等於」顯示條件，請先改條件再開啟「多個值」。'),
-    options: tr('還沒有可用的值，請先輸入至少一個選項。'),
-    'too-many': tr('這個欄位有超過 100 種不同的值，不適合限定選項。'),
+    fallback: tr('這個欄位用在備用來源，請先移除備用來源。'),
+    condition: tr('這個欄位用在「等於／不等於」顯示條件，請先改條件。'),
     'condition-option': tr('這個欄位用在「等於／不等於」顯示條件，比較值不在選項內，請先改條件。'),
-    long: tr('每個選項最多 100 個字'),
+    'too-many': tr('這個欄位有超過 100 種不同的值，不適合從清單選一個。'),
   }
-  const apply = (id: string, result: SwitchResult) => {
-    if ('error' in result) {
-      setProblems((now) => ({ ...now, [id]: result.error }))
-      if (result.error === 'options') setPending((now) => ({ ...now, [id]: now[id] ?? [] }))
-      return
-    }
-    setProblems(({ [id]: _old, ...rest }) => rest)
-    setPending(({ [id]: _old, ...rest }) => rest)
-    change(result.project)
-  }
-  const usage = (id: string, option: string) =>
-    values(id).filter(
-      (value) => value === option || (Array.isArray(value) && value.includes(option))
-    ).length
-  const tooLong = (id: string, options: string[]) => {
-    if (!options.some((option) => option.length > 100)) return false
-    setProblems((now) => ({ ...now, [id]: 'long' }))
-    return true
-  }
-  const setOptions = (binding: Binding, options: string[]) => {
-    if (tooLong(binding.attributeId, options)) return
+  // A dry run: the change is applied only after the impact has been read and confirmed.
+  const planned = target
+    ? switchTextType(
+        typed.length
+          ? {
+              ...draft,
+              fieldBindings: draft.fieldBindings.map((field) =>
+                field.attributeId === id ? { ...field, options: typed } : field
+              ),
+            }
+          : draft,
+        id,
+        target,
+        values
+      )
+    : undefined
+  const plannedOptions =
+    planned && 'project' in planned
+      ? planned.project.fieldBindings.find((field) => field.attributeId === id)?.options
+      : undefined
+  const impact = target ? purposeChangeImpact(draft, id, target) : 0
+  const usage = (option: string) =>
+    values.filter((value) => value === option || (Array.isArray(value) && value.includes(option)))
+      .length
+  const setOptions = (options: string[]) => {
+    if (tooLong(options)) return setOptionProblem(tr('每個選項最多 100 個字'))
     const used = (binding.options ?? []).filter(
-      (option) => !options.includes(option) && usage(binding.attributeId, option) > 0
+      (option) => !options.includes(option) && usage(option) > 0
     )
-    if (used.length) {
-      setProblems((now) => ({
-        ...now,
-        [binding.attributeId]: tr(
+    if (used.length)
+      return setOptionProblem(
+        tr(
           '「{0}」仍有 {1} 個資料夾使用，請先把這些資料夾改成其他值再移除。',
           used[0],
-          usage(binding.attributeId, used[0])
-        ),
-      }))
-      return
-    }
-    if (!options.length) {
-      setProblems((now) => ({ ...now, [binding.attributeId]: tr('單選至少需要一個選項') }))
-      return
-    }
-    setProblems(({ [binding.attributeId]: _old, ...rest }) => rest)
+          usage(used[0])
+        )
+      )
+    if (!options.length) return setOptionProblem(tr('至少需要一個選項'))
+    setOptionProblem('')
     change({
       ...draft,
       fieldBindings: draft.fieldBindings.map((field) =>
-        field.attributeId === binding.attributeId
+        field.attributeId === id
           ? {
               ...field,
               options,
@@ -158,218 +145,469 @@ export function FieldManager({
       ),
     })
   }
-  const row = ({ binding, added }: { binding: Binding; added: boolean }) => {
-    const id = binding.attributeId,
-      name = binding.alias || tr('未命名欄位'),
-      source = sources.find((f) => f.attributeId === id),
-      text = isTextType(binding.type),
-      problem = problems[id]
-    return (
-      <div key={id} className="field-manager-row" data-attribute-id={id}>
-        <Group justify="space-between" wrap="nowrap" align="flex-start" gap="xs">
-          <div className="field-manager-name">
-            <Text fw={600} size="sm">
-              {name}
-            </Text>
-            <Text size="xs" c="dimmed">
-              {typeLabels[binding.type] ?? binding.type} · {fieldSource(id, attributes)} ·{' '}
-              {added ? tr('使用 {0} 次', uses(id)) : tr('尚未加入')}
-              {source?.shared === false && source.private ? ' · ' + tr('專案私有') : ''}
-            </Text>
-            <Text size="xs" c="dimmed" className="field-manager-hint">
-              {typeHints[binding.type]}
-            </Text>
-          </div>
-          <Group gap={4} wrap="nowrap">
-            {added ? (
-              <>
-                <Tooltip label={tr('重新命名欄位')}>
-                  <ActionIcon
-                    variant="subtle"
-                    color="gray"
-                    aria-label={tr('重新命名欄位') + ' ' + name}
-                    disabled={busy}
-                    onClick={() => setRenaming({ id, name: binding.alias })}
-                  >
-                    <Icon name="edit" size={14} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label={dirty ? tr('先保存版面後才能刪除欄位') : tr('刪除欄位及資料')}>
-                  <ActionIcon
-                    variant="subtle"
-                    color="red"
-                    aria-label={tr('刪除欄位及資料') + ' ' + name}
-                    disabled={busy || dirty}
-                    onClick={() => requestDelete(binding)}
-                  >
-                    <Icon name="close" size={14} />
-                  </ActionIcon>
-                </Tooltip>
-              </>
-            ) : (
-              <Button
-                size="compact-xs"
-                variant="light"
-                disabled={source?.conflict}
-                onClick={() => reference(binding)}
-              >
-                {tr('只引用欄位')}
-              </Button>
-            )}
-          </Group>
-        </Group>
-        {added && text && (
-          <Group gap="lg" mt={6}>
-            <Switch
-              size="xs"
-              label={tr('多個值')}
-              checked={binding.type === 'tags'}
-              disabled={!switchable || binding.type === 'enum'}
-              onChange={(event) =>
-                apply(
-                  id,
-                  switchTextType(
-                    draft,
-                    id,
-                    textType(event.currentTarget.checked, false),
-                    values(id)
-                  )
-                )
-              }
-            />
-            <Switch
-              size="xs"
-              label={tr('限定選項')}
-              checked={binding.type === 'enum'}
-              disabled={!switchable || binding.type === 'tags'}
-              onChange={(event) =>
-                apply(
-                  id,
-                  switchTextType(
-                    draft,
-                    id,
-                    textType(false, event.currentTarget.checked),
-                    values(id)
-                  )
-                )
-              }
-            />
-          </Group>
-        )}
-        {added && text && !switchable && (
-          <Text size="xs" c="dimmed" mt={4}>
-            {tr('「多個值」「限定選項」請在卡片版面編輯器切換。')}
-          </Text>
-        )}
-        {added && text && binding.type !== 'enum' && pending[id] && (
-          <Group gap="xs" mt={6} align="flex-end" wrap="nowrap">
-            <TagsInput
-              flex={1}
-              size="xs"
-              label={tr('選項')}
-              placeholder={tr('輸入選項後按 Enter')}
-              value={pending[id]}
-              splitChars={[',', '，']}
-              onChange={(options) =>
-                !tooLong(id, options) && setPending((now) => ({ ...now, [id]: options }))
-              }
-            />
-            <Button
-              size="xs"
-              variant="default"
-              disabled={!pending[id].length}
-              onClick={() =>
-                apply(
-                  id,
-                  switchTextType(
-                    {
-                      ...draft,
-                      fieldBindings: draft.fieldBindings.map((field) =>
-                        field.attributeId === id ? { ...field, options: pending[id] } : field
-                      ),
-                    },
-                    id,
-                    'enum',
-                    values(id)
-                  )
-                )
-              }
+  const filled = values.filter(isFilled)
+  const examples = [...new Set(filled.map((value) => copyableValue(value) ?? ''))]
+    .filter(Boolean)
+    .slice(0, 3)
+    .map((text) => (text.length > 40 ? text.slice(0, 40) + '…' : text))
+  const layoutName = (use: FieldUse) => {
+    if (use.where === 'current') return tr('目前版面')
+    if (use.where === 'preset') return use.name === '預設版面' ? tr('預設版面') : (use.name ?? '')
+    return tr(
+      '{0}資訊版面',
+      (
+        {
+          book: tr('書籍／漫畫'),
+          game: tr('遊戲'),
+          media: tr('影音'),
+          general: tr('一般'),
+        } as Record<string, string>
+      )[use.name ?? ''] ?? tr('一般')
+    )
+  }
+  const uses = fieldUses(draft, id, cardEditor)
+  const roleNote = (use: FieldUse) =>
+    use.role === 'fallback'
+      ? ' · ' + tr('備用來源')
+      : use.role === 'condition'
+        ? ' · ' + tr('顯示條件')
+        : ''
+  const cellName = (cell: Cell) =>
+    labels[cell.kind] +
+    (cell.kind === 'static-text' && cell.text ? ` · ${cell.text.slice(0, 20)}` : '')
+  return (
+    <div className="field-detail">
+      <div className="field-detail-head">
+        <h3>{name}</h3>
+        {added && (
+          <Tooltip label={tr('重新命名欄位')}>
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              aria-label={tr('重新命名欄位') + ' ' + name}
+              disabled={busy}
+              onClick={() => setRenaming({ id, name: binding.alias })}
             >
-              {tr('開啟限定選項')}
-            </Button>
-          </Group>
-        )}
-        {added && binding.type === 'enum' && (
-          <Stack gap={4} mt={6}>
-            <TagsInput
-              size="xs"
-              label={tr('選項')}
-              value={binding.options ?? []}
-              splitChars={[',', '，']}
-              onChange={(options) => setOptions(binding, options)}
-            />
-            <EnumColors
-              binding={binding}
-              options={binding.options ?? []}
-              onChange={(optionColors) =>
-                change({
-                  ...draft,
-                  fieldBindings: draft.fieldBindings.map((field) => {
-                    if (field.attributeId !== id) return field
-                    const { optionColors: _old, ...rest } = field
-                    return optionColors ? { ...rest, optionColors } : rest
-                  }),
-                })
-              }
-            />
-          </Stack>
-        )}
-        {problem && (
-          <Text size="xs" c="orange" mt={4} role="alert">
-            {reasons[problem] ?? problem}
-          </Text>
+              <Icon name="edit" size={14} />
+            </ActionIcon>
+          </Tooltip>
         )}
       </div>
+      <dl className="field-detail-facts">
+        <dt>{tr('用途')}</dt>
+        <dd className="field-detail-purpose">
+          <span>{purposeLabel(binding.type)}</span>
+          {added && isTextType(binding.type) && cardEditor && (
+            <Menu position="bottom-start">
+              <Menu.Target>
+                <Button size="compact-xs" variant="default">
+                  {tr('改成…')}
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {textTypes
+                  .filter((type) => type !== binding.type)
+                  .map((type) => (
+                    <Menu.Item
+                      key={type}
+                      onClick={() => {
+                        setTyped([])
+                        setTarget(type)
+                      }}
+                    >
+                      {purposeLabel(type)}
+                    </Menu.Item>
+                  ))}
+              </Menu.Dropdown>
+            </Menu>
+          )}
+        </dd>
+        <dt>{tr('來源')}</dt>
+        <dd>
+          <Tooltip label={tr('只看這個來源')} openDelay={300}>
+            <Button size="compact-xs" variant="subtle" onClick={() => showSource(origin)}>
+              {origin}
+            </Button>
+          </Tooltip>
+          {source?.shared === false && source.private && ' · ' + tr('專案私有')}
+          {source?.shared && source.private && ' · ' + tr('有專案覆寫')}
+        </dd>
+        <dt>{tr('資料')}</dt>
+        <dd>
+          {filled.length
+            ? tr('{0} 個資料夾有值，例如：{1}', filled.length, examples.join('、'))
+            : tr('目前沒有資料夾有值')}
+        </dd>
+      </dl>
+      {added && isTextType(binding.type) && !cardEditor && (
+        <Text size="xs" c="dimmed">
+          {tr('改用途請到卡片版面編輯器。')}
+        </Text>
+      )}
+      {target && planned && (
+        <div className="field-detail-change">
+          <Text size="sm" fw={600}>
+            {tr('改成「{0}」', purposeLabel(target))}
+          </Text>
+          {'error' in planned && planned.error !== 'options' ? (
+            <Text size="xs" c="orange" role="alert">
+              {reasons[planned.error]}
+            </Text>
+          ) : (
+            <ul>
+              <li>
+                {impact
+                  ? tr('卡片上 {0} 個組件會換成新的呈現', impact)
+                  : tr('卡片上的組件保留原本的呈現')}
+              </li>
+              <li>{tr('資料夾裡已存的值不會改寫，顯示時自動轉換')}</li>
+              {binding.optionColors && target !== 'enum' && <li>{tr('選項顏色會被移除')}</li>}
+              {plannedOptions && target === 'enum' && (
+                <li>{tr('選項：{0}', plannedOptions.join('、'))}</li>
+              )}
+            </ul>
+          )}
+          {target === 'enum' &&
+            (typed.length > 0 || ('error' in planned && planned.error === 'options')) && (
+              <TagsInput
+                size="xs"
+                label={tr('還沒有可用的值，請先輸入選項')}
+                placeholder={tr('輸入選項後按 Enter')}
+                value={typed}
+                splitChars={[',', '，']}
+                error={typedProblem || undefined}
+                onChange={(options) => {
+                  setTypedProblem(tooLong(options) ? tr('每個選項最多 100 個字') : '')
+                  if (!tooLong(options)) setTyped(options)
+                }}
+              />
+            )}
+          <Group gap="xs">
+            <Button
+              size="xs"
+              disabled={'error' in planned}
+              onClick={() => {
+                if ('project' in planned) change(planned.project)
+                setTarget(undefined)
+              }}
+            >
+              {tr('確認改用途')}
+            </Button>
+            <Button size="xs" variant="default" onClick={() => setTarget(undefined)}>
+              {tr('取消')}
+            </Button>
+          </Group>
+        </div>
+      )}
+      {!added && (
+        <div className="field-detail-part">
+          <Text size="sm">{tr('這個欄位還沒加入本專案。')}</Text>
+          <Button
+            size="xs"
+            variant="default"
+            disabled={source?.conflict}
+            onClick={() => reference(binding)}
+          >
+            {tr('只引用欄位')}
+          </Button>
+          {source?.conflict && (
+            <Text size="xs" c="orange">
+              {tr('同一欄位的型別不一致，請先處理資料衝突')}
+            </Text>
+          )}
+        </div>
+      )}
+      {added && (
+        <div className="field-detail-part">
+          <Text size="sm" fw={600}>
+            {tr('用在哪裡')}
+          </Text>
+          {uses.length ? (
+            <ul className="field-detail-uses">
+              {uses.map((use, index) => (
+                <li key={use.cell.cellId + index}>
+                  {use.where === 'current' ? (
+                    <Button
+                      size="compact-xs"
+                      variant="subtle"
+                      onClick={() => selectCell(use.cell.cellId)}
+                    >
+                      {cellName(use.cell)}
+                      {roleNote(use)}
+                    </Button>
+                  ) : (
+                    <Text size="xs" c="dimmed">
+                      {layoutName(use)} · {cellName(use.cell)}
+                      {roleNote(use)}
+                    </Text>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Text size="xs" c="dimmed">
+              {tr('還沒有用在任何組件')}
+            </Text>
+          )}
+        </div>
+      )}
+      {added && binding.type === 'enum' && (
+        <div className="field-detail-part">
+          <TagsInput
+            size="xs"
+            label={tr('選項')}
+            value={binding.options ?? []}
+            splitChars={[',', '，']}
+            error={optionProblem || undefined}
+            onChange={setOptions}
+          />
+          <EnumColors
+            binding={binding}
+            options={binding.options ?? []}
+            onChange={(optionColors) =>
+              change({
+                ...draft,
+                fieldBindings: draft.fieldBindings.map((field) => {
+                  if (field.attributeId !== id) return field
+                  const { optionColors: _old, ...rest } = field
+                  return optionColors ? { ...rest, optionColors } : rest
+                }),
+              })
+            }
+          />
+        </div>
+      )}
+      {added && (
+        <div className="field-detail-danger">
+          <Button
+            size="xs"
+            variant="subtle"
+            color="red"
+            disabled={busy || dirty}
+            onClick={() => requestDelete(binding)}
+          >
+            {tr('刪除欄位及資料')}
+          </Button>
+          {dirty && (
+            <Text size="xs" c="dimmed">
+              {tr('先保存版面後才能刪除欄位')}
+            </Text>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// The field management window (R-225): the same source groups as the "Your fields" list on the left, with one field's
+// details beside them. Everything here edits the layout draft, so it can be undone and only counts after saving.
+// Field groups (R-226) will come first in this list.
+export function FieldManager({
+  focusId,
+  onClose,
+  draft,
+  busy,
+  dirty,
+  sources,
+  availableFields,
+  attributes,
+  cardEditor,
+  labels,
+  values,
+  change,
+  onNewField,
+  reference,
+  requestDelete,
+  setRenaming,
+  selectCell,
+}: {
+  // The field to show first, also after creating one from this window.
+  focusId?: string
+  onClose: () => void
+  draft: Project
+  busy: boolean
+  dirty: boolean
+  sources: Source[]
+  availableFields: Source[]
+  attributes: Attribute[]
+  // Purpose changes convert every layout's components, so they are offered only in the card layout editor (a content
+  // template editor saves its own cells only).
+  cardEditor: boolean
+  labels: Record<CellKind, string>
+  // The values a field holds in the project's folders (data examples, option use and options from the data).
+  values: (attributeId: string) => unknown[]
+  change: (next: Project) => void
+  onNewField: () => void
+  reference: (binding: Binding) => void
+  requestDelete: (binding: Binding) => void
+  setRenaming: (value: { id: string; name: string }) => void
+  selectCell: (cellId: string) => void
+}) {
+  const [search, setSearch] = useState(''),
+    [selected, setSelected] = useState(focusId)
+  const query = search.trim().toLocaleLowerCase()
+  const folding = useSourceFolding(!!query)
+  // A field asked for from outside is always visible in the list, even in a folded source or under a search.
+  useEffect(() => {
+    if (!focusId) return
+    setSelected(focusId)
+    setSearch('')
+    folding.reveal(fieldSource(focusId, attributes))
+  }, [focusId])
+  const bound = (id: string) => draft.fieldBindings.some((field) => field.attributeId === id)
+  const all: Binding[] = [
+    ...draft.fieldBindings,
+    ...availableFields.map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type })),
+  ]
+  const shown = all.filter((binding) =>
+    `${binding.alias} ${fieldSource(binding.attributeId, attributes)} ${purposeLabel(binding.type)}`
+      .toLocaleLowerCase()
+      .includes(query)
+  )
+  const current = all.find((binding) => binding.attributeId === selected)
+  const currentRow = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    currentRow.current?.scrollIntoView({ block: 'nearest' })
+  }, [selected])
+  const row = (binding: Binding) => {
+    const id = binding.attributeId,
+      added = bound(id),
+      name = binding.alias || tr('未命名欄位'),
+      count = fieldUses(draft, id, cardEditor).filter((use) => use.role !== 'condition').length
+    return (
+      <UnstyledButton
+        key={id}
+        ref={id === selected ? currentRow : undefined}
+        className={'field-manager-row' + (added ? '' : ' is-unbound')}
+        data-attribute-id={id}
+        aria-current={id === selected ? 'true' : undefined}
+        onClick={() => setSelected(id)}
+      >
+        <span className="palette-row-icon is-glyph" aria-hidden>
+          {purposeGlyph(binding.type)}
+        </span>
+        <span className="field-manager-name">{name}</span>
+        <span className="field-manager-meta">
+          {purposeLabel(binding.type)} · {added ? tr('使用 {0} 次', count) : tr('尚未加入')}
+        </span>
+      </UnstyledButton>
     )
   }
   return (
-    <Modal opened={opened} onClose={onClose} title={tr('管理欄位')} size="lg">
-      <Stack gap="sm">
-        <Group gap="xs" wrap="nowrap">
+    <Modal opened onClose={onClose} title={tr('管理欄位')} size="min(1000px, 92vw)">
+      <div className="field-manager" data-view={current ? 'detail' : 'list'}>
+        <Text size="xs" c="dimmed">
+          {tr('這裡整理欄位本身：名稱、用途與選項。要放上卡片，請用左側清單。')}
+        </Text>
+        <Group gap="xs" wrap="nowrap" className="field-manager-tools">
           <TextInput
             flex={1}
             size="xs"
             aria-label={tr('搜尋欄位')}
-            placeholder={tr('搜尋名稱、型別或來源')}
+            placeholder={tr('搜尋名稱、用途或來源')}
             leftSection={<Icon name="search" size={14} />}
             value={search}
             onChange={(event) => setSearch(event.currentTarget.value)}
           />
           <Button
             size="xs"
-            variant="light"
+            variant="default"
             leftSection={<Icon name="plus" size={14} />}
             onClick={onNewField}
           >
             {tr('新增欄位')}
           </Button>
         </Group>
-        <Text size="xs" c="dimmed">
-          {tr('切換「多個值」「限定選項」只改欄位設定；資料夾裡已存的值不會改寫，顯示時自動轉換。')}
-        </Text>
-        {fields.length ? (
-          <div className="field-manager-list">{fields.map(row)}</div>
-        ) : (
-          <Text size="sm" c="dimmed">
-            {tr('沒有符合的欄位')}
-          </Text>
-        )}
-        <Group gap={6}>
-          <Badge size="xs" color="gray">
-            {tr('{0} 個欄位', draft.fieldBindings.length)}
-          </Badge>
-        </Group>
-      </Stack>
+        <div className="field-manager-body">
+          <div className="field-manager-list">
+            {orderedFieldSourceGroups(shown, attributes).map(({ source, fields }) => {
+              const added = fields.filter((f) => bound(f.attributeId)),
+                unadded = fields.filter((f) => !bound(f.attributeId))
+              return (
+                <details
+                  key={source}
+                  className="field-source-group"
+                  open={folding.isOpen(source, added.length > 0)}
+                >
+                  <summary
+                    onClick={(event) => {
+                      event.preventDefault()
+                      folding.toggle(source, added.length > 0)
+                    }}
+                  >
+                    {source}{' '}
+                    <Text component="span" size="xs" c="dimmed">
+                      {tr('{0} 個欄位 · 已加入 {1}', fields.length, added.length)}
+                    </Text>
+                  </summary>
+                  {added.map(row)}
+                  {unadded.length > 0 && !folding.showsUnadded(source) ? (
+                    <Button
+                      size="compact-xs"
+                      variant="subtle"
+                      color="gray"
+                      onClick={() => folding.showUnadded(source)}
+                    >
+                      {tr('＋ {0} 個尚未加入', unadded.length)}
+                    </Button>
+                  ) : (
+                    unadded.map(row)
+                  )}
+                </details>
+              )
+            })}
+            {!shown.length && (
+              <Text size="sm" c="dimmed">
+                {tr('沒有符合的欄位')}
+              </Text>
+            )}
+          </div>
+          <div className="field-manager-detail">
+            {current ? (
+              <>
+                <Button
+                  className="field-manager-back"
+                  size="compact-xs"
+                  variant="subtle"
+                  leftSection={<Icon name="arrow-left" size={14} />}
+                  onClick={() => setSelected(undefined)}
+                >
+                  {tr('返回欄位清單')}
+                </Button>
+                <FieldDetail
+                  key={current.attributeId}
+                  binding={current}
+                  added={bound(current.attributeId)}
+                  source={sources.find((f) => f.attributeId === current.attributeId)}
+                  attributes={attributes}
+                  draft={draft}
+                  busy={busy}
+                  dirty={dirty}
+                  cardEditor={cardEditor}
+                  labels={labels}
+                  values={values(current.attributeId)}
+                  change={change}
+                  reference={reference}
+                  requestDelete={requestDelete}
+                  setRenaming={setRenaming}
+                  showSource={(source) => {
+                    setSearch(source)
+                    setSelected(undefined)
+                  }}
+                  selectCell={(cellId) => {
+                    selectCell(cellId)
+                    onClose()
+                  }}
+                />
+              </>
+            ) : (
+              <Text size="sm" c="dimmed">
+                {tr('選擇左邊的欄位，就能在這裡查看與設定。')}
+              </Text>
+            )}
+          </div>
+        </div>
+      </div>
     </Modal>
   )
 }

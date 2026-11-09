@@ -358,7 +358,30 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .inspector-tab-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent); }
 .find-fallback { align-self:flex-start; }
 .palette-row .palette-field-value { margin-top:1px; font-size:11px; color:var(--muted); }.palette-row .palette-field-value.is-empty { opacity:.8; }
-/* Field management window (R-225). */
-.field-manager-list { display:grid; gap:8px; max-height:min(60dvh,560px); overflow:auto; padding-right:4px; }
-.field-manager-row { padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius,8px); background:var(--surface); min-width:0; }
-.field-manager-name { min-width:0; overflow-wrap:anywhere; }
+/* Field management window (R-225): list beside details; below about 800px one at a time, with a way back. */
+.field-manager { display:grid; gap:10px; container:field-manager / inline-size; min-width:0; }
+.field-manager-body { display:grid; grid-template-columns:minmax(260px,320px) minmax(0,1fr); gap:12px; height:min(66dvh,600px); min-height:0; }
+.field-manager-list,.field-manager-detail { min-width:0; min-height:0; overflow:auto; padding:8px; border:1px solid var(--line); border-radius:var(--radius,8px); }
+.field-manager-list .field-source-group { margin-block:0 8px; }.field-manager-list .field-source-group > summary { margin-bottom:2px; font-size:12px; color:var(--muted); }
+.field-manager-row { display:grid; grid-template-columns:24px minmax(0,1fr); column-gap:8px; width:100%; align-items:center; padding:5px 6px; border-radius:6px; text-align:left; color:var(--text); }
+.field-manager-row .palette-row-icon { grid-row:span 2; }.field-manager-row:hover { background:var(--hover); }.field-manager-row:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+.field-manager-row[aria-current='true'] { background:var(--selected); color:var(--selected-text); }.field-manager-row[aria-current='true'] .field-manager-meta { color:inherit; }
+.field-manager-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }.field-manager-row.is-unbound .field-manager-name { color:var(--muted); }.field-manager-row.is-unbound[aria-current='true'] .field-manager-name { color:inherit; }
+.field-manager-meta { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; color:var(--muted); }
+.field-manager-back { display:none; margin-bottom:8px; }
+.field-detail { display:grid; gap:14px; padding:4px; }
+.field-detail-head { display:flex; align-items:center; gap:6px; min-width:0; }.field-detail-head h3 { margin:0; min-width:0; font-size:16px; overflow-wrap:anywhere; }
+.field-detail-facts { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:6px 12px; margin:0; font-size:13px; align-items:baseline; }.field-detail-facts dt { color:var(--muted); }.field-detail-facts dd { margin:0; min-width:0; overflow-wrap:anywhere; }
+.field-detail-purpose { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.field-detail-change { display:grid; gap:8px; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius,8px); background:var(--soft); }.field-detail-change ul { margin:0; padding-left:18px; font-size:12px; }
+.field-detail-part { display:grid; gap:6px; justify-items:start; }.field-detail-part > .mantine-InputWrapper-root,.field-detail-part > div { justify-self:stretch; }
+.field-detail-uses { margin:0; padding:0; list-style:none; display:grid; gap:2px; justify-items:start; }
+.field-detail-danger { display:grid; gap:4px; justify-items:start; padding-top:10px; border-top:1px solid var(--line); }
+@container field-manager (max-width:800px) { .field-manager-body { grid-template-columns:minmax(0,1fr); }.field-manager[data-view='list'] .field-manager-detail { display:none; }.field-manager[data-view='detail'] .field-manager-list { display:none; }.field-manager[data-view='detail'] .field-manager-tools { display:none; }.field-manager-back { display:inline-flex; } }
+/* New field: choose by purpose. A real radio stays underneath, for the keyboard and screen readers. */
+.purpose-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }.purpose-cards-title { grid-column:1 / -1; }
+.purpose-card { position:relative; display:flex; align-items:center; gap:8px; min-width:0; padding:7px 8px; border:1px solid var(--line); border-radius:var(--radius,8px); cursor:pointer; }.purpose-card:hover { background:var(--hover); }
+.purpose-card input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
+.purpose-card:has(input:checked) { border-color:var(--accent); background:var(--selected); color:var(--selected-text); }.purpose-card:has(input:checked) small { color:inherit; }.purpose-card:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:1px; }
+.purpose-card-text { display:grid; min-width:0; }.purpose-card-text strong { font-size:13px; font-weight:600; }.purpose-card-text small { font-size:11px; color:var(--muted); overflow-wrap:anywhere; }
+.palette-unadded { justify-self:start; }

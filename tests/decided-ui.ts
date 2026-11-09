@@ -177,7 +177,7 @@ try {
     .click()
   const form = page.getByRole('form', { name: '新增欄位' })
   await form.getByLabel('欄位名稱').fill('Verified flag')
-  await choose('欄位型別', '是／否')
+  await form.getByRole('radio', { name: /^是／否/ }).check()
   await form.getByRole('button', { name: '新增欄位', exact: true }).click()
   await page
     .locator('.project-field-palette')

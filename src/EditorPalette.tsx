@@ -8,8 +8,6 @@ import {
   Group,
   Menu,
   Modal,
-  Select,
-  Switch,
   Text,
   Textarea,
   TextInput,
@@ -32,9 +30,9 @@ import { addCommonFields, editorFields } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
 import { typeKinds } from './editorKinds'
 import { isFilled } from '../shared/cells'
-import { fieldSource, fieldSourceGroups } from './fieldSources'
+import { fieldSource, orderedFieldSourceGroups, useSourceFolding } from './fieldSources'
 import { FieldManager } from './FieldManager'
-import { textType } from './fieldTypes'
+import { fieldPurposes, purposeGlyph, purposeLabel } from './fieldTypes'
 
 // One line of the previewed folder's value for a field; long values are cut with "…" and shown whole on hover.
 function FieldValuePreview({ value }: { value: unknown }) {
@@ -74,16 +72,6 @@ const kindIcons: Partial<Record<CellKind, IconName>> = {
   'game-cover': 'image',
   'game-launch': 'play',
 }
-const typeGlyphs: Record<string, string> = {
-  string: 'Aa',
-  tags: '#',
-  number: '12',
-  datetime: '⏱',
-  boolean: '✓',
-  enum: '◉',
-  url: '↗',
-  date: '▦',
-}
 
 // The left-hand materials panel: find something and put it on the card. Four sections share one heading style
 // (folder info, your fields, layout, game); every row looks the same and is added by a click or a drag.
@@ -94,8 +82,6 @@ export type EditorPaletteProps = {
   dirty: boolean
   hints: Record<CellKind, string>
   labels: Record<CellKind, string>
-  typeLabels: Record<string, string>
-  typeHints: Record<string, string>
   sources: Source[]
   availableFields: Source[]
   attributes: Attribute[]
@@ -113,8 +99,9 @@ export type EditorPaletteProps = {
   setRenaming: (value: { id: string; name: string }) => void
   // The values a field holds in the project's folders (use counts and options taken from the data).
   values: (attributeId: string) => unknown[]
-  // Text type switches are offered only in the card layout editor.
-  switchable: boolean
+  // Purpose changes are offered only in the card layout editor.
+  cardEditor: boolean
+  selectCell: (cellId: string) => void
 }
 
 function Section({
@@ -161,8 +148,6 @@ export function EditorPalette(props: EditorPaletteProps) {
     dirty,
     hints,
     labels,
-    typeLabels,
-    typeHints,
     sources,
     availableFields,
     attributes,
@@ -177,15 +162,31 @@ export function EditorPalette(props: EditorPaletteProps) {
     setFieldDeletion,
     setRenaming,
     values,
-    switchable,
+    cardEditor,
+    selectCell,
   } = props
   const [newField, setNewField] = useState('')
-  // New field: a base type; "text" also takes the two switches of R-223 (multiple values / fixed options).
-  const [newType, setNewType] = useState('string'),
-    [newMultiple, setNewMultiple] = useState(false),
-    [newFixed, setNewFixed] = useState(false)
-  const createdType = newType === 'string' ? textType(newMultiple, newFixed) : newType
-  const [managing, setManaging] = useState(false)
+  const [newType, setNewType] = useState('string')
+  const [newOptions, setNewOptions] = useState('')
+  // The field management window is mounted only while open; `focus` is the field to show.
+  // Up to 100 distinct options of up to 100 characters; anything else could not be saved with the layout.
+  const typedOptions = [
+    ...new Set(
+      newOptions
+        .split(/[,，\n]/)
+        .map((option) => option.trim())
+        .filter(Boolean)
+    ),
+  ]
+  const optionsProblem =
+    newOptions.trim() && !typedOptions.length
+      ? tr('至少需要一個選項')
+      : typedOptions.some((option) => option.length > 100)
+        ? tr('每個選項最多 100 個字')
+        : typedOptions.length > 100
+          ? tr('最多 100 個選項')
+          : ''
+  const [managing, setManaging] = useState<{ focus?: string }>()
   const requestDelete = async (binding: Binding) => {
     const result = await act({
       action: 'deleteFieldPreview',
@@ -194,7 +195,6 @@ export function EditorPalette(props: EditorPaletteProps) {
     })
     if (result?.fieldDeletionPreview) setFieldDeletion(result.fieldDeletionPreview)
   }
-  const [newOptions, setNewOptions] = useState('')
   const [adding, setAdding] = useState(false)
   const [search, setSearch] = useState(''),
     [onlyFilled, setOnlyFilled] = useState(false)
@@ -202,6 +202,7 @@ export function EditorPalette(props: EditorPaletteProps) {
   const toggle = (id: string) =>
     setClosed((now) => (now.includes(id) ? now.filter((x) => x !== id) : [...now, id]))
   const query = search.trim().toLocaleLowerCase()
+  const folding = useSourceFolding(!!query || onlyFilled)
   const bound = (attributeId: string) =>
     draft.fieldBindings.some((f) => f.attributeId === attributeId)
   const matches = (binding: Binding, withEmpty = true) => {
@@ -254,19 +255,19 @@ export function EditorPalette(props: EditorPaletteProps) {
           title={
             source?.conflict
               ? tr('同一欄位的型別不一致，請先處理資料衝突')
-              : `${name} · ${typeLabels[binding.type]} · ${origin} · ${scope}`
+              : `${name} · ${purposeLabel(binding.type)} · ${origin} · ${scope}`
           }
           onClick={() => add(kind, undefined, undefined, binding)}
         >
           <span className="palette-row-icon is-glyph" aria-hidden>
-            {typeGlyphs[binding.type] ?? '·'}
+            {purposeGlyph(binding.type)}
           </span>
           <span className="palette-row-text">
             <span className="palette-field-name">{name}</span>
             {preview ? (
               <FieldValuePreview value={fieldValue(preview, binding.attributeId)} />
             ) : (
-              <span className="palette-row-meta">{typeLabels[binding.type]}</span>
+              <span className="palette-row-meta">{purposeLabel(binding.type)}</span>
             )}
           </span>
           {/* Shared is the usual case; only the exceptions get a mark (the full scope is in the tooltip). */}
@@ -299,6 +300,12 @@ export function EditorPalette(props: EditorPaletteProps) {
             </Tooltip>
           </Menu.Target>
           <Menu.Dropdown>
+            <Menu.Item
+              leftSection={<Icon name="settings" size={14} />}
+              onClick={() => setManaging({ focus: binding.attributeId })}
+            >
+              {tr('欄位設定…')}
+            </Menu.Item>
             {!added && (
               <Menu.Item disabled={source?.conflict} onClick={() => reference(binding)}>
                 {tr('只引用欄位')}
@@ -416,7 +423,7 @@ export function EditorPalette(props: EditorPaletteProps) {
                 color="gray"
                 size="sm"
                 aria-label={tr('管理欄位')}
-                onClick={() => setManaging(true)}
+                onClick={() => setManaging({})}
               >
                 <Icon name="settings" size={14} />
               </ActionIcon>
@@ -459,25 +466,53 @@ export function EditorPalette(props: EditorPaletteProps) {
             </Button>
           </>
         )}
-        {/* Field combinations (R-226) will be the first group here, above the source groups. */}
-        {fieldSourceGroups(shownFields, attributes).map(({ source, fields }) => (
-          <details key={source} className="field-source-group" open>
-            <summary>
-              {source}{' '}
-              <Text component="span" size="xs" c="dimmed">
-                {tr(
-                  '{0} 項有資料',
-                  fields.filter((f) =>
-                    preview
-                      ? isFilled(fieldValue(preview, f.attributeId))
-                      : sources.find((s) => s.attributeId === f.attributeId)?.hasData
-                  ).length
+        {/* Field groups (R-226) will come first here, above the source groups. */}
+        {orderedFieldSourceGroups(shownFields, attributes).map(({ source, fields }) => {
+          const addedFields = fields.filter((f) => bound(f.attributeId)),
+            unadded = fields.filter((f) => !bound(f.attributeId))
+          return (
+            <details
+              key={source}
+              className="field-source-group"
+              open={folding.isOpen(source, addedFields.length > 0)}
+            >
+              <summary
+                onClick={(event) => {
+                  event.preventDefault()
+                  folding.toggle(source, addedFields.length > 0)
+                }}
+              >
+                {source}{' '}
+                <Text component="span" size="xs" c="dimmed">
+                  {tr(
+                    '{0} 項有資料',
+                    fields.filter((f) =>
+                      preview
+                        ? isFilled(fieldValue(preview, f.attributeId))
+                        : sources.find((s) => s.attributeId === f.attributeId)?.hasData
+                    ).length
+                  )}
+                </Text>
+              </summary>
+              <div className="palette-rows">
+                {addedFields.map(fieldRow)}
+                {unadded.length > 0 && !folding.showsUnadded(source) ? (
+                  <Button
+                    size="compact-xs"
+                    variant="subtle"
+                    color="gray"
+                    className="palette-unadded"
+                    onClick={() => folding.showUnadded(source)}
+                  >
+                    {tr('＋ {0} 個尚未加入', unadded.length)}
+                  </Button>
+                ) : (
+                  unadded.map(fieldRow)
                 )}
-              </Text>
-            </summary>
-            <div className="palette-rows">{fields.map(fieldRow)}</div>
-          </details>
-        ))}
+              </div>
+            </details>
+          )
+        })}
         {allFields.length > 0 && !shownFields.length && !query && !hiddenCount && (
           <Text size="xs" c="dimmed">
             {tr('沒有符合的欄位')}
@@ -519,24 +554,18 @@ export function EditorPalette(props: EditorPaletteProps) {
               setError(tr('請輸入未使用的欄位名稱'))
               return
             }
+            const attributeId = crypto.randomUUID()
             change({
               ...draft,
               fieldBindings: [
                 ...draft.fieldBindings,
                 {
                   alias,
-                  attributeId: crypto.randomUUID(),
-                  type: createdType,
-                  ...(createdType === 'enum'
+                  attributeId,
+                  type: newType,
+                  ...(newType === 'enum'
                     ? {
-                        options: [
-                          ...new Set(
-                            newOptions
-                              .split(/[,，\n]/)
-                              .map((option) => option.trim())
-                              .filter(Boolean)
-                          ),
-                        ],
+                        options: typedOptions,
                       }
                     : {}),
                 },
@@ -544,9 +573,9 @@ export function EditorPalette(props: EditorPaletteProps) {
             })
             setNewField('')
             setNewOptions('')
-            setNewMultiple(false)
-            setNewFixed(false)
+            setNewType('string')
             setAdding(false)
+            setManaging((now) => now && { focus: attributeId })
             setSearch('')
             setError('')
           }}
@@ -560,39 +589,33 @@ export function EditorPalette(props: EditorPaletteProps) {
             required
             onChange={(e) => setNewField(e.currentTarget.value)}
           />
-          <Select
-            label={tr('欄位型別')}
-            allowDeselect={false}
-            comboboxProps={{ zIndex: 410 }}
-            value={newType}
-            onChange={(v) => v && setNewType(v)}
-            description={newType === 'string' ? undefined : typeHints[newType]}
-            data={['string', 'number', 'datetime', 'date', 'boolean', 'url'].map((value) => ({
-              value,
-              label: typeLabels[value],
-            }))}
-          />
-          {newType === 'string' && (
-            <>
-              <Switch
-                label={tr('多個值')}
-                description={tr('例如類型、角色；輸入時以逗號分隔')}
-                checked={newMultiple}
-                disabled={newFixed}
-                onChange={(event) => setNewMultiple(event.currentTarget.checked)}
-              />
-              <Switch
-                label={tr('限定選項')}
-                description={tr('從固定選項中選一個，例如狀態')}
-                checked={newFixed}
-                disabled={newMultiple}
-                onChange={(event) => setNewFixed(event.currentTarget.checked)}
-              />
-            </>
-          )}
-          {createdType === 'enum' && (
+          <div className="purpose-cards" role="radiogroup" aria-label={tr('這個欄位要記什麼？')}>
+            <Text size="sm" fw={500} className="purpose-cards-title">
+              {tr('這個欄位要記什麼？')}
+            </Text>
+            {fieldPurposes().map((purpose) => (
+              <label key={purpose.type} className="purpose-card">
+                <input
+                  type="radio"
+                  name="field-purpose"
+                  value={purpose.type}
+                  checked={newType === purpose.type}
+                  onChange={() => setNewType(purpose.type)}
+                />
+                <span className="palette-row-icon is-glyph" aria-hidden>
+                  {purpose.glyph}
+                </span>
+                <span className="purpose-card-text">
+                  <strong>{purpose.label}</strong>
+                  <small>{purpose.example}</small>
+                </span>
+              </label>
+            ))}
+          </div>
+          {newType === 'enum' && (
             <Textarea
               label={tr('選項（逗號或換行分隔）')}
+              error={optionsProblem || undefined}
               value={newOptions}
               onChange={(event) => setNewOptions(event.currentTarget.value)}
             />
@@ -601,31 +624,35 @@ export function EditorPalette(props: EditorPaletteProps) {
             type="submit"
             fullWidth
             variant="default"
-            disabled={!newField.trim() || (createdType === 'enum' && !newOptions.trim())}
+            disabled={
+              !newField.trim() || (newType === 'enum' && (!typedOptions.length || !!optionsProblem))
+            }
           >
             {tr('新增欄位')}
           </Button>
         </form>
       </Modal>
-      <FieldManager
-        opened={managing}
-        onClose={() => setManaging(false)}
-        draft={draft}
-        busy={busy}
-        dirty={dirty}
-        sources={sources}
-        availableFields={availableFields}
-        attributes={attributes}
-        typeLabels={typeLabels}
-        typeHints={typeHints}
-        values={values}
-        change={change}
-        onNewField={() => startNewField()}
-        reference={reference}
-        requestDelete={(binding) => void requestDelete(binding)}
-        setRenaming={setRenaming}
-        switchable={switchable}
-      />
+      {managing && (
+        <FieldManager
+          focusId={managing.focus}
+          onClose={() => setManaging(undefined)}
+          draft={draft}
+          busy={busy}
+          dirty={dirty}
+          sources={sources}
+          availableFields={availableFields}
+          attributes={attributes}
+          cardEditor={cardEditor}
+          labels={labels}
+          values={values}
+          change={change}
+          onNewField={() => startNewField()}
+          reference={reference}
+          requestDelete={(binding) => void requestDelete(binding)}
+          setRenaming={setRenaming}
+          selectCell={selectCell}
+        />
+      )}
     </aside>
   )
 }
