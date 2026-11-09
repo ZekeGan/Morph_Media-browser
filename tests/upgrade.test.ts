@@ -31,7 +31,7 @@ async function sandbox(t: { after: (fn: () => Promise<void>) => void }, name: st
   t.after(async () => {
     const target = await fs.realpath(root)
     if (!target.startsWith(base + path.sep)) throw new Error('Unsafe test cleanup')
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   return root
 }

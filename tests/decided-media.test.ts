@@ -31,7 +31,7 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
   t.after(async () => {
     explorer.index.close()
     assert.ok((await fs.realpath(root)).startsWith(base + path.sep))
-    await fs.rm(root, { recursive: true, force: true })
+    await fs.rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   return { root, media, lib, explorer }
 }

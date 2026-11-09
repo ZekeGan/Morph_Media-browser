@@ -24,7 +24,7 @@ async function setup(t: { after: (fn: () => Promise<void>) => void }) {
   t.after(async () => {
     const target = await fs.realpath(root)
     if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup')
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   const media = path.join(root, 'Library'),
     local = path.join(root, 'local'),

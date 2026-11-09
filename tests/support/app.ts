@@ -77,5 +77,5 @@ export async function removeTestRoot(root: string) {
   const base = path.resolve('.test-output'),
     target = path.resolve(root)
   if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup: ' + target)
-  await fs.rm(target, { recursive: true, force: true })
+  await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
 }

@@ -132,7 +132,7 @@ test('cover from image URL is saved as a portable asset, and failures keep the o
     explorer.index.close()
     const target = await fs.realpath(root)
     if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup')
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   await lib.create(media, {
     name: 'Games',

@@ -36,7 +36,7 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
     explorer.index.close()
     const target = await fs.realpath(root)
     if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup')
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   return {
     root,

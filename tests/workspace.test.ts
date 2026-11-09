@@ -14,7 +14,7 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
   t.after(async () => {
     const target = await fs.realpath(root)
     if (!target.startsWith(base + path.sep)) throw new Error('Unsafe test cleanup')
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   const store = new WorkspaceStore(root)
   await store.init()

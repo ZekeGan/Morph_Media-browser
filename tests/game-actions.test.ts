@@ -52,7 +52,7 @@ test('game targets require explicit selection, preserve arguments and leave orig
     explorer.index.close()
     const target = await fs.realpath(root)
     assert.ok(target.startsWith(base + path.sep))
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   await library.create(media, {
     name: 'Games',

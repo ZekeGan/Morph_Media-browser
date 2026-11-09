@@ -17,7 +17,7 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
   t.after(async () => {
     const target = await fs.realpath(root)
     assert.ok(target.startsWith(base + path.sep))
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   const lib = new Library(path.join(root, 'local'), undefined, false)
   await lib.init()

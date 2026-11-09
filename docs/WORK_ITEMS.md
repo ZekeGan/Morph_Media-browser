@@ -33,6 +33,8 @@
 
 ## 已登記（未核定）
 
+- **R-227** 移除與清理在 Windows 遇到暫時佔用時重試刪資料夾 ｜小｜資料寫入｜無｜領域：project、storage｜依賴：無
+  完全移除與清理刪完檔案後立刻刪資料夾（`electron/library-removal.ts` 的 `fs.rmdir`）；若剛刪的檔案仍被其他程式（防毒、索引）短暫開著，Windows 回報 ENOTEMPTY，移除整筆失敗並復原。2026-11-10 單元測試偶發重現（`tests/maintenance.test.ts`「full removal restores a pristine metadata tree…」）。建議：只對 ENOTEMPTY／EPERM／EBUSY 做數次短暫重試，仍失敗才照現有規則處理；不放寬安全檢查。
 
 ## 擱置
 

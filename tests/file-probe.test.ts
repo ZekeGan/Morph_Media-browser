@@ -8,7 +8,7 @@ test('probeFile tells disguised and empty files from real media by their first b
   const base = path.resolve('.test-output')
   await fs.mkdir(base, { recursive: true })
   const dir = await fs.mkdtemp(path.join(base, 'probe-'))
-  t.after(() => fs.rm(dir, { recursive: true, force: true }))
+  t.after(() => fs.rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }))
   const sample = async (name: string, bytes: Buffer | string) => {
     const file = path.join(dir, name)
     await fs.writeFile(file, bytes)

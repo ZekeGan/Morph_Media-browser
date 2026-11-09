@@ -70,7 +70,7 @@ test('the folderKind request stores or clears the manual kind and rejects unknow
     explorer.index.close()
     const target = await fs.realpath(root)
     if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup')
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   await lib.create(media, {
     name: 'Kinds',
@@ -123,7 +123,7 @@ test('folderKinds sets the kind of several folders and reports the ones that fai
     explorer.index.close()
     const target = await fs.realpath(root)
     if (!target.startsWith(base + path.sep)) throw new Error('Unsafe cleanup')
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   await lib.create(media, { name: 'Kinds', depth: { mode: 'through', level: 2 } })
   const rowOf = (name: string) => lib.snapshot().rows.find((r) => r.name === name)!

@@ -33,7 +33,7 @@ async function directory(
     await before()
     const target = await fs.realpath(root)
     assert.ok(target.startsWith(base + path.sep))
-    await fs.rm(target, { recursive: true, force: true })
+    await fs.rm(target, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   return root
 }

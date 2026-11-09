@@ -27,7 +27,7 @@ async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
   const root = await fs.mkdtemp(path.join(base, 'library-'))
   t.after(async () => {
     if (!root.startsWith(base + path.sep)) throw new Error('Unsafe fixture')
-    await fs.rm(root, { recursive: true, force: true })
+    await fs.rm(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   })
   const p1 = path.join(root, 'P1'),
     p2 = path.join(root, 'P2')
