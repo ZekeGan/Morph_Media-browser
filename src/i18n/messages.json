@@ -1223,12 +1223,6 @@
     "en": "Component settings",
     "es": "Ajustes del componente"
   },
-  "綁定欄位": {
-    "ja": "関連付ける項目",
-    "zh-CN": "绑定栏位",
-    "en": "Bound field",
-    "es": "Campo vinculado"
-  },
   "水平位置 X": {
     "ja": "水平位置 X",
     "zh-CN": "水平位置 X",
@@ -4835,36 +4829,6 @@
     "ja": "代替フィールド",
     "es": "Campos alternativos"
   },
-  "主要欄位沒有值時，依序改用下列欄位；兩者都有值時以排在前面的為準。": {
-    "zh-CN": "主要字段没有值时，依序改用下列字段；都有值时以排在前面的为准。",
-    "en": "When the main field is empty, the following fields are tried in order; if several have a value, the earlier one wins.",
-    "ja": "メインのフィールドが空のとき、以下を順に使います。複数に値がある場合は前にあるものが優先されます。",
-    "es": "Si el campo principal está vacío, se prueban los siguientes en orden; si varios tienen valor, gana el primero."
-  },
-  "第 {0} 順位欄位": {
-    "zh-CN": "第 {0} 顺位字段",
-    "en": "Field number {0} in order",
-    "ja": "{0} 番目のフィールド",
-    "es": "Campo n.º {0} en orden"
-  },
-  "移除備用欄位": {
-    "zh-CN": "移除备用字段",
-    "en": "Remove fallback field",
-    "ja": "代替フィールドを削除",
-    "es": "Quitar campo alternativo"
-  },
-  "移除備用欄位 {0}": {
-    "zh-CN": "移除备用字段 {0}",
-    "en": "Remove fallback field {0}",
-    "ja": "代替フィールド {0} を削除",
-    "es": "Quitar el campo alternativo {0}"
-  },
-  "新增備用欄位": {
-    "zh-CN": "添加备用字段",
-    "en": "Add fallback field",
-    "ja": "代替フィールドを追加",
-    "es": "Añadir campo alternativo"
-  },
   "預覽中的「{0}」顯示：{1}": {
     "zh-CN": "预览中的“{0}”显示：{1}",
     "en": "In the preview, “{0}” shows: {1}",
@@ -6575,29 +6539,11 @@
     "ja": "一致するフィールドがありません",
     "es": "No hay campos coincidentes"
   },
-  "標籤 → 文字": {
-    "zh-CN": "标签 → 文字",
-    "en": "Tags → text",
-    "ja": "タグ → テキスト",
-    "es": "Etiquetas → texto"
-  },
-  "文字 → 標籤": {
-    "zh-CN": "文字 → 标签",
-    "en": "Text → tags",
-    "ja": "テキスト → タグ",
-    "es": "Texto → etiquetas"
-  },
   "使用中": {
     "zh-CN": "使用中",
     "en": "In use",
     "ja": "使用中",
     "es": "En uso"
-  },
-  "沒有其他相容欄位。先在左側欄位清單新增或匯入。": {
-    "zh-CN": "没有其他兼容字段。先在左侧字段列表新增或导入。",
-    "en": "No other compatible fields. Add or import one in the field list on the left.",
-    "ja": "ほかに互換性のあるフィールドはありません。左の一覧で追加またはインポートしてください。",
-    "es": "No hay otros campos compatibles. Añade o importa uno en la lista de la izquierda."
   },
   "標籤合併成文字，原始資料不變。": {
     "zh-CN": "标签合并成文字，原始数据不变。",
@@ -6622,12 +6568,6 @@
     "en": "Next folder",
     "ja": "次のフォルダー",
     "es": "Carpeta siguiente"
-  },
-  "找使用備用欄位的資料夾": {
-    "zh-CN": "查找使用备用字段的文件夹",
-    "en": "Find a folder using a fallback",
-    "ja": "代替フィールドを使用するフォルダーを探す",
-    "es": "Buscar carpeta que use un campo alternativo"
   },
   "已手動修改": {
     "zh-CN": "已手动修改",
@@ -7090,5 +7030,359 @@
     "zh-CN": "最多 100 个选项",
     "en": "At most 100 options",
     "es": "Como máximo 100 opciones"
+  },
+  "這個欄位在群組裡，請先移出群組。": {
+    "zh-CN": "这个字段在群组里，请先移出群组。",
+    "en": "This field is in a group. Remove it from the group first.",
+    "ja": "このフィールドはグループに入っています。先にグループから外してください。",
+    "es": "Este campo está en un grupo. Sácalo del grupo primero."
+  },
+  "{0} · 群組，{1} 個欄位": {
+    "zh-CN": "{0} · 群组，{1} 个字段",
+    "en": "{0} · group of {1} fields",
+    "ja": "{0} · グループ（フィールド {1} 個）",
+    "es": "{0} · grupo de {1} campos"
+  },
+  "{0} 個欄位": {
+    "zh-CN": "{0} 个字段",
+    "en": "{0} fields",
+    "ja": "フィールド {0} 個",
+    "es": "{0} campos"
+  },
+  "{0} 個資料夾指定了來源": {
+    "zh-CN": "{0} 个文件夹指定了来源",
+    "en": "{0} folders chose their own source",
+    "ja": "{0} 個のフォルダーがソースを指定",
+    "es": "{0} carpetas eligieron su origen"
+  },
+  "{0} 個資料夾都沒有值": {
+    "zh-CN": "{0} 个文件夹都没有值",
+    "en": "{0} folders have no value in any field",
+    "ja": "{0} 個のフォルダーはどれも値なし",
+    "es": "{0} carpetas no tienen valor en ningún campo"
+  },
+  "{0} 個資料夾顯示這個": {
+    "zh-CN": "{0} 个文件夹显示这个",
+    "en": "shown in {0} folders",
+    "ja": "{0} 個のフォルダーで表示",
+    "es": "se muestra en {0} carpetas"
+  },
+  "{0} 群組": {
+    "zh-CN": "{0} 群组",
+    "en": "{0} group",
+    "ja": "{0} グループ",
+    "es": "Grupo {0}"
+  },
+  "{0}：來自「{1}」": {
+    "zh-CN": "{0}：来自“{1}”",
+    "en": "{0}: from “{1}”",
+    "ja": "{0}：「{1}」から",
+    "es": "{0}: de «{1}»"
+  },
+  "一個群組最多 {0} 個欄位": {
+    "zh-CN": "一个群组最多 {0} 个字段",
+    "en": "A group can hold up to {0} fields",
+    "ja": "1 つのグループに入れられるのは {0} 個まで",
+    "es": "Un grupo admite como máximo {0} campos"
+  },
+  "依序取第一個有值的：{0}": {
+    "zh-CN": "依序取第一个有值的：{0}",
+    "en": "Shows the first with a value, in order: {0}",
+    "ja": "値のある最初のものを順に表示：{0}",
+    "es": "Muestra el primero con valor, en orden: {0}"
+  },
+  "依順序顯示第一個有值的欄位。拖動可調整順序；把其他欄位拖到群組上即可加入。": {
+    "zh-CN": "依顺序显示第一个有值的字段。拖动可调整顺序；把其他字段拖到群组上即可加入。",
+    "en": "Shows the first field with a value, in order. Drag to reorder; drop another field on the group to add it.",
+    "ja": "値のある最初のフィールドを順番に表示します。ドラッグで並べ替え、ほかのフィールドをグループにドロップすると追加されます。",
+    "es": "Muestra el primer campo con valor, en orden. Arrastra para reordenar; suelta otro campo sobre el grupo para añadirlo."
+  },
+  "依順序顯示第一個有值的欄位；個別資料夾可在資料夾設定指定來源。": {
+    "zh-CN": "依顺序显示第一个有值的字段；个别文件夹可在文件夹设置指定来源。",
+    "en": "Shows the first field with a value, in order; a folder can choose its own source in its settings.",
+    "ja": "値のある最初のフィールドを順番に表示します。フォルダーごとに設定でソースを指定できます。",
+    "es": "Muestra el primer campo con valor, en orden; cada carpeta puede elegir su origen en su configuración."
+  },
+  "備用來源（舊版設定）：{0}": {
+    "zh-CN": "备用来源（旧版设置）：{0}",
+    "en": "Fallback fields (older setting): {0}",
+    "ja": "代替フィールド（旧設定）：{0}",
+    "es": "Campos alternativos (configuración anterior): {0}"
+  },
+  "加入群組": {
+    "zh-CN": "加入群组",
+    "en": "Add to group",
+    "ja": "グループに追加",
+    "es": "Añadir al grupo"
+  },
+  "加到卡片": {
+    "zh-CN": "加到卡片",
+    "en": "Add to card",
+    "ja": "カードに追加",
+    "es": "Añadir a la tarjeta"
+  },
+  "型別不同的欄位不能放在同一個群組（文字和多個標籤可以）": {
+    "zh-CN": "类型不同的字段不能放在同一个群组（文字和多个标签可以）",
+    "en": "Fields of different types can't share a group (text and tags can)",
+    "ja": "型の違うフィールドは同じグループに入れられません（テキストと複数タグは可）",
+    "es": "Los campos de tipos distintos no pueden compartir grupo (texto y etiquetas sí)"
+  },
+  "已選 {0} 個欄位": {
+    "zh-CN": "已选 {0} 个字段",
+    "en": "{0} fields selected",
+    "ja": "{0} 個のフィールドを選択中",
+    "es": "{0} campos seleccionados"
+  },
+  "成員操作": {
+    "zh-CN": "成员操作",
+    "en": "Member actions",
+    "ja": "メンバーの操作",
+    "es": "Acciones del miembro"
+  },
+  "成員操作 {0}": {
+    "zh-CN": "成员操作 {0}",
+    "en": "Member actions {0}",
+    "ja": "メンバーの操作 {0}",
+    "es": "Acciones del miembro {0}"
+  },
+  "成員與顯示來源": {
+    "zh-CN": "成员与显示来源",
+    "en": "Members and what folders show",
+    "ja": "メンバーと表示ソース",
+    "es": "Miembros y lo que muestran las carpetas"
+  },
+  "打開群組": {
+    "zh-CN": "打开群组",
+    "en": "Open group",
+    "ja": "グループを開く",
+    "es": "Abrir grupo"
+  },
+  "打開群組 {0}": {
+    "zh-CN": "打开群组 {0}",
+    "en": "Open group {0}",
+    "ja": "グループ {0} を開く",
+    "es": "Abrir el grupo {0}"
+  },
+  "找顯示後面欄位的資料夾": {
+    "zh-CN": "找显示后面字段的文件夹",
+    "en": "Find a folder showing a later field",
+    "ja": "後ろのフィールドを表示しているフォルダーを探す",
+    "es": "Buscar una carpeta que muestre un campo posterior"
+  },
+  "指定的「{0}」目前沒有值。": {
+    "zh-CN": "指定的“{0}”目前没有值。",
+    "en": "The chosen “{0}” has no value right now.",
+    "ja": "指定した「{0}」には今は値がありません。",
+    "es": "El campo elegido «{0}» no tiene valor ahora."
+  },
+  "指定的「{0}」目前沒有值，暫時依順序顯示「{1}」。": {
+    "zh-CN": "指定的“{0}”目前没有值，暂时依顺序显示“{1}”。",
+    "en": "The chosen “{0}” has no value right now, so “{1}” is shown by the group order for now.",
+    "ja": "指定した「{0}」に今は値がないため、順番に従って「{1}」を表示しています。",
+    "es": "El campo elegido «{0}» no tiene valor ahora; por ahora se muestra «{1}» según el orden del grupo."
+  },
+  "搜尋欄位或群組": {
+    "zh-CN": "搜索字段或群组",
+    "en": "Search fields or groups",
+    "ja": "フィールドやグループを検索",
+    "es": "Buscar campos o grupos"
+  },
+  "新群組": {
+    "zh-CN": "新群组",
+    "en": "New group",
+    "ja": "新しいグループ",
+    "es": "Grupo nuevo"
+  },
+  "更換": {
+    "zh-CN": "更换",
+    "en": "Change",
+    "ja": "変更",
+    "es": "Cambiar"
+  },
+  "更換顯示的欄位或群組": {
+    "zh-CN": "更换显示的字段或群组",
+    "en": "Change the field or group shown",
+    "ja": "表示するフィールドやグループを変更",
+    "es": "Cambiar el campo o grupo que se muestra"
+  },
+  "未選擇": {
+    "zh-CN": "未选择",
+    "en": "Not chosen",
+    "ja": "未選択",
+    "es": "Sin elegir"
+  },
+  "欄位回到原本的來源分類；顯示這個群組的組件改顯示第一個欄位。": {
+    "zh-CN": "字段回到原本的来源分类；显示这个群组的组件改显示第一个字段。",
+    "en": "Fields go back under their sources; components showing this group show its first field instead.",
+    "ja": "フィールドは元のソースに戻り、このグループを表示していたコンポーネントは最初のフィールドを表示します。",
+    "es": "Los campos vuelven a su origen; los componentes que muestran este grupo pasan a mostrar su primer campo."
+  },
+  "移出群組": {
+    "zh-CN": "移出群组",
+    "en": "Remove from group",
+    "ja": "グループから外す",
+    "es": "Quitar del grupo"
+  },
+  "移出群組 {0}": {
+    "zh-CN": "移出群组 {0}",
+    "en": "Remove {0} from group",
+    "ja": "{0} をグループから外す",
+    "es": "Quitar {0} del grupo"
+  },
+  "組成群組": {
+    "zh-CN": "组成群组",
+    "en": "Make a group",
+    "ja": "グループにする",
+    "es": "Formar grupo"
+  },
+  "群組": {
+    "zh-CN": "群组",
+    "en": "Groups",
+    "ja": "グループ",
+    "es": "Grupos"
+  },
+  "群組 {0}": {
+    "zh-CN": "群组 {0}",
+    "en": "Group {0}",
+    "ja": "グループ {0}",
+    "es": "Grupo {0}"
+  },
+  "群組 · {0} 個欄位": {
+    "zh-CN": "群组 · {0} 个字段",
+    "en": "Group · {0} fields",
+    "ja": "グループ · フィールド {0} 個",
+    "es": "Grupo · {0} campos"
+  },
+  "群組「{0}」": {
+    "zh-CN": "群组“{0}”",
+    "en": "group “{0}”",
+    "ja": "グループ「{0}」",
+    "es": "grupo «{0}»"
+  },
+  "群組名稱需為 1～100 字，且不可與欄位或其他群組重複": {
+    "zh-CN": "群组名称需为 1～100 字，且不可与字段或其他群组重复",
+    "en": "A group name needs 1–100 characters and can't match a field or another group",
+    "ja": "グループ名は 1～100 文字で、フィールドやほかのグループと同じ名前にはできません",
+    "es": "El nombre del grupo debe tener de 1 a 100 caracteres y no puede coincidir con un campo u otro grupo"
+  },
+  "群組成員": {
+    "zh-CN": "群组成员",
+    "en": "Group members",
+    "ja": "グループのメンバー",
+    "es": "Miembros del grupo"
+  },
+  "群組操作": {
+    "zh-CN": "群组操作",
+    "en": "Group actions",
+    "ja": "グループの操作",
+    "es": "Acciones del grupo"
+  },
+  "群組操作 {0}": {
+    "zh-CN": "群组操作 {0}",
+    "en": "Group actions {0}",
+    "ja": "グループの操作 {0}",
+    "es": "Acciones del grupo {0}"
+  },
+  "群組設定…": {
+    "zh-CN": "群组设置…",
+    "en": "Group settings…",
+    "ja": "グループの設定…",
+    "es": "Configuración del grupo…"
+  },
+  "解散群組": {
+    "zh-CN": "解散群组",
+    "en": "Ungroup",
+    "ja": "グループを解除",
+    "es": "Deshacer grupo"
+  },
+  "資訊版面": {
+    "zh-CN": "信息版面",
+    "en": "Info layout",
+    "ja": "情報レイアウト",
+    "es": "Diseño de información"
+  },
+  "轉成群組": {
+    "zh-CN": "转成群组",
+    "en": "Turn into a group",
+    "ja": "グループに変換",
+    "es": "Convertir en grupo"
+  },
+  "這個欄位已在群組裡": {
+    "zh-CN": "这个字段已在群组里",
+    "en": "This field is already in the group",
+    "ja": "このフィールドはすでにグループに入っています",
+    "es": "Este campo ya está en el grupo"
+  },
+  "這個資料夾顯示": {
+    "zh-CN": "这个文件夹显示",
+    "en": "This folder shows",
+    "ja": "このフォルダーで表示",
+    "es": "Esta carpeta muestra"
+  },
+  "選取（組成群組用）": {
+    "zh-CN": "选取（组成群组用）",
+    "en": "Select (to make a group)",
+    "ja": "選択（グループ作成用）",
+    "es": "Seleccionar (para formar grupo)"
+  },
+  "都沒有值": {
+    "zh-CN": "都没有值",
+    "en": "No field has a value",
+    "ja": "どれも値なし",
+    "es": "Ningún campo tiene valor"
+  },
+  "預覽資料夾顯示這個欄位": {
+    "zh-CN": "预览文件夹显示这个字段",
+    "en": "The previewed folder shows this field",
+    "ja": "プレビュー中のフォルダーはこのフィールドを表示",
+    "es": "La carpeta de la vista previa muestra este campo"
+  },
+  "顯示「{0}」": {
+    "zh-CN": "显示“{0}”",
+    "en": "Showing “{0}”",
+    "ja": "「{0}」を表示",
+    "es": "Muestra «{0}»"
+  },
+  "顯示中": {
+    "zh-CN": "显示中",
+    "en": "Shown",
+    "ja": "表示中",
+    "es": "Se muestra"
+  },
+  "顯示：": {
+    "zh-CN": "显示：",
+    "en": "Shows:",
+    "ja": "表示：",
+    "es": "Muestra:"
+  },
+  "{0}：來自「{1}」（這個資料夾指定）": {
+    "zh-CN": "{0}：来自“{1}”（这个文件夹指定）",
+    "en": "{0}: from “{1}” (chosen for this folder)",
+    "ja": "{0}：「{1}」から（このフォルダーで指定）",
+    "es": "{0}: de «{1}» (elegido para esta carpeta)"
+  },
+  "會從群組移出：{0}": {
+    "zh-CN": "会从群组移出：{0}",
+    "en": "Leaves these groups: {0}",
+    "ja": "グループから外れます：{0}",
+    "es": "Sale de estos grupos: {0}"
+  },
+  "欄位「{0}」": {
+    "zh-CN": "字段“{0}”",
+    "en": "field “{0}”",
+    "ja": "フィールド「{0}」",
+    "es": "campo «{0}»"
+  },
+  "自動（依群組順序）": {
+    "zh-CN": "自动（依群组顺序）",
+    "en": "Automatic (group order)",
+    "ja": "自動（グループの順番）",
+    "es": "Automático (orden del grupo)"
+  },
+  "已有同名群組": {
+    "zh-CN": "已有同名群组",
+    "en": "A group already has this name",
+    "ja": "同じ名前のグループがあります",
+    "es": "Ya hay un grupo con este nombre"
   }
 }

@@ -7,8 +7,9 @@ import type { Project } from '../shared/model'
 import { closeApp, launchApp, removeTestRoot, reportFailure } from './support/app'
 
 // The editor's "Your fields" section (source groups, not-yet-added rows, search, create from search, value filter,
-// reference only), a text component with a tags fallback (order, conversion, saved order) and the folder settings
-// keeping 0 / false and a field being cleared visible. Folder records are never rewritten by the editor.
+// reference only), a field group shown by a text component (made from the row menu, a tags member converted, order
+// changed in the opened group, saved) and the folder settings keeping 0 / false and a field being cleared visible.
+// Folder records are never rewritten by the editor.
 const base = path.resolve('.test-output')
 await fs.mkdir(base, { recursive: true })
 const root = await fs.mkdtemp(path.join(base, 'editor-fields-ui-')),
@@ -130,45 +131,65 @@ try {
   )
   await row('NAME').getByText('使用 1 次', { exact: true }).waitFor()
 
-  // Text component with a tags fallback: the preview shows the tags as text, the order can be changed.
+  // Field group (R-226): NAME starts a group from its row menu, Genre (tags) joins it, and the selected component
+  // shows the group. The preview shows the tags as text, from the first member with a value.
+  const menuPath = async (row: string, ...items: string[]) => {
+    await button('欄位操作 ' + row).click()
+    for (const item of items.slice(0, -1))
+      await page.getByRole('menuitem', { name: item, exact: true }).hover()
+    await page.getByRole('menuitem', { name: items.at(-1)!, exact: true }).click()
+  }
+  const groupName = 'NAME 群組'
+  await menuPath('NAME', '加入群組', '新群組')
+  await fields.getByRole('region', { name: '群組 ' + groupName, exact: true }).waitFor()
+  await button('返回欄位清單').click()
+  await source('自建')
+    .getByRole('button', { name: /個尚未加入$/ })
+    .click()
+  await menuPath('Genre', '加入群組', groupName)
+  assert.equal(await row('NAME').count(), 0, 'a grouped field moves into its group')
   await page.getByRole('tab', { name: '內容', exact: true }).click()
-  await button('新增備用欄位').click()
-  await page.getByRole('textbox', { name: '第 2 順位欄位', exact: true }).click()
-  await page.getByRole('option', { name: /^Genre · 自建 · 標籤 → 文字$/ }).click()
+  await button('更換').click()
+  await page.getByRole('option', { name: groupName, exact: true }).click()
   await page.getByRole('status').filter({ hasText: '預覽中的「Library」顯示：Genre' }).waitFor()
   const added = page.locator('.editor-cell.selected')
   await added.getByText('Action, RPG').waitFor()
-  assert.equal(await button('找使用備用欄位的資料夾').isDisabled(), false)
-  await button('找使用備用欄位的資料夾').click()
+  assert.equal(await button('找顯示後面欄位的資料夾').isDisabled(), false)
+  await button('找顯示後面欄位的資料夾').click()
   assert.match(
     await page.getByRole('textbox', { name: '使用真實資料預覽', exact: true }).inputValue(),
     /^Library · /
   )
   const cellId = await added.getAttribute('data-cell-id')
-  await button('上移 Genre').click()
-  assert.match(
-    await page.getByRole('textbox', { name: '綁定欄位', exact: true }).inputValue(),
-    /^Genre/
-  )
+  // The opened group changes the order.
+  await button('打開群組 ' + groupName).click()
+  await button('成員操作 Genre').click()
+  await page.getByRole('menuitem', { name: '上移', exact: true }).click()
+  await fields
+    .locator('.palette-member .palette-field-name')
+    .first()
+    .filter({ hasText: 'Genre' })
+    .waitFor()
+  await button('返回欄位清單').click()
 
   await button('儲存').click()
   await page.locator('.editor-page').waitFor({ state: 'hidden' })
   const saved = (await readJson(projectFile(media, project.projectId))) as Project
   const cell = saved.cells.find((c) => c.cellId === cellId)!
-  assert.equal(cell.attributeId, 'genre')
-  assert.deepEqual(cell.fallbackIds, ['steam-name'])
+  const group = saved.fieldGroups!.find((g) => g.name === groupName)!
+  assert.deepEqual(group.memberIds, ['genre', 'steam-name'])
+  assert.equal(cell.groupId, group.groupId)
+  assert.equal(cell.fallbackIds, undefined)
+  assert.ok(saved.fieldBindings.some((f) => f.attributeId === 'genre'))
   assert.ok(saved.fieldBindings.some((f) => f.attributeId === 'dlsite-title'))
   assert.ok(saved.fieldBindings.some((f) => f.alias === 'Zzz'))
   assert.deepEqual(await records(), originalRecords, 'the editor never rewrites folder records')
 
-  // Reopened, the order is kept.
+  // Reopened, the component still shows the group.
   await button('編輯版面').click()
   await page.locator(`.editor-cell[data-cell-id="${cellId}"]`).click()
   await page.getByRole('tab', { name: '內容', exact: true }).click()
-  assert.match(
-    await page.getByRole('textbox', { name: '綁定欄位', exact: true }).inputValue(),
-    /^Genre/
-  )
+  await page.getByText(`群組「${groupName}」`, { exact: true }).waitFor()
 
   // Field management window (R-225): the same source groups, one field's details beside the list.
   await button('管理欄位').click()
@@ -201,10 +222,13 @@ try {
   await manager.getByText('卡片上的組件保留原本的呈現', { exact: true }).waitFor()
   await confirm.click()
   await managed('Zzz').getByText('多個標籤 · 使用 0 次', { exact: true }).waitFor()
-  // A field in a fallback chain cannot become a choice from a list; the reason is shown.
-  await managed('NAME').click()
+  // A field sharing a group cannot become a choice from a list; the reason is shown. Grouped fields are listed in
+  // their group, whose details open a member's own details.
+  await managed('NAME 群組').click()
+  await manager.getByRole('button', { name: 'NAME', exact: true }).click()
+  await heading('NAME').waitFor()
   await changeTo('清單選一個')
-  await manager.getByRole('alert').filter({ hasText: '備用來源' }).waitFor()
+  await manager.getByRole('alert').filter({ hasText: '群組' }).waitFor()
   assert.equal(await confirm.isDisabled(), true)
   await manager.getByRole('button', { name: '取消', exact: true }).click()
   // A new field is chosen by purpose and shown right away.
@@ -253,7 +277,7 @@ try {
     BrowserWindow.getAllWindows()[0].setBounds({ width: 1500, height: 950 })
   )
   // "Used in" selects the component on the canvas and closes the window.
-  await managed('NAME').click()
+  await managed('NAME 群組').click()
   await manager.locator('.field-detail-uses').getByRole('button').first().click()
   await manager.waitFor({ state: 'hidden' })
   await page.locator(`.editor-cell.selected[data-cell-id="${cellId}"]`).waitFor()
@@ -294,7 +318,7 @@ try {
   assert.deepEqual(errors, [])
   passed = true
   console.log(
-    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, text with tags fallback order, field manager (list and details, search, purpose change with impact, refused change, new field by purpose, rename, narrow view, used in, row menu); folder settings keep 0/false, a cleared field and the old-type note. ' +
+    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, field group (row menu, tags member, shown by a component, order, saved), field manager (list and details, search, purpose change with impact, refused change, new field by purpose, rename, narrow view, used in, row menu); folder settings keep 0/false, a cleared field and the old-type note. ' +
       root
   )
 } catch (error) {

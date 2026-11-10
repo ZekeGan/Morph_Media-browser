@@ -165,9 +165,15 @@ export async function previewDeleteField(
           (cell) =>
             cell.attributeId === attributeId ||
             cell.fallbackIds?.includes(attributeId) ||
+            (cell.groupId &&
+              project.fieldGroups
+                ?.find((g) => g.groupId === cell.groupId)
+                ?.memberIds.includes(attributeId)) ||
             cell.condition?.attributeId === attributeId
         ).length
       preview.searches += (project.savedSearches?.length ?? 0) - (next.savedSearches?.length ?? 0)
+      const group = project.fieldGroups?.find((g) => g.memberIds.includes(attributeId))
+      if (group) preview.groups = [...(preview.groups ?? []), group.name]
       changes.push({ ...guard, value: { ...next, revision: project.revision + 1 } })
     }
     const backup = file + '.bak'

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import type { BrowseState } from '../shared/explorer'
-import { fallbackColumns } from '../shared/browse'
+import { fallbackColumns, groupColumns } from '../shared/browse'
 import type { Project } from '../shared/model'
 import { t as tr } from './i18n'
 
@@ -26,6 +26,7 @@ export function useTableColumns({
     { id: 'name', label: tr('資料夾名稱') },
     { id: 'path', label: tr('目前路徑') },
     { id: 'depth', label: tr('層級') },
+    ...groupColumns(project),
     ...project.fieldBindings.map((f) => ({ id: f.attributeId, label: f.alias })),
     ...fallbackColumns(project).map(({ id, attributeId }) => ({
       id,

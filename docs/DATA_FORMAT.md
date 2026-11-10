@@ -1,6 +1,6 @@
 # 資料格式參考
 
-> 最後確認：2026-11-05。可攜記錄與應用程式資料的格式；型別以 `shared/model.ts`、`shared/workspace.ts` 為準，升級在 `shared/upgrade.ts`。
+> 最後確認：2026-11-10。可攜記錄與應用程式資料的格式；型別以 `shared/model.ts`、`shared/workspace.ts` 為準，升級在 `shared/upgrade.ts`。
 
 M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是可重建的副本。此頁列出各檔案的位置與欄位，讓其他工具或貢獻者能讀懂；設計理由見 [資料模型](FOLDER_PROJECT_MODEL.md) 與 [儲存安全](STORAGE_OPTIONS.md)，型別定義的原始碼是 [shared/model.ts](../shared/model.ts)、[shared/explorer.ts](../shared/explorer.ts)、[shared/workspace.ts](../shared/workspace.ts)，驗證在同檔的 `validate*` 函式。
 
@@ -81,6 +81,8 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 | `kindLayouts` | 各資料夾類型套用的 CELL 版面方案 ID（資料夾自選的版面優先） |
 | `depth` | `{ mode: 'through' | 'exact', level }` 掃描層級 |
 | `fieldBindings` | 專案的欄位清單：`{ alias, attributeId, type, options?, optionColors? }` |
+| `fieldGroups`（選用，暫定） | 欄位群組：`{ groupId, name, memberIds }`，最多 100 個；成員 1～20 個、須在 `fieldBindings`、型別相同（文字與標籤可混用）、一個欄位只屬一個群組；名稱 1～100 字，不分大小寫不可與其他群組或欄位別名重複 |
+| `groupSources`（選用，暫定） | 資料夾指定的群組來源：`{ <folderId>: { <groupId>: <attributeId> } }`，值須是該群組成員；只在本專案有效，成員移出或刪除時清除。讀取時（`shared/upgrade.ts` 的 `settleFieldGroups`）先整理舊版程式留下的不一致：已不存在、重複或型別不合的成員移出，空群組移除，與欄位同名的群組名稱加編號，指定來源與組件跟著調整，不因此拒絕整個專案 |
 | `cells` | 預設卡片版面：組件陣列，見下 |
 | `layoutPresets`、`activeLayoutId`、`folderLayouts` | 多個命名版面、目前使用的版面、各資料夾指定的版面 |
 | `stylePresets`（選用） | 此專案的命名樣式：`{ id, name, style }`，最多 20 個、名稱不分大小寫不可重複；`style` 與組件的 `style` 同規則 |
@@ -89,7 +91,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 | `list`、`cardView`、`excludedRelativePaths`、`scanAll`、`traversal` | 列表、顯示範圍、排除與掃描設定 |
 | `savedSearches` | 儲存的搜尋 |
 
-**組件 `Cell`**：`cellId`、`kind`（`name`、`path`、`field-text`、`field-tags`、`field-number`、`field-date`、`field-boolean`、`field-enum`、`field-url`、`field-date-only`、`static-text`、`spacer`、`system-info`、`image`、`divider`、`open-folder`、`game-cover`、`game-launch`）、`grid`（12 欄、最多 100 列，組件不能重疊）、`style`，以及依型別的選用欄位：`attributeId`、`fallbackIds`（備用欄位，最多 5 個、同型別或文字／標籤相容顯示）、`condition`（顯示條件）、`wrap`／`scroll`、`unit`／`decimals`／`maximum`、`presentation`、`imageFit`、`imageIndex`、`actionId`／`fallbackActionIds`、`tagColors`／`tagPrefix`。完整樣式欄位見 [CELL 目錄](CELL_CATALOG.md#組件樣式2026-11-02-新增)。
+**組件 `Cell`**：`cellId`、`kind`（`name`、`path`、`field-text`、`field-tags`、`field-number`、`field-date`、`field-boolean`、`field-enum`、`field-url`、`field-date-only`、`static-text`、`spacer`、`system-info`、`image`、`divider`、`open-folder`、`game-cover`、`game-launch`）、`grid`（12 欄、最多 100 列，組件不能重疊）、`style`，以及依型別的選用欄位：`attributeId`、`fallbackIds`（備用欄位，最多 5 個、同型別或文字／標籤相容顯示；舊設定，新設定用群組）、`groupId`（暫定：顯示欄位群組，此時 `attributeId` 為其成員之一、不可同時有 `fallbackIds`）、`condition`（顯示條件）、`wrap`／`scroll`、`unit`／`decimals`／`maximum`、`presentation`、`imageFit`、`imageIndex`、`actionId`／`fallbackActionIds`、`tagColors`／`tagPrefix`。完整樣式欄位見 [CELL 目錄](CELL_CATALOG.md#組件樣式2026-11-02-新增)。
 
 ## 設定包
 

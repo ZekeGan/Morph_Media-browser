@@ -1,8 +1,8 @@
 import { t as tr, useLocale, currentLocale } from './i18n'
 import { Badge, Button, Progress, Rating } from '@mantine/core'
 import { TagList } from './TagList'
-import { type Cell, type FolderRow, type Project } from '../shared/model'
-import { cellField, cellVisible, copyableValue, numericDisplay } from '../shared/cells'
+import { fieldValue, type Cell, type FolderRow, type Project } from '../shared/model'
+import { cellField, cellVisible, copyableValue, isFilled, numericDisplay } from '../shared/cells'
 import { describeError } from './errors'
 import { launchChoice } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
@@ -49,6 +49,18 @@ function CellPicture({
     </span>
   )
 }
+// A component showing a field group tells on hover which member the value came from.
+function groupSourceTitle(project: Project, cell: Cell, row: FolderRow) {
+  if (!cell.groupId) return undefined
+  const shown = cellField(cell, row, project).attributeId,
+    group = project.fieldGroups?.find((g) => g.groupId === cell.groupId),
+    alias = project.fieldBindings.find((f) => f.attributeId === shown)?.alias
+  if (!group || !alias || !isFilled(fieldValue(row, shown!))) return undefined
+  const folderId = row.record?.folderId
+  return folderId && project.groupSources?.[folderId]?.[group.groupId] === shown
+    ? tr('{0}：來自「{1}」（這個資料夾指定）', group.name, alias)
+    : tr('{0}：來自「{1}」', group.name, alias)
+}
 export function CellContent(props: CellProps) {
   useLocale()
   const { cell, row, preview, project } = props,
@@ -56,7 +68,7 @@ export function CellContent(props: CellProps) {
     [copyError, setCopyError] = useState('')
   if (!cellVisible(cell, row))
     return preview ? <span className="cell-condition-hidden">{tr('條件未符合')}</span> : null
-  const shown = cellField(cell, row),
+  const shown = cellField(cell, row, project),
     copy = copyableValue(shown.value)
   return (
     <>
@@ -258,7 +270,11 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     ) : null
   }
   const value =
-    cell.kind === 'name' ? row?.name : cell.kind === 'path' ? row?.path : cellField(cell, row).value
+    cell.kind === 'name'
+      ? row?.name
+      : cell.kind === 'path'
+        ? row?.path
+        : cellField(cell, row, project).value
   const label =
     typeof value === 'string' ? value : value == null ? '' : tr('⚠ 型別不符：{0}', String(value))
   if (cell.kind === 'field-tags')
@@ -347,7 +363,7 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       <Badge
         color={
           project?.fieldBindings.find(
-            (field) => field.attributeId === cellField(cell, row).attributeId
+            (field) => field.attributeId === cellField(cell, row, project).attributeId
           )?.optionColors?.[value] ?? 'gray'
         }
         variant="light"
@@ -412,6 +428,7 @@ export function Card({
         <div
           key={cell.cellId}
           className="card-cell"
+          title={groupSourceTitle(project, cell, row)}
           style={{
             gridColumn: `${cell.grid.x + 1} / span ${cell.grid.w}`,
             gridRow: `${cell.grid.y + 1} / span ${cell.grid.h}`,

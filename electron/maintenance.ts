@@ -11,6 +11,7 @@ import {
 } from '../shared/model'
 import { fingerprint, exists, keyPath, within, safePath, readJson, message } from './files'
 import { isNewerFormat } from '../shared/upgrade'
+import { groupsWithoutField } from '../shared/fieldGroups'
 
 export interface ManagedFile {
   root: string
@@ -242,7 +243,7 @@ export async function applyMaintenance(
 }
 
 export function withoutField(project: Project, attributeId: string) {
-  const next = structuredClone(project),
+  const next = structuredClone(groupsWithoutField(project, attributeId)),
     cells = (items: Project['cells']): Project['cells'] => cellsWithoutField(items, attributeId)
   next.fieldBindings = next.fieldBindings.filter((field) => field.attributeId !== attributeId)
   next.cells = cells(next.cells)

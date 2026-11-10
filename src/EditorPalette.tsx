@@ -33,28 +33,18 @@ import { isFilled } from '../shared/cells'
 import { fieldSource, orderedFieldSourceGroups, useSourceFolding } from './fieldSources'
 import { FieldManager } from './FieldManager'
 import { fieldPurposes, purposeGlyph, purposeLabel } from './fieldTypes'
-
-// One line of the previewed folder's value for a field; long values are cut with "…" and shown whole on hover.
-function FieldValuePreview({ value }: { value: unknown }) {
-  const text = Array.isArray(value)
-    ? value.map(String).join(', ')
-    : typeof value === 'boolean'
-      ? value
-        ? tr('是')
-        : tr('否')
-      : value == null
-        ? ''
-        : String(value)
-  const clean = text.replace(/\s+/g, ' ').trim()
-  return (
-    <span
-      className={clean ? 'palette-field-value' : 'palette-field-value is-empty'}
-      title={clean ? clean.slice(0, 2000) : undefined}
-    >
-      {clean || tr('（此筆沒有值）')}
-    </span>
-  )
-}
+import { groupValue } from '../shared/cells'
+import { groupOfField, groupType } from '../shared/fieldGroups'
+import {
+  dropHandlers,
+  fieldDrag,
+  refusalText,
+  FieldValuePreview,
+  GroupRow,
+  GroupView,
+  useGroupActions,
+  type DropState,
+} from './FieldGroupPalette'
 
 type Binding = Project['fieldBindings'][number]
 type Source = ReturnType<typeof editorFields>[number]
@@ -92,8 +82,18 @@ export type EditorPaletteProps = {
   hasGames: boolean
   dragImage: (event: React.DragEvent<HTMLDivElement>) => void
   act: (request: Request) => Promise<Response | undefined>
-  add: (kind: CellKind, grid?: Cell['grid'], layout?: Layout, source?: Binding) => void
+  add: (
+    kind: CellKind,
+    grid?: Cell['grid'],
+    layout?: Layout,
+    source?: Binding,
+    groupId?: string
+  ) => void
   change: (next: Project) => void
+  // Adds a field from folder records to the project's fields (unique name), as dropping it on the card does.
+  bindSource: (bindings: Project['fieldBindings'], source: Binding) => Project['fieldBindings']
+  // The project's folders, for which member each folder's group shows.
+  rows: FolderRow[]
   setError: (message: string) => void
   setFieldDeletion: (preview: FieldDeletionPreview) => void
   setRenaming: (value: { id: string; name: string }) => void
@@ -164,6 +164,8 @@ export function EditorPalette(props: EditorPaletteProps) {
     values,
     cardEditor,
     selectCell,
+    bindSource,
+    rows,
   } = props
   const [newField, setNewField] = useState('')
   const [newType, setNewType] = useState('string')
@@ -187,6 +189,22 @@ export function EditorPalette(props: EditorPaletteProps) {
           ? tr('最多 100 個選項')
           : ''
   const [managing, setManaging] = useState<{ focus?: string }>()
+  // An opened group replaces the field list (like opening a folder); `fresh` focuses its name to rename it.
+  const [openGroup, setOpenGroup] = useState<{ id: string; fresh?: boolean }>()
+  // Fields picked with Ctrl+click (or the row menu) to form a group together.
+  const [picked, setPicked] = useState<string[]>([])
+  const [dropOver, setDropOver] = useState<{ id: string; state: DropState }>()
+  const groupActions = useGroupActions({
+    draft,
+    change,
+    bindSource,
+    setError,
+    onCreated: (groupId) => {
+      if (!groupId) return
+      setPicked([])
+      setOpenGroup({ id: groupId, fresh: true })
+    },
+  })
   const requestDelete = async (binding: Binding) => {
     const result = await act({
       action: 'deleteFieldPreview',
@@ -218,8 +236,27 @@ export function EditorPalette(props: EditorPaletteProps) {
     ...draft.fieldBindings,
     ...availableFields.map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type })),
   ]
-  const shownFields = allFields.filter((f) => matches(f))
-  const hiddenCount = allFields.filter((f) => matches(f, false) && !matches(f)).length
+  const fieldOf = (attributeId: string) => allFields.find((f) => f.attributeId === attributeId)
+  // A field in a group is listed inside the group, not under its source.
+  const ungrouped = allFields.filter((f) => !groupOfField(draft, f.attributeId))
+  const shownFields = ungrouped.filter((f) => matches(f))
+  const hiddenCount = ungrouped.filter((f) => matches(f, false) && !matches(f)).length
+  const groups = (draft.fieldGroups ?? []).filter((group) => {
+    const members = group.memberIds.flatMap((id) => fieldOf(id) ?? [])
+    return (
+      (group.name.toLocaleLowerCase().includes(query) || members.some((m) => matches(m, false))) &&
+      (!onlyFilled || !preview || isFilled(groupValue(draft, group, preview).value))
+    )
+  })
+  const opened = draft.fieldGroups?.find((group) => group.groupId === openGroup?.id)
+  const togglePick = (attributeId: string) =>
+    setPicked((now) =>
+      now.includes(attributeId) ? now.filter((id) => id !== attributeId) : [...now, attributeId]
+    )
+  const groupKind = (groupId: string) => {
+    const group = draft.fieldGroups?.find((g) => g.groupId === groupId)
+    return group ? typeKinds[groupType(draft, group) ?? ''] : undefined
+  }
   const startNewField = (name = '') => {
     setNewField(name)
     setAdding(true)
@@ -231,23 +268,39 @@ export function EditorPalette(props: EditorPaletteProps) {
     if (!kind) return null
     const uses = draft.cells.filter(
       (cell) =>
-        cell.attributeId === binding.attributeId || cell.fallbackIds?.includes(binding.attributeId)
+        !cell.groupId &&
+        (cell.attributeId === binding.attributeId ||
+          cell.fallbackIds?.includes(binding.attributeId))
     ).length
+    const isPicked = picked.includes(binding.attributeId),
+      over = dropOver?.id === binding.attributeId ? dropOver.state : undefined
     const name = binding.alias || tr('未命名欄位')
     const origin = fieldSource(binding.attributeId, attributes)
     const scope = source?.shared === false && source.private ? tr('專案私有') : tr('共用')
     return (
       <div
         key={binding.attributeId}
-        className={'palette-item palette-row palette-field' + (added ? '' : ' is-unbound')}
+        className={
+          'palette-item palette-row palette-field' +
+          (added ? '' : ' is-unbound') +
+          (isPicked ? ' is-picked' : '') +
+          (over ? ' is-drop-' + over : '')
+        }
         data-attribute-id={binding.attributeId}
         draggable={!source?.conflict}
         onDragStart={(e) => {
           e.dataTransfer.setData('text/plain', kind)
           e.dataTransfer.setData('application/x-media-viewer-field', binding.attributeId)
-          e.dataTransfer.effectAllowed = 'copy'
+          e.dataTransfer.effectAllowed = 'copyMove'
+          fieldDrag.start({ attributeId: binding.attributeId })
           dragImage(e)
         }}
+        onDragEnd={() => fieldDrag.end()}
+        {...(source?.conflict
+          ? {}
+          : dropHandlers(groupActions, { attributeId: binding.attributeId }, fieldOf, (state) =>
+              setDropOver(state ? { id: binding.attributeId, state } : undefined)
+            ))}
       >
         <UnstyledButton
           className="palette-row-main"
@@ -257,7 +310,11 @@ export function EditorPalette(props: EditorPaletteProps) {
               ? tr('同一欄位的型別不一致，請先處理資料衝突')
               : `${name} · ${purposeLabel(binding.type)} · ${origin} · ${scope}`
           }
-          onClick={() => add(kind, undefined, undefined, binding)}
+          aria-pressed={picked.length ? isPicked : undefined}
+          onClick={(event) => {
+            if (event.ctrlKey || event.metaKey || picked.length) togglePick(binding.attributeId)
+            else add(kind, undefined, undefined, binding)
+          }}
         >
           <span className="palette-row-icon is-glyph" aria-hidden>
             {purposeGlyph(binding.type)}
@@ -311,6 +368,38 @@ export function EditorPalette(props: EditorPaletteProps) {
                 {tr('只引用欄位')}
               </Menu.Item>
             )}
+            <Menu.Sub>
+              <Menu.Sub.Target>
+                <Menu.Sub.Item
+                  leftSection={<Icon name="layers" size={14} />}
+                  disabled={source?.conflict}
+                >
+                  {tr('加入群組')}
+                </Menu.Sub.Item>
+              </Menu.Sub.Target>
+              <Menu.Sub.Dropdown>
+                {(draft.fieldGroups ?? []).map((group) => {
+                  const refusal = groupActions.refusal({ groupId: group.groupId }, binding)
+                  return (
+                    <Menu.Item
+                      key={group.groupId}
+                      disabled={!!refusal}
+                      title={refusal ? refusalText(refusal) : undefined}
+                      onClick={() => groupActions.join(group.groupId, binding)}
+                    >
+                      {group.name}
+                    </Menu.Item>
+                  )
+                })}
+                {!!draft.fieldGroups?.length && <Menu.Divider />}
+                <Menu.Item onClick={() => groupActions.onCreated?.(groupActions.create([binding]))}>
+                  {tr('新群組')}
+                </Menu.Item>
+              </Menu.Sub.Dropdown>
+            </Menu.Sub>
+            <Menu.Item onClick={() => togglePick(binding.attributeId)} disabled={source?.conflict}>
+              {isPicked ? tr('取消選取') : tr('選取（組成群組用）')}
+            </Menu.Item>
             <Menu.Item
               leftSection={<Icon name="edit" size={14} />}
               disabled={busy || !added}
@@ -466,68 +555,131 @@ export function EditorPalette(props: EditorPaletteProps) {
             </Button>
           </>
         )}
-        {/* Field groups (R-226) will come first here, above the source groups. */}
-        {orderedFieldSourceGroups(shownFields, attributes).map(({ source, fields }) => {
-          const addedFields = fields.filter((f) => bound(f.attributeId)),
-            unadded = fields.filter((f) => !bound(f.attributeId))
-          return (
-            <details
-              key={source}
-              className="field-source-group"
-              open={folding.isOpen(source, addedFields.length > 0)}
-            >
-              <summary
-                onClick={(event) => {
-                  event.preventDefault()
-                  folding.toggle(source, addedFields.length > 0)
-                }}
-              >
-                {source}{' '}
-                <Text component="span" size="xs" c="dimmed">
-                  {tr(
-                    '{0} 項有資料',
-                    fields.filter((f) =>
-                      preview
-                        ? isFilled(fieldValue(preview, f.attributeId))
-                        : sources.find((s) => s.attributeId === f.attributeId)?.hasData
-                    ).length
-                  )}
-                </Text>
-              </summary>
-              <div className="palette-rows">
-                {addedFields.map(fieldRow)}
-                {unadded.length > 0 && !folding.showsUnadded(source) ? (
-                  <Button
-                    size="compact-xs"
-                    variant="subtle"
-                    color="gray"
-                    className="palette-unadded"
-                    onClick={() => folding.showUnadded(source)}
-                  >
-                    {tr('＋ {0} 個尚未加入', unadded.length)}
-                  </Button>
-                ) : (
-                  unadded.map(fieldRow)
-                )}
+        {opened ? (
+          <GroupView
+            key={opened.groupId}
+            group={opened}
+            project={draft}
+            preview={preview}
+            attributes={attributes}
+            actions={groupActions}
+            back={() => setOpenGroup(undefined)}
+            focusName={openGroup?.fresh}
+            dragImage={dragImage}
+            memberKind={(binding) => typeKinds[binding.type]}
+            addToCard={() => {
+              const kind = groupKind(opened.groupId)
+              if (kind) add(kind, undefined, undefined, undefined, opened.groupId)
+            }}
+          />
+        ) : (
+          <>
+            {picked.length > 0 && (
+              <div className="palette-pick-bar" role="status">
+                <Text size="xs">{tr('已選 {0} 個欄位', picked.length)}</Text>
+                <Button
+                  size="compact-xs"
+                  variant="light"
+                  onClick={() =>
+                    groupActions.onCreated?.(
+                      groupActions.create(picked.flatMap((id) => fieldOf(id) ?? []))
+                    )
+                  }
+                >
+                  {tr('組成群組')}
+                </Button>
+                <Button
+                  size="compact-xs"
+                  variant="subtle"
+                  color="gray"
+                  onClick={() => setPicked([])}
+                >
+                  {tr('取消')}
+                </Button>
               </div>
-            </details>
-          )
-        })}
-        {allFields.length > 0 && !shownFields.length && !query && !hiddenCount && (
-          <Text size="xs" c="dimmed">
-            {tr('沒有符合的欄位')}
-          </Text>
-        )}
-        {query && !shownFields.length && (
-          <Button
-            size="compact-sm"
-            variant="light"
-            fullWidth
-            className="palette-create"
-            onClick={() => startNewField(search.trim())}
-          >
-            {tr('＋ 建立欄位「{0}」', search.trim())}
-          </Button>
+            )}
+            {groups.length > 0 && (
+              <div className="palette-rows palette-groups">
+                {groups.map((group) => (
+                  <GroupRow
+                    key={group.groupId}
+                    group={group}
+                    project={draft}
+                    preview={preview}
+                    actions={groupActions}
+                    fieldOf={fieldOf}
+                    kind={groupKind(group.groupId)}
+                    dragImage={dragImage}
+                    open={() => setOpenGroup({ id: group.groupId })}
+                    rename={() => setOpenGroup({ id: group.groupId, fresh: true })}
+                    manage={() => setManaging({ focus: 'group:' + group.groupId })}
+                  />
+                ))}
+              </div>
+            )}
+            {orderedFieldSourceGroups(shownFields, attributes).map(({ source, fields }) => {
+              const addedFields = fields.filter((f) => bound(f.attributeId)),
+                unadded = fields.filter((f) => !bound(f.attributeId))
+              return (
+                <details
+                  key={source}
+                  className="field-source-group"
+                  open={folding.isOpen(source, addedFields.length > 0)}
+                >
+                  <summary
+                    onClick={(event) => {
+                      event.preventDefault()
+                      folding.toggle(source, addedFields.length > 0)
+                    }}
+                  >
+                    {source}{' '}
+                    <Text component="span" size="xs" c="dimmed">
+                      {tr(
+                        '{0} 項有資料',
+                        fields.filter((f) =>
+                          preview
+                            ? isFilled(fieldValue(preview, f.attributeId))
+                            : sources.find((s) => s.attributeId === f.attributeId)?.hasData
+                        ).length
+                      )}
+                    </Text>
+                  </summary>
+                  <div className="palette-rows">
+                    {addedFields.map(fieldRow)}
+                    {unadded.length > 0 && !folding.showsUnadded(source) ? (
+                      <Button
+                        size="compact-xs"
+                        variant="subtle"
+                        color="gray"
+                        className="palette-unadded"
+                        onClick={() => folding.showUnadded(source)}
+                      >
+                        {tr('＋ {0} 個尚未加入', unadded.length)}
+                      </Button>
+                    ) : (
+                      unadded.map(fieldRow)
+                    )}
+                  </div>
+                </details>
+              )
+            })}
+            {allFields.length > 0 && !shownFields.length && !query && !hiddenCount && (
+              <Text size="xs" c="dimmed">
+                {tr('沒有符合的欄位')}
+              </Text>
+            )}
+            {query && !shownFields.length && (
+              <Button
+                size="compact-sm"
+                variant="light"
+                fullWidth
+                className="palette-create"
+                onClick={() => startNewField(search.trim())}
+              >
+                {tr('＋ 建立欄位「{0}」', search.trim())}
+              </Button>
+            )}
+          </>
         )}
       </Section>
       {componentSection('layout', tr('排版'), ['static-text', 'spacer', 'divider'])}
@@ -549,6 +701,9 @@ export function EditorPalette(props: EditorPaletteProps) {
               !alias ||
               draft.fieldBindings.some(
                 (f) => f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()
+              ) ||
+              draft.fieldGroups?.some(
+                (g) => g.name.trim().toLocaleLowerCase() === alias.toLocaleLowerCase()
               )
             ) {
               setError(tr('請輸入未使用的欄位名稱'))
@@ -651,6 +806,9 @@ export function EditorPalette(props: EditorPaletteProps) {
           requestDelete={(binding) => void requestDelete(binding)}
           setRenaming={setRenaming}
           selectCell={selectCell}
+          rows={rows}
+          bindSource={bindSource}
+          setError={setError}
         />
       )}
     </aside>

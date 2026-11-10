@@ -1,5 +1,5 @@
 import { fieldValue, type FolderRow, type Project } from './model'
-import { cellField } from './cells'
+import { cellField, groupValue } from './cells'
 import type { BrowseMode } from './explorer'
 export const pathKey = (p: string) => p.replace(/\\/g, '/').replace(/\/$/, '').toLocaleLowerCase()
 export const parentPath = (p: string) => p.replace(/[\\/][^\\/]+[\\/]?$/, '')
@@ -132,8 +132,20 @@ export function fallbackColumns(project: Project) {
     .filter((cell) => cell.attributeId && cell.fallbackIds?.length)
     .map((cell) => ({ id: FALLBACK_COLUMN + cell.cellId, attributeId: cell.attributeId! }))
 }
+// Each field group is a column too, showing (and sorting by) what the group shows for that folder.
+const GROUP_COLUMN = 'group:'
+export function groupColumns(project: Project) {
+  return (project.fieldGroups ?? []).map((group) => ({
+    id: GROUP_COLUMN + group.groupId,
+    label: group.name,
+  }))
+}
 export function columnValue(project: Project, row: FolderRow, id: string): unknown {
+  if (id.startsWith(GROUP_COLUMN)) {
+    const group = project.fieldGroups?.find((g) => GROUP_COLUMN + g.groupId === id)
+    return group ? groupValue(project, group, row).value : undefined
+  }
   if (!id.startsWith(FALLBACK_COLUMN)) return fieldValue(row, id)
   const cell = project.cells.find((c) => FALLBACK_COLUMN + c.cellId === id)
-  return cell ? cellField(cell, row).value : undefined
+  return cell ? cellField(cell, row, project).value : undefined
 }

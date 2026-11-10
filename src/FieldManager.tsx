@@ -13,13 +13,16 @@ import {
 } from '@mantine/core'
 import { Icon } from './icons'
 import { t as tr } from './i18n'
-import type { Attribute, Cell, CellKind, Project } from '../shared/model'
+import type { Attribute, Cell, CellKind, FieldGroup, FolderRow, Project } from '../shared/model'
 import type { editorFields } from '../shared/layouts'
-import { copyableValue, isFilled } from '../shared/cells'
+import { copyableValue, groupValue, isFilled } from '../shared/cells'
+import { groupOfField } from '../shared/fieldGroups'
+import { dropHandlers, fieldDrag, useGroupActions, type DropState } from './FieldGroupPalette'
 import { fieldSource, orderedFieldSourceGroups, useSourceFolding } from './fieldSources'
 import { EnumColors } from './EnumColors'
 import {
   fieldUses,
+  groupUseList,
   isTextType,
   purposeChangeImpact,
   purposeGlyph,
@@ -81,6 +84,7 @@ function FieldDetail({
     [optionProblem, setOptionProblem] = useState('')
   const reasons: Record<string, string> = {
     fallback: tr('這個欄位用在備用來源，請先移除備用來源。'),
+    group: tr('這個欄位在群組裡，請先移出群組。'),
     condition: tr('這個欄位用在「等於／不等於」顯示條件，請先改條件。'),
     'condition-option': tr('這個欄位用在「等於／不等於」顯示條件，比較值不在選項內，請先改條件。'),
     'too-many': tr('這個欄位有超過 100 種不同的值，不適合從清單選一個。'),
@@ -167,11 +171,13 @@ function FieldDetail({
   }
   const uses = fieldUses(draft, id, cardEditor)
   const roleNote = (use: FieldUse) =>
-    use.role === 'fallback'
-      ? ' · ' + tr('備用來源')
-      : use.role === 'condition'
-        ? ' · ' + tr('顯示條件')
-        : ''
+    use.role === 'group'
+      ? ' · ' + tr('群組「{0}」', groupOfField(draft, id)?.name ?? '')
+      : use.role === 'fallback'
+        ? ' · ' + tr('備用來源')
+        : use.role === 'condition'
+          ? ' · ' + tr('顯示條件')
+          : ''
   const cellName = (cell: Cell) =>
     labels[cell.kind] +
     (cell.kind === 'static-text' && cell.text ? ` · ${cell.text.slice(0, 20)}` : '')
@@ -399,9 +405,175 @@ function FieldDetail({
   )
 }
 
+// One group's details (R-226): its name, members in order, which member each folder shows, where it is used, and
+// dissolving it. Members open their own details.
+function GroupDetail({
+  group,
+  draft,
+  rows,
+  attributes,
+  labels,
+  cardEditor,
+  actions,
+  openField,
+  selectCell,
+}: {
+  group: FieldGroup
+  draft: Project
+  rows: FolderRow[]
+  attributes: Attribute[]
+  labels: Record<CellKind, string>
+  cardEditor: boolean
+  actions: ReturnType<typeof useGroupActions>
+  openField: (attributeId: string) => void
+  selectCell: (cellId: string) => void
+}) {
+  const [name, setName] = useState(group.name)
+  useEffect(() => setName(group.name), [group.name])
+  const alias = (id: string) =>
+    draft.fieldBindings.find((field) => field.attributeId === id)?.alias ?? id
+  const shown = rows.map((row) => groupValue(draft, group, row))
+  const count = (id?: string) => shown.filter((value) => value.attributeId === id).length
+  const chosen = Object.values(draft.groupSources ?? {}).filter(
+    (choice) => choice[group.groupId]
+  ).length
+  const uses = groupUseList(draft, group.groupId, cardEditor)
+  const move = (from: number, to: number) => {
+    const ids = [...group.memberIds]
+    ids.splice(to, 0, ids.splice(from, 1)[0])
+    actions.reorder(group.groupId, ids)
+  }
+  const commit = () => {
+    if (name.trim() !== group.name && !actions.rename(group.groupId, name)) setName(group.name)
+  }
+  return (
+    <div className="field-detail">
+      <div className="field-detail-head">
+        <span className="palette-row-icon is-group" aria-hidden>
+          <Icon name="layers" size={14} />
+        </span>
+        <TextInput
+          size="sm"
+          flex={1}
+          aria-label={tr('群組名稱')}
+          value={name}
+          maxLength={100}
+          onChange={(event) => setName(event.currentTarget.value)}
+          onBlur={commit}
+          onKeyDown={(event) => event.key === 'Enter' && commit()}
+        />
+      </div>
+      <Text size="xs" c="dimmed">
+        {tr('依順序顯示第一個有值的欄位；個別資料夾可在資料夾設定指定來源。')}
+      </Text>
+      <div className="field-detail-part">
+        <Text size="sm" fw={600}>
+          {tr('成員與顯示來源')}
+        </Text>
+        <ol className="field-group-members">
+          {group.memberIds.map((id, index) => (
+            <li key={id}>
+              <Button size="compact-xs" variant="subtle" onClick={() => openField(id)}>
+                {alias(id)}
+              </Button>
+              <Text component="span" size="xs" c="dimmed">
+                {fieldSource(id, attributes)} · {tr('{0} 個資料夾顯示這個', count(id))}
+              </Text>
+              <span className="field-group-member-tools">
+                <Tooltip label={tr('上移')}>
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    size="sm"
+                    aria-label={tr('上移 {0}', alias(id))}
+                    disabled={index === 0}
+                    onClick={() => move(index, index - 1)}
+                  >
+                    <span aria-hidden>↑</span>
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={tr('下移')}>
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    size="sm"
+                    aria-label={tr('下移 {0}', alias(id))}
+                    disabled={index === group.memberIds.length - 1}
+                    onClick={() => move(index, index + 1)}
+                  >
+                    <span aria-hidden>↓</span>
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={tr('移出群組')}>
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    size="sm"
+                    aria-label={tr('移出群組 {0}', alias(id))}
+                    onClick={() => actions.remove(id)}
+                  >
+                    <Icon name="close" size={12} />
+                  </ActionIcon>
+                </Tooltip>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <Text size="xs" c="dimmed">
+          {tr('{0} 個資料夾都沒有值', count(undefined))}
+          {chosen > 0 && ' · ' + tr('{0} 個資料夾指定了來源', chosen)}
+        </Text>
+      </div>
+      <div className="field-detail-part">
+        <Text size="sm" fw={600}>
+          {tr('用在哪裡')}
+        </Text>
+        {uses.length ? (
+          <ul className="field-detail-uses">
+            {uses.map((use, index) => (
+              <li key={use.cell.cellId + index}>
+                {use.where === 'current' ? (
+                  <Button
+                    size="compact-xs"
+                    variant="subtle"
+                    onClick={() => selectCell(use.cell.cellId)}
+                  >
+                    {labels[use.cell.kind]}
+                  </Button>
+                ) : (
+                  <Text size="xs" c="dimmed">
+                    {use.where === 'preset' ? use.name : tr('資訊版面')} · {labels[use.cell.kind]}
+                  </Text>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Text size="xs" c="dimmed">
+            {tr('還沒有用在任何組件')}
+          </Text>
+        )}
+      </div>
+      <div className="field-detail-danger">
+        <Button
+          size="xs"
+          variant="subtle"
+          color="red"
+          onClick={() => actions.dissolve(group.groupId)}
+        >
+          {tr('解散群組')}
+        </Button>
+        <Text size="xs" c="dimmed">
+          {tr('欄位回到原本的來源分類；顯示這個群組的組件改顯示第一個欄位。')}
+        </Text>
+      </div>
+    </div>
+  )
+}
+
 // The field management window (R-225): the same source groups as the "Your fields" list on the left, with one field's
 // details beside them. Everything here edits the layout draft, so it can be undone and only counts after saving.
-// Field groups (R-226) will come first in this list.
+// Field groups (R-226) come first; a field in a group is listed inside it, and the same drags make and fill groups.
 export function FieldManager({
   focusId,
   onClose,
@@ -420,9 +592,15 @@ export function FieldManager({
   requestDelete,
   setRenaming,
   selectCell,
+  rows,
+  bindSource,
+  setError,
 }: {
-  // The field to show first, also after creating one from this window.
+  // The field (or "group:" and a group ID) to show first, also after creating one from this window.
   focusId?: string
+  rows: FolderRow[]
+  bindSource: (bindings: Project['fieldBindings'], source: Binding) => Project['fieldBindings']
+  setError: (message: string) => void
   onClose: () => void
   draft: Project
   busy: boolean
@@ -452,19 +630,39 @@ export function FieldManager({
     if (!focusId) return
     setSelected(focusId)
     setSearch('')
-    folding.reveal(fieldSource(focusId, attributes))
+    if (!focusId.startsWith('group:')) folding.reveal(fieldSource(focusId, attributes))
   }, [focusId])
+  const [dropOver, setDropOver] = useState<{ id: string; state: DropState }>()
+  const actions = useGroupActions({
+    draft,
+    change,
+    bindSource,
+    setError,
+    onCreated: (groupId) => groupId && setSelected('group:' + groupId),
+  })
   const bound = (id: string) => draft.fieldBindings.some((field) => field.attributeId === id)
   const all: Binding[] = [
     ...draft.fieldBindings,
     ...availableFields.map((f) => ({ attributeId: f.attributeId, alias: f.key, type: f.type })),
   ]
-  const shown = all.filter((binding) =>
+  const fieldOf = (id: string) => all.find((binding) => binding.attributeId === id)
+  const matches = (binding: Binding) =>
     `${binding.alias} ${fieldSource(binding.attributeId, attributes)} ${purposeLabel(binding.type)}`
       .toLocaleLowerCase()
       .includes(query)
+  const shown = all.filter(
+    (binding) => !groupOfField(draft, binding.attributeId) && matches(binding)
+  )
+  const groups = (draft.fieldGroups ?? []).filter(
+    (group) =>
+      group.name.toLocaleLowerCase().includes(query) ||
+      group.memberIds.some((id) => {
+        const binding = fieldOf(id)
+        return !!binding && matches(binding)
+      })
   )
   const current = all.find((binding) => binding.attributeId === selected)
+  const currentGroup = draft.fieldGroups?.find((group) => 'group:' + group.groupId === selected)
   const currentRow = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     currentRow.current?.scrollIntoView({ block: 'nearest' })
@@ -478,10 +676,24 @@ export function FieldManager({
       <UnstyledButton
         key={id}
         ref={id === selected ? currentRow : undefined}
-        className={'field-manager-row' + (added ? '' : ' is-unbound')}
+        className={
+          'field-manager-row' +
+          (added ? '' : ' is-unbound') +
+          (dropOver?.id === id ? ' is-drop-' + dropOver.state : '')
+        }
         data-attribute-id={id}
         aria-current={id === selected ? 'true' : undefined}
         onClick={() => setSelected(id)}
+        draggable
+        onDragStart={(event: React.DragEvent) => {
+          event.dataTransfer.setData('application/x-media-viewer-field', id)
+          event.dataTransfer.effectAllowed = 'move'
+          fieldDrag.start({ attributeId: id })
+        }}
+        onDragEnd={() => fieldDrag.end()}
+        {...dropHandlers(actions, { attributeId: id }, fieldOf, (state) =>
+          setDropOver(state ? { id, state } : undefined)
+        )}
       >
         <span className="palette-row-icon is-glyph" aria-hidden>
           {purposeGlyph(binding.type)}
@@ -495,7 +707,7 @@ export function FieldManager({
   }
   return (
     <Modal opened onClose={onClose} title={tr('管理欄位')} size="min(1000px, 92vw)">
-      <div className="field-manager" data-view={current ? 'detail' : 'list'}>
+      <div className="field-manager" data-view={current || currentGroup ? 'detail' : 'list'}>
         <Text size="xs" c="dimmed">
           {tr('這裡整理欄位本身：名稱、用途與選項。要放上卡片，請用左側清單。')}
         </Text>
@@ -520,6 +732,37 @@ export function FieldManager({
         </Group>
         <div className="field-manager-body">
           <div className="field-manager-list">
+            {groups.length > 0 && (
+              <div className="field-manager-groups">
+                {groups.map((group) => {
+                  const key = 'group:' + group.groupId
+                  return (
+                    <UnstyledButton
+                      key={key}
+                      ref={key === selected ? currentRow : undefined}
+                      className={
+                        'field-manager-row field-manager-group' +
+                        (dropOver?.id === key ? ' is-drop-' + dropOver.state : '')
+                      }
+                      aria-current={key === selected ? 'true' : undefined}
+                      onClick={() => setSelected(key)}
+                      {...dropHandlers(actions, { groupId: group.groupId }, fieldOf, (state) =>
+                        setDropOver(state ? { id: key, state } : undefined)
+                      )}
+                    >
+                      <span className="palette-row-icon is-group" aria-hidden>
+                        <Icon name="layers" size={14} />
+                      </span>
+                      <span className="field-manager-name">{group.name}</span>
+                      <span className="field-manager-meta">
+                        {tr('群組 · {0} 個欄位', group.memberIds.length)} ·{' '}
+                        {tr('使用 {0} 次', groupUseList(draft, group.groupId, cardEditor).length)}
+                      </span>
+                    </UnstyledButton>
+                  )
+                })}
+              </div>
+            )}
             {orderedFieldSourceGroups(shown, attributes).map(({ source, fields }) => {
               const added = fields.filter((f) => bound(f.attributeId)),
                 unadded = fields.filter((f) => !bound(f.attributeId))
@@ -556,14 +799,41 @@ export function FieldManager({
                 </details>
               )
             })}
-            {!shown.length && (
+            {!shown.length && !groups.length && (
               <Text size="sm" c="dimmed">
                 {tr('沒有符合的欄位')}
               </Text>
             )}
           </div>
           <div className="field-manager-detail">
-            {current ? (
+            {currentGroup ? (
+              <>
+                <Button
+                  className="field-manager-back"
+                  size="compact-xs"
+                  variant="subtle"
+                  leftSection={<Icon name="arrow-left" size={14} />}
+                  onClick={() => setSelected(undefined)}
+                >
+                  {tr('返回欄位清單')}
+                </Button>
+                <GroupDetail
+                  key={currentGroup.groupId}
+                  group={currentGroup}
+                  draft={draft}
+                  rows={rows}
+                  attributes={attributes}
+                  labels={labels}
+                  cardEditor={cardEditor}
+                  actions={actions}
+                  openField={setSelected}
+                  selectCell={(cellId) => {
+                    selectCell(cellId)
+                    onClose()
+                  }}
+                />
+              </>
+            ) : current ? (
               <>
                 <Button
                   className="field-manager-back"

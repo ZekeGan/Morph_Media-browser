@@ -19,7 +19,7 @@ import {
 import type { Attribute, Cell, CellKind, FolderRow, Project } from '../shared/model'
 import { isFieldKind, launchTemplates } from '../shared/explorer'
 import { typeKinds } from './editorKinds'
-import { FallbackFields } from './FallbackFields'
+import { DisplaySource } from './DisplaySource'
 import { CellStyleEditor } from './CellStyleEditor'
 import { EnumColors } from './EnumColors'
 import { FallbackActions } from './FallbackActions'
@@ -37,6 +37,8 @@ export type EditorInspectorProps = {
   fieldSources: { attributeId: string; key: string; type: string }[]
   attributes: Attribute[]
   setFieldIds: (ids: string[], newSource?: string) => void
+  setGroup: (groupId: string) => void
+  convertToGroup: () => void
   enumOptions: string[]
   hasContent: boolean
   hints: Record<CellKind, string>
@@ -67,6 +69,8 @@ export function EditorInspector(props: EditorInspectorProps) {
     fieldSources,
     attributes,
     setFieldIds,
+    setGroup,
+    convertToGroup,
     enumOptions,
     hasContent,
     hints,
@@ -149,17 +153,19 @@ export function EditorInspector(props: EditorInspectorProps) {
                       />
                     )}
                   {isFieldKind(selectedCell.kind) && (
-                    <FallbackFields
+                    <DisplaySource
                       cell={selectedCell}
                       draft={draft}
                       preview={preview}
                       sources={fieldSources}
                       attributes={attributes}
                       setFieldIds={setFieldIds}
+                      setGroup={setGroup}
+                      convertToGroup={convertToGroup}
                       setRenaming={setRenaming}
                     />
                   )}
-                  {!!selectedCell.fallbackIds?.length && (
+                  {(!!selectedCell.fallbackIds?.length || !!selectedCell.groupId) && (
                     <Button
                       size="compact-xs"
                       variant="subtle"
@@ -167,7 +173,7 @@ export function EditorInspector(props: EditorInspectorProps) {
                       disabled={!canFindFallback}
                       onClick={findFallback}
                     >
-                      {tr('找使用備用欄位的資料夾')}
+                      {tr('找顯示後面欄位的資料夾')}
                     </Button>
                   )}
                   {(selectedCell.kind === 'static-text' || selectedCell.kind === 'field-url') && (

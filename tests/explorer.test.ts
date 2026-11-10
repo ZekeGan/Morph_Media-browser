@@ -349,6 +349,43 @@ test('searching a field also looks in the fallback fields its cells list, and no
   assert.equal(await total('steam:manual-name'), 0, 'the chain only widens the first field')
   assert.equal(await total('steam:steam-name'), 1)
 })
+test('a field group is searched by its name and any member finds the folder (R-226)', async (t) => {
+  const { media, lib, explorer } = await fixture(t)
+  for (const name of ['A', 'B', 'C']) await fs.mkdir(path.join(media, name))
+  let s = await lib.create(media, { name: 'Groups', depth: { mode: 'through', level: 2 } }),
+    p = s.projects[0].project!
+  s = await lib.saveProject({
+    ...p,
+    fieldBindings: [
+      ...p.fieldBindings,
+      { alias: 'steam', attributeId: 'steam', type: 'number' },
+      { alias: 'dlsite', attributeId: 'dlsite', type: 'number' },
+      { alias: 'other', attributeId: 'other', type: 'number' },
+    ],
+    fieldGroups: [{ groupId: 'score', name: 'Score', memberIds: ['steam', 'dlsite'] }],
+  })
+  const values: Record<string, [string, number]> = {
+    A: ['steam', 3],
+    B: ['dlsite', 8],
+    C: ['other', 9],
+  }
+  for (const [name, [attributeId, value]] of Object.entries(values)) {
+    const row = s.rows.find((r) => r.name === name)!
+    await explorer.request({
+      action: 'attributes',
+      rowId: row.rowId,
+      revision: row.record!.revision,
+      private: false,
+      values: [{ attributeId, key: attributeId, type: 'number', value, source: 'manual' }],
+    })
+  }
+  const total = async (query: string) =>
+    (await explorer.request({ action: 'search', query, projectId: p.projectId })).search!.total
+  assert.equal(await total('score:8'), 1, 'a member value is found by the group name')
+  assert.equal(await total('score:>2'), 2, 'comparisons look at every member')
+  assert.equal(await total('score:9'), 0, 'fields outside the group are not included')
+  assert.equal(await total('steam:8'), 0, 'a member alone searches only itself')
+})
 test('search sync detects same-revision values, private overrides, aliases, paths and source changes', async (t) => {
   const { lib, media, explorer } = await fixture(t)
   const snapshot = await lib.create(media, {

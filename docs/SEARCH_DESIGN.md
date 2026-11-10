@@ -1,6 +1,6 @@
 # 搜尋規格與工程邊界
 
-> 最後確認：2026-11-05。搜尋畫面、語法與索引的現行規則；程式：`shared/query.ts`、`electron/search-index.ts`、`src/SearchDialog.tsx`。
+> 最後確認：2026-11-10。搜尋畫面、語法與索引的現行規則；程式：`shared/query.ts`、`electron/search-index.ts`、`src/SearchDialog.tsx`。
 
 已選單一搜尋框＋欄位提示＋自由文字（方案 A）。本頁是語法及搜尋語意主文件；外框位置見 [工作區](WORKSPACE_REVISION.md)。程式入口：[query](../shared/query.ts)、[SearchIndex](../electron/search-index.ts)、[SearchDialog](../src/SearchDialog.tsx)。
 
@@ -28,6 +28,7 @@
 | --- | --- |
 | 自由文字 | 無 key 的可搜尋值任意子字串 |
 | `key:value` | 該專案別名／明確屬性的條件 |
+| `群組名:value` | 欄位群組（暫定，R-226）：任一成員符合即找到，數值／日期比較亦同；只寫成員別名時只查該成員 |
 | 空格 | AND |
 | `name:chinese,pic` | 同 key 的兩個 AND 條件 |
 | `"含 空格"` | 引號包住的文字 |

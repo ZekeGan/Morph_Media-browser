@@ -90,7 +90,23 @@ if (args.includes('--fields')) {
     score = crypto.randomUUID(),
     steam = crypto.randomUUID(),
     dlsite = crypto.randomUUID(),
-    getchu = crypto.randomUUID()
+    getchu = crypto.randomUUID(),
+    groups = args.includes('--groups')
+  if (groups) {
+    // The first folder has only the DLsite title, so the group shows its second member.
+    const dir = path.join(media, folders[kind][0].split('/')[0])
+    const record = await readFolder(dir)
+    record.attributes = [
+      {
+        attributeId: dlsite,
+        key: 'DLsite 作品名',
+        type: 'string',
+        value: '夏の終わりに',
+        source: 'manual',
+      },
+    ]
+    await saveFolder(dir, record, record.revision)
+  }
   await library.saveProject({
     ...project,
     ...(kind === 'game'
@@ -103,6 +119,13 @@ if (args.includes('--fields')) {
               color: '#168c77',
             },
             { id: 'le', label: '用 LE 啟動', kind: 'shortcut' as const, color: '#123456' },
+          ],
+        }
+      : {}),
+    ...(groups
+      ? {
+          fieldGroups: [
+            { groupId: 'title-group', name: '遊戲標題', memberIds: [steam, dlsite, getchu] },
           ],
         }
       : {}),
@@ -134,7 +157,8 @@ if (args.includes('--fields')) {
         cellId: crypto.randomUUID(),
         kind: 'field-text',
         attributeId: steam,
-        fallbackIds: [dlsite],
+        // --groups: the title component shows a field group instead of listing fallback fields.
+        ...(groups ? { groupId: 'title-group' } : { fallbackIds: [dlsite] }),
         grid: { x: 0, y: 7, w: 12, h: 1 },
         style,
       },

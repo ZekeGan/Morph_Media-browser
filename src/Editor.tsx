@@ -27,7 +27,6 @@ import {
   type Response,
   type FieldDeletionPreview,
   fieldValue,
-  cellsWithoutField,
 } from '../shared/model'
 import { CellContent } from './Card'
 import { EditorInspector, type InspectorTab } from './EditorInspector'
@@ -48,6 +47,13 @@ import { commonFieldNames } from './commonFields'
 import { isGameFolder } from '../shared/media'
 import { cellField } from '../shared/cells'
 import { rowFieldAttributes } from './fieldSources'
+import { bindCellToGroup, freeGroupName, groupFromFallbacks } from '../shared/fieldGroups'
+import { refusalText } from './FieldGroupPalette'
+
+const withoutGroup = (cell: Cell): Cell => {
+  const { groupId: _drop, ...plain } = cell
+  return plain
+}
 
 // Preview choices that are not a folder (row ids are hashes, so these cannot collide).
 const EXTREME = { longest: 'extreme:longest', shortest: 'extreme:shortest' }
@@ -366,6 +372,12 @@ export function Editor({
       )
     )
       return tr('已有同名欄位')
+    if (
+      draft.fieldGroups?.some(
+        (g) => g.name.trim().toLocaleLowerCase() === alias.toLocaleLowerCase()
+      )
+    )
+      return tr('已有同名群組')
     return ''
   }
   const applyRename = () => {
@@ -399,7 +411,11 @@ export function Editor({
       ...withLevel(
         level.map((c) =>
           c.cellId === selected
-            ? { ...c, attributeId: ids[0], fallbackIds: ids.length > 1 ? ids.slice(1) : undefined }
+            ? {
+                ...withoutGroup(c),
+                attributeId: ids[0],
+                fallbackIds: ids.length > 1 ? ids.slice(1) : undefined,
+              }
             : c
         )
       ),
@@ -411,6 +427,30 @@ export function Editor({
           })
         : draft.fieldBindings,
     })
+  }
+  // A field component shows a group instead (R-226), or an older one with fallback fields becomes a group.
+  const setGroup = (groupId: string) => {
+    const group = draft.fieldGroups?.find((g) => g.groupId === groupId)
+    if (group)
+      change(withLevel(level.map((c) => (c.cellId === selected ? bindCellToGroup(c, group) : c))))
+  }
+  const convertToGroup = () => {
+    const cell = level.find((c) => c.cellId === selected)
+    if (!cell?.attributeId) return
+    const alias = draft.fieldBindings.find((f) => f.attributeId === cell.attributeId)?.alias ?? ''
+    try {
+      change(
+        groupFromFallbacks(
+          draft,
+          cell.cellId,
+          freeGroupName(draft, tr('{0} 群組', alias)),
+          crypto.randomUUID()
+        )
+      )
+      setError('')
+    } catch (reason) {
+      setError(refusalText(reason instanceof Error ? reason.message : String(reason)))
+    }
   }
   const updateCell = (update: Partial<Cell>) =>
     change(withLevel(level.map((c) => (c.cellId === selected ? { ...c, ...update } : c))))
@@ -432,8 +472,12 @@ export function Editor({
     if (bindings.some((f) => f.attributeId === source.attributeId)) return bindings
     let alias = source.alias || tr('欄位'),
       i = 2
-    while (bindings.some((f) => f.alias.toLocaleLowerCase() === alias.toLocaleLowerCase()))
-      alias = (source.alias || tr('欄位')) + '_' + i++
+    const taken = (name: string) =>
+      bindings.some((f) => f.alias.toLocaleLowerCase() === name.toLocaleLowerCase()) ||
+      !!draft.fieldGroups?.some(
+        (g) => g.name.trim().toLocaleLowerCase() === name.trim().toLocaleLowerCase()
+      )
+    while (taken(alias)) alias = (source.alias || tr('欄位')) + '_' + i++
     return [
       ...bindings,
       {
@@ -489,8 +533,16 @@ export function Editor({
     kind: CellKind,
     grid?: Cell['grid'],
     layout?: Layout,
-    source?: Project['fieldBindings'][number]
+    source?: Project['fieldBindings'][number],
+    groupId?: string
   ) => {
+    // A group goes on the card as a component showing it, bound to its first member.
+    const group = groupId ? draft.fieldGroups?.find((g) => g.groupId === groupId) : undefined
+    if (groupId && !group) {
+      setError(tr('欄位已變更或型別衝突，請重新選擇'))
+      return
+    }
+    if (group) source = draft.fieldBindings.find((f) => f.attributeId === group.memberIds[0])
     if (source && source.type !== cellType(kind)) {
       setError(tr('欄位與組件型別不符'))
       return
@@ -512,7 +564,10 @@ export function Editor({
       attributeId = crypto.randomUUID()
       let alias = cellType(kind),
         i = 2
-      while (bindings.some((f) => f.alias.toLowerCase() === alias.toLowerCase()))
+      while (
+        bindings.some((f) => f.alias.toLowerCase() === alias.toLowerCase()) ||
+        draft.fieldGroups?.some((g) => g.name.trim().toLowerCase() === alias.toLowerCase())
+      )
         alias = `${cellType(kind)}_${i++}`
       bindings = [...bindings, { attributeId, alias, type: cellType(kind) }]
     }
@@ -521,6 +576,7 @@ export function Editor({
       cellId: crypto.randomUUID(),
       kind,
       ...(isFieldKind(kind) || kind === 'image' ? { attributeId } : {}),
+      ...(group ? { groupId: group.groupId } : {}),
       grid: grid ?? {
         x: 0,
         y,
@@ -633,7 +689,8 @@ export function Editor({
       at < 0 ? (delta > 0 ? 0 : rows.length - 1) : (at + delta + rows.length) % rows.length
     setPreviewId(rows[next].rowId)
   }
-  const usesFallback = (row: FolderRow) => !!selectedCell && cellField(selectedCell, row).index > 0
+  const usesFallback = (row: FolderRow) =>
+    !!selectedCell && cellField(selectedCell, row, draft).index > 0
   const findFallback = () =>
     setPreviewId(
       (rows.find((row) => row.rowId !== previewId && usesFallback(row)) ?? rows.find(usesFallback))
@@ -836,6 +893,9 @@ export function Editor({
                   fieldDeletion.searches
                 )}
               </Text>
+              {!!fieldDeletion.groups?.length && (
+                <Text size="sm">{tr('會從群組移出：{0}', fieldDeletion.groups.join('、'))}</Text>
+              )}
               <Text size="sm">{tr('已驗證備份：{0}', fieldDeletion.backups)}</Text>
               <Alert color="orange">
                 {tr('刪除影響以下專案；原始媒體保留。')}
@@ -877,7 +937,7 @@ export function Editor({
                           ? presetDraft(saved)
                           : {
                               ...saved,
-                              cells: cellsWithoutField(draft.cells, fieldDeletion.attributeId),
+                              cells: saved.cells,
                             }
                         setDraft(next)
                         setInitial(structuredClone(next))
@@ -1020,6 +1080,8 @@ export function Editor({
           sources={sources}
           availableFields={availableFields}
           attributes={attributes}
+          bindSource={withSourceBinding}
+          rows={rows.filter((row) => row.projectId === project.projectId)}
           reference={(source) =>
             change({ ...draft, fieldBindings: withSourceBinding(draft.fieldBindings, source) })
           }
@@ -1202,6 +1264,7 @@ export function Editor({
                   const transfer = (event as DragEvent).dataTransfer,
                     kind = transfer?.getData('text/plain') as CellKind,
                     id = transfer?.getData('application/x-media-viewer-field'),
+                    groupId = transfer?.getData('application/x-media-viewer-group') || undefined,
                     source = id
                       ? (draft.fieldBindings.find((f) => f.attributeId === id) ??
                         availableFields
@@ -1215,7 +1278,13 @@ export function Editor({
                   }
                   if (!(kind in labels)) return
                   if (item) {
-                    add(kind, { x: item.x, y: item.y, w: item.w, h: item.h }, layout, source)
+                    add(
+                      kind,
+                      { x: item.x, y: item.y, w: item.w, h: item.h },
+                      layout,
+                      source,
+                      groupId
+                    )
                     return
                   }
                   // A quick throw can drop before the grid has rendered its placeholder (it is added on dragover
@@ -1225,7 +1294,7 @@ export function Editor({
                     ?.getBoundingClientRect()
                   const drop = event as DragEvent
                   if (!grid) {
-                    add(kind, undefined, layout, source)
+                    add(kind, undefined, layout, source, groupId)
                     return
                   }
                   const column = (width - 4 * 11) / 12,
@@ -1233,7 +1302,7 @@ export function Editor({
                     left = drop.clientX - grid.left - (column * w + 4 * (w - 1)) / 2,
                     x = Math.min(12 - w, Math.max(0, Math.round(left / (column + 4)))),
                     y = Math.max(0, Math.round((drop.clientY - grid.top - 21) / (42 + 4)))
-                  add(kind, { x, y, w, h: 1 }, layout, source)
+                  add(kind, { x, y, w, h: 1 }, layout, source, groupId)
                 }}
                 onDragStart={() => setMoving(true)}
                 onResizeStart={() => setMoving(true)}
@@ -1303,6 +1372,8 @@ export function Editor({
           fieldSources={availableFields.filter((f) => !f.conflict)}
           attributes={attributes}
           setFieldIds={setFieldIds}
+          setGroup={setGroup}
+          convertToGroup={convertToGroup}
           enumOptions={enumOptions}
           hasContent={hasContent}
           hints={hints}

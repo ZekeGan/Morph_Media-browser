@@ -30,6 +30,8 @@ export interface Cell {
   attributeId?: string
   // Field cells only: further fields of the same type, tried in order when the ones before are empty.
   fallbackIds?: string[]
+  // Field cells only: show a field group (its first member with a value); attributeId is then one of its members.
+  groupId?: string
   grid: { x: number; y: number; w: number; h: number }
   style: {
     textColor: string
@@ -142,7 +144,17 @@ export interface Project {
   cardView?: { mode: 'multi' | 'single'; level: number | 'all' }
   traversal?: Record<string, boolean>
   savedSearches?: { id: string; name: string; query: string; queryAst?: StableQuery }[]
+  // Fields holding the same kind of data from different sources, shown as one: the first member with a value.
+  fieldGroups?: FieldGroup[]
+  // A folder's chosen member per group (folder ID → group ID → attribute ID); this project only.
+  groupSources?: Record<string, Record<string, string>>
 }
+export interface FieldGroup {
+  groupId: string
+  name: string
+  memberIds: string[]
+}
+export const MAX_GROUP_MEMBERS = 20
 export interface LinkedProject {
   projectId: string
   root: string
@@ -221,6 +233,8 @@ export interface FieldDeletionPreview {
   tables: number
   searches: number
   backups: number
+  // Field groups (by name) the field is taken out of.
+  groups?: string[]
   projects: { projectId: string; name: string; root: string }[]
   skipped: string[]
   recoveryPath: string
@@ -389,6 +403,8 @@ function validCell(c: unknown): boolean {
         c.fallbackIds.length <= MAX_FALLBACKS &&
         c.fallbackIds.every(id) &&
         new Set([c.attributeId, ...c.fallbackIds]).size === c.fallbackIds.length + 1)) &&
+    (c.groupId === undefined ||
+      (c.kind.startsWith('field-') && id(c.groupId) && c.fallbackIds === undefined)) &&
     (c.actionId === undefined || (c.kind === 'game-launch' && id(c.actionId))) &&
     (c.imageIndex === undefined || (c.kind === 'image' && integer(c.imageIndex, 1, 999))) &&
     (c.fallbackActionIds === undefined ||
@@ -665,6 +681,7 @@ export function validateProject(v: unknown): asserts v is Project {
       )
         throw new Error('備用欄位必須存在且型別可相容顯示')
     }
+  validateFieldGroups(v as Project)
   for (const cell of v.cells)
     if (cell.condition) {
       const condition = cell.condition
@@ -802,6 +819,78 @@ export function defaultCells(makeId: () => string, attributeId?: string): Cell[]
   }))
 }
 export const MAX_FALLBACKS = 5
+// The type a field cell shows.
+const kindTypes: Record<string, string> = {
+  'field-text': 'string',
+  'field-tags': 'tags',
+  'field-number': 'number',
+  'field-date': 'datetime',
+  'field-boolean': 'boolean',
+  'field-enum': 'enum',
+  'field-url': 'url',
+  'field-date-only': 'date',
+}
+function validateFieldGroups(v: Project) {
+  const groups = v.fieldGroups
+  if (groups === undefined) {
+    if (v.cells.some((cell) => cell.groupId) || v.groupSources !== undefined)
+      throw new Error('欄位群組不存在')
+    return
+  }
+  const typeOf = (attributeId: string) =>
+    v.fieldBindings.find((field) => field.attributeId === attributeId)?.type
+  const aliases = new Set(v.fieldBindings.map((field) => field.alias.trim().toLocaleLowerCase()))
+  if (
+    !Array.isArray(groups) ||
+    groups.length > 100 ||
+    !groups.every(
+      (g) =>
+        obj(g) &&
+        id(g.groupId) &&
+        text(g.name, 100) &&
+        g.name.trim().length > 0 &&
+        !aliases.has(g.name.trim().toLocaleLowerCase()) &&
+        Array.isArray(g.memberIds) &&
+        g.memberIds.length >= 1 &&
+        g.memberIds.length <= MAX_GROUP_MEMBERS &&
+        g.memberIds.every((member) => id(member) && typeOf(member) !== undefined) &&
+        g.memberIds.every((member) => compatibleFieldTypes(typeOf(g.memberIds[0]), typeOf(member)))
+    ) ||
+    new Set(groups.map((g) => g.groupId)).size !== groups.length ||
+    new Set(groups.map((g) => g.name.trim().toLocaleLowerCase())).size !== groups.length ||
+    new Set(groups.flatMap((g) => g.memberIds)).size !==
+      groups.reduce((sum, g) => sum + g.memberIds.length, 0)
+  )
+    throw new Error('欄位群組不合法：成員須存在、型別相容、只屬一個群組，名稱不可重複')
+  for (const cell of v.cells)
+    if (cell.groupId) {
+      const group = groups.find((g) => g.groupId === cell.groupId)
+      if (
+        !group ||
+        !cell.attributeId ||
+        !group.memberIds.includes(cell.attributeId) ||
+        !compatibleFieldTypes(kindTypes[cell.kind], typeOf(group.memberIds[0]))
+      )
+        throw new Error('組件顯示的欄位群組不存在或型別不相容')
+    }
+  const sources = v.groupSources
+  if (
+    sources !== undefined &&
+    (!obj(sources) ||
+      Object.keys(sources).length > 50000 ||
+      !Object.entries(sources).every(
+        ([folder, chosen]) =>
+          id(folder) &&
+          obj(chosen) &&
+          Object.entries(chosen).every(
+            ([groupId, member]) =>
+              id(groupId) &&
+              groups.some((g) => g.groupId === groupId && g.memberIds.includes(member as string))
+          )
+      ))
+  )
+    throw new Error('資料夾指定的群組來源不合法')
+}
 // Removing a field from layouts: cells that show it alone and cells whose condition reads it go away,
 // a cell with fallbacks moves on to its next field, and a fallback entry is simply dropped.
 export function cellsWithoutField(cells: Cell[], attributeId: string): Cell[] {

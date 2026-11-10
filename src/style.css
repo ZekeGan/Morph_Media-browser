@@ -357,6 +357,15 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .inspector-head h3 { margin:0 0 2px; font-size:14px; }.inspector-empty h3 { margin:0; font-size:14px; }
 .inspector-tab-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent); }
 .find-fallback { align-self:flex-start; }
+/* Field groups (R-226): a group row is a field row with an accent picture; an opened group replaces the list. */
+.palette-row-icon.is-group { background:var(--accent); color:var(--accent-contrast, #fff); }
+.palette-row.is-drop-ok { outline:2px solid var(--accent); outline-offset:-2px; background:var(--hover); }.palette-row.is-drop-refused { outline:2px dashed var(--error); outline-offset:-2px; }
+.palette-row.is-picked { background:var(--hover); box-shadow:inset 3px 0 0 var(--accent); }
+.palette-groups { margin-bottom:6px; }
+.palette-pick-bar { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:6px; padding:4px 6px; border-radius:6px; background:var(--inset); }.palette-pick-bar > :first-child { flex:1; }
+.palette-group-view { display:grid; gap:6px; min-width:0; }.palette-group-head { display:flex; align-items:center; gap:6px; min-width:0; }.palette-group-name { flex:1; min-width:0; }
+.palette-group-hint { line-height:1.4; }.palette-member .palette-row-main { cursor:grab; }
+.palette-member-shown { display:inline-flex; flex-shrink:0; color:var(--accent); }
 .palette-row .palette-field-value { margin-top:1px; font-size:11px; color:var(--muted); }.palette-row .palette-field-value.is-empty { opacity:.8; }
 /* Field management window (R-225): list beside details; below about 800px one at a time, with a way back. */
 .field-manager { display:grid; gap:10px; container:field-manager / inline-size; min-width:0; }
@@ -375,6 +384,9 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .field-detail-purpose { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
 .field-detail-change { display:grid; gap:8px; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius,8px); background:var(--soft); }.field-detail-change ul { margin:0; padding-left:18px; font-size:12px; }
 .field-detail-part { display:grid; gap:6px; justify-items:start; }.field-detail-part > .mantine-InputWrapper-root,.field-detail-part > div { justify-self:stretch; }
+.field-manager-groups { margin-bottom:8px; }.field-manager-row.is-drop-ok { outline:2px solid var(--accent); outline-offset:-2px; }.field-manager-row.is-drop-refused { outline:2px dashed var(--error); outline-offset:-2px; }
+.field-group-members { margin:0; padding-left:20px; display:grid; gap:2px; }.field-group-members li { display:flex; flex-wrap:wrap; align-items:center; gap:4px; min-width:0; }.field-group-member-tools { display:inline-flex; margin-left:auto; }
+.display-source-head { min-width:0; }.display-source-name { display:inline-flex; align-items:center; gap:6px; flex:1; min-width:0; overflow-wrap:anywhere; font-size:14px; }.display-source-name .palette-row-icon { flex-basis:20px; height:20px; }.display-source-legacy { display:grid; gap:4px; justify-items:start; }
 .field-detail-uses { margin:0; padding:0; list-style:none; display:grid; gap:2px; justify-items:start; }
 .field-detail-danger { display:grid; gap:4px; justify-items:start; padding-top:10px; border-top:1px solid var(--line); }
 @container field-manager (max-width:800px) { .field-manager-body { grid-template-columns:minmax(0,1fr); }.field-manager[data-view='list'] .field-manager-detail { display:none; }.field-manager[data-view='detail'] .field-manager-list { display:none; }.field-manager[data-view='detail'] .field-manager-tools { display:none; }.field-manager-back { display:inline-flex; } }

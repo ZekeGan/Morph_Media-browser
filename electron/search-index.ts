@@ -115,6 +115,16 @@ export class SearchIndex {
             projectId: row.projectId,
             attributeId: f.attributeId,
           })
+        // A field group can be searched by its name; any member holding the value finds the folder.
+        for (const g of project?.fieldGroups ?? [])
+          keys.set(`${row.projectId}/${g.groupId}`, {
+            key: g.name,
+            type:
+              project!.fieldBindings.find((f) => f.attributeId === g.memberIds[0])?.type ??
+              'string',
+            projectId: row.projectId,
+            attributeId: g.groupId,
+          })
         // Compare all searchable inputs before normalizing text/grams. This still
         // detects in-place value, path and alias edits without relying on revisions.
         const signature = createHash('sha256')
@@ -162,7 +172,13 @@ export class SearchIndex {
       available = this.fields.filter((f) => !projectId || f.projectId === projectId)
     // A field that a cell lists first with fallback fields also finds what is stored in those fallbacks (one value
     // that may come from several source sites). Only the set of fields in the query grows; nothing more is indexed.
-    const chains = new Map<string, Set<string>>()
+    const chains = new Map<string, Set<string>>(),
+      groupMembers = new Map<string, string[]>()
+    for (const linked of this.snapshot?.projects ?? [])
+      for (const group of linked.project?.fieldGroups ?? []) {
+        chains.set(group.groupId, new Set(group.memberIds))
+        groupMembers.set(group.groupId, group.memberIds)
+      }
     for (const linked of this.snapshot?.projects ?? [])
       for (const cells of linked.project
         ? [
@@ -209,7 +225,8 @@ export class SearchIndex {
                     !/^\d{4}-\d{2}-\d{2}(?:T(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?)?$/i.test(value))
                 )
                   throw new Error('日期比較條件不合法')
-                params.push(fields![0], type === 'number' ? Number(value) : value)
+                const compared = groupMembers.get(fields![0]) ?? [fields![0]]
+                params.push(...compared, type === 'number' ? Number(value) : value)
                 const column =
                   type === 'number'
                     ? 'CAST(v.text AS REAL)'
@@ -218,7 +235,9 @@ export class SearchIndex {
                       : 'v.text'
                 return (
                   (t.exclude ? 'NOT ' : '') +
-                  "EXISTS(SELECT 1 FROM vals v WHERE v.doc=d.id AND v.field=? AND v.text IS NOT NULL AND v.text<>'' AND " +
+                  'EXISTS(SELECT 1 FROM vals v WHERE v.doc=d.id AND v.field IN (' +
+                  compared.map(() => '?').join(',') +
+                  ") AND v.text IS NOT NULL AND v.text<>'' AND " +
                   column +
                   ' ' +
                   comparison[1] +

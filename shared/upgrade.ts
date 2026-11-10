@@ -79,6 +79,89 @@ export function upgradeFolderRecord(value: unknown): unknown {
 // Stored records name their kind; this picks the format for a raw value read from a .json or .json.bak file.
 export function upgradeStored(value: unknown): unknown {
   if (plain(value) && value.kind === 'media-viewer.folder') return upgradeFolderRecord(value)
-  if (plain(value) && value.kind === 'media-viewer.project') return upgradeFormat('project', value)
+  if (plain(value) && value.kind === 'media-viewer.project')
+    return settleFieldGroups(upgradeFormat('project', value))
   return value
+}
+
+// Field groups (R-226, optional keys) are ignored by older app versions, which may then delete or rename a member
+// field. Instead of refusing the whole project, what no longer fits is settled on reading: missing, repeated or
+// incompatible members leave their group, empty groups go, a name now taken by a field gets a number, folder choices
+// and components follow. Anything else is left for validation as before.
+export function settleFieldGroups(value: unknown): unknown {
+  if (!plain(value) || !Array.isArray(value.fieldGroups)) return value
+  const types = new Map<string, unknown>(
+    (Array.isArray(value.fieldBindings) ? value.fieldBindings : [])
+      .filter(plain)
+      .map((field) => [field.attributeId as string, field.type])
+  )
+  const textual = (type: unknown) => type === 'string' || type === 'tags'
+  const fits = (a: unknown, b: unknown) => a === b || (textual(a) && textual(b))
+  const taken = new Set(
+    (Array.isArray(value.fieldBindings) ? value.fieldBindings : []).filter(plain).map((field) =>
+      String(field.alias ?? '')
+        .trim()
+        .toLocaleLowerCase()
+    )
+  )
+  const used = new Set<string>()
+  const groups = value.fieldGroups.filter(plain).flatMap((group) => {
+    if (!Array.isArray(group.memberIds) || typeof group.name !== 'string') return [group]
+    const members: string[] = []
+    for (const id of group.memberIds)
+      if (
+        typeof id === 'string' &&
+        types.has(id) &&
+        !used.has(id) &&
+        (!members.length || fits(types.get(members[0]), types.get(id)))
+      )
+        members.push(id)
+    if (!members.length) return []
+    members.forEach((id) => used.add(id))
+    let name = group.name.trim().slice(0, 95) || 'Group'
+    for (let n = 2; taken.has(name.toLocaleLowerCase()); n++)
+      name = `${group.name.trim().slice(0, 95) || 'Group'} ${n}`
+    taken.add(name.toLocaleLowerCase())
+    return [{ ...group, name, memberIds: members }]
+  })
+  const next: Record<string, unknown> = { ...value }
+  if (groups.length) next.fieldGroups = groups
+  else delete next.fieldGroups
+  const find = (id: unknown) => groups.find((group) => group.groupId === id)
+  if (plain(value.groupSources)) {
+    const sources = Object.fromEntries(
+      Object.entries(value.groupSources).flatMap(([folder, chosen]) => {
+        if (!plain(chosen)) return []
+        const kept = Object.entries(chosen).filter(([groupId, member]) =>
+          (find(groupId)?.memberIds as string[] | undefined)?.includes(member as string)
+        )
+        return kept.length ? [[folder, Object.fromEntries(kept)]] : []
+      })
+    )
+    if (Object.keys(sources).length) next.groupSources = sources
+    else delete next.groupSources
+  }
+  const cell = (item: unknown) => {
+    if (!plain(item) || item.groupId === undefined) return item
+    const group = find(item.groupId)
+    if (!group) {
+      const { groupId: _drop, ...rest } = item
+      return rest
+    }
+    const members = group.memberIds as string[]
+    return members.includes(item.attributeId as string)
+      ? item
+      : { ...item, attributeId: members[0] }
+  }
+  const cells = (list: unknown) => (Array.isArray(list) ? list.map(cell) : list)
+  next.cells = cells(value.cells)
+  if (Array.isArray(value.layoutPresets))
+    next.layoutPresets = value.layoutPresets.map((preset) =>
+      plain(preset) ? { ...preset, cells: cells(preset.cells) } : preset
+    )
+  if (plain(value.contentCells))
+    next.contentCells = Object.fromEntries(
+      Object.entries(value.contentCells).map(([key, list]) => [key, cells(list)])
+    )
+  return next
 }

@@ -44,8 +44,10 @@ import {
   type ExplorerRequest,
   type ExplorerResponse,
 } from '../shared/explorer'
+import { fieldValue } from '../shared/model'
 import type { Attribute, FolderRow, Project, Request, Response } from '../shared/model'
-import { isFilled } from '../shared/cells'
+import { groupValue, isFilled } from '../shared/cells'
+import { groupOfField, setGroupSource } from '../shared/fieldGroups'
 import { fieldSource, fieldSourceGroups, rowFieldAttributes } from './fieldSources'
 type Act = (request: Request) => Promise<Response | undefined>
 type Run = (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
@@ -156,7 +158,10 @@ export function FolderPanel({
     [project.fieldBindings, row.record]
   )
   const configured = new Set(project.fieldBindings.map((f) => f.attributeId)),
-    mainFields = fields.filter((f) => configured.has(f.attributeId)),
+    // Fields in a group are shown together under the group (R-226), not in their source.
+    mainFields = fields.filter(
+      (f) => configured.has(f.attributeId) && !groupOfField(project, f.attributeId)
+    ),
     otherFields = fields.filter((f) => !configured.has(f.attributeId))
   const imageCells = [
     ...new Map(
@@ -213,7 +218,9 @@ export function FolderPanel({
   const attributes = rowFieldAttributes([row])
   const visibleField = (f: { attributeId: string }) =>
     showEmpty || isFilled(effective(f.attributeId)) || editedFields.includes(f.attributeId)
-  const hiddenFields = fields.filter((f) => !visibleField(f)).length
+  const hiddenFields = fields.filter(
+    (f) => !visibleField(f) && !groupOfField(project, f.attributeId)
+  ).length
   const save = async () => {
     const changed: Attribute[] = fields
       .filter(
@@ -284,6 +291,62 @@ export function FolderPanel({
       onAddOption={(option) => void addOption(f.attributeId, option)}
     />
   )
+  // A field group: every member's value side by side, and which member this folder shows (saved in the project).
+  const folderId = row.record?.folderId
+  const renderFieldGroups = () =>
+    (project.fieldGroups ?? []).map((group) => {
+      const alias = (id: string) =>
+          project.fieldBindings.find((field) => field.attributeId === id)?.alias ?? id,
+        shown = groupValue(project, group, row),
+        chosen = folderId ? project.groupSources?.[folderId]?.[group.groupId] : undefined,
+        members = group.memberIds.flatMap((id) => fields.find((f) => f.attributeId === id) ?? [])
+      return (
+        <details key={group.groupId} className="field-source-group field-group-block" open>
+          <summary>
+            {group.name}{' '}
+            <Text component="span" size="xs" c="dimmed">
+              {shown.attributeId ? tr('顯示「{0}」', alias(shown.attributeId)) : tr('都沒有值')}
+            </Text>
+          </summary>
+          <Stack gap="xs">
+            <Select
+              size="xs"
+              label={tr('這個資料夾顯示')}
+              disabled={busy || !folderId}
+              allowDeselect={false}
+              value={chosen ?? ''}
+              data={[
+                { value: '', label: tr('自動（依群組順序）') },
+                ...group.memberIds.map((id) => ({
+                  value: id,
+                  label: alias(id),
+                  disabled: id !== chosen && !isFilled(fieldValue(row, id)),
+                })),
+              ]}
+              onChange={(value) =>
+                folderId &&
+                void act({
+                  action: 'saveProject',
+                  project: setGroupSource(project, folderId, group.groupId, value || undefined),
+                })
+              }
+            />
+            {shown.chosenEmpty && chosen && (
+              <Text size="xs" c="orange" role="status">
+                {shown.attributeId
+                  ? tr(
+                      '指定的「{0}」目前沒有值，暫時依順序顯示「{1}」。',
+                      alias(chosen),
+                      alias(shown.attributeId)
+                    )
+                  : tr('指定的「{0}」目前沒有值。', alias(chosen))}
+              </Text>
+            )}
+            <Stack>{members.map(renderField)}</Stack>
+          </Stack>
+        </details>
+      )
+    })
   const renderGroups = (items: typeof fields) =>
     fieldSourceGroups(items.filter(visibleField), attributes).map(({ source, fields }) => (
       <details key={source} className="field-source-group" open>
@@ -333,8 +396,8 @@ export function FolderPanel({
         go: () => setTab('images'),
       })
     if (
-      mainFields.length &&
-      mainFields.every((f) => empty(original[f.attributeId])) &&
+      configured.size &&
+      fields.every((f) => !configured.has(f.attributeId) || empty(original[f.attributeId])) &&
       !row.record.attributes.some((a) => a.sourceRecord)
     )
       todo.push({
@@ -568,8 +631,9 @@ export function FolderPanel({
                 {tr('已隱藏 {0} 個未填欄位', hiddenFields)}
               </Text>
             )}
+            {renderFieldGroups()}
             {renderGroups(mainFields)}
-            {!mainFields.length && (
+            {!mainFields.length && !project.fieldGroups?.length && (
               <Group justify="space-between" wrap="nowrap" gap="xs">
                 <Text c="dimmed" size="sm">
                   {tr('專案尚未配置欄位。')}

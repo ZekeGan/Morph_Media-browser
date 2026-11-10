@@ -59,20 +59,35 @@ export type FieldUse = {
   where: 'current' | 'preset' | 'content'
   // The other layout's name, or the content template's category.
   name?: string
-  role: 'main' | 'fallback' | 'condition'
+  role: 'main' | 'fallback' | 'condition' | 'group'
   cell: Cell
 }
 // Where a field is used. In the card editor the active layout's saved copy is the draft itself; a content template
 // editor has its own list as the draft, so that list's saved copy is not counted a second time.
 export function fieldUses(project: Project, attributeId: string, cardEditor: boolean): FieldUse[] {
+  const group = project.fieldGroups?.find((g) => g.memberIds.includes(attributeId))
   const role = (cell: Cell): FieldUse['role'] | undefined =>
-    cell.attributeId === attributeId
-      ? 'main'
-      : cell.fallbackIds?.includes(attributeId)
-        ? 'fallback'
-        : cell.condition?.attributeId === attributeId
-          ? 'condition'
-          : undefined
+    // A group component shows the group, not the member it is stored with.
+    cell.groupId && cell.groupId === group?.groupId
+      ? 'group'
+      : !cell.groupId && cell.attributeId === attributeId
+        ? 'main'
+        : cell.fallbackIds?.includes(attributeId)
+          ? 'fallback'
+          : cell.condition?.attributeId === attributeId
+            ? 'condition'
+            : undefined
+  return cellUses(project, cardEditor, role)
+}
+// Where a group is shown (components bound to it), in the same places fieldUses looks.
+export function groupUseList(project: Project, groupId: string, cardEditor: boolean) {
+  return cellUses(project, cardEditor, (cell) => (cell.groupId === groupId ? 'group' : undefined))
+}
+function cellUses(
+  project: Project,
+  cardEditor: boolean,
+  role: (cell: Cell) => FieldUse['role'] | undefined
+): FieldUse[] {
   const from = (where: FieldUse['where'], cells: Cell[], name?: string) =>
     cells.flatMap((cell) => {
       const found = role(cell)
@@ -98,12 +113,13 @@ export function fieldUses(project: Project, attributeId: string, cardEditor: boo
 export function purposeChangeImpact(project: Project, attributeId: string, next: TextType) {
   const binding = project.fieldBindings.find((field) => field.attributeId === attributeId)
   if (!binding || !(binding.type === 'enum' || next === 'enum')) return 0
-  return fieldUses(project, attributeId, true).filter((use) => use.role === 'main').length
+  return fieldUses(project, attributeId, true).filter((use) => ['main', 'group'].includes(use.role))
+    .length
 }
 
 export type SwitchResult =
   | { project: Project }
-  | { error: 'fallback' | 'condition' | 'condition-option' | 'options' | 'too-many' }
+  | { error: 'fallback' | 'group' | 'condition' | 'condition-option' | 'options' | 'too-many' }
 
 export function switchTextType(
   project: Project,
@@ -124,6 +140,12 @@ export function switchTextType(
     )
   )
     return { error: 'fallback' }
+  // Nor can it share a group with them.
+  if (
+    (binding.type === 'enum' || next === 'enum') &&
+    (project.fieldGroups?.find((g) => g.memberIds.includes(attributeId))?.memberIds.length ?? 0) > 1
+  )
+    return { error: 'group' }
   // "Equals" conditions are not offered for tag lists.
   if (
     next === 'tags' &&

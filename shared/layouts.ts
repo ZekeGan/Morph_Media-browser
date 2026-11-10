@@ -222,7 +222,12 @@ export function addCommonFields(project: Project, names: CommonFieldNames): Proj
   let y = Math.max(0, ...cells.map((c) => c.grid.y + c.grid.h))
   for (const item of wanted) {
     const alias = item.alias.trim()
-    if (!alias || bindings.some((f) => f.alias.toLowerCase() === alias.toLowerCase())) continue
+    if (
+      !alias ||
+      bindings.some((f) => f.alias.toLowerCase() === alias.toLowerCase()) ||
+      project.fieldGroups?.some((g) => g.name.trim().toLowerCase() === alias.toLowerCase())
+    )
+      continue
     if (cells.length >= 50 || y + 1 > 100) break
     const attributeId = crypto.randomUUID()
     bindings.push({
