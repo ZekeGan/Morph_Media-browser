@@ -105,6 +105,28 @@ const choose = async (label: string, option: string) => {
 }
 const healthy = async () => {
   assert.deepEqual(errors, [], 'scrolling must not crash the renderer')
+  // The virtual list fills the viewport a frame or more after a scroll; on a busy machine that takes longer than
+  // any fixed wait, so wait for files in view (bounded) before checking. A list that stays blank still fails.
+  await page
+    .waitForFunction(
+      () => {
+        const element = document.querySelector('.file-overview-scroll')
+        if (!element) return false
+        const viewport = element.getBoundingClientRect()
+        return [...element.querySelectorAll('.file-overview-item')].some((item) => {
+          const bounds = item.getBoundingClientRect()
+          return (
+            bounds.bottom > viewport.top &&
+            bounds.top < viewport.bottom &&
+            bounds.right > viewport.left &&
+            bounds.left < viewport.right
+          )
+        })
+      },
+      undefined,
+      { timeout: 5000 }
+    )
+    .catch(() => undefined)
   assert.equal(await page.locator('.titlebar').count(), 1)
   assert.ok(
     (await page.locator('.file-overview-item').count()) > 0,

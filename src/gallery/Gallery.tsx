@@ -385,8 +385,12 @@ export function Gallery({
       root = element?.closest<HTMLElement>('.folder-panel-body')
     if (!element || !root) return
     scroll.current = root
-    const previous = root.style.overflowAnchor
+    const previous = root.style.overflowAnchor,
+      previousGutter = root.style.scrollbarGutter
     root.style.overflowAnchor = 'none'
+    // The layout follows the measured width, and its height decides whether the scrollbar shows. Without a reserved
+    // gutter a width near the edge flips the scrollbar on and off and the re-measure never settles (React #185).
+    root.style.scrollbarGutter = 'stable'
     const update = () => {
         if (anchor.current && Math.abs(root.scrollTop - anchor.current.scrollTop) > 1)
           anchor.current = undefined
@@ -407,6 +411,7 @@ export function Gallery({
       cancelAnimationFrame(frame.current)
       cancelAnimationFrame(ratioFrame.current)
       root.style.overflowAnchor = previous
+      root.style.scrollbarGutter = previousGutter
       scroll.current = null
       frame.current = 0
       ratioFrame.current = 0

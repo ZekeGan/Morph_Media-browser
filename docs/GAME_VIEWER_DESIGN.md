@@ -1,6 +1,6 @@
 # 遊戲內容頁、動作與掃描邊界
 
-> 最後確認：2026-11-05。遊戲內容頁與啟動按鈕的現行規則；辨識規則見 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md)，有效記錄與導覽邊界見 [工作區](WORKSPACE_REVISION.md)。程式：`src/game/GameActions.tsx`、`src/panel/FolderContent.tsx`、`shared/launchArgs.ts`、`electron/explorer.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-78～C-80、C-85、C-92）。
+> 最後確認：2026-11-11。遊戲內容頁與啟動按鈕的現行規則；辨識規則見 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md)，有效記錄與導覽邊界見 [工作區](WORKSPACE_REVISION.md)。程式：`src/game/GameActions.tsx`、`src/panel/FolderContent.tsx`、`shared/launchArgs.ts`、`electron/explorer.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-78～C-80、C-85、C-92）。
 
 ## 遊戲內容頁
 

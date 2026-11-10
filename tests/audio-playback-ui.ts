@@ -118,6 +118,11 @@ const server = process.env.AUDIO_DEV_RENDERER
       configFile: false,
       root: path.resolve('src'),
       esbuild: { jsx: 'automatic' },
+      define: {
+        __APP_VERSION__: JSON.stringify(
+          JSON.parse(await fs.readFile('package.json', 'utf8')).version
+        ),
+      },
       server: { host: '127.0.0.1', port: 0 },
     })
   : undefined
@@ -131,6 +136,10 @@ page.setDefaultTimeout(15000)
 await page.evaluate('window.__name=(target)=>target')
 const errors: string[] = []
 page.on('pageerror', (error) => errors.push(error.message))
+const consoleErrors: string[] = []
+page.on('console', (message) => {
+  if (message.type() === 'error') consoleErrors.push(message.text())
+})
 try {
   for (const name of ['Audio media', 'Audio legacy']) {
     if (name === 'Audio legacy') {
@@ -458,6 +467,23 @@ try {
 } catch (error) {
   await page.screenshot({ path: path.join(root, 'failure.png') }).catch(() => {})
   console.error(root)
+  // A crash behind the error screen otherwise only shows up as a click timeout.
+  const crash = await page
+    .locator('.error-boundary code')
+    .textContent({ timeout: 1000 })
+    .catch(() => null)
+  if (crash || errors.length)
+    throw new Error(
+      'Renderer crashed: ' +
+        [crash, ...errors].join(' | ').replace(/\s*\n\s*/g, ' ← ') +
+        ' (while: ' +
+        String((error as Error).message).split('\n')[0] +
+        ') console: ' +
+        consoleErrors
+          .join(' | ')
+          .replace(/\s*\n\s*/g, ' ← ')
+          .slice(0, 4000)
+    )
   throw error
 } finally {
   await app.evaluate(({ BrowserWindow }) => {

@@ -1,6 +1,6 @@
 # 影片播放器
 
-> 最後確認：2026-11-05。只寫現行規則；選型與歷次取捨見 [決策索引](DECISIONS.md)（C-83～C-85）。程式：`src/video/VideoViewer.tsx`、`src/video/VideoControls.tsx`、`src/video/VideoSubtitleSettings.tsx`、`shared/subtitles.ts`；測試：`tests/video-player-ui.ts`、`tests/video-failure-ui.ts`。影片從媒體頁的大視窗（`MediaViewer`）或右側面板的檔案預覽開啟，入口與佇列見 [媒體工作區](MEDIA_WORKSPACE.md#統一媒體工作區)。
+> 最後確認：2026-11-11。只寫現行規則；選型與歷次取捨見 [決策索引](DECISIONS.md)（C-83～C-85）。程式：`src/video/VideoViewer.tsx`、`src/video/VideoControls.tsx`、`src/video/VideoSubtitleSettings.tsx`、`shared/subtitles.ts`；測試：`tests/video-player-ui.ts`、`tests/video-failure-ui.ts`。影片從媒體頁的大視窗（`MediaViewer`）或右側面板的檔案預覽開啟，入口與佇列見 [媒體工作區](MEDIA_WORKSPACE.md#統一媒體工作區)。
 
 <a id="現行控制欄2026-10-28"></a>
 

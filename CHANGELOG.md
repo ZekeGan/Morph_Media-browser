@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix (R-251): the image waterfall in the side panel could crash the window ("Something went wrong") when the panel or window width landed where the scrollbar kept appearing and disappearing; the scrollbar space is now kept while the waterfall is shown.
+- Tests (R-250): the file overview scroll check waits for files to appear instead of a fixed 100 ms.
 - Internal (R-249): the window's source files are grouped into one folder per feature (browse, panel, editor, media, video and so on) instead of one flat folder. No visible change.
 - Cleanup (R-245): leftover records inside a game folder are only removed whole; clearing just a project's private values there, which would rewrite the record, is refused.
 - Fix (R-246): importing from a website with "fill empty fields" no longer fails when one of the chosen fields was edited by hand; that field is left as it is and the others are filled. Replacing still refuses to overwrite a hand edit.
