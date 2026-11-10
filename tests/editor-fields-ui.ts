@@ -204,39 +204,39 @@ try {
   await managed('Note').click()
   await heading('Note').waitFor()
   await manager.getByText('1 個資料夾有值，例如：hello').waitFor()
-  await managed('Note').getByText('一段文字 · 使用 0 次', { exact: true }).waitFor()
+  await managed('Note').getByText('文字 · 使用 0 次', { exact: true }).waitFor()
   // Changing the purpose says what will happen first, and only happens after confirming (R-223).
   const changeTo = async (purpose: string) => {
     await manager.getByRole('button', { name: '改成…', exact: true }).click()
     await page.getByRole('menuitem', { name: purpose, exact: true }).click()
   }
   const confirm = manager.getByRole('button', { name: '確認改用途', exact: true })
-  await changeTo('清單選一個')
+  await changeTo('單選')
   await manager.getByText('選項：hello', { exact: true }).waitFor()
-  await managed('Note').getByText('一段文字 · 使用 0 次', { exact: true }).waitFor()
+  await managed('Note').getByText('文字 · 使用 0 次', { exact: true }).waitFor()
   await confirm.click()
-  await managed('Note').getByText('清單選一個 · 使用 0 次', { exact: true }).waitFor()
+  await managed('Note').getByText('單選 · 使用 0 次', { exact: true }).waitFor()
   await manager.locator('.mantine-Pill-label').filter({ hasText: 'hello' }).waitFor()
   await managed('Zzz').click()
-  await changeTo('多個標籤')
+  await changeTo('多個值')
   await manager.getByText('卡片上的組件保留原本的呈現', { exact: true }).waitFor()
   await confirm.click()
-  await managed('Zzz').getByText('多個標籤 · 使用 0 次', { exact: true }).waitFor()
+  await managed('Zzz').getByText('多個值 · 使用 0 次', { exact: true }).waitFor()
   // A field sharing a group cannot become a choice from a list; the reason is shown. Grouped fields are listed in
   // their group, whose details open a member's own details.
   await managed('NAME 群組').click()
   await manager.getByRole('button', { name: 'NAME', exact: true }).click()
   await heading('NAME').waitFor()
-  await changeTo('清單選一個')
+  await changeTo('單選')
   await manager.getByRole('alert').filter({ hasText: '群組' }).waitFor()
   assert.equal(await confirm.isDisabled(), true)
   await manager.getByRole('button', { name: '取消', exact: true }).click()
   // A new field is chosen by purpose and shown right away.
   await manager.getByRole('button', { name: '新增欄位', exact: true }).click()
   await form.getByLabel('欄位名稱').fill('Cast')
-  await form.getByRole('radio', { name: /^多個標籤/ }).check()
+  await form.getByRole('radio', { name: /^多個值/ }).check()
   assert.equal(await form.getByLabel('選項（逗號或換行分隔）').count(), 0)
-  await form.getByRole('radio', { name: /^從清單選一個/ }).check()
+  await form.getByRole('radio', { name: /^單選/ }).check()
   await form.getByLabel('選項（逗號或換行分隔）').waitFor()
   await form.getByLabel('選項（逗號或換行分隔）').fill(', ，')
   await form.getByLabel('欄位名稱').fill('Cast')
@@ -246,12 +246,12 @@ try {
     'separators alone are not options'
   )
   await form.getByLabel('選項（逗號或換行分隔）').fill('')
-  await form.getByRole('radio', { name: /^多個標籤/ }).check()
+  await form.getByRole('radio', { name: /^多個值/ }).check()
   await form.getByRole('button', { name: '新增欄位', exact: true }).click()
   await heading('Cast').waitFor()
-  await managed('Cast').getByText('多個標籤 · 使用 0 次', { exact: true }).waitFor()
+  await managed('Cast').getByText('多個值 · 使用 0 次', { exact: true }).waitFor()
   // With no values to take options from, they are typed in first.
-  await changeTo('清單選一個')
+  await changeTo('單選')
   assert.equal(await confirm.isDisabled(), true)
   const typedOption = manager.getByRole('textbox', { name: '還沒有可用的值，請先輸入選項' })
   await typedOption.fill('A')
@@ -276,11 +276,12 @@ try {
   await app.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].setBounds({ width: 1500, height: 950 })
   )
-  // "Used in" selects the component on the canvas and closes the window.
-  await managed('NAME 群組').click()
-  await manager.locator('.field-detail-uses').getByRole('button').first().click()
+  // "Used N times" counts every layout and lists them on hover (R-228); the details have no "Used in" section.
+  await managed('NAME 群組').getByText('使用 1 次', { exact: true }).hover()
+  await page.getByRole('tooltip').filter({ hasText: '目前版面 1' }).waitFor()
+  assert.equal(await manager.getByText('用在哪裡').count(), 0) // ui-names: ignore (checks the section is gone)
+  await page.keyboard.press('Escape')
   await manager.waitFor({ state: 'hidden' })
-  await page.locator(`.editor-cell.selected[data-cell-id="${cellId}"]`).waitFor()
   // The row's menu opens the same details directly.
   await button('欄位操作 Note').click()
   await page.getByRole('menuitem', { name: '欄位設定…', exact: true }).click()
@@ -336,7 +337,7 @@ try {
   assert.deepEqual(errors, [])
   passed = true
   console.log(
-    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, field group (row menu, tags member, shown by a component, order, saved), folder chooses a group member, field manager (list and details, search, purpose change with impact, refused change, new field by purpose, rename, narrow view, used in, row menu); folder settings keep 0/false, a cleared field and the old-type note. ' +
+    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, field group (row menu, tags member, shown by a component, order, saved), folder chooses a group member, field manager (list and details, search, purpose change with impact, refused change, new field by purpose, rename, narrow view, use count breakdown, row menu); folder settings keep 0/false, a cleared field and the old-type note. ' +
       root
   )
 } catch (error) {

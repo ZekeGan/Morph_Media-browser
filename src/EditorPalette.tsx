@@ -32,7 +32,7 @@ import { typeKinds } from './editorKinds'
 import { isFilled } from '../shared/cells'
 import { fieldSource, orderedFieldSourceGroups, useSourceFolding } from './fieldSources'
 import { FieldManager } from './FieldManager'
-import { fieldPurposes, purposeGlyph, purposeLabel } from './fieldTypes'
+import { fieldPurposes, purposeGlyph, purposeLabel, shownUses } from './fieldTypes'
 import { groupValue } from '../shared/cells'
 import { groupOfField, groupType } from '../shared/fieldGroups'
 import {
@@ -42,6 +42,7 @@ import {
   FieldValuePreview,
   GroupRow,
   GroupView,
+  UseCount,
   useGroupActions,
   type DropState,
 } from './FieldGroupPalette'
@@ -101,7 +102,6 @@ export type EditorPaletteProps = {
   values: (attributeId: string) => unknown[]
   // Purpose changes are offered only in the card layout editor.
   cardEditor: boolean
-  selectCell: (cellId: string) => void
 }
 
 function Section({
@@ -163,7 +163,6 @@ export function EditorPalette(props: EditorPaletteProps) {
     setRenaming,
     values,
     cardEditor,
-    selectCell,
     bindSource,
     rows,
   } = props
@@ -266,12 +265,7 @@ export function EditorPalette(props: EditorPaletteProps) {
       kind = typeKinds[binding.type],
       added = bound(binding.attributeId)
     if (!kind) return null
-    const uses = draft.cells.filter(
-      (cell) =>
-        !cell.groupId &&
-        (cell.attributeId === binding.attributeId ||
-          cell.fallbackIds?.includes(binding.attributeId))
-    ).length
+    const uses = shownUses(draft, binding.attributeId, cardEditor)
     const isPicked = picked.includes(binding.attributeId),
       over = dropOver?.id === binding.attributeId ? dropOver.state : undefined
     const name = binding.alias || tr('未命名欄位')
@@ -339,7 +333,7 @@ export function EditorPalette(props: EditorPaletteProps) {
             </Badge>
           )}
           <span className={'palette-row-state' + (added ? '' : ' is-unbound')}>
-            {added ? tr('使用 {0} 次', uses) : tr('尚未加入')}
+            {added ? <UseCount uses={uses} /> : tr('尚未加入')}
           </span>
         </UnstyledButton>
         <Menu position="bottom-end" withinPortal>
@@ -436,20 +430,21 @@ export function EditorPalette(props: EditorPaletteProps) {
         dragImage(e)
       }}
     >
-      <UnstyledButton
-        className="palette-row-main"
-        aria-label={labels[kind]}
-        title={hints[kind]}
-        onClick={() => add(kind)}
-      >
-        <span className="palette-row-icon" aria-hidden>
-          <Icon name={kindIcons[kind] ?? 'grid'} size={14} />
-        </span>
-        <span className="palette-row-text">
-          <span className="palette-field-name">{labels[kind]}</span>
-          <span className="palette-row-meta">{hints[kind]}</span>
-        </span>
-      </UnstyledButton>
+      <Tooltip label={hints[kind]} position="right" openDelay={400} withArrow multiline maw={260}>
+        <UnstyledButton
+          className="palette-row-main"
+          aria-label={labels[kind]}
+          aria-description={hints[kind]}
+          onClick={() => add(kind)}
+        >
+          <span className="palette-row-icon" aria-hidden>
+            <Icon name={kindIcons[kind] ?? 'grid'} size={14} />
+          </span>
+          <span className="palette-row-text">
+            <span className="palette-field-name">{labels[kind]}</span>
+          </span>
+        </UnstyledButton>
+      </Tooltip>
     </div>
   )
   const components = (kinds: CellKind[]) =>
@@ -609,6 +604,7 @@ export function EditorPalette(props: EditorPaletteProps) {
                     actions={groupActions}
                     fieldOf={fieldOf}
                     kind={groupKind(group.groupId)}
+                    cardEditor={cardEditor}
                     dragImage={dragImage}
                     open={() => setOpenGroup({ id: group.groupId })}
                     rename={() => setOpenGroup({ id: group.groupId, fresh: true })}
@@ -798,14 +794,12 @@ export function EditorPalette(props: EditorPaletteProps) {
           availableFields={availableFields}
           attributes={attributes}
           cardEditor={cardEditor}
-          labels={labels}
           values={values}
           change={change}
           onNewField={() => startNewField()}
           reference={reference}
           requestDelete={(binding) => void requestDelete(binding)}
           setRenaming={setRenaming}
-          selectCell={selectCell}
           rows={rows}
           bindSource={bindSource}
           setError={setError}

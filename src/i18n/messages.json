@@ -6791,12 +6791,6 @@
     "en": "This field is used in an “equals / not equals” display condition; change it first.",
     "es": "Este campo se usa en una condición «igual a / distinto de»; cámbiala primero."
   },
-  "這個欄位有超過 100 種不同的值，不適合從清單選一個。": {
-    "ja": "このフィールドには 100 種類を超える値があるため、リストから選ぶ形式には向きません。",
-    "zh-CN": "这个字段有超过 100 种不同的值，不适合从列表选一个。",
-    "en": "This field has more than 100 different values, too many to pick from a list.",
-    "es": "Este campo tiene más de 100 valores distintos, demasiados para elegir de una lista."
-  },
   "至少需要一個選項": {
     "ja": "選択肢が 1 つ以上必要です",
     "zh-CN": "至少需要一个选项",
@@ -6905,18 +6899,6 @@
     "en": "This field is not in this project yet.",
     "es": "Este campo aún no está en este proyecto."
   },
-  "用在哪裡": {
-    "ja": "使用場所",
-    "zh-CN": "用在哪里",
-    "en": "Used in",
-    "es": "Dónde se usa"
-  },
-  "還沒有用在任何組件": {
-    "ja": "まだどのコンポーネントにも使われていません",
-    "zh-CN": "还没有用在任何组件",
-    "en": "Not used by any component yet",
-    "es": "Aún no lo usa ningún componente"
-  },
   "這裡整理欄位本身：名稱、用途與選項。要放上卡片，請用左側清單。": {
     "ja": "ここではフィールドそのもの（名前・用途・選択肢）を整理します。カードに置くには左のリストを使います。",
     "zh-CN": "这里整理字段本身：名称、用途与选项。要放上卡片，请用左侧列表。",
@@ -6947,35 +6929,11 @@
     "en": "Choose a field on the left to see and change it here.",
     "es": "Elige un campo de la izquierda para verlo y ajustarlo aquí."
   },
-  "一段文字": {
-    "ja": "テキスト",
-    "zh-CN": "一段文字",
-    "en": "A piece of text",
-    "es": "Un texto"
-  },
-  "備註、作者、原名": {
-    "ja": "メモ、作者、原題",
-    "zh-CN": "备注、作者、原名",
-    "en": "Notes, author, original title",
-    "es": "Notas, autor, título original"
-  },
-  "多個標籤": {
-    "ja": "複数のタグ",
-    "zh-CN": "多个标签",
-    "en": "Several tags",
-    "es": "Varias etiquetas"
-  },
   "類型、角色": {
     "ja": "ジャンル、キャラクター",
     "zh-CN": "类型、角色",
     "en": "Genres, characters",
     "es": "Géneros, personajes"
-  },
-  "從清單選一個": {
-    "ja": "リストから 1 つ選ぶ",
-    "zh-CN": "从列表选一个",
-    "en": "One from a list",
-    "es": "Una opción de una lista"
   },
   "狀態：進行中／已完成": {
     "ja": "状態：進行中／完了",
@@ -7018,12 +6976,6 @@
     "zh-CN": "官网",
     "en": "Official site",
     "es": "Sitio oficial"
-  },
-  "清單選一個": {
-    "ja": "リストから選択",
-    "zh-CN": "列表选一个",
-    "en": "From a list",
-    "es": "De una lista"
   },
   "最多 100 個選項": {
     "ja": "選択肢は 100 個まで",
@@ -7120,12 +7072,6 @@
     "en": "Add to card",
     "ja": "カードに追加",
     "es": "Añadir a la tarjeta"
-  },
-  "型別不同的欄位不能放在同一個群組（文字和多個標籤可以）": {
-    "zh-CN": "类型不同的字段不能放在同一个群组（文字和多个标签可以）",
-    "en": "Fields of different types can't share a group (text and tags can)",
-    "ja": "型の違うフィールドは同じグループに入れられません（テキストと複数タグは可）",
-    "es": "Los campos de tipos distintos no pueden compartir grupo (texto y etiquetas sí)"
   },
   "已選 {0} 個欄位": {
     "zh-CN": "已选 {0} 个字段",
@@ -7295,12 +7241,6 @@
     "ja": "グループを解除",
     "es": "Deshacer grupo"
   },
-  "資訊版面": {
-    "zh-CN": "信息版面",
-    "en": "Info layout",
-    "ja": "情報レイアウト",
-    "es": "Diseño de información"
-  },
   "轉成群組": {
     "zh-CN": "转成群组",
     "en": "Turn into a group",
@@ -7384,5 +7324,35 @@
     "en": "A group already has this name",
     "ja": "同じ名前のグループがあります",
     "es": "Ya hay un grupo con este nombre"
+  },
+  "、": {
+    "zh-CN": "、",
+    "en": ", ",
+    "ja": "、",
+    "es": ", "
+  },
+  "多個值": {
+    "zh-CN": "多个值",
+    "en": "Several values",
+    "ja": "複数の値",
+    "es": "Varios valores"
+  },
+  "標題、作者、備註": {
+    "zh-CN": "标题、作者、备注",
+    "en": "Title, author, note",
+    "ja": "タイトル、作者、メモ",
+    "es": "Título, autor, nota"
+  },
+  "型別不同的欄位不能放在同一個群組（文字和多個值可以）": {
+    "zh-CN": "类型不同的字段不能放在同一个群组（文字和多个值可以）",
+    "en": "Fields of different types can't share a group (text and several values can)",
+    "ja": "型の違うフィールドは同じグループに入れられません（テキストと複数の値は可）",
+    "es": "Los campos de tipos distintos no pueden compartir grupo (texto y varios valores sí)"
+  },
+  "這個欄位有超過 100 種不同的值，不適合做成單選。": {
+    "zh-CN": "这个字段有超过 100 种不同的值，不适合做成单选。",
+    "en": "This field has more than 100 different values, too many for a single choice.",
+    "ja": "このフィールドには 100 種類を超える値があるため、単一選択には向きません。",
+    "es": "Este campo tiene más de 100 valores distintos, demasiados para una opción única."
   }
 }

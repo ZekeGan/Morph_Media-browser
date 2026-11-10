@@ -6,18 +6,18 @@ import { t as tr } from './i18n'
 // a value was saved with and are converted on read, so a change only touches the project's definition and cells.
 export const fieldPurposes = () =>
   [
-    { type: 'string', glyph: 'Aa', label: tr('一段文字'), example: tr('備註、作者、原名') },
-    { type: 'tags', glyph: '#', label: tr('多個標籤'), example: tr('類型、角色') },
-    { type: 'enum', glyph: '◉', label: tr('從清單選一個'), example: tr('狀態：進行中／已完成') },
+    { type: 'string', glyph: 'Aa', label: tr('文字'), example: tr('標題、作者、備註') },
+    { type: 'tags', glyph: '#', label: tr('多個值'), example: tr('類型、角色') },
+    { type: 'enum', glyph: '◉', label: tr('單選'), example: tr('狀態：進行中／已完成') },
     { type: 'number', glyph: '12', label: tr('數字'), example: tr('評分、集數') },
     { type: 'date', glyph: '▦', label: tr('日期'), example: tr('發售日') },
     { type: 'datetime', glyph: '⏱', label: tr('日期和時間'), example: tr('最後遊玩') },
     { type: 'boolean', glyph: '✓', label: tr('是／否'), example: tr('已收藏') },
     { type: 'url', glyph: '↗', label: tr('網址'), example: tr('官網') },
   ] as const
-// The short name shown in lists; a choice from a list is shortened to fit one line.
+// One short name per purpose, used on the cards, in lists, menus and messages alike (R-228).
 export const purposeLabel = (type: string) =>
-  type === 'enum' ? tr('清單選一個') : (fieldPurposes().find((p) => p.type === type)?.label ?? type)
+  fieldPurposes().find((p) => p.type === type)?.label ?? type
 export const purposeGlyph = (type: string) =>
   fieldPurposes().find((p) => p.type === type)?.glyph ?? '·'
 
@@ -108,6 +108,39 @@ function cellUses(
       )
     ),
   ]
+}
+// Components that show a field itself (alone or as a fallback); group components count for the group, conditions
+// only read the field.
+export function shownUses(project: Project, attributeId: string, cardEditor: boolean) {
+  return fieldUses(project, attributeId, cardEditor).filter((use) =>
+    ['main', 'fallback'].includes(use.role)
+  )
+}
+// Where uses are, counted per layout: "Current layout 2, Game info layout 1".
+export function usesSummary(uses: FieldUse[]) {
+  const counts = new Map<string, number>()
+  for (const use of uses) {
+    const where =
+      use.where === 'current'
+        ? tr('目前版面')
+        : use.where === 'preset'
+          ? use.name === '預設版面'
+            ? tr('預設版面')
+            : (use.name ?? '')
+          : tr(
+              '{0}資訊版面',
+              (
+                {
+                  book: tr('書籍／漫畫'),
+                  game: tr('遊戲'),
+                  media: tr('影音'),
+                  general: tr('一般'),
+                } as Record<string, string>
+              )[use.name ?? ''] ?? tr('一般')
+            )
+    counts.set(where, (counts.get(where) ?? 0) + 1)
+  }
+  return [...counts].map(([where, n]) => `${where} ${n}`).join(tr('、'))
 }
 // How many components change their display when a field changes purpose (text and tags keep theirs).
 export function purposeChangeImpact(project: Project, attributeId: string, next: TextType) {

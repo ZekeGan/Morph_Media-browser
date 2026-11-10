@@ -12,24 +12,30 @@ import {
   UnstyledButton,
 } from '@mantine/core'
 import { Icon } from './icons'
+import { HelpTip } from './HelpTip'
 import { t as tr } from './i18n'
-import type { Attribute, Cell, CellKind, FieldGroup, FolderRow, Project } from '../shared/model'
+import type { Attribute, FieldGroup, FolderRow, Project } from '../shared/model'
 import type { editorFields } from '../shared/layouts'
 import { copyableValue, groupValue, isFilled } from '../shared/cells'
 import { groupOfField } from '../shared/fieldGroups'
-import { dropHandlers, fieldDrag, useGroupActions, type DropState } from './FieldGroupPalette'
+import {
+  dropHandlers,
+  fieldDrag,
+  UseCount,
+  useGroupActions,
+  type DropState,
+} from './FieldGroupPalette'
 import { fieldSource, orderedFieldSourceGroups, useSourceFolding } from './fieldSources'
 import { EnumColors } from './EnumColors'
 import {
-  fieldUses,
   groupUseList,
   isTextType,
   purposeChangeImpact,
   purposeGlyph,
   purposeLabel,
+  shownUses,
   switchTextType,
   textTypes,
-  type FieldUse,
   type TextType,
 } from './fieldTypes'
 
@@ -49,14 +55,12 @@ function FieldDetail({
   busy,
   dirty,
   cardEditor,
-  labels,
   values,
   change,
   reference,
   requestDelete,
   setRenaming,
   showSource,
-  selectCell,
 }: {
   binding: Binding
   added: boolean
@@ -66,14 +70,12 @@ function FieldDetail({
   busy: boolean
   dirty: boolean
   cardEditor: boolean
-  labels: Record<CellKind, string>
   values: unknown[]
   change: (next: Project) => void
   reference: (binding: Binding) => void
   requestDelete: (binding: Binding) => void
   setRenaming: (value: { id: string; name: string }) => void
   showSource: (source: string) => void
-  selectCell: (cellId: string) => void
 }) {
   const id = binding.attributeId,
     name = binding.alias || tr('未命名欄位'),
@@ -87,7 +89,7 @@ function FieldDetail({
     group: tr('這個欄位在群組裡，請先移出群組。'),
     condition: tr('這個欄位用在「等於／不等於」顯示條件，請先改條件。'),
     'condition-option': tr('這個欄位用在「等於／不等於」顯示條件，比較值不在選項內，請先改條件。'),
-    'too-many': tr('這個欄位有超過 100 種不同的值，不適合從清單選一個。'),
+    'too-many': tr('這個欄位有超過 100 種不同的值，不適合做成單選。'),
   }
   // A dry run: the change is applied only after the impact has been read and confirmed.
   const planned = target
@@ -154,33 +156,6 @@ function FieldDetail({
     .filter(Boolean)
     .slice(0, 3)
     .map((text) => (text.length > 40 ? text.slice(0, 40) + '…' : text))
-  const layoutName = (use: FieldUse) => {
-    if (use.where === 'current') return tr('目前版面')
-    if (use.where === 'preset') return use.name === '預設版面' ? tr('預設版面') : (use.name ?? '')
-    return tr(
-      '{0}資訊版面',
-      (
-        {
-          book: tr('書籍／漫畫'),
-          game: tr('遊戲'),
-          media: tr('影音'),
-          general: tr('一般'),
-        } as Record<string, string>
-      )[use.name ?? ''] ?? tr('一般')
-    )
-  }
-  const uses = fieldUses(draft, id, cardEditor)
-  const roleNote = (use: FieldUse) =>
-    use.role === 'group'
-      ? ' · ' + tr('群組「{0}」', groupOfField(draft, id)?.name ?? '')
-      : use.role === 'fallback'
-        ? ' · ' + tr('備用來源')
-        : use.role === 'condition'
-          ? ' · ' + tr('顯示條件')
-          : ''
-  const cellName = (cell: Cell) =>
-    labels[cell.kind] +
-    (cell.kind === 'static-text' && cell.text ? ` · ${cell.text.slice(0, 20)}` : '')
   return (
     <div className="field-detail">
       <div className="field-detail-head">
@@ -323,40 +298,6 @@ function FieldDetail({
           )}
         </div>
       )}
-      {added && (
-        <div className="field-detail-part">
-          <Text size="sm" fw={600}>
-            {tr('用在哪裡')}
-          </Text>
-          {uses.length ? (
-            <ul className="field-detail-uses">
-              {uses.map((use, index) => (
-                <li key={use.cell.cellId + index}>
-                  {use.where === 'current' ? (
-                    <Button
-                      size="compact-xs"
-                      variant="subtle"
-                      onClick={() => selectCell(use.cell.cellId)}
-                    >
-                      {cellName(use.cell)}
-                      {roleNote(use)}
-                    </Button>
-                  ) : (
-                    <Text size="xs" c="dimmed">
-                      {layoutName(use)} · {cellName(use.cell)}
-                      {roleNote(use)}
-                    </Text>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <Text size="xs" c="dimmed">
-              {tr('還沒有用在任何組件')}
-            </Text>
-          )}
-        </div>
-      )}
       {added && binding.type === 'enum' && (
         <div className="field-detail-part">
           <TagsInput
@@ -405,28 +346,23 @@ function FieldDetail({
   )
 }
 
-// One group's details (R-226): its name, members in order, which member each folder shows, where it is used, and
-// dissolving it. Members open their own details.
+// One group's details (R-226): its name, members in order, which member each folder shows, and dissolving it. Members open their own details.
 function GroupDetail({
   group,
   draft,
   rows,
   attributes,
-  labels,
   cardEditor,
   actions,
   openField,
-  selectCell,
 }: {
   group: FieldGroup
   draft: Project
   rows: FolderRow[]
   attributes: Attribute[]
-  labels: Record<CellKind, string>
   cardEditor: boolean
   actions: ReturnType<typeof useGroupActions>
   openField: (attributeId: string) => void
-  selectCell: (cellId: string) => void
 }) {
   const [name, setName] = useState(group.name)
   useEffect(() => setName(group.name), [group.name])
@@ -437,7 +373,6 @@ function GroupDetail({
   const chosen = Object.values(draft.groupSources ?? {}).filter(
     (choice) => choice[group.groupId]
   ).length
-  const uses = groupUseList(draft, group.groupId, cardEditor)
   const move = (from: number, to: number) => {
     const ids = [...group.memberIds]
     ids.splice(to, 0, ids.splice(from, 1)[0])
@@ -524,36 +459,6 @@ function GroupDetail({
           {chosen > 0 && ' · ' + tr('{0} 個資料夾指定了來源', chosen)}
         </Text>
       </div>
-      <div className="field-detail-part">
-        <Text size="sm" fw={600}>
-          {tr('用在哪裡')}
-        </Text>
-        {uses.length ? (
-          <ul className="field-detail-uses">
-            {uses.map((use, index) => (
-              <li key={use.cell.cellId + index}>
-                {use.where === 'current' ? (
-                  <Button
-                    size="compact-xs"
-                    variant="subtle"
-                    onClick={() => selectCell(use.cell.cellId)}
-                  >
-                    {labels[use.cell.kind]}
-                  </Button>
-                ) : (
-                  <Text size="xs" c="dimmed">
-                    {use.where === 'preset' ? use.name : tr('資訊版面')} · {labels[use.cell.kind]}
-                  </Text>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <Text size="xs" c="dimmed">
-            {tr('還沒有用在任何組件')}
-          </Text>
-        )}
-      </div>
       <div className="field-detail-danger">
         <Button
           size="xs"
@@ -584,14 +489,12 @@ export function FieldManager({
   availableFields,
   attributes,
   cardEditor,
-  labels,
   values,
   change,
   onNewField,
   reference,
   requestDelete,
   setRenaming,
-  selectCell,
   rows,
   bindSource,
   setError,
@@ -611,7 +514,6 @@ export function FieldManager({
   // Purpose changes convert every layout's components, so they are offered only in the card layout editor (a content
   // template editor saves its own cells only).
   cardEditor: boolean
-  labels: Record<CellKind, string>
   // The values a field holds in the project's folders (data examples, option use and options from the data).
   values: (attributeId: string) => unknown[]
   change: (next: Project) => void
@@ -619,7 +521,6 @@ export function FieldManager({
   reference: (binding: Binding) => void
   requestDelete: (binding: Binding) => void
   setRenaming: (value: { id: string; name: string }) => void
-  selectCell: (cellId: string) => void
 }) {
   const [search, setSearch] = useState(''),
     [selected, setSelected] = useState(focusId)
@@ -671,7 +572,7 @@ export function FieldManager({
     const id = binding.attributeId,
       added = bound(id),
       name = binding.alias || tr('未命名欄位'),
-      count = fieldUses(draft, id, cardEditor).filter((use) => use.role !== 'condition').length
+      uses = shownUses(draft, id, cardEditor)
     return (
       <UnstyledButton
         key={id}
@@ -700,7 +601,7 @@ export function FieldManager({
         </span>
         <span className="field-manager-name">{name}</span>
         <span className="field-manager-meta">
-          {purposeLabel(binding.type)} · {added ? tr('使用 {0} 次', count) : tr('尚未加入')}
+          {purposeLabel(binding.type)} · {added ? <UseCount uses={uses} /> : tr('尚未加入')}
         </span>
       </UnstyledButton>
     )
@@ -708,10 +609,8 @@ export function FieldManager({
   return (
     <Modal opened onClose={onClose} title={tr('管理欄位')} size="min(1000px, 92vw)">
       <div className="field-manager" data-view={current || currentGroup ? 'detail' : 'list'}>
-        <Text size="xs" c="dimmed">
-          {tr('這裡整理欄位本身：名稱、用途與選項。要放上卡片，請用左側清單。')}
-        </Text>
         <Group gap="xs" wrap="nowrap" className="field-manager-tools">
+          <HelpTip text={tr('這裡整理欄位本身：名稱、用途與選項。要放上卡片，請用左側清單。')} />
           <TextInput
             flex={1}
             size="xs"
@@ -756,7 +655,7 @@ export function FieldManager({
                       <span className="field-manager-name">{group.name}</span>
                       <span className="field-manager-meta">
                         {tr('群組 · {0} 個欄位', group.memberIds.length)} ·{' '}
-                        {tr('使用 {0} 次', groupUseList(draft, group.groupId, cardEditor).length)}
+                        <UseCount uses={groupUseList(draft, group.groupId, cardEditor)} />
                       </span>
                     </UnstyledButton>
                   )
@@ -823,14 +722,9 @@ export function FieldManager({
                   draft={draft}
                   rows={rows}
                   attributes={attributes}
-                  labels={labels}
                   cardEditor={cardEditor}
                   actions={actions}
                   openField={setSelected}
-                  selectCell={(cellId) => {
-                    selectCell(cellId)
-                    onClose()
-                  }}
                 />
               </>
             ) : current ? (
@@ -854,7 +748,6 @@ export function FieldManager({
                   busy={busy}
                   dirty={dirty}
                   cardEditor={cardEditor}
-                  labels={labels}
                   values={values(current.attributeId)}
                   change={change}
                   reference={reference}
@@ -863,10 +756,6 @@ export function FieldManager({
                   showSource={(source) => {
                     setSearch(source)
                     setSelected(undefined)
-                  }}
-                  selectCell={(cellId) => {
-                    selectCell(cellId)
-                    onClose()
                   }}
                 />
               </>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ActionIcon, Button, Menu, Text, TextInput, Tooltip, UnstyledButton } from '@mantine/core'
+import { ActionIcon, Button, Menu, TextInput, Tooltip, UnstyledButton } from '@mantine/core'
 import { Icon } from './icons'
+import { HelpTip } from './HelpTip'
 import { t as tr } from './i18n'
 import {
   fieldValue,
@@ -23,7 +24,7 @@ import {
   type GroupRefusal,
 } from '../shared/fieldGroups'
 import { fieldSource } from './fieldSources'
-import { purposeGlyph } from './fieldTypes'
+import { groupUseList, purposeGlyph, usesSummary, type FieldUse } from './fieldTypes'
 
 type Binding = Project['fieldBindings'][number]
 
@@ -51,7 +52,7 @@ export function FieldValuePreview({ value }: { value: unknown }) {
 
 export function refusalText(refusal: GroupRefusal | string) {
   return refusal === 'type'
-    ? tr('型別不同的欄位不能放在同一個群組（文字和多個標籤可以）')
+    ? tr('型別不同的欄位不能放在同一個群組（文字和多個值可以）')
     : refusal === 'full'
       ? tr('一個群組最多 {0} 個欄位', 20)
       : refusal === 'name'
@@ -189,8 +190,15 @@ export function dropHandlers(
   }
 }
 
-export function groupUses(project: Project, groupId: string) {
-  return project.cells.filter((cell) => cell.groupId === groupId).length
+export function UseCount({ uses }: { uses: FieldUse[] }) {
+  const text = tr('使用 {0} 次', uses.length)
+  return uses.length ? (
+    <Tooltip label={usesSummary(uses)} openDelay={300}>
+      <span>{text}</span>
+    </Tooltip>
+  ) : (
+    <span>{text}</span>
+  )
 }
 
 // A group row looks like a field row; only its picture differs (the accent colour, a stack of layers).
@@ -205,7 +213,9 @@ export function GroupRow({
   manage,
   dragImage,
   kind,
+  cardEditor,
 }: {
+  cardEditor: boolean
   group: FieldGroup
   project: Project
   preview?: FolderRow
@@ -256,7 +266,7 @@ export function GroupRow({
           )}
         </span>
         <span className="palette-row-state">
-          {tr('使用 {0} 次', groupUses(project, group.groupId))}
+          <UseCount uses={groupUseList(project, group.groupId, cardEditor)} />
         </span>
       </UnstyledButton>
       <Menu position="bottom-end" withinPortal>
@@ -366,10 +376,10 @@ export function GroupView({
             if (e.key === 'Escape') setName(group.name)
           }}
         />
+        <HelpTip
+          text={tr('依順序顯示第一個有值的欄位。拖動可調整順序；把其他欄位拖到群組上即可加入。')}
+        />
       </div>
-      <Text size="xs" c="dimmed" className="palette-group-hint">
-        {tr('依順序顯示第一個有值的欄位。拖動可調整順序；把其他欄位拖到群組上即可加入。')}
-      </Text>
       {addToCard && (
         <Button size="compact-xs" variant="light" mb={4} onClick={addToCard} disabled={!type}>
           {tr('加到卡片')}

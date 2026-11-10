@@ -364,7 +364,7 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .palette-groups { margin-bottom:6px; }
 .palette-pick-bar { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:6px; padding:4px 6px; border-radius:6px; background:var(--inset); }.palette-pick-bar > :first-child { flex:1; }
 .palette-group-view { display:grid; gap:6px; min-width:0; }.palette-group-head { display:flex; align-items:center; gap:6px; min-width:0; }.palette-group-name { flex:1; min-width:0; }
-.palette-group-hint { line-height:1.4; }.palette-member .palette-row-main { cursor:grab; }
+.palette-member .palette-row-main { cursor:grab; }
 .palette-member-shown { display:inline-flex; flex-shrink:0; color:var(--accent); }
 .palette-row .palette-field-value { margin-top:1px; font-size:11px; color:var(--muted); }.palette-row .palette-field-value.is-empty { opacity:.8; }
 /* Field management window (R-225): list beside details; below about 800px one at a time, with a way back. */

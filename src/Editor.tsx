@@ -1104,7 +1104,6 @@ export function Editor({
               .filter((value) => value != null)
           }
           cardEditor={presets}
-          selectCell={setSelected}
         />
         <main
           className="canvas-wrap"
