@@ -186,9 +186,11 @@ try {
     () => getComputedStyle(document.querySelector('.editor-cell')!).fontStyle === 'italic'
   )
   assert.equal(await italic.getAttribute('aria-pressed'), 'true')
-  // The box styles open by themselves when the cell already uses some.
-  const more = inspector.getByRole('button', { name: '更多樣式', exact: true })
-  if ((await more.getAttribute('aria-expanded')) !== 'true') await more.click()
+  // The Box group starts folded; the Text group marks itself changed (R-233).
+  await inspector.getByRole('img', { name: '已調整', exact: true }).first().waitFor()
+  const boxGroup = inspector.getByRole('button', { name: '外框', exact: true })
+  assert.equal(await boxGroup.getAttribute('aria-expanded'), 'false')
+  await boxGroup.click()
   await inspector
     .getByRole('radiogroup', { name: '圓角', exact: true })
     .getByText('大', { exact: true })
@@ -198,7 +200,8 @@ try {
   )
   await page.screenshot({ path: path.join(root, 'style-editor.png') })
   // A style saved by name in this project applies the whole look to another component and is kept with the layout.
-  await inspector.getByRole('button', { name: '存成樣式…', exact: true }).click()
+  await inspector.getByRole('button', { name: '樣式操作', exact: true }).click()
+  await page.getByRole('menuitem', { name: '存成樣式…', exact: true }).click()
   await page.getByRole('textbox', { name: '樣式名稱', exact: true }).fill('QA style')
   await page.getByRole('button', { name: '儲存樣式', exact: true }).click()
   await page.locator('.editor-cell').nth(1).click()

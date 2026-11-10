@@ -1247,12 +1247,6 @@
     "en": "Text color",
     "es": "Color del texto"
   },
-  "背景透明": {
-    "ja": "透明な背景",
-    "zh-CN": "背景透明",
-    "en": "Transparent background",
-    "es": "Fondo transparente"
-  },
   "背景顏色": {
     "ja": "背景色",
     "zh-CN": "背景颜色",
@@ -4313,24 +4307,6 @@
     "ja": "配置",
     "es": "Alineación"
   },
-  "靠左": {
-    "zh-CN": "靠左",
-    "en": "Left",
-    "ja": "左",
-    "es": "Izquierda"
-  },
-  "置中": {
-    "zh-CN": "居中",
-    "en": "Center",
-    "ja": "中央",
-    "es": "Centro"
-  },
-  "靠右": {
-    "zh-CN": "靠右",
-    "en": "Right",
-    "ja": "右",
-    "es": "Derecha"
-  },
   "長文字換行顯示": {
     "zh-CN": "长文本换行显示",
     "en": "Wrap long text",
@@ -4991,18 +4967,6 @@
     "ja": "縦の配置",
     "es": "Alineación vertical"
   },
-  "靠上": {
-    "zh-CN": "靠上",
-    "en": "Top",
-    "ja": "上",
-    "es": "Arriba"
-  },
-  "靠下": {
-    "zh-CN": "靠下",
-    "en": "Bottom",
-    "ja": "下",
-    "es": "Abajo"
-  },
   "標籤顏色": {
     "zh-CN": "标签颜色",
     "en": "Tag colours",
@@ -5026,12 +4990,6 @@
     "en": "Show the category prefix",
     "ja": "分類の接頭辞を表示",
     "es": "Mostrar el prefijo de categoría"
-  },
-  "更多樣式": {
-    "zh-CN": "更多样式",
-    "en": "More styles",
-    "ja": "その他のスタイル",
-    "es": "Más estilos"
   },
   "內距": {
     "zh-CN": "内边距",
@@ -6401,12 +6359,6 @@
     "ja": "スタイルを保存",
     "es": "Guardar estilo"
   },
-  "刪除樣式…": {
-    "zh-CN": "删除样式…",
-    "en": "Delete style…",
-    "ja": "スタイルを削除…",
-    "es": "Eliminar estilo…"
-  },
   "換行": {
     "zh-CN": "换行",
     "en": "Wrap text",
@@ -7378,5 +7330,71 @@
     "en": "Select a component on the canvas to adjust its content and style here.",
     "ja": "キャンバス上のコンポーネントを選ぶと、ここで内容とスタイルを調整できます。",
     "es": "Selecciona un componente en el lienzo para ajustar aquí su contenido y estilo."
+  },
+  "已調整": {
+    "zh-CN": "已调整",
+    "en": "Changed",
+    "ja": "変更あり",
+    "es": "Modificado"
+  },
+  "重設{0}": {
+    "zh-CN": "重设{0}",
+    "en": "Reset {0}",
+    "ja": "{0}をリセット",
+    "es": "Restablecer {0}"
+  },
+  "左": {
+    "zh-CN": "左",
+    "en": "Left",
+    "ja": "左",
+    "es": "Izq."
+  },
+  "右": {
+    "zh-CN": "右",
+    "en": "Right",
+    "ja": "右",
+    "es": "Der."
+  },
+  "上": {
+    "zh-CN": "上",
+    "en": "Top",
+    "ja": "上",
+    "es": "Arriba"
+  },
+  "下": {
+    "zh-CN": "下",
+    "en": "Bottom",
+    "ja": "下",
+    "es": "Abajo"
+  },
+  "外框": {
+    "zh-CN": "外框",
+    "en": "Box",
+    "ja": "ボックス",
+    "es": "Caja"
+  },
+  "樣式操作": {
+    "zh-CN": "样式操作",
+    "en": "Style actions",
+    "ja": "スタイルの操作",
+    "es": "Acciones de estilo"
+  },
+  "刪除樣式": {
+    "zh-CN": "删除样式",
+    "en": "Delete style",
+    "ja": "スタイルを削除",
+    "es": "Eliminar estilo"
+  },
+  "選擇顏色": {
+    "zh-CN": "选择颜色",
+    "en": "Pick a colour",
+    "ja": "色を選ぶ",
+    "es": "Elegir color"
+  },
+  "背景": {
+    "zh-CN": "背景",
+    "en": "Background",
+    "ja": "背景",
+    "es": "Fondo"
   }
 }

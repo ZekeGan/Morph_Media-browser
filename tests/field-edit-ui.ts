@@ -119,7 +119,7 @@ try {
   assert.ok((await size()) > before * 1.2, 'large text is bigger')
   await page
     .getByRole('radiogroup', { name: '對齊', exact: true })
-    .getByText('置中', { exact: true })
+    .getByText('中', { exact: true })
     .click()
   assert.equal(await textCell.evaluate((node) => getComputedStyle(node).justifyContent), 'center')
   // Wrapping applies to name, path and text cells; the folder name cell renders without data.
