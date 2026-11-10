@@ -22,6 +22,7 @@ import {
   readFolder,
   readJson,
   relPath,
+  removeEmptiedDir,
   restoreJson,
   safePath,
   saveFolder,
@@ -178,8 +179,12 @@ export async function cleanup(
           throw new Error('清理期間檔案已變更，停止此筆清理')
         await fs.unlink(f.path)
       }
-      for (const child of ['assets', 'projects', ''])
-        await fs.rmdir(path.join(entry.dir, DATA_DIR, child)).catch(() => {})
+      const gone = ordered.map((f) => f.path)
+      for (const child of ['assets', 'projects', '']) {
+        const dir = path.join(entry.dir, DATA_DIR, child)
+        // Only a folder that is really gone counts as ours when its parent is removed next.
+        if (await removeEmptiedDir(dir, gone).then(() => true, missing)) gone.push(dir)
+      }
       result.removed++
     } catch (e) {
       result.failed.push(`${entry.dir}: ${message(e)}`)

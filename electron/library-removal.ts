@@ -22,6 +22,7 @@ import {
   readFolder,
   readJson,
   relPath,
+  removeEmptiedDir,
   safePath,
   saveFolder,
   within,
@@ -177,10 +178,12 @@ export async function fullRemoveProject(ex: Library, token: string): Promise<Cle
     failed: [],
     skipped: plan.preview.skipped,
   }
+  const removed = [...tree.files.map((file) => file.path)]
   for (const dir of tree.directories)
     try {
       await safePath(plan.preview.root, dir)
-      await fs.rmdir(dir)
+      await removeEmptiedDir(dir, removed)
+      removed.push(dir)
     } catch (error) {
       const code = (error as NodeJS.ErrnoException).code
       if (code === 'ENOTEMPTY') result.skipped.push(`${dir}: 尚有未驗證資料，目錄保留`)
@@ -475,13 +478,16 @@ export async function removeProject(ex: Library, token: string): Promise<Cleanup
           throw new Error('清理期間資料已變更，停止此筆清理')
         await fs.unlink(file.path)
       }
+      const retired = now.map((file) => file.path)
       for (const directory of [
         path.join(plan.root, DATA_DIR, 'projects'),
         path.join(plan.root, DATA_DIR),
-      ])
-        await fs.rmdir(directory).catch((error) => {
+      ]) {
+        await removeEmptiedDir(directory, retired).catch((error) => {
           if (!missing(error)) throw error
         })
+        retired.push(directory)
+      }
       result.removed++
     } catch (error) {
       // A late directory/permission failure must not strand unknown data beside a

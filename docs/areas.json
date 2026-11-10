@@ -318,7 +318,7 @@
         "src/ProblemsDialog*"
       ],
       "ui": ["@smoke", "problems-ui", "decided-ui"],
-      "tests": ["library.test.ts", "maintenance.test.ts", "model.test.ts"]
+      "tests": ["library.test.ts", "maintenance.test.ts", "model.test.ts", "remove-dir.test.ts"]
     },
     {
       "id": "upgrade",

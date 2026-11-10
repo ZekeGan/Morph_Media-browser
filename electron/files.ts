@@ -19,6 +19,34 @@ export function within(root: string, target: string) {
 }
 export const relPath = (root: string, target: string) =>
   path.relative(root, target).split(path.sep).join('/')
+// Removes a folder this operation has just emptied. On Windows a deleted file stays in its folder until every handle
+// on it closes (an antivirus scan, the search indexer), so the folder can briefly report ENOTEMPTY. Retry only while
+// everything still listed is something this operation itself deleted; anything else is real content and the original
+// error is thrown at once, so callers keep their rules for folders that are not empty.
+export async function removeEmptiedDir(
+  dir: string,
+  deleted: Iterable<string>,
+  {
+    attempts = 8,
+    rmdir = fs.rmdir,
+  }: { attempts?: number; rmdir?: (dir: string) => Promise<void> } = {}
+) {
+  const ours = new Set([...deleted].map(keyPath))
+  let first: unknown
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await rmdir(dir)
+    } catch (error) {
+      first ??= error
+      const code = (error as NodeJS.ErrnoException).code
+      if (attempt >= attempts || !['ENOTEMPTY', 'EPERM', 'EBUSY'].includes(code ?? '')) throw first
+      // What is left must be listed and be ours; a folder that cannot be listed is not waited for either.
+      const left = await fs.readdir(dir).catch(() => undefined)
+      if (!left || left.some((name) => !ours.has(keyPath(path.join(dir, name))))) throw first
+      await new Promise((resolve) => setTimeout(resolve, 50 * attempt))
+    }
+  }
+}
 export async function exists(file: string) {
   try {
     await fs.lstat(file)
