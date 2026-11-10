@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Internal (R-241): every request from the window to the main process is checked for a known action and correctly typed fields before it runs; malformed requests are refused. The library request handling moved out of main.ts into its own module. No visible change.
+- Docs (R-242): specs describe current behaviour only (change history and "this round" notes removed), numbered headings renamed, ARCHITECTURE lists the missing modules, the metadata spec lists DLsite.
 - Conditions (R-239): a component can have up to five display conditions, all or any of which must match; date fields can be compared with today ("within N days", "more than N days ago"); and layout text can show different words by rule (for example "New" for releases within 90 days, "Classic" before 2016), with its own text when no rule matches. New keys `moreConditions`, `conditionMode`, `textRules` and operators `within`/`older`.
 - Cards (R-237): every field component with no value shows a dimmed "No value" (some showed nothing, others "Not set"); "Hide when empty" leaves it blank. Tag components offer namespace colouring and the prefix switch only when the field has "namespace:tag" data (R-238).
 - Fix (R-234): a yes/no field's own wording now also shows on the game folder page's field table (it showed true/false) and in the editor's field list and group previews (they showed yes/no).

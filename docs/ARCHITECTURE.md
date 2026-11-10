@@ -1,6 +1,6 @@
 # 現況架構與定位
 
-> 最後確認：2026-11-05。模組責任、資料流與安全邊界；改動模組責任或資料流時同批更新本頁的圖。
+> 最後確認：2026-11-11。模組責任、資料流與安全邊界；改動模組責任或資料流時同批更新本頁的圖。
 
 依目前程式整理；版本與依賴查 package.json。此頁只持有模組責任，功能規格由 [任務索引](README.md) 導向。舊 Next.js／View／Cell／DataType／JsonStorage 原型不是目標資料模型。
 
@@ -61,14 +61,15 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | 範圍 | 主要檔案／符號 | 責任 |
 | --- | --- | --- |
 | 啟動／IPC／協定／系統操作 | [main](../electron/main.ts)、[preload](../electron/preload.ts) | BrowserWindow、來源驗證、原生對話框、受控媒體串流 |
-| 專案與可攜記錄 | [library](../electron/library.ts) `Library` | create/link/saveValues、身分、副本與復原；類別只保留協調與狀態，其餘函式在同層模組並由 `Library` 轉呼叫：[掃描與造訪](../electron/library-scan.ts)、[欄位刪除](../electron/library-field-removal.ts)、[專案移除](../electron/library-removal.ts)、[清理與復原](../electron/library-cleanup.ts) |
+| IPC 請求檢查與 library 分派 | [ipc-requests](../electron/ipc-requests.ts)、[library-dispatch](../electron/library-dispatch.ts) | 每個 IPC 入口先驗證呼叫來源，再檢查請求形狀（動作在允許清單、各欄位型別）；巢狀內容由寫入端驗證。library 請求在 library-dispatch 轉成 Library、備份與原生對話框呼叫，資料夾選擇以短期代號交給 renderer |
+| 專案與可攜記錄 | [library](../electron/library.ts) `Library` | create/link/saveValues、身分、副本與復原；類別只保留協調與狀態，其餘函式在同層模組並由 `Library` 轉呼叫：[掃描與造訪](../electron/library-scan.ts)、[欄位刪除](../electron/library-field-removal.ts)、[專案移除](../electron/library-removal.ts)、[清理與復原](../electron/library-cleanup.ts)、[匯出](../electron/library-export.ts)；移除與欄位刪除共用 [maintenance](../electron/maintenance.ts) 的備份與回滾流程；[backup](../electron/backup.ts) 管理備份資料夾 |
 | 原子檔案／路徑 | [files](../electron/files.ts)、[hidden](../electron/hidden.ts) | safePath/within、atomicJson、記錄備份／指紋、Windows 隱藏目錄 |
-| 媒體／縮圖／字幕／遊戲動作 | [explorer](../electron/explorer.ts) `Explorer` | attributes、request 分派；其餘函式在同層模組並由 `Explorer` 轉呼叫：[內容列表](../electron/explorer-content.ts)、[串流與縮圖](../electron/explorer-stream.ts)、[外部資料與圖片網址](../electron/explorer-source.ts)、[檔案總覽](../electron/explorer-overview.ts)；另有 content/overview/stream/thumbnail、目標綁定與執行、外部資料套用 |
+| 媒體／縮圖／字幕／遊戲動作 | [explorer](../electron/explorer.ts) `Explorer` | attributes、request 分派；其餘函式在同層模組並由 `Explorer` 轉呼叫：[內容列表](../electron/explorer-content.ts)、[串流與縮圖](../electron/explorer-stream.ts)、[外部資料與圖片網址](../electron/explorer-source.ts)、[檔案總覽](../electron/explorer-overview.ts)、[圖片網址](../electron/image-url.ts)、[媒體檔案分類](../electron/media-files.ts)；另有 content/overview/stream/thumbnail、目標綁定與執行、外部資料套用 |
 | 遊戲辨識 | [game-detection](../electron/game-detection.ts) | 有限探測、證據與 ROOT 邊界 |
 | 搜尋索引 | [search-index](../electron/search-index.ts) `SearchIndex` | Node SQLite、Unicode 子字串 grams、分頁；可重建，非資料來源 |
 | 本機 UI 設定 | [workspace](../electron/workspace.ts) `WorkspaceStore` | 群組／排序／窗格／偏好，驗證、保存、尺寸正規化；settings-package／settings-file 處理允許清單、移轉預覽與備份復原 |
-| 外部來源 | [metadata](../electron/metadata.ts) | [sources](../shared/sources.ts) 分類註冊、metadata／metadata-public 固定端點、大小限制、來源預覽與追溯 |
-| 契約與驗證 | [model](../shared/model.ts)、[explorer](../shared/explorer.ts)、[workspace](../shared/workspace.ts) | 型別及 runtime 驗證；修改 IPC 時兩端一起查 |
+| 外部來源 | [metadata](../electron/metadata.ts) | [sources](../shared/sources.ts) 分類註冊、metadata／metadata-public 固定端點、[metadata-common](../electron/metadata-common.ts) 大小限制、來源預覽與追溯 |
+| 契約與驗證 | [model](../shared/model.ts)、[explorer](../shared/explorer.ts)、[workspace](../shared/workspace.ts) | 型別及寫入前的 runtime 驗證（validateProject、validateDetails 等）；IPC 入口的形狀檢查在 ipc-requests。修改 IPC 時型別、ipc-requests 與呼叫端一起改 |
 | 操作通知契約 | [notifications](../shared/notifications.ts)、[Toasts](../src/Toasts.tsx) | main／Explorer 以完成數與問題數建立通知等級；App 接收 notice，例外明確標為 error；Toasts 負責標題、角色及收起時機。專案匯出、清理等操作的顯示文字由 main 組合；均屬瞬時回應，不改可攜 schema |
 | 共用純邏輯 | [browse](../shared/browse.ts)、[layouts](../shared/layouts.ts)、[fieldGroups](../shared/fieldGroups.ts)、[images](../shared/images.ts)、[query](../shared/query.ts)、[subtitles](../shared/subtitles.ts)、[reader](../shared/reader.ts)、[gallery](../shared/gallery.ts) | 模式／樹分支、方案、欄位群組、格式、查詢、字幕解析、閱讀分頁及適應尺寸、圖庫尺寸與可見範圍模型 |
 | 應用狀態／外框 | [App](../src/App.tsx)、[DesktopShell](../src/DesktopShell.tsx)、[ProjectSettings](../src/ProjectSettings.tsx) | snapshot／草稿／保存、側欄、搜尋入口與視窗控制 |
@@ -94,6 +95,7 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | ROOT 的 `.media-viewer/projects/<projectId>.json` | 可攜專案定義、欄位／版面與掃描邊界 |
 | `.media-viewer/` 內受管資產／字幕 | 以相對參照復原；不依賴舊絕對路徑 |
 | Electron userData 的 `poc-projects.json`、`workspace-ui.json` | 本機連結登錄與 UI 偏好 |
+| userData 的 `workspace-backups/` | 套用或還原設定前的本機設定備份，供「回到還原之前」 |
 | userData 的 `search.sqlite`、`thumbnails/` | 可重建索引／快取；不得當可攜原值 |
 
 實體欄位以 shared 契約及讀寫程式為準，避免另寫一份易失同步的 schema。值的語意見 [資料模型](FOLDER_PROJECT_MODEL.md)，損壞／清理／遷移見 [儲存安全](STORAGE_OPTIONS.md)。來源資料變更後更新 snapshot／畫面及索引，不要求重開應用。

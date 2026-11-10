@@ -30,17 +30,18 @@
 
 ## 分類來源
 
-已接入下列不需要 API 憑證的來源，選單依種類分組，並標示適合目前專案分類的網站。以精確作品網址預覽，不搜尋、模糊配對、合併跨站作品或下載作品內容。來源註冊在 shared/sources.ts；固定端點與映射在 electron/metadata.ts、electron/metadata-public.ts。
+已接入下列不需要 API 憑證的來源，選單依種類分組，並標示適合目前專案分類的網站。以精確作品網址預覽，不搜尋、模糊配對、合併跨站作品或下載作品內容。來源註冊在 shared/sources.ts；固定端點與映射在 electron/metadata.ts、electron/metadata-public.ts，回應大小限制在 electron/metadata-common.ts。
 
 | 選單分類 | 來源 | 讀取方式與限制 |
 | --- | --- | --- |
 | 漫畫／動畫 | E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList | E-H 系列沿用 [gdata](https://ehwiki.org/wiki/API)；Hitomi 僅解析公開 galleryinfo JSON，絕不執行遠端 JS；[Bangumi](https://bangumi.github.io/api/)／[AniList](https://docs.anilist.co/guide/auth/) 讀公開作品條目 |
+| 同人／商店 | DLsite | 商品頁的作品 ID（RJ 等），讀站內商品資訊端點；封面限 `img.dlsite.jp` |
 | 遊戲 | Steam、VNDB | Steam 商店公開資料；[VNDB Kana](https://api.vndb.org/kana) 的公開視覺小說條目 |
 | 音樂 | MusicBrainz | [公開發行版本資料](https://musicbrainz.org/doc/MusicBrainz_API)，不因此加入音樂播放器 |
 | 書籍 | Open Library | [公開書目與作者](https://openlibrary.org/developers/api)，作者補讀最多三筆 |
 | 圖片／插畫 | Pixiv、Wikimedia Commons | Pixiv 公開作品回應；[Commons API](https://commons.wikimedia.org/wiki/Commons:API/MediaWiki) 保留作者及授權，不推論私人照片身分 |
 
-IGDB、TMDB 需要 API 憑證，本輪依使用者要求排除。沒有內建 key、登入／Cookie 收集或存取限制繞過。ExHentai、Hitomi、Pixiv 可能因登入、站方限制或公開回應變更而失敗；失敗保留原資料並顯示原因。公開端點不等於官方提供長期相容承諾，Hitomi／Pixiv 的內部端點尤其如此。
+IGDB、TMDB 需要 API 憑證，不接入。沒有內建 key、登入／Cookie 收集或存取限制繞過。ExHentai、Hitomi、Pixiv、DLsite 可能因登入、站方限制或公開回應變更而失敗；失敗保留原資料並顯示原因。公開端點不等於官方提供長期相容承諾，Hitomi、Pixiv、DLsite 的內部端點尤其如此。
 
 ## 預覽、套用與追溯
 
@@ -54,7 +55,7 @@ IGDB、TMDB 需要 API 憑證，本輪依使用者要求排除。沒有內建 ke
 
 - 外部資料提供候選，不替使用者決定作品身分；不以資料夾名稱直接認定作品。不自動批次模糊匹配或下載收藏。
 - 來源 URL／ID 與語意應可追溯；來源資料隨資料夾攜帶。敏感憑證不進專案或可攜記錄，不把共用 secret 內建桌面應用。
-- 再次匯入預設填空、預覽目前值並明確覆寫來源欄位，保護手填值；完整跨來源欄位映射、原始回應封存及批次匯入仍不在本輪範圍。
+- 再次匯入預設填空、預覽目前值並明確覆寫來源欄位，保護手填值；完整跨來源欄位映射、原始回應封存及批次匯入不在範圍內。
 - 只有來源及使用方式明確可用時保存圖片；不能假設所有網站提供同樣 API、欄位或授權。來源 adapter 彼此隔離，不為加一站重寫整個資料模型。
 
 ## 未接入的來源

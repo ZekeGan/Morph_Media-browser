@@ -14,6 +14,12 @@
 
 ## 待查收
 
+- **R-241** library 請求分派移出 main.ts，IPC 參數在入口逐項驗證 ｜中｜安全邊界｜無｜領域：core｜依賴：無
+  驗收：開程式後建立／開啟專案、改欄位值、播放影片、搜尋、切換群組與主題都照常；`pnpm exec tsx --test tests/ipc-requests.test.ts` 通過。
+  `dispatch` 搬到 electron 同層模組；`library:request`、`explorer:request`、`workspace:update` 在入口檢查請求形狀（動作名稱在允許清單、各欄位型別正確），不符合就拒絕。行為與回應不變。
+- **R-242** 文件整理：規格只寫現行規則，出處移到決策紀錄 ｜中｜一般｜無｜領域：shell、browse、panel、editor、storage、core｜依賴：無
+  ①規格裡「已移除／不再」等變更語句改寫成現狀描述，「本輪」等出處移出規格；②遊戲與漫畫規格的章節去掉編號與「本輪圖」，連動 areas.json；③ARCHITECTURE 補上漏列的模組與 `workspace-backups/`，外部來源規格補 DLsite。驗收：看 GAME_VIEWER_DESIGN、MANGA_VIEWER_DESIGN 的章節名稱與 ARCHITECTURE 的模組表。不改檔名：決策紀錄只增不改，裡面的舊連結會失效。
+
 ## 進行中
 
 ## 已核定（未做）
@@ -22,6 +28,18 @@
 
 - **R-240** 外部匯入的日期存成日期，文字與日期可互轉 ｜中｜資料寫入｜設定｜領域：metadata、editor、cells、search｜依賴：無
   ①匯入：E-Hentai 上傳時間存成「日期時間」，Steam（`12 Nov, 2020`）與其他來源的發售日轉成 `YYYY-MM-DD` 的「日期」；只有年份或年月等解讀不了的值照舊存文字，不補日期。專案裡該欄位已被使用者改成文字時，新匯入照文字存。②管理欄位：日期／日期時間可改成文字（顯示原值；讀這個欄位的大於／小於／距今條件會移除，改之前預覽數量）。③文字改日期：所有已存的值都要能解讀成日期才允許，否則列出不符合的值並拒絕；不改寫資料夾記錄，讀取時解讀。只有年份（`1999`）算解讀不了。
+
+- **R-243** 拆分 App／BrowseWorkspace 的狀態 ｜中｜一般｜無｜領域：browse、notices｜依賴：無
+  App 有 27 個 useState，BrowseWorkspace 有 18 個 useEffect。等下一個大改這兩個檔案的需求時排在它前面，一次只拆那一塊，不單獨做。
+
+- **R-244** 拖入字幕不再讓 renderer 指定任意路徑 ｜小｜安全邊界｜無｜領域：video、core｜依賴：無
+  `explorer:subtitleDrop` 收 renderer 給的路徑，任何位置 5MB 以內的 .srt／.vtt 都能讀回畫面，違反「renderer 不得任意讀路徑」。方向：只接受受管資料夾內的檔案，或改由 main 端在拖放時取得路徑。
+- **R-245** 清理不得寫入或刪除遊戲 ROOT 內的記錄 ｜小｜資料寫入｜無｜領域：storage、detection｜依賴：無
+  `previewCleanup`／`cleanup` 沒有檢查 `protectedAncestor`／`readonly`；還原、移除與欄位刪除都有。待你決定：ROOT 內殘留的舊記錄是否仍允許由使用者明確清理（只刪不寫），還是一律拒絕。
+- **R-246** 外部匯入在「只填空值」時跳過手動改過的來源欄位 ｜小｜資料寫入｜無｜領域：metadata｜依賴：無
+  現在只要勾選的欄位中有一個曾手動修改（`source: manual`），整批匯入就以「既有欄位來源衝突」失敗；規格的意思是該欄位保留、其他照填。
+- **R-247** 資料夾設定存值時檢查欄位型別 ｜小｜資料寫入｜無｜領域：panel、storage｜依賴：無｜可與 R-240 一起做
+  `saveValues` 對尚無值的數字／日期欄位直接建立文字屬性，規格要求型別不符時保留並標示、不默默轉換。
 
 ## 擱置
 

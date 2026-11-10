@@ -245,8 +245,8 @@
       "id": "game",
       "name": "遊戲畫面與啟動動作",
       "docs": [
-        "GAME_VIEWER_DESIGN.md#1-已確認的遊戲內容頁",
-        "GAME_VIEWER_DESIGN.md#5-路徑參數與執行責任"
+        "GAME_VIEWER_DESIGN.md#遊戲內容頁",
+        "GAME_VIEWER_DESIGN.md#路徑參數與執行責任"
       ],
       "code": ["src/GameActions*", "src/game-actions.css", "shared/launchArgs*"],
       "ui": ["game-actions-ui", "game-launch-cell-ui", "game-folder-page-ui"],
@@ -360,9 +360,11 @@
       "id": "core",
       "name": "主程序、IPC、啟動",
       "docs": ["ARCHITECTURE.md#資料流與邊界", "ARCHITECTURE.md#按問題找入口"],
-      "code": ["electron/main.ts", "electron/preload.ts", "src/main.tsx", "src/index.html", "src/env.d.ts"],
+      "code": ["electron/main.ts",
+        "electron/ipc-requests.ts",
+        "electron/library-dispatch.ts", "electron/preload.ts", "src/main.tsx", "src/index.html", "src/env.d.ts"],
       "ui": ["@smoke"],
-      "tests": []
+      "tests": ["ipc-requests.test.ts"]
     }
   ]
 }

@@ -1,7 +1,6 @@
 import {
   app,
   BrowserWindow,
-  clipboard,
   dialog,
   ipcMain,
   nativeImage,
@@ -13,32 +12,18 @@ import {
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import { existsSync } from 'node:fs'
-import { randomUUID } from 'node:crypto'
-import { imageTypes } from '../shared/images'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { Library } from './library'
 import { safePath } from './files'
-import type { Request, Response } from '../shared/model'
-import { fieldValue } from '../shared/model'
-import { copyableValue } from '../shared/cells'
+import type { Response } from '../shared/model'
 import { WorkspaceStore } from './workspace'
-import type { WorkspaceCommand, WindowAction } from '../shared/workspace'
+import type { WindowAction } from '../shared/workspace'
 import { Explorer } from './explorer'
 import { warmHiddenHelper } from './hidden'
-import type { ExplorerRequest } from '../shared/explorer'
 import type { LocaleId } from '../shared/locales'
 import { nativeText } from '../shared/native-messages'
-import { completionNotice } from '../shared/notifications'
-import {
-  applyBackup,
-  createKeptBackup,
-  deleteBackup,
-  exportBackup,
-  keptBackup,
-  listBackups,
-  locateBackupProject,
-  previewBackup,
-} from './backup'
+import { libraryDispatcher } from './library-dispatch'
+import { isExplorerRequest, isLibraryRequest, isWorkspaceCommand, ref } from './ipc-requests'
 
 const directory = path.dirname(fileURLToPath(import.meta.url))
 // Taskbar and Alt+Tab icon; a build without the build/ folder simply keeps the default icon.
@@ -62,7 +47,6 @@ let workspace: WorkspaceStore
 let pendingRequests = 0
 let nativeLocale: LocaleId = 'zh-TW'
 const nt = (source: Parameters<typeof nativeText>[0]) => nativeText(source, nativeLocale)
-const rootChoices = new Map<string, { path: string; expires: number }>()
 const devUrl = process.env.ELECTRON_RENDERER_URL
 function trusted(url: string) {
   try {
@@ -72,233 +56,6 @@ function trusted(url: string) {
   } catch {
     return false
   }
-}
-async function selectFolder() {
-  const result = await dialog.showOpenDialog(win!, { properties: ['openDirectory'] })
-  return result.canceled ? undefined : result.filePaths[0]
-}
-// The renderer never names paths: a picked folder is remembered here and referred to by a short-lived token.
-function rememberChoice(path: string) {
-  for (const [id, item] of rootChoices) if (item.expires < Date.now()) rootChoices.delete(id)
-  if (rootChoices.size >= 10) rootChoices.delete(rootChoices.keys().next().value!)
-  const token = randomUUID()
-  rootChoices.set(token, { path, expires: Date.now() + 60 * 60 * 1000 })
-  return { token, path }
-}
-async function dispatch(request: Request): Promise<Response> {
-  let extra: Partial<Response> = {}
-  switch (request.action) {
-    case 'snapshot':
-      break
-    case 'copyPath':
-      clipboard.writeText((await library.readableRow(request.rowId)).path)
-      break
-    case 'copyFieldValue': {
-      const row = await library.readableRow(request.rowId),
-        project = library
-          .snapshot()
-          .projects.find((ref) => ref.projectId === row.projectId)?.project
-      if (!project?.fieldBindings.some((field) => field.attributeId === request.attributeId))
-        throw new Error('欄位不存在，無法複製')
-      const value = copyableValue(fieldValue(row, request.attributeId))
-      if (value === undefined) throw new Error('此欄位沒有可複製的值')
-      clipboard.writeText(value)
-      break
-    }
-    case 'scan':
-      await library.scan()
-      break
-    case 'chooseRoot': {
-      const root = await selectFolder()
-      if (root)
-        extra.rootSelection = { ...rememberChoice(root), existing: await library.projectsAt(root) }
-      else extra.cancelled = true
-      break
-    }
-    case 'create': {
-      const choice = request.rootToken ? rootChoices.get(request.rootToken) : undefined
-      if (request.rootToken && (!choice || choice.expires < Date.now()))
-        throw new Error('資料夾選擇已失效，請重新選擇')
-      const root = choice?.path ?? (await selectFolder())
-      if (root) {
-        await library.create(root, request.input)
-        if (request.rootToken) rootChoices.delete(request.rootToken)
-      } else extra.cancelled = true
-      break
-    }
-    case 'link': {
-      const choice = request.rootToken ? rootChoices.get(request.rootToken) : undefined
-      if (request.rootToken && (!choice || choice.expires < Date.now()))
-        throw new Error('資料夾選擇已失效，請重新選擇')
-      const root = choice?.path ?? (await selectFolder())
-      if (root) {
-        await library.link(root)
-        if (request.rootToken) rootChoices.delete(request.rootToken)
-      } else extra.cancelled = true
-      break
-    }
-    case 'unlink':
-      await library.unlink(request.projectId)
-      break
-    case 'removeProjectPreview':
-      extra.removalPreview = await library.previewRemoveProject(request.projectId)
-      break
-    case 'removeProject':
-      extra.removal = await library.removeProject(request.token)
-      break
-    case 'fullRemovalPreview':
-      extra.fullRemovalPreview = await library.previewFullRemoval(request.projectId)
-      break
-    case 'fullRemoval':
-      extra.removal = await library.fullRemoveProject(request.token)
-      break
-    case 'deleteFieldPreview':
-      extra.fieldDeletionPreview = await library.previewDeleteField(
-        request.projectId,
-        request.attributeId
-      )
-      break
-    case 'deleteField':
-      extra.recoveryPath = await library.deleteField(request.token)
-      break
-    case 'saveProject':
-      await library.saveProject(request.project)
-      break
-    case 'saveFolder':
-      await library.saveValues(request.rowId, request.revision, request.values)
-      break
-    case 'image': {
-      const selected = await dialog.showOpenDialog(win!, {
-        properties: ['openFile'],
-        filters: [{ name: nt('圖片'), extensions: Object.keys(imageTypes) }],
-      })
-      if (!selected.canceled)
-        await library.addImage(
-          request.rowId,
-          request.revision,
-          selected.filePaths[0],
-          request.cellId
-        )
-      else extra.cancelled = true
-      break
-    }
-    case 'open': {
-      const row = await library.checkedRow(request.rowId)
-      const error = await shell.openPath(row.path)
-      if (error) throw new Error(error)
-      break
-    }
-    case 'restore':
-      await library.restore(request.rowId)
-      break
-    case 'restoreProject':
-      await library.restoreProject(request.projectId)
-      break
-    case 'copyIdentity':
-      await library.copyIdentity(request.rowId)
-      break
-    case 'resume':
-      await library.resume(request.rowId)
-      break
-    case 'cleanupPreview':
-      extra.preview = await library.previewCleanup(request.rowId, request.scope)
-      break
-    case 'cleanup':
-      extra.cleanup = await library.cleanup(request.token, request.restart)
-      break
-    case 'createBackup': {
-      const ids = library.snapshot().projects.map((p) => p.projectId)
-      const result = await createKeptBackup(library, workspace, ids, app.getVersion())
-      extra.notice = completionNotice(
-        result.projects,
-        result.skipped.length,
-        '已建立備份' +
-          (result.skipped.length
-            ? `
-未備份：${result.skipped.join('、')}`
-            : '')
-      )
-      extra.backups = await listBackups(library)
-      break
-    }
-    case 'listBackups':
-      extra.backups = await listBackups(library)
-      break
-    case 'deleteBackup':
-      await deleteBackup(library, request.id)
-      extra.backups = await listBackups(library)
-      break
-    case 'exportBackup': {
-      const chosen = await dialog.showOpenDialog(win!, {
-        title: nt('選擇備份位置'),
-        properties: ['openDirectory', 'createDirectory'],
-      })
-      if (chosen.canceled || !chosen.filePaths[0]) {
-        extra.cancelled = true
-        break
-      }
-      const target = await exportBackup(library, request.id, chosen.filePaths[0])
-      extra.notice = completionNotice(1, 0, `已匯出備份：${target}`)
-      break
-    }
-    case 'previewBackup': {
-      let dir = request.id ? await keptBackup(library, request.id) : undefined
-      if (!dir) {
-        const chosen = await dialog.showOpenDialog(win!, {
-          title: nt('選擇備份資料夾'),
-          properties: ['openDirectory'],
-        })
-        if (chosen.canceled || !chosen.filePaths[0]) {
-          extra.cancelled = true
-          break
-        }
-        dir = chosen.filePaths[0]
-      }
-      const ids = library.snapshot().projects.map((p) => p.projectId)
-      extra.backup = await previewBackup(library, workspace, ids, dir)
-      break
-    }
-    case 'locateBackup': {
-      const root = await selectFolder()
-      if (!root) {
-        extra.cancelled = true
-        break
-      }
-      extra.backup = await locateBackupProject(library, request.token, request.projectId, root)
-      break
-    }
-    case 'restoreBackup': {
-      const result = await applyBackup(
-        library,
-        workspace,
-        () => library.snapshot().projects.map((p) => p.projectId),
-        request.token,
-        request.settings,
-        request.projects
-      )
-      extra.restored = result
-      extra.backups = await listBackups(library)
-      const done = result.projects.length + (result.settings ? 1 : 0)
-      extra.notice = completionNotice(
-        done,
-        result.failed.length,
-        `已還原：${[...(result.settings ? ['設定'] : []), ...result.projects].join('、') || '無'}` +
-          (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '')
-      )
-      break
-    }
-    default:
-      throw new Error('不支援的操作')
-  }
-  const cleanup = extra.cleanup ?? extra.removal
-  if (cleanup?.failed.length) {
-    extra.notice = completionNotice(
-      cleanup.removed,
-      cleanup.failed.length,
-      nt('部分資料清理失敗：') + cleanup.failed.join('\n')
-    )
-  }
-  return { snapshot: library.snapshot(), ...extra }
 }
 // Automated UI tests run the real app. Unless MEDIA_VIEWER_TEST_VISIBLE=1 their window stays out of the way:
 // fully transparent, click-through, never activated and not in the taskbar. It is still a normal visible window to
@@ -349,6 +106,12 @@ else {
         )
           throw new Error('拒絕未授權的操作')
       }
+      const dispatch = libraryDispatcher({
+        library,
+        workspace,
+        window: () => win!,
+        text: nt,
+      })
       const projectIds = () => library.snapshot().projects.map((p) => p.projectId)
       nativeLocale = (await workspace.read(projectIds())).prefs.locale ?? 'zh-TW'
       const explorer = new Explorer(library, app.getPath('userData'), {
@@ -417,8 +180,9 @@ else {
       })
       warmHiddenHelper()
       app.on('will-quit', () => explorer.index.close())
-      ipcMain.handle('explorer:request', async (event, request: ExplorerRequest) => {
+      ipcMain.handle('explorer:request', async (event, request: unknown) => {
         checkSender(event)
+        if (!isExplorerRequest(request)) throw new Error('無效的操作')
         pendingRequests++
         try {
           return await library.run(() => explorer.request(request))
@@ -426,8 +190,9 @@ else {
           pendingRequests--
         }
       })
-      ipcMain.handle('explorer:subtitleDrop', async (event, rowId: string, file: string) => {
+      ipcMain.handle('explorer:subtitleDrop', async (event, rowId: unknown, file: unknown) => {
         checkSender(event)
+        if (!ref(rowId) || !ref(file)) throw new Error('無效的操作')
         pendingRequests++
         try {
           return await library.run(() => explorer.droppedSubtitle(rowId, file))
@@ -444,8 +209,9 @@ else {
           pendingRequests--
         }
       })
-      ipcMain.handle('workspace:update', async (event, command: WorkspaceCommand) => {
+      ipcMain.handle('workspace:update', async (event, command: unknown) => {
         checkSender(event)
+        if (!isWorkspaceCommand(command)) throw new Error('無效的操作')
         pendingRequests++
         try {
           const state = await workspace.update(command, projectIds())
@@ -526,15 +292,9 @@ else {
           return new Response(null, { status: 404 })
         }
       })
-      ipcMain.handle('library:request', async (event, request: Request) => {
-        if (
-          event.sender !== win?.webContents ||
-          event.senderFrame !== win.webContents.mainFrame ||
-          !trusted(event.senderFrame.url) ||
-          !request ||
-          typeof request.action !== 'string'
-        )
-          throw new Error('拒絕未授權的操作')
+      ipcMain.handle('library:request', async (event, request: unknown) => {
+        checkSender(event)
+        if (!isLibraryRequest(request)) throw new Error('無效的操作')
         if (request.action === 'cancelScan') {
           library.cancelScan()
           return { snapshot: library.snapshot() }
