@@ -308,6 +308,24 @@ try {
   await drawer.waitFor()
   assert.equal(await drawer.getByLabel('Score', { exact: true }).inputValue(), '0')
   assert.equal(await drawer.getByRole('textbox', { name: 'Flag', exact: true }).inputValue(), '否')
+  // A group lists its members together; this folder can choose the member it shows (saved in the project), and a
+  // member without a value cannot be chosen.
+  const groupBlock = drawer.locator('.field-group-block').filter({ hasText: groupName })
+  await groupBlock.getByText('顯示「Genre」').waitFor()
+  await groupBlock.getByRole('textbox', { name: '這個資料夾顯示', exact: true }).click()
+  assert.equal(
+    await page
+      .getByRole('option', { name: 'NAME', exact: true })
+      .getAttribute('data-combobox-disabled'),
+    'true'
+  )
+  await page.getByRole('option', { name: 'Genre', exact: true }).click()
+  const chosenSource = async () =>
+    ((await readJson(projectFile(media, project.projectId))) as Project).groupSources?.[
+      rootRecord.folderId
+    ]?.[group.groupId]
+  for (let i = 0; i < 50 && (await chosenSource()) !== 'genre'; i++) await page.waitForTimeout(100)
+  assert.equal(await chosenSource(), 'genre')
   // Note is now a choice field but this folder saved it as text: it is edited as text, with a note why.
   await drawer.getByText('這個資料夾的值仍以原本的格式保存，編輯時沿用').waitFor()
   const note = drawer.getByLabel('Note', { exact: true })
@@ -318,7 +336,7 @@ try {
   assert.deepEqual(errors, [])
   passed = true
   console.log(
-    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, field group (row menu, tags member, shown by a component, order, saved), field manager (list and details, search, purpose change with impact, refused change, new field by purpose, rename, narrow view, used in, row menu); folder settings keep 0/false, a cleared field and the old-type note. ' +
+    'PASS editor fields: source groups, not-added rows, search, create from search, value filter, reference only, field group (row menu, tags member, shown by a component, order, saved), folder chooses a group member, field manager (list and details, search, purpose change with impact, refused change, new field by purpose, rename, narrow view, used in, row menu); folder settings keep 0/false, a cleared field and the old-type note. ' +
       root
   )
 } catch (error) {
