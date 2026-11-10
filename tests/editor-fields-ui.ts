@@ -160,12 +160,6 @@ try {
   await button('返回欄位清單').click()
   const added = page.locator('.editor-cell.selected')
   await added.getByText('Action, RPG').waitFor()
-  assert.equal(await button('找顯示後面欄位的資料夾').isDisabled(), false)
-  await button('找顯示後面欄位的資料夾').click()
-  assert.match(
-    await page.getByRole('textbox', { name: '使用真實資料預覽', exact: true }).inputValue(),
-    /^Library · /
-  )
   const cellId = await added.getAttribute('data-cell-id')
   // The opened group changes the order.
   await button('打開群組 ' + groupName).click()

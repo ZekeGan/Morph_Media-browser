@@ -119,7 +119,6 @@ export function CellStyleEditor({
     { key: 'underline', label: tr('底線'), glyph: <u>U</u> },
     { key: 'strike', label: tr('刪除線'), glyph: <s>S</s> },
   ]
-  const isTags = cell.kind === 'field-tags'
   return (
     <Stack gap="sm">
       <Select
@@ -290,26 +289,6 @@ export function CellStyleEditor({
         onChange={(valign) => patch({ valign })}
       />
       {extra}
-      {isTags && (
-        <>
-          <Segments
-            label={tr('標籤顏色')}
-            value={cell.tagColors}
-            options={[
-              { value: 'default', label: tr('一律灰色') },
-              { value: 'namespace', label: tr('依分類上色') },
-            ]}
-            onChange={(tagColors) => updateCell({ tagColors })}
-          />
-          <Checkbox
-            label={tr('顯示分類前綴')}
-            checked={cell.tagPrefix !== false}
-            onChange={(event) =>
-              updateCell({ tagPrefix: event.currentTarget.checked ? undefined : false })
-            }
-          />
-        </>
-      )}
       <ColorInput
         label={tr('文字顏色')}
         format="hex"

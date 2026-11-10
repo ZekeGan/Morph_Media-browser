@@ -46,7 +46,7 @@ import {
 } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
 import { isGameFolder } from '../shared/media'
-import { cellField, cellFieldIds, isFilled } from '../shared/cells'
+import { cellFieldIds, isFilled } from '../shared/cells'
 import { rowFieldAttributes } from './fieldSources'
 import { bindCellToGroup, freeGroupName, groupFromFallbacks } from '../shared/fieldGroups'
 import { refusalText } from './FieldGroupPalette'
@@ -140,12 +140,11 @@ export function Editor({
   const [tab, setTab] = useState<InspectorTab>(() => {
       try {
         const saved = localStorage.getItem(TAB_KEY)
-        return saved === 'style' || saved === 'condition' ? saved : 'content'
+        return saved === 'style' ? saved : 'content'
       } catch {
         return 'content'
       }
     }),
-    [optionError, setOptionError] = useState(''),
     [renaming, setRenaming] = useState<{ id: string; name: string }>()
   const [schemeAction, setSchemeAction] = useState<'new' | 'copy' | 'rename'>(),
     [schemeName, setSchemeName] = useState('')
@@ -367,13 +366,6 @@ export function Editor({
       ['static-text', 'system-info', 'image', 'game-cover', 'game-launch'].includes(
         selectedCell.kind
       ))
-  const enumOptions =
-    draft.fieldBindings.find((field) => field.attributeId === selectedCell?.attributeId)?.options ??
-    []
-  // Folders (of this project) whose value is currently this option, so a used option is never silently orphaned.
-  const optionUsage = (option: string) =>
-    rows.filter((row) => fieldValue(row, selectedCell?.attributeId ?? '') === option).length
-  useEffect(() => setOptionError(''), [selected])
   // The last inspector tab is remembered for the next component and the next time the editor opens.
   const chooseTab = (next: InspectorTab) => {
     setTab(next)
@@ -456,6 +448,8 @@ export function Editor({
   }
   // "Edit group" in the Content tab opens that group in the left panel (a new request each time).
   const [groupRequest, setGroupRequest] = useState<{ id: string; at: number }>()
+  // "Edit options" in the Content tab opens the field's details in Manage fields.
+  const [fieldRequest, setFieldRequest] = useState<{ id: string; at: number }>()
   const convertToGroup = () => {
     const cell = level.find((c) => c.cellId === selected)
     if (!cell?.attributeId) return
@@ -711,13 +705,6 @@ export function Editor({
       at < 0 ? (delta > 0 ? 0 : rows.length - 1) : (at + delta + rows.length) % rows.length
     setPreviewId(rows[next].rowId)
   }
-  const usesFallback = (row: FolderRow) =>
-    !!selectedCell && cellField(selectedCell, row, draft).index > 0
-  const findFallback = () =>
-    setPreviewId(
-      (rows.find((row) => row.rowId !== previewId && usesFallback(row)) ?? rows.find(usesFallback))
-        ?.rowId
-    )
   const leave = () => {
     if (!dirty || window.confirm(tr('放棄尚未保存的版面變更？'))) close()
   }
@@ -1109,6 +1096,7 @@ export function Editor({
           attributes={attributes}
           bindSource={withSourceBinding}
           groupRequest={groupRequest}
+          fieldRequest={fieldRequest}
           rows={rows.filter((row) => row.projectId === project.projectId)}
           reference={(source) =>
             change({ ...draft, fieldBindings: withSourceBinding(draft.fieldBindings, source) })
@@ -1418,19 +1406,14 @@ export function Editor({
               ? () => setPreviewId(EXTREME.sample)
               : undefined
           }
-          enumOptions={enumOptions}
           hasContent={hasContent}
           hints={hints}
           labels={labels}
           tab={tab}
           setTab={chooseTab}
-          optionError={optionError}
-          setOptionError={setOptionError}
-          optionUsage={optionUsage}
+          openFieldSettings={(id) => setFieldRequest({ id, at: Date.now() })}
           change={change}
           updateCell={updateCell}
-          findFallback={findFallback}
-          canFindFallback={rows.some(usesFallback)}
           cells={level}
           overflowing={overflowing}
           selectCell={setSelected}

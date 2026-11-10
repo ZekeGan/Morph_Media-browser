@@ -61,15 +61,22 @@ const errors: string[] = []
 const { app, page } = await launchApp(local, errors, { width: 1500, height: 950 })
 let passed = false
 try {
+  // Rare options (display conditions, copy button) are under "More options" (R-232).
+  const openMore = async () => {
+    const more = page.getByRole('button', { name: '其他選項', exact: true })
+    if ((await more.getAttribute('aria-expanded')) !== 'true') await more.click()
+  }
+
   await page.getByRole('button', { name: '開啟專案 Fields', exact: true }).first().click()
   await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.locator('.editor-page').waitFor()
 
-  // A component with a display condition marks its condition tab; the tab offers the enum's options.
+  // A component with a display condition opens "More options" by itself; it offers the enum's options.
   await page.locator('.editor-cell').nth(-2).click()
-  const conditionTab = page.getByRole('tab', { name: /^條件/ })
-  await conditionTab.getByRole('img', { name: '已啟用', exact: true }).waitFor()
-  await conditionTab.click()
+  assert.equal(
+    await page.getByRole('button', { name: '其他選項', exact: true }).getAttribute('aria-expanded'),
+    'true'
+  )
   const compare = page.getByRole('textbox', { name: '比較值', exact: true })
   await compare.waitFor()
   await compare.click()
@@ -90,14 +97,8 @@ try {
   await page.locator('.palette-field').filter({ hasText: '作者' }).waitFor()
   assert.equal(await page.locator('.palette-field').filter({ hasText: '備註' }).count(), 0)
 
-  // Rename also works from the inspector next to the bound field. The condition tab is remembered, so go back to
-  // the content tab first.
+  // Rename also works from the inspector next to the bound field.
   await page.locator('.editor-cell').last().click()
-  assert.equal(
-    await conditionTab.getAttribute('aria-selected'),
-    'true',
-    'the last tab is remembered'
-  )
   await page.getByRole('tab', { name: '內容', exact: true }).click()
   await page.getByRole('button', { name: '重新命名此欄位', exact: true }).click()
   await dialog.getByLabel('欄位名稱').fill('創作者')
@@ -139,15 +140,15 @@ try {
       document.querySelector<HTMLElement>('.editor-cell')!.getBoundingClientRect().width <
       document.querySelector<HTMLElement>('.react-grid-layout')!.getBoundingClientRect().width * 0.6
   )
-  await page.getByRole('tab', { name: '內容', exact: true }).click()
 
   await page.locator('.editor-cell').last().click()
+  await page.getByRole('tab', { name: '內容', exact: true }).click()
   await page.getByLabel('小數位數').fill('2')
   await page.getByLabel('單位文字').fill('分')
   await page.getByRole('radiogroup', { name: '單位位置' }).waitFor()
 
   // Greater/less conditions are offered for number fields only.
-  await conditionTab.click()
+  await openMore()
   await page.getByRole('textbox', { name: '顯示條件欄位' }).click()
   await page.getByRole('option', { name: '創作者', exact: true }).click()
   await page.getByRole('textbox', { name: '顯示條件', exact: true }).click()

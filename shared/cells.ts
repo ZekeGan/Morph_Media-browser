@@ -77,9 +77,19 @@ export function cellField(
     index: 0,
   }
 }
-export function cellVisible(cell: Cell, row?: FolderRow): boolean {
+export function cellVisible(cell: Cell, row?: FolderRow, project?: GroupContext): boolean {
   if (!cell.condition) return true
-  const value = row ? fieldValue(row, cell.condition.attributeId) : undefined,
+  // "Hide when empty" on the component's own field looks at what it shows, so a group or fallback component stays
+  // visible while any of its fields has a value (R-232).
+  const shown =
+    ['set', 'unset'].includes(cell.condition.operator) &&
+    cell.condition.attributeId === cell.attributeId &&
+    (!!cell.groupId || !!cell.fallbackIds?.length)
+  const value = !row
+      ? undefined
+      : shown
+        ? cellField(cell, row, project).value
+        : fieldValue(row, cell.condition.attributeId),
     set = isFilled(value)
   if (cell.condition.operator === 'set') return set
   if (cell.condition.operator === 'unset') return !set

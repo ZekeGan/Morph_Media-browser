@@ -167,7 +167,8 @@ try {
   await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   await page.locator('.editor-cell').first().click()
   const inspector = page.getByRole('complementary', { name: '組件設定', exact: true })
-  await inspector.getByRole('tab', { name: '樣式', exact: true }).click()
+  // The folder name has no content settings, so its style shows without tabs (R-232).
+  assert.equal(await inspector.getByRole('tab').count(), 0)
   await inspector.getByRole('button', { name: '底線', exact: true }).waitFor()
   // The "title" preset makes it bold and large, and clears the other optional styles.
   await inspector.getByRole('textbox', { name: '套用預設樣式', exact: true }).click()
@@ -210,11 +211,21 @@ try {
       getComputedStyle(node).borderTopLeftRadius === '14px'
     )
   })
+  // The style tab is remembered after reopening the editor (on the first component that has tabs).
+  const withTabs = async () => {
+    const cells = page.locator('.editor-cell')
+    for (let index = 0; index < (await cells.count()); index++) {
+      await cells.nth(index).click()
+      if (await inspector.getByRole('tab').count()) return
+    }
+    throw new Error('no component with content settings')
+  }
+  await withTabs()
+  await inspector.getByRole('tab', { name: '樣式', exact: true }).click()
   await page.getByRole('button', { name: '儲存', exact: true }).click()
   await page.locator('.editor-page').waitFor({ state: 'hidden' })
   await page.getByRole('button', { name: '編輯版面', exact: true }).click()
-  await page.locator('.editor-cell').first().click()
-  // The style tab is remembered after reopening the editor.
+  await withTabs()
   assert.equal(
     await inspector.getByRole('tab', { name: '樣式', exact: true }).getAttribute('aria-selected'),
     'true'

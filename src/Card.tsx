@@ -66,7 +66,7 @@ export function CellContent(props: CellProps) {
   const { cell, row, preview, project } = props,
     [copied, setCopied] = useState<string>(),
     [copyError, setCopyError] = useState('')
-  if (!cellVisible(cell, row))
+  if (!cellVisible(cell, row, project))
     return preview ? <span className="cell-condition-hidden">{tr('條件未符合')}</span> : null
   const shown = cellField(cell, row, project),
     copy = copyableValue(shown.value)

@@ -3611,29 +3611,11 @@
     "zh-CN": "显示方式",
     "es": "Estilo de visualización"
   },
-  "一般文字": {
-    "en": "Plain text",
-    "ja": "通常のテキスト",
-    "zh-CN": "普通文本",
-    "es": "Texto simple"
-  },
   "評分": {
     "en": "Rating",
     "ja": "評価",
     "zh-CN": "评分",
     "es": "Valoración"
-  },
-  "進度": {
-    "en": "Progress",
-    "ja": "進捗",
-    "zh-CN": "进度",
-    "es": "Progreso"
-  },
-  "狀態徽章": {
-    "en": "Status badge",
-    "ja": "ステータスバッジ",
-    "zh-CN": "状态徽章",
-    "es": "Insignia de estado"
   },
   "滿分／總量": {
     "en": "Maximum / total",
@@ -4211,29 +4193,11 @@
     "ja": "表示名だけが変わり、フォルダーのデータは変更されません。検索構文の項目名も一緒に変わります。",
     "es": "Solo cambia el nombre mostrado; no se modifica ningún dato de carpeta. El nombre usado en la sintaxis de búsqueda también cambia."
   },
-  "選項會成為資料夾設定中的下拉選單；使用中的選項不能移除。": {
-    "zh-CN": "选项会成为文件夹设置中的下拉菜单；使用中的选项不能移除。",
-    "en": "Options become the dropdown in folder settings; options in use cannot be removed.",
-    "ja": "選択肢はフォルダー設定のドロップダウンになります。使用中の選択肢は削除できません。",
-    "es": "Las opciones forman el menú desplegable de los ajustes de carpeta; no se pueden quitar las que están en uso."
-  },
   "「{0}」仍有 {1} 個資料夾使用，請先把這些資料夾改成其他值再移除。": {
     "zh-CN": "“{0}”仍有 {1} 个文件夹在使用，请先把这些文件夹改成其他值再移除。",
     "en": "\"{0}\" is still used by {1} folder(s). Change those folders to another value before removing it.",
     "ja": "「{0}」は {1} 個のフォルダーで使用中です。先にそれらを別の値に変更してから削除してください。",
     "es": "«{0}» sigue en uso en {1} carpeta(s). Cámbialas a otro valor antes de quitarla."
-  },
-  "單選至少需要一個選項": {
-    "zh-CN": "单选至少需要一个选项",
-    "en": "A single-choice field needs at least one option",
-    "ja": "単一選択には選択肢が1つ以上必要です",
-    "es": "Un campo de selección única necesita al menos una opción"
-  },
-  "使用中：{0}": {
-    "zh-CN": "使用中：{0}",
-    "en": "In use: {0}",
-    "ja": "使用中：{0}",
-    "es": "En uso: {0}"
   },
   "只在所選欄位符合條件時顯示這個組件；不符合時保留空位。": {
     "zh-CN": "只在所选字段符合条件时显示这个组件；不符合时保留空位。",
@@ -4246,12 +4210,6 @@
     "en": "Position and size",
     "ja": "位置とサイズ",
     "es": "Posición y tamaño"
-  },
-  "已啟用": {
-    "zh-CN": "已启用",
-    "en": "On",
-    "ja": "有効",
-    "es": "Activa"
   },
   "要加入新組件或欄位，請從左側拖入畫布，或直接點選。": {
     "zh-CN": "要添加新组件或字段，请从左侧拖入画布，或直接点选。",
@@ -6515,12 +6473,6 @@
     "ja": "一致するフィールドがありません",
     "es": "No hay campos coincidentes"
   },
-  "使用中": {
-    "zh-CN": "使用中",
-    "en": "In use",
-    "ja": "使用中",
-    "es": "En uso"
-  },
   "標籤合併成文字，原始資料不變。": {
     "zh-CN": "标签合并成文字，原始数据不变。",
     "en": "Tags are joined as text; source data stays unchanged.",
@@ -6659,18 +6611,6 @@
     "en": "Layout",
     "es": "Maquetación"
   },
-  "條件": {
-    "ja": "条件",
-    "zh-CN": "条件",
-    "en": "Condition",
-    "es": "Condición"
-  },
-  "這個組件沒有內容設定，可到「樣式」調整外觀。": {
-    "ja": "このコンポーネントには内容の設定がありません。見た目は「スタイル」で調整できます。",
-    "zh-CN": "这个组件没有内容设置，可到“样式”调整外观。",
-    "en": "This component has no content settings; adjust its look under “Style”.",
-    "es": "Este componente no tiene ajustes de contenido; ajusta su aspecto en «Estilo»."
-  },
   "進階：位置與大小": {
     "ja": "詳細：位置とサイズ",
     "zh-CN": "高级：位置与大小",
@@ -6694,12 +6634,6 @@
     "zh-CN": "在预览中被截断的组件（点一下选取并处理）：",
     "en": "Components cut off in the preview (click one to select and fix it):",
     "es": "Componentes cortados en la vista previa (haz clic para seleccionarlo y corregirlo):"
-  },
-  "點選畫布上的組件，就能在這裡調整內容、樣式與條件。": {
-    "ja": "キャンバス上のコンポーネントをクリックすると、ここで内容・スタイル・条件を調整できます。",
-    "zh-CN": "点选画布上的组件，就能在这里调整内容、样式与条件。",
-    "en": "Click a component on the canvas to adjust its content, style and condition here.",
-    "es": "Haz clic en un componente del lienzo para ajustar aquí su contenido, estilo y condición."
   },
   "拖曳移動、拉邊角縮放；Delete 移除、Ctrl+D 複製。": {
     "ja": "ドラッグで移動、角を引いてサイズ変更。Delete で削除、Ctrl+D で複製。",
@@ -7067,12 +7001,6 @@
     "ja": "グループ {0} を開く",
     "es": "Abrir el grupo {0}"
   },
-  "找顯示後面欄位的資料夾": {
-    "zh-CN": "找显示后面字段的文件夹",
-    "en": "Find a folder showing a later field",
-    "ja": "後ろのフィールドを表示しているフォルダーを探す",
-    "es": "Buscar una carpeta que muestre un campo posterior"
-  },
   "指定的「{0}」目前沒有值。": {
     "zh-CN": "指定的“{0}”目前没有值。",
     "en": "The chosen “{0}” has no value right now.",
@@ -7396,5 +7324,59 @@
     "en": "Preview with sample data",
     "ja": "サンプルデータでプレビュー",
     "es": "Previsualizar con datos de ejemplo"
+  },
+  "徽章": {
+    "zh-CN": "徽章",
+    "en": "Badge",
+    "ja": "バッジ",
+    "es": "Insignia"
+  },
+  "星等": {
+    "zh-CN": "星级",
+    "en": "Stars",
+    "ja": "星",
+    "es": "Estrellas"
+  },
+  "進度條": {
+    "zh-CN": "进度条",
+    "en": "Progress bar",
+    "ja": "進捗バー",
+    "es": "Barra de progreso"
+  },
+  "選項在管理欄位設定": {
+    "zh-CN": "选项在管理字段设置",
+    "en": "Options are set in Manage fields",
+    "ja": "選択肢はフィールド管理で設定します",
+    "es": "Las opciones se configuran en Gestionar campos"
+  },
+  "編輯選項": {
+    "zh-CN": "编辑选项",
+    "en": "Edit options",
+    "ja": "選択肢を編集",
+    "es": "Editar opciones"
+  },
+  "選項顏色屬於欄位，所有顯示這個欄位的組件共用。": {
+    "zh-CN": "选项颜色属于字段，所有显示这个字段的组件共用。",
+    "en": "Option colours belong to the field and are shared by every component showing it.",
+    "ja": "選択肢の色はフィールドの設定で、このフィールドを表示するすべてのコンポーネントで共通です。",
+    "es": "Los colores de las opciones pertenecen al campo y los comparten todos los componentes que lo muestran."
+  },
+  "沒有值時隱藏": {
+    "zh-CN": "没有值时隐藏",
+    "en": "Hide when empty",
+    "ja": "値がないときは隠す",
+    "es": "Ocultar si está vacío"
+  },
+  "其他選項": {
+    "zh-CN": "其他选项",
+    "en": "More options",
+    "ja": "その他のオプション",
+    "es": "Más opciones"
+  },
+  "點選畫布上的組件，就能在這裡調整內容與樣式。": {
+    "zh-CN": "点选画布上的组件，就能在这里调整内容与样式。",
+    "en": "Select a component on the canvas to adjust its content and style here.",
+    "ja": "キャンバス上のコンポーネントを選ぶと、ここで内容とスタイルを調整できます。",
+    "es": "Selecciona un componente en el lienzo para ajustar aquí su contenido y estilo."
   }
 }

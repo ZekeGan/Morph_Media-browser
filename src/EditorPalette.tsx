@@ -96,6 +96,8 @@ export type EditorPaletteProps = {
   rows: FolderRow[]
   // A group to open, asked for from the Content tab.
   groupRequest?: { id: string; at: number }
+  // A field whose details to open in Manage fields, asked for from the Content tab.
+  fieldRequest?: { id: string; at: number }
   setError: (message: string) => void
   setFieldDeletion: (preview: FieldDeletionPreview) => void
   setRenaming: (value: { id: string; name: string }) => void
@@ -167,6 +169,7 @@ export function EditorPalette(props: EditorPaletteProps) {
     bindSource,
     rows,
     groupRequest,
+    fieldRequest,
   } = props
   const [newField, setNewField] = useState('')
   const [newType, setNewType] = useState('string')
@@ -189,6 +192,9 @@ export function EditorPalette(props: EditorPaletteProps) {
       document.querySelector('.palette-group-view')?.scrollIntoView({ block: 'nearest' })
     )
   }, [groupRequest])
+  useEffect(() => {
+    if (fieldRequest) setManaging({ focus: fieldRequest.id })
+  }, [fieldRequest])
   const groupActions = useGroupActions({
     draft,
     change,
