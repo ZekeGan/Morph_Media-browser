@@ -34,6 +34,7 @@ import {
   purposeGlyph,
   purposeLabel,
   shownUses,
+  switchDateType,
   switchTextType,
   textTypes,
   type TextType,
@@ -80,6 +81,8 @@ function FieldDetail({
   const id = binding.attributeId,
     name = binding.alias || tr('未命名欄位'),
     origin = fieldSource(id, attributes)
+  const [wording, setWording] = useState<{ trueLabel?: string; falseLabel?: string }>({}),
+    [wordingError, setWordingError] = useState('')
   const [target, setTarget] = useState<TextType>(),
     [typed, setTyped] = useState<string[]>([]),
     [typedProblem, setTypedProblem] = useState(''),
@@ -178,6 +181,34 @@ function FieldDetail({
         <dt>{tr('用途')}</dt>
         <dd className="field-detail-purpose">
           <span>{purposeLabel(binding.type)}</span>
+          {added && ['date', 'datetime'].includes(binding.type) && cardEditor && (
+            <Button
+              size="compact-xs"
+              variant="default"
+              onClick={() => {
+                const next = binding.type === 'date' ? 'datetime' : 'date'
+                const timed = values.filter(
+                  (value) => typeof value === 'string' && value.length > 10
+                ).length
+                if (
+                  next === 'date' &&
+                  timed &&
+                  !window.confirm(
+                    tr(
+                      '有 {0} 個資料夾的值含時間；改成只有日期後只顯示日期，已存的值不會改寫。',
+                      timed
+                    )
+                  )
+                )
+                  return
+                const result = switchDateType(draft, id, next)
+                if ('project' in result) change(result.project)
+                else window.alert(reasons[result.error])
+              }}
+            >
+              {binding.type === 'date' ? tr('改成包含時間') : tr('改成只有日期')}
+            </Button>
+          )}
           {added && isTextType(binding.type) && cardEditor && (
             <Menu position="bottom-start">
               <Menu.Target>
@@ -296,6 +327,51 @@ function FieldDetail({
               {tr('同一欄位的型別不一致，請先處理資料衝突')}
             </Text>
           )}
+        </div>
+      )}
+      {added && binding.type === 'boolean' && (
+        <div className="field-detail-part">
+          <Text size="sm" fw={600}>
+            {tr('顯示文字')}
+          </Text>
+          <Group gap="xs" grow>
+            {(['trueLabel', 'falseLabel'] as const).map((key) => (
+              <TextInput
+                key={key}
+                size="xs"
+                label={key === 'trueLabel' ? tr('「是」顯示為') : tr('「否」顯示為')}
+                placeholder={key === 'trueLabel' ? tr('是') : tr('否')}
+                maxLength={20}
+                value={wording[key] ?? binding[key] ?? ''}
+                error={wordingError && key === 'falseLabel' ? wordingError : undefined}
+                onChange={(event) => {
+                  const text = event.currentTarget.value
+                  const other = binding[key === 'trueLabel' ? 'falseLabel' : 'trueLabel']
+                  setWording((now) => ({ ...now, [key]: text }))
+                  // The same words for yes and no could not be told apart; they are kept here until they differ.
+                  if (
+                    text.trim() &&
+                    other?.trim().toLocaleLowerCase() === text.trim().toLocaleLowerCase()
+                  ) {
+                    setWordingError(tr('「是」和「否」的文字不能相同'))
+                    return
+                  }
+                  setWordingError('')
+                  change({
+                    ...draft,
+                    fieldBindings: draft.fieldBindings.map((field) => {
+                      if (field.attributeId !== id) return field
+                      const { [key]: _old, ...rest } = field
+                      return text.trim() ? { ...rest, [key]: text } : rest
+                    }),
+                  })
+                }}
+              />
+            ))}
+          </Group>
+          <Text size="xs" c="dimmed">
+            {tr('卡片、表格、資料夾設定與搜尋都用這組文字；留空用「是／否」。')}
+          </Text>
         </div>
       )}
       {added && binding.type === 'enum' && (

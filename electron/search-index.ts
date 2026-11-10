@@ -193,6 +193,19 @@ export class SearchIndex {
             for (const id of cell.fallbackIds) set.add(id)
             chains.set(cell.attributeId, set)
           }
+    const yesNoWording = (text: string, ids: string[]) => {
+      const key = text.trim().toLocaleLowerCase()
+      // Only the searched project's wording counts (the same field ID can carry other words elsewhere).
+      for (const linked of this.snapshot?.projects ?? [])
+        for (const field of !projectId || linked.projectId === projectId
+          ? (linked.project?.fieldBindings ?? [])
+          : [])
+          if (ids.includes(field.attributeId)) {
+            if (field.trueLabel?.trim().toLocaleLowerCase() === key) return 'true'
+            if (field.falseLabel?.trim().toLocaleLowerCase() === key) return 'false'
+          }
+      return text
+    }
     const groups = saved ? restoreQuery(saved, available) : parseQuery(query)
     const conditions = groups
       .map(
@@ -244,7 +257,12 @@ export class SearchIndex {
                   ' ?)'
                 )
               }
-              const value = normalizeValue(t.value, type),
+              // A yes/no field can also be searched by its own wording (R-234).
+              const wording =
+                type === 'boolean' && fields
+                  ? yesNoWording(t.value, [fields[0], ...(chains.get(fields[0]) ?? [])])
+                  : t.value
+              const value = normalizeValue(wording, type),
                 gram = [...value].slice(0, 3).join('')
               let sql = 'v.doc=d.id'
               if (fields) {

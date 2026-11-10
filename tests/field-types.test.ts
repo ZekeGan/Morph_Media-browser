@@ -224,3 +224,49 @@ test('a field lists its uses once per layout, and only choice changes alter comp
   assert.equal(purposeChangeImpact(start, 'note', 'tags'), 0)
   assert.equal(purposeChangeImpact(start, 'note', 'enum'), 2)
 })
+
+test('date and date-and-time switch into each other; components follow (R-234)', async () => {
+  const { switchDateType } = await import('../src/fieldTypes')
+  const p = project(
+    [cell({ kind: 'field-date', attributeId: 'when', condition: undefined })],
+    [{ alias: 'When', attributeId: 'when', type: 'datetime' }]
+  )
+  const withCondition: Project = {
+    ...p,
+    cells: [
+      {
+        ...p.cells[0],
+        condition: { attributeId: 'when', operator: 'gt', value: '2025-01-02T10:00' },
+      },
+    ],
+  }
+  const next = switched(switchDateType(withCondition, 'when', 'date'))
+  assert.equal(next.fieldBindings.find((f) => f.attributeId === 'when')!.type, 'date')
+  assert.equal(next.cells[0].kind, 'field-date-only')
+  assert.equal(next.cells[0].condition!.value, '2025-01-02', 'a condition keeps only the date')
+  const back = switched(switchDateType(next, 'when', 'datetime'))
+  assert.equal(back.cells[0].kind, 'field-date')
+})
+
+test('yes/no wording is optional, 1-20 characters, and only on yes/no fields (R-234)', async () => {
+  const { yesNo } = await import('../src/fieldTypes')
+  const p = project([], [{ alias: 'Owned', attributeId: 'owned', type: 'boolean' }])
+  const labelled = (patch: object): Project => ({
+    ...p,
+    fieldBindings: p.fieldBindings.map((f) => (f.attributeId === 'owned' ? { ...f, ...patch } : f)),
+  })
+  validateProject(labelled({ trueLabel: '已收藏', falseLabel: '未收藏' }))
+  assert.throws(() => validateProject(labelled({ trueLabel: ' ' })))
+  assert.throws(() => validateProject(labelled({ trueLabel: 'Done', falseLabel: 'done ' })))
+  assert.throws(() => validateProject(labelled({ falseLabel: 'x'.repeat(21) })))
+  assert.throws(() =>
+    validateProject({
+      ...p,
+      fieldBindings: p.fieldBindings.map((f) =>
+        f.attributeId === 'note' ? { ...f, trueLabel: 'Yes' } : f
+      ),
+    })
+  )
+  assert.equal(yesNo(true, { trueLabel: '已收藏' }), '已收藏')
+  assert.equal(yesNo(false, { trueLabel: '已收藏' }), tr('否'))
+})

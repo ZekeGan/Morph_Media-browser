@@ -127,6 +127,9 @@ export interface Project {
     options?: string[]
     // Enum fields: a badge colour per option (hex).
     optionColors?: Record<string, string>
+    // Yes/no fields: the text shown for true and false (1-20 characters); absent means the usual yes/no.
+    trueLabel?: string
+    falseLabel?: string
   }[]
   cells: Cell[]
   list: { itemsPerRow: number; pageSize: number }
@@ -352,6 +355,14 @@ function validFieldBinding(f: unknown): boolean {
         f.options.length <= 100 &&
         new Set(f.options).size === f.options.length &&
         f.options.every((option: unknown) => text(option, 100) && option.trim().length > 0))) &&
+    (f.trueLabel === undefined ||
+      (f.type === 'boolean' && text(f.trueLabel, 20) && f.trueLabel.trim().length > 0)) &&
+    (f.falseLabel === undefined ||
+      (f.type === 'boolean' && text(f.falseLabel, 20) && f.falseLabel.trim().length > 0)) &&
+    // Yes and no must read differently, or neither the card nor search could tell them apart.
+    (f.trueLabel === undefined ||
+      f.falseLabel === undefined ||
+      f.trueLabel.trim().toLocaleLowerCase() !== f.falseLabel.trim().toLocaleLowerCase()) &&
     (f.optionColors === undefined ||
       (f.type === 'enum' &&
         obj(f.optionColors) &&

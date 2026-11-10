@@ -19,6 +19,7 @@ import type { Attribute, Cell, CellKind, FolderRow, Project } from '../shared/mo
 import { isFieldKind, launchTemplates } from '../shared/explorer'
 import { typeKinds } from './editorKinds'
 import { DisplaySource } from './DisplaySource'
+import { yesNo } from './fieldTypes'
 import { CellStyleEditor } from './CellStyleEditor'
 import { EnumColors } from './EnumColors'
 import { FallbackActions } from './FallbackActions'
@@ -96,7 +97,13 @@ export function EditorInspector(props: EditorInspectorProps) {
     !!conditionValue &&
     conditionValue.operator === 'set' &&
     conditionValue.attributeId === selectedCell?.attributeId
-  const customCondition = !!conditionValue && !hidesWhenEmpty
+  // Yes/no components can show only when the value is yes (R-234).
+  const showsOnlyTrue =
+    !!conditionValue &&
+    conditionValue.operator === 'equals' &&
+    conditionValue.value === true &&
+    conditionValue.attributeId === selectedCell?.attributeId
+  const customCondition = !!conditionValue && !hidesWhenEmpty && !showsOnlyTrue
   const copyable =
     !!selectedCell && ['field-text', 'field-url', 'field-tags'].includes(selectedCell.kind)
   // One switch for how a field shows, for every field kind (R-232).
@@ -697,11 +704,29 @@ export function EditorInspector(props: EditorInspectorProps) {
                       <Checkbox
                         label={tr('沒有值時隱藏')}
                         checked={hidesWhenEmpty}
-                        disabled={!!selectedCell.condition && !hidesWhenEmpty}
+                        disabled={!!selectedCell.condition && !hidesWhenEmpty && !showsOnlyTrue}
                         onChange={(event) =>
                           updateCell({
                             condition: event.currentTarget.checked
                               ? { attributeId: selectedCell.attributeId!, operator: 'set' }
+                              : undefined,
+                          })
+                        }
+                      />
+                    )}
+                    {selectedCell.kind === 'field-boolean' && selectedCell.attributeId && (
+                      <Checkbox
+                        label={tr('只在「{0}」時顯示', yesNo(true, binding))}
+                        checked={showsOnlyTrue}
+                        disabled={!!selectedCell.condition && !showsOnlyTrue && !hidesWhenEmpty}
+                        onChange={(event) =>
+                          updateCell({
+                            condition: event.currentTarget.checked
+                              ? {
+                                  attributeId: selectedCell.attributeId!,
+                                  operator: 'equals',
+                                  value: true,
+                                }
                               : undefined,
                           })
                         }

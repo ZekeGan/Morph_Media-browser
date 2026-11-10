@@ -11,6 +11,7 @@ import {
 } from '@mantine/core'
 import type { Project } from '../shared/model'
 import { t as tr } from './i18n'
+import { yesNo } from './fieldTypes'
 
 type FieldBinding = Project['fieldBindings'][number]
 
@@ -58,8 +59,8 @@ export function FolderFieldInput({
         clearable
         value={value === true ? 'true' : value === false ? 'false' : null}
         data={[
-          { value: 'true', label: tr('是') },
-          { value: 'false', label: tr('否') },
+          { value: 'true', label: yesNo(true, binding) },
+          { value: 'false', label: yesNo(false, binding) },
         ]}
         disabled={disabled}
         onChange={(value) => onChange(value === null ? null : value === 'true')}

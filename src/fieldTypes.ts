@@ -18,6 +18,9 @@ export const fieldPurposes = () =>
 // One short name per purpose, used on the cards, in lists, menus and messages alike (R-228).
 export const purposeLabel = (type: string) =>
   fieldPurposes().find((p) => p.type === type)?.label ?? type
+// The text for a yes/no value: the field's own wording when set, otherwise the usual yes/no (R-234).
+export const yesNo = (value: boolean, binding?: { trueLabel?: string; falseLabel?: string }) =>
+  value ? binding?.trueLabel || tr('是') : binding?.falseLabel || tr('否')
 export const purposeGlyph = (type: string) =>
   fieldPurposes().find((p) => p.type === type)?.glyph ?? '·'
 
@@ -148,6 +151,72 @@ export function purposeChangeImpact(project: Project, attributeId: string, next:
   if (!binding || !(binding.type === 'enum' || next === 'enum')) return 0
   return fieldUses(project, attributeId, true).filter((use) => ['main', 'group'].includes(use.role))
     .length
+}
+
+export type DateType = 'date' | 'datetime'
+export function switchDateType(
+  project: Project,
+  attributeId: string,
+  next: DateType
+): SwitchResult {
+  const binding = project.fieldBindings.find((field) => field.attributeId === attributeId)
+  if (!binding || !['date', 'datetime'].includes(binding.type) || binding.type === next)
+    return { project }
+  if (
+    (project.fieldGroups?.find((g) => g.memberIds.includes(attributeId))?.memberIds.length ?? 0) > 1
+  )
+    return { error: 'group' }
+  if (
+    cellLists(project)
+      .flat()
+      .some(
+        (cell) =>
+          cell.fallbackIds?.includes(attributeId) ||
+          (cell.attributeId === attributeId && cell.fallbackIds?.length)
+      )
+  )
+    return { error: 'fallback' }
+  const kind: Cell['kind'] = next === 'date' ? 'field-date-only' : 'field-date'
+  const cells = (list: Cell[]) =>
+    list.map((cell) => {
+      let next2 = cell
+      if (cell.attributeId === attributeId && ['field-date', 'field-date-only'].includes(cell.kind))
+        next2 = { ...next2, kind }
+      if (
+        cell.condition?.attributeId === attributeId &&
+        next === 'date' &&
+        typeof cell.condition.value === 'string'
+      )
+        next2 = {
+          ...next2,
+          condition: { ...cell.condition, value: cell.condition.value.slice(0, 10) },
+        }
+      return next2
+    })
+  return {
+    project: {
+      ...project,
+      fieldBindings: project.fieldBindings.map((field) =>
+        field.attributeId === attributeId ? { ...field, type: next } : field
+      ),
+      cells: cells(project.cells),
+      ...(project.layoutPresets
+        ? {
+            layoutPresets: project.layoutPresets.map((preset) => ({
+              ...preset,
+              cells: cells(preset.cells),
+            })),
+          }
+        : {}),
+      ...(project.contentCells
+        ? {
+            contentCells: Object.fromEntries(
+              Object.entries(project.contentCells).map(([key, list]) => [key, cells(list)])
+            ),
+          }
+        : {}),
+    },
+  }
 }
 
 export type SwitchResult =

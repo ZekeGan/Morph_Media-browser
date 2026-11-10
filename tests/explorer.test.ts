@@ -386,6 +386,43 @@ test('a field group is searched by its name and any member finds the folder (R-2
   assert.equal(await total('score:9'), 0, 'fields outside the group are not included')
   assert.equal(await total('steam:8'), 0, 'a member alone searches only itself')
 })
+test('a yes/no field is also searched by its own wording (R-234)', async (t) => {
+  const { media, lib, explorer } = await fixture(t)
+  for (const name of ['A', 'B']) await fs.mkdir(path.join(media, name))
+  let s = await lib.create(media, { name: 'Wording', depth: { mode: 'through', level: 2 } }),
+    p = s.projects[0].project!
+  s = await lib.saveProject({
+    ...p,
+    fieldBindings: [
+      ...p.fieldBindings,
+      {
+        alias: 'owned',
+        attributeId: 'owned',
+        type: 'boolean',
+        trueLabel: '已收藏',
+        falseLabel: '未收藏',
+      },
+    ],
+  })
+  for (const [name, value] of [
+    ['A', true],
+    ['B', false],
+  ] as const) {
+    const row = s.rows.find((r) => r.name === name)!
+    await explorer.request({
+      action: 'attributes',
+      rowId: row.rowId,
+      revision: row.record!.revision,
+      private: false,
+      values: [{ attributeId: 'owned', key: 'owned', type: 'boolean', value, source: 'manual' }],
+    })
+  }
+  const total = async (query: string) =>
+    (await explorer.request({ action: 'search', query, projectId: p.projectId })).search!.total
+  assert.equal(await total('owned:已收藏'), 1)
+  assert.equal(await total('owned:未收藏'), 1)
+  assert.equal(await total('owned:是'), 1, 'the usual words still work')
+})
 test('search sync detects same-revision values, private overrides, aliases, paths and source changes', async (t) => {
   const { lib, media, explorer } = await fixture(t)
   const snapshot = await lib.create(media, {

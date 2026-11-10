@@ -12,6 +12,7 @@ import { httpUrl } from '../shared/fields'
 import { useFolderStats } from './folderStats'
 import { cellColors } from './themes/cellStyle'
 import './cells.css'
+import { yesNo } from './fieldTypes'
 type CellProps = {
   cell: Cell
   row?: FolderRow
@@ -341,14 +342,15 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       </span>
     )
   if (cell.kind === 'field-boolean') {
+    const binding = project?.fieldBindings.find(
+      (field) => field.attributeId === cellField(cell, row, project).attributeId
+    )
     const label =
-      value === true
-        ? tr('是')
-        : value === false
-          ? tr('否')
-          : value == null
-            ? tr('未填')
-            : tr('⚠ 型別不符')
+      typeof value === 'boolean'
+        ? yesNo(value, binding)
+        : value == null
+          ? tr('未填')
+          : tr('⚠ 型別不符')
     return cell.presentation === 'badge' && typeof value === 'boolean' ? (
       <Badge color={value ? 'teal' : 'gray'} variant="light">
         {label}
@@ -358,7 +360,14 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     )
   }
   if (cell.kind === 'field-date-only' || cell.kind === 'field-enum') {
-    const label = typeof value === 'string' ? value : value == null ? tr('未填') : tr('⚠ 型別不符')
+    const label =
+      typeof value === 'string'
+        ? cell.kind === 'field-date-only' && /^\d{4}-\d{2}-\d{2}T/.test(value)
+          ? value.slice(0, 10)
+          : value
+        : value == null
+          ? tr('未填')
+          : tr('⚠ 型別不符')
     return cell.presentation === 'badge' && typeof value === 'string' && value.length ? (
       <Badge
         color={

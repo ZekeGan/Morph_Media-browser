@@ -829,6 +829,16 @@ export function BrowseWorkspace({
               dragColumn={dragColumn}
               draggingColumn={draggingColumn}
               valueOf={valueOf}
+              labelsOf={(id) =>
+                project.fieldBindings.find(
+                  (field) =>
+                    field.attributeId === id ||
+                    project.fieldGroups?.some(
+                      (group) =>
+                        'group:' + group.groupId === id && group.memberIds[0] === field.attributeId
+                    )
+                )
+              }
               setDragColumn={setDragColumn}
               columnDrop={columnDrop}
               setColumnDrop={setColumnDrop}

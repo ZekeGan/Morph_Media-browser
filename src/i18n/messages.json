@@ -7396,5 +7396,65 @@
     "en": "Background",
     "ja": "背景",
     "es": "Fondo"
+  },
+  "包含時間": {
+    "zh-CN": "包含时间",
+    "en": "Include time",
+    "ja": "時刻を含める",
+    "es": "Incluir hora"
+  },
+  "顯示文字": {
+    "zh-CN": "显示文字",
+    "en": "Wording",
+    "ja": "表示する文字",
+    "es": "Texto que se muestra"
+  },
+  "「是」顯示為": {
+    "zh-CN": "“是”显示为",
+    "en": "Show \"yes\" as",
+    "ja": "「はい」の表示",
+    "es": "Mostrar «sí» como"
+  },
+  "「否」顯示為": {
+    "zh-CN": "“否”显示为",
+    "en": "Show \"no\" as",
+    "ja": "「いいえ」の表示",
+    "es": "Mostrar «no» como"
+  },
+  "卡片、表格、資料夾設定與搜尋都用這組文字；留空用「是／否」。": {
+    "zh-CN": "卡片、表格、文件夹设置与搜索都用这组文字；留空用“是／否”。",
+    "en": "Cards, the table, folder settings and search use this wording; leave it empty for yes/no.",
+    "ja": "カード、表、フォルダー設定、検索でこの文字を使います。空欄なら「はい／いいえ」。",
+    "es": "Las tarjetas, la tabla, la configuración de carpetas y la búsqueda usan este texto; déjalo vacío para sí/no."
+  },
+  "只在「{0}」時顯示": {
+    "zh-CN": "只在“{0}”时显示",
+    "en": "Show only when \"{0}\"",
+    "ja": "「{0}」のときだけ表示",
+    "es": "Mostrar solo cuando sea «{0}»"
+  },
+  "改成包含時間": {
+    "zh-CN": "改成包含时间",
+    "en": "Include time",
+    "ja": "時刻を含めるように変更",
+    "es": "Cambiar para incluir hora"
+  },
+  "改成只有日期": {
+    "zh-CN": "改成只有日期",
+    "en": "Date only",
+    "ja": "日付だけに変更",
+    "es": "Cambiar a solo fecha"
+  },
+  "有 {0} 個資料夾的值含時間；改成只有日期後只顯示日期，已存的值不會改寫。": {
+    "zh-CN": "有 {0} 个文件夹的值含时间；改成只有日期后只显示日期，已存的值不会改写。",
+    "en": "{0} folders have a time in their value; with the date only, just the date shows. Saved values are not rewritten.",
+    "ja": "{0} 個のフォルダーの値に時刻が含まれています。日付だけにすると日付のみ表示され、保存済みの値は書き換えません。",
+    "es": "{0} carpetas tienen hora en su valor; con solo fecha se muestra solo la fecha. Los valores guardados no se reescriben."
+  },
+  "「是」和「否」的文字不能相同": {
+    "zh-CN": "“是”和“否”的文字不能相同",
+    "en": "Yes and no need different wording",
+    "ja": "「はい」と「いいえ」は別の文字にしてください",
+    "es": "Sí y no necesitan textos distintos"
   }
 }

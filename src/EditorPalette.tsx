@@ -5,6 +5,7 @@ import { t as tr } from './i18n'
 import {
   ActionIcon,
   Badge,
+  Checkbox,
   Button,
   Group,
   Menu,
@@ -743,25 +744,37 @@ export function EditorPalette(props: EditorPaletteProps) {
             <Text size="sm" fw={500} className="purpose-cards-title">
               {tr('這個欄位要記什麼？')}
             </Text>
-            {fieldPurposes().map((purpose) => (
-              <label key={purpose.type} className="purpose-card">
-                <input
-                  type="radio"
-                  name="field-purpose"
-                  value={purpose.type}
-                  checked={newType === purpose.type}
-                  onChange={() => setNewType(purpose.type)}
-                />
-                <span className="palette-row-icon is-glyph" aria-hidden>
-                  {purpose.glyph}
-                </span>
-                <span className="purpose-card-text">
-                  <strong>{purpose.label}</strong>
-                  <small>{purpose.example}</small>
-                </span>
-              </label>
-            ))}
+            {fieldPurposes()
+              .filter((purpose) => purpose.type !== 'datetime')
+              .map((purpose) => (
+                <label key={purpose.type} className="purpose-card">
+                  <input
+                    type="radio"
+                    name="field-purpose"
+                    value={purpose.type}
+                    checked={
+                      newType === purpose.type ||
+                      (purpose.type === 'date' && newType === 'datetime')
+                    }
+                    onChange={() => setNewType(purpose.type)}
+                  />
+                  <span className="palette-row-icon is-glyph" aria-hidden>
+                    {purpose.glyph}
+                  </span>
+                  <span className="purpose-card-text">
+                    <strong>{purpose.label}</strong>
+                    <small>{purpose.example}</small>
+                  </span>
+                </label>
+              ))}
           </div>
+          {['date', 'datetime'].includes(newType) && (
+            <Checkbox
+              label={tr('包含時間')}
+              checked={newType === 'datetime'}
+              onChange={(event) => setNewType(event.currentTarget.checked ? 'datetime' : 'date')}
+            />
+          )}
           {newType === 'enum' && (
             <OptionTagsInput
               label={tr('選項')}

@@ -6,13 +6,14 @@ import { importSources } from './importSource'
 import { isFilled } from '../shared/cells'
 import { fieldSourceGroups, rowFieldAttributes } from './fieldSources'
 import { t as tr, useLocale } from './i18n'
+import { yesNo } from './fieldTypes'
 
 // Filled values only; 0 and false are real values, empty strings and arrays are not.
-const shown = (value: unknown) =>
+const shown = (value: unknown, binding?: { trueLabel?: string; falseLabel?: string }) =>
   !isFilled(value)
     ? undefined
     : typeof value === 'boolean'
-      ? tr(value ? '是' : '否')
+      ? yesNo(value, binding)
       : Array.isArray(value)
         ? value.join(', ')
         : typeof value === 'object'
@@ -39,7 +40,7 @@ export function FolderDetails({
     shortPath = (parts.length > 2 ? '…' + separator : '') + parts.slice(-2).join(separator),
     sources = importSources(row),
     fields = project.fieldBindings.flatMap((field) => {
-      const text = shown(fieldValue(row, field.attributeId))
+      const text = shown(fieldValue(row, field.attributeId), field)
       return text === undefined
         ? []
         : [{ attributeId: field.attributeId, label: field.alias, text }]

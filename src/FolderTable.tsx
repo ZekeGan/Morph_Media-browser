@@ -7,6 +7,7 @@ import {
   HTMLAttributes,
 } from 'react'
 import { t as tr } from './i18n'
+import { yesNo } from './fieldTypes'
 import { Icon } from './icons'
 import { BoundaryFlag } from './BoundaryFlag'
 import type { FolderRow } from '../shared/model'
@@ -23,6 +24,7 @@ export function FolderTable({
   dragColumn,
   draggingColumn,
   valueOf,
+  labelsOf,
   setDragColumn,
   columnDrop,
   setColumnDrop,
@@ -51,6 +53,8 @@ export function FolderTable({
   draggingColumn: () => string
   // A row's value in a column (a field, or a card component's fallback chain).
   valueOf: (row: FolderRow, columnId: string) => unknown
+  // A yes/no column's own wording (R-234).
+  labelsOf: (columnId: string) => { trueLabel?: string; falseLabel?: string } | undefined
   setDragColumn: (id: string) => void
   columnDrop?: { id: string; after: boolean }
   setColumnDrop: Dispatch<SetStateAction<{ id: string; after: boolean } | undefined>>
@@ -257,11 +261,7 @@ export function FolderTable({
                   ) : Array.isArray(valueOf(r, c.id)) ? (
                     (valueOf(r, c.id) as unknown[]).join(', ')
                   ) : typeof valueOf(r, c.id) === 'boolean' ? (
-                    valueOf(r, c.id) ? (
-                      tr('是')
-                    ) : (
-                      tr('否')
-                    )
+                    yesNo(valueOf(r, c.id) as boolean, labelsOf(c.id))
                   ) : (
                     String(valueOf(r, c.id) ?? '')
                   )}
