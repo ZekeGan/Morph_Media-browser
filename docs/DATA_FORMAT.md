@@ -80,7 +80,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 | `contentCells` | 內容模板，以資料夾類型為鍵（`book`、`game`、`media`、`general`；舊鍵 `manga`、`album`、`video`、`music`、`other` 仍可讀取）；舊 `mediaCategory`／`mediaSourceCategory` 已移除，讀到時忽略 |
 | `kindLayouts` | 各資料夾類型套用的 CELL 版面方案 ID（資料夾自選的版面優先） |
 | `depth` | `{ mode: 'through' | 'exact', level }` 掃描層級 |
-| `fieldBindings` | 專案的欄位清單：`{ alias, attributeId, type, options?, optionColors?, trueLabel?, falseLabel? }`；`trueLabel`／`falseLabel`（暫定，R-234）只用於是／否欄位，各 1～20 字的顯示文字 |
+| `fieldBindings` | 專案的欄位清單：`{ alias, attributeId, type, options?, optionColors?, trueLabel?, falseLabel? }`；`trueLabel`／`falseLabel`（R-234）只用於是／否欄位，各 1～20 字的顯示文字 |
 | `fieldGroups`（選用） | 欄位群組：`{ groupId, name, memberIds }`，最多 100 個；成員 1～20 個、須在 `fieldBindings`、型別相同（文字與標籤可混用）、一個欄位只屬一個群組；名稱 1～100 字，不分大小寫不可與其他群組或欄位別名重複 |
 | `groupSources`（選用） | 資料夾指定的群組來源：`{ <folderId>: { <groupId>: <attributeId> } }`，值須是該群組成員；只在本專案有效，成員移出或刪除時清除。讀取時（`shared/upgrade.ts` 的 `settleFieldGroups`）先整理舊版程式留下的不一致：已不存在、重複或型別不合的成員移出，空群組移除，與欄位同名的群組名稱加編號，指定來源與組件跟著調整，不因此拒絕整個專案 |
 | `cells` | 預設卡片版面：組件陣列，見下 |
