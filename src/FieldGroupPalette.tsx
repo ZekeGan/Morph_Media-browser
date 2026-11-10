@@ -24,18 +24,23 @@ import {
   type GroupRefusal,
 } from '../shared/fieldGroups'
 import { fieldSource } from './fieldSources'
-import { purposeGlyph, usesSummary, type FieldUse } from './fieldTypes'
+import { purposeGlyph, usesSummary, yesNo, type FieldUse } from './fieldTypes'
 
 type Binding = Project['fieldBindings'][number]
 
 // One line of the previewed folder's value for a field; long values are cut with "…" and shown whole on hover.
-export function FieldValuePreview({ value }: { value: unknown }) {
+export function FieldValuePreview({
+  value,
+  binding,
+}: {
+  value: unknown
+  // A yes/no field's own wording (R-234).
+  binding?: { trueLabel?: string; falseLabel?: string }
+}) {
   const text = Array.isArray(value)
     ? value.map(String).join(', ')
     : typeof value === 'boolean'
-      ? value
-        ? tr('是')
-        : tr('否')
+      ? yesNo(value, binding)
       : value == null
         ? ''
         : String(value)
@@ -258,7 +263,10 @@ export function GroupRow({
         <span className="palette-row-text">
           <span className="palette-field-name">{group.name}</span>
           {preview ? (
-            <FieldValuePreview value={shown?.value} />
+            <FieldValuePreview
+              value={shown?.value}
+              binding={project.fieldBindings.find((f) => f.attributeId === shown?.attributeId)}
+            />
           ) : (
             <span className="palette-row-meta">{tr('{0} 個欄位', group.memberIds.length)}</span>
           )}
@@ -433,7 +441,7 @@ export function GroupView({
                     {index + 1}. {binding.alias}
                   </span>
                   {preview ? (
-                    <FieldValuePreview value={fieldValue(preview, id)} />
+                    <FieldValuePreview value={fieldValue(preview, id)} binding={binding} />
                   ) : (
                     <span className="palette-row-meta">{fieldSource(id, attributes)}</span>
                   )}

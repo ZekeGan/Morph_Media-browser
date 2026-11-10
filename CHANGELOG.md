@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix (R-234): a yes/no field's own wording now also shows on the game folder page's field table (it showed true/false) and in the editor's field list and group previews (they showed yes/no).
 - Layout editor (R-236): a website field added to the project is named in plain words with its site (TITLE_ORIGINAL becomes "Original title (E-Hentai)"); keys without a plain name stay as they are, and fields already added keep their names.
 - Folder settings (R-235): the folder type and the card layout moved from the Data tab into a new Appearance tab, next to Data.
 - Field purposes (R-234): a new field's Date card has "Include time" instead of a separate Date and time card, and a field's details can switch between the two (components follow; saved values are kept, a date-only component shows only the date). A yes/no field can have its own wording (for example Owned / Not owned; provisional `trueLabel`/`falseLabel`), used on cards, in the table, in folder settings and by search, and a yes/no component can show only when the value is yes.

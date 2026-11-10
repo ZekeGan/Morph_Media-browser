@@ -10,6 +10,7 @@ import { DocumentViewer } from './DocumentViewer'
 import './game-actions.css'
 import { cacheFolderStats } from './folderStats'
 import { t as tr, useLocale } from './i18n'
+import { yesNo } from './fieldTypes'
 import { Icon } from './icons'
 import { useRefreshNonce } from './refresh'
 import { Fragment, lazy, Suspense, useEffect, useRef, useState } from 'react'
@@ -529,9 +530,10 @@ export function FolderContent({
                       row.record?.projectOverrides[row.projectId]?.find(
                         (a) => a.attributeId === f.attributeId
                       ) ?? row.record?.attributes.find((a) => a.attributeId === f.attributeId)
-                  const alias = project.fieldBindings.find(
+                  const binding = project.fieldBindings.find(
                       (b) => b.attributeId === f.attributeId
-                    )?.alias,
+                    ),
+                    alias = binding?.alias,
                     plain = importedLabels[f.key]
                   return (
                     <tr key={f.attributeId}>
@@ -541,9 +543,11 @@ export function FolderContent({
                           ? '—'
                           : Array.isArray(value)
                             ? value.join(', ')
-                            : typeof value === 'object'
-                              ? JSON.stringify(value)
-                              : String(value)}
+                            : typeof value === 'boolean'
+                              ? yesNo(value, binding)
+                              : typeof value === 'object'
+                                ? JSON.stringify(value)
+                                : String(value)}
                       </td>
                       <td title={isUrl(attribute?.source) ? attribute?.source : undefined}>
                         {describeSource(attribute?.source)}

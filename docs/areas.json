@@ -191,7 +191,7 @@
         "src/fieldTypes*",
         "shared/layouts*"
       ],
-      "ui": ["cell-editor-ui", "field-edit-ui", "editor-fields-ui", "decided-ui"],
+      "ui": ["cell-editor-ui", "field-edit-ui", "editor-fields-ui", "decided-ui", "yes-no-wording-ui"],
       "tests": ["decided.test.ts", "field-types.test.ts", "field-groups.test.ts"]
     },
     {

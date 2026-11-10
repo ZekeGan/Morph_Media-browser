@@ -318,7 +318,10 @@ export function EditorPalette(props: EditorPaletteProps) {
           <span className="palette-row-text">
             <span className="palette-field-name">{name}</span>
             {preview ? (
-              <FieldValuePreview value={fieldValue(preview, binding.attributeId)} />
+              <FieldValuePreview
+                value={fieldValue(preview, binding.attributeId)}
+                binding={binding}
+              />
             ) : (
               <span className="palette-row-meta">{purposeLabel(binding.type)}</span>
             )}
