@@ -24,7 +24,7 @@ import {
   type GroupRefusal,
 } from '../shared/fieldGroups'
 import { fieldSource } from './fieldSources'
-import { groupUseList, purposeGlyph, usesSummary, type FieldUse } from './fieldTypes'
+import { purposeGlyph, usesSummary, type FieldUse } from './fieldTypes'
 
 type Binding = Project['fieldBindings'][number]
 
@@ -213,9 +213,7 @@ export function GroupRow({
   manage,
   dragImage,
   kind,
-  cardEditor,
 }: {
-  cardEditor: boolean
   group: FieldGroup
   project: Project
   preview?: FolderRow
@@ -264,9 +262,6 @@ export function GroupRow({
           ) : (
             <span className="palette-row-meta">{tr('{0} 個欄位', group.memberIds.length)}</span>
           )}
-        </span>
-        <span className="palette-row-state">
-          <UseCount uses={groupUseList(project, group.groupId, cardEditor)} />
         </span>
       </UnstyledButton>
       <Menu position="bottom-end" withinPortal>

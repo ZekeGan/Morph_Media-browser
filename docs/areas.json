@@ -186,6 +186,7 @@
         "src/FieldManager*",
         "src/FieldGroup*",
         "src/DisplaySource*",
+        "src/OptionTagsInput*",
         "shared/fieldGroups*",
         "src/fieldTypes*",
         "shared/layouts*"

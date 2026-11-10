@@ -1,5 +1,6 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Icon, type IconName } from './icons'
+import { OptionTagsInput } from './OptionTagsInput'
 import { t as tr } from './i18n'
 import {
   ActionIcon,
@@ -9,7 +10,6 @@ import {
   Menu,
   Modal,
   Text,
-  Textarea,
   TextInput,
   Tooltip,
   UnstyledButton,
@@ -32,7 +32,7 @@ import { typeKinds } from './editorKinds'
 import { isFilled } from '../shared/cells'
 import { fieldSource, orderedFieldSourceGroups, useSourceFolding } from './fieldSources'
 import { FieldManager } from './FieldManager'
-import { fieldPurposes, purposeGlyph, purposeLabel, shownUses } from './fieldTypes'
+import { fieldPurposes, purposeGlyph, purposeLabel } from './fieldTypes'
 import { groupValue } from '../shared/cells'
 import { groupOfField, groupType } from '../shared/fieldGroups'
 import {
@@ -42,7 +42,6 @@ import {
   FieldValuePreview,
   GroupRow,
   GroupView,
-  UseCount,
   useGroupActions,
   type DropState,
 } from './FieldGroupPalette'
@@ -95,6 +94,8 @@ export type EditorPaletteProps = {
   bindSource: (bindings: Project['fieldBindings'], source: Binding) => Project['fieldBindings']
   // The project's folders, for which member each folder's group shows.
   rows: FolderRow[]
+  // A group to open, asked for from the Content tab.
+  groupRequest?: { id: string; at: number }
   setError: (message: string) => void
   setFieldDeletion: (preview: FieldDeletionPreview) => void
   setRenaming: (value: { id: string; name: string }) => void
@@ -165,34 +166,29 @@ export function EditorPalette(props: EditorPaletteProps) {
     cardEditor,
     bindSource,
     rows,
+    groupRequest,
   } = props
   const [newField, setNewField] = useState('')
   const [newType, setNewType] = useState('string')
-  const [newOptions, setNewOptions] = useState('')
-  // The field management window is mounted only while open; `focus` is the field to show.
-  // Up to 100 distinct options of up to 100 characters; anything else could not be saved with the layout.
-  const typedOptions = [
-    ...new Set(
-      newOptions
-        .split(/[,，\n]/)
-        .map((option) => option.trim())
-        .filter(Boolean)
-    ),
-  ]
-  const optionsProblem =
-    newOptions.trim() && !typedOptions.length
-      ? tr('至少需要一個選項')
-      : typedOptions.some((option) => option.length > 100)
-        ? tr('每個選項最多 100 個字')
-        : typedOptions.length > 100
-          ? tr('最多 100 個選項')
-          : ''
+  // Options are typed as tags, like in Manage fields: a comma (also full-width) or Enter makes one (R-229). Up to
+  // 100 distinct options of up to 100 characters; anything else could not be saved with the layout.
+  const [typedOptions, setTypedOptions] = useState<string[]>([])
+  const [optionsProblem, setOptionsProblem] = useState('')
   const [managing, setManaging] = useState<{ focus?: string }>()
   // An opened group replaces the field list (like opening a folder); `fresh` focuses its name to rename it.
   const [openGroup, setOpenGroup] = useState<{ id: string; fresh?: boolean }>()
   // Fields picked with Ctrl+click (or the row menu) to form a group together.
   const [picked, setPicked] = useState<string[]>([])
   const [dropOver, setDropOver] = useState<{ id: string; state: DropState }>()
+  useEffect(() => {
+    if (!groupRequest) return
+    setOpenGroup({ id: groupRequest.id })
+    setClosed((now) => now.filter((id) => id !== 'fields'))
+    setSearch('')
+    requestAnimationFrame(() =>
+      document.querySelector('.palette-group-view')?.scrollIntoView({ block: 'nearest' })
+    )
+  }, [groupRequest])
   const groupActions = useGroupActions({
     draft,
     change,
@@ -265,7 +261,6 @@ export function EditorPalette(props: EditorPaletteProps) {
       kind = typeKinds[binding.type],
       added = bound(binding.attributeId)
     if (!kind) return null
-    const uses = shownUses(draft, binding.attributeId, cardEditor)
     const isPicked = picked.includes(binding.attributeId),
       over = dropOver?.id === binding.attributeId ? dropOver.state : undefined
     const name = binding.alias || tr('未命名欄位')
@@ -332,9 +327,7 @@ export function EditorPalette(props: EditorPaletteProps) {
               {tr('有專案覆寫')}
             </Badge>
           )}
-          <span className={'palette-row-state' + (added ? '' : ' is-unbound')}>
-            {added ? <UseCount uses={uses} /> : tr('尚未加入')}
-          </span>
+          {!added && <span className="palette-row-state is-unbound">{tr('尚未加入')}</span>}
         </UnstyledButton>
         <Menu position="bottom-end" withinPortal>
           <Menu.Target>
@@ -604,7 +597,6 @@ export function EditorPalette(props: EditorPaletteProps) {
                     actions={groupActions}
                     fieldOf={fieldOf}
                     kind={groupKind(group.groupId)}
-                    cardEditor={cardEditor}
                     dragImage={dragImage}
                     open={() => setOpenGroup({ id: group.groupId })}
                     rename={() => setOpenGroup({ id: group.groupId, fresh: true })}
@@ -723,7 +715,8 @@ export function EditorPalette(props: EditorPaletteProps) {
               ],
             })
             setNewField('')
-            setNewOptions('')
+            setTypedOptions([])
+            setOptionsProblem('')
             setNewType('string')
             setAdding(false)
             setManaging((now) => now && { focus: attributeId })
@@ -764,11 +757,22 @@ export function EditorPalette(props: EditorPaletteProps) {
             ))}
           </div>
           {newType === 'enum' && (
-            <Textarea
-              label={tr('選項（逗號或換行分隔）')}
+            <OptionTagsInput
+              label={tr('選項')}
+              placeholder={tr('輸入選項後按 Enter 或逗號')}
+              value={typedOptions}
+              splitChars={[',', '，']}
+              maxTags={100}
               error={optionsProblem || undefined}
-              value={newOptions}
-              onChange={(event) => setNewOptions(event.currentTarget.value)}
+              onChange={(options) => {
+                const clean = [...new Set(options.map((option) => option.trim()).filter(Boolean))]
+                if (clean.some((option) => option.length > 100)) {
+                  setOptionsProblem(tr('每個選項最多 100 個字'))
+                  return
+                }
+                setOptionsProblem('')
+                setTypedOptions(clean)
+              }}
             />
           )}
           <Button

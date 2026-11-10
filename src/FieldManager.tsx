@@ -5,13 +5,13 @@ import {
   Group,
   Menu,
   Modal,
-  TagsInput,
   Text,
   TextInput,
   Tooltip,
   UnstyledButton,
 } from '@mantine/core'
 import { Icon } from './icons'
+import { OptionTagsInput } from './OptionTagsInput'
 import { HelpTip } from './HelpTip'
 import { t as tr } from './i18n'
 import type { Attribute, FieldGroup, FolderRow, Project } from '../shared/model'
@@ -250,7 +250,7 @@ function FieldDetail({
           )}
           {target === 'enum' &&
             (typed.length > 0 || ('error' in planned && planned.error === 'options')) && (
-              <TagsInput
+              <OptionTagsInput
                 size="xs"
                 label={tr('還沒有可用的值，請先輸入選項')}
                 placeholder={tr('輸入選項後按 Enter')}
@@ -300,7 +300,7 @@ function FieldDetail({
       )}
       {added && binding.type === 'enum' && (
         <div className="field-detail-part">
-          <TagsInput
+          <OptionTagsInput
             size="xs"
             label={tr('選項')}
             value={binding.options ?? []}

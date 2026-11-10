@@ -1145,12 +1145,6 @@
     "en": "Discard unsaved layout changes?",
     "es": "¿Descartar los cambios de diseño sin guardar?"
   },
-  "」所有": {
-    "ja": "」の全",
-    "zh-CN": "」所有",
-    "en": "” for all",
-    "es": "» para todos los"
-  },
   "復原": {
     "ja": "元に戻す",
     "zh-CN": "复原",
@@ -3083,12 +3077,6 @@
     "en": "Components",
     "es": "Componentes"
   },
-  "選項（逗號或換行分隔）": {
-    "ja": "選択肢（カンマまたは改行区切り）",
-    "zh-CN": "选项（逗号或换行分隔）",
-    "en": "Options (comma or line separated)",
-    "es": "Opciones (separadas por comas o líneas)"
-  },
   "加入第一個組件": {
     "ja": "最初のコンポーネントを追加",
     "zh-CN": "添加第一个组件",
@@ -4828,18 +4816,6 @@
     "en": "Fallback fields",
     "ja": "代替フィールド",
     "es": "Campos alternativos"
-  },
-  "預覽中的「{0}」顯示：{1}": {
-    "zh-CN": "预览中的“{0}”显示：{1}",
-    "en": "In the preview, “{0}” shows: {1}",
-    "ja": "プレビュー中の「{0}」は次を表示: {1}",
-    "es": "En la vista previa, «{0}» muestra: {1}"
-  },
-  "預覽中的「{0}」所有欄位都沒有值": {
-    "zh-CN": "预览中的“{0}”所有字段都没有值",
-    "en": "In the preview, every field of “{0}” is empty",
-    "ja": "プレビュー中の「{0}」はすべてのフィールドが空です",
-    "es": "En la vista previa, todos los campos de «{0}» están vacíos"
   },
   "這不是遊戲目錄": {
     "zh-CN": "这不是游戏目录",
@@ -6977,12 +6953,6 @@
     "en": "Official site",
     "es": "Sitio oficial"
   },
-  "最多 100 個選項": {
-    "ja": "選択肢は 100 個まで",
-    "zh-CN": "最多 100 个选项",
-    "en": "At most 100 options",
-    "es": "Como máximo 100 opciones"
-  },
   "這個欄位在群組裡，請先移出群組。": {
     "zh-CN": "这个字段在群组里，请先移出群组。",
     "en": "This field is in a group. Remove it from the group first.",
@@ -7037,12 +7007,6 @@
     "ja": "1 つのグループに入れられるのは {0} 個まで",
     "es": "Un grupo admite como máximo {0} campos"
   },
-  "依序取第一個有值的：{0}": {
-    "zh-CN": "依序取第一个有值的：{0}",
-    "en": "Shows the first with a value, in order: {0}",
-    "ja": "値のある最初のものを順に表示：{0}",
-    "es": "Muestra el primero con valor, en orden: {0}"
-  },
   "依順序顯示第一個有值的欄位。拖動可調整順序；把其他欄位拖到群組上即可加入。": {
     "zh-CN": "依顺序显示第一个有值的字段。拖动可调整顺序；把其他字段拖到群组上即可加入。",
     "en": "Shows the first field with a value, in order. Drag to reorder; drop another field on the group to add it.",
@@ -7054,12 +7018,6 @@
     "en": "Shows the first field with a value, in order; a folder can choose its own source in its settings.",
     "ja": "値のある最初のフィールドを順番に表示します。フォルダーごとに設定でソースを指定できます。",
     "es": "Muestra el primer campo con valor, en orden; cada carpeta puede elegir su origen en su configuración."
-  },
-  "備用來源（舊版設定）：{0}": {
-    "zh-CN": "备用来源（旧版设置）：{0}",
-    "en": "Fallback fields (older setting): {0}",
-    "ja": "代替フィールド（旧設定）：{0}",
-    "es": "Campos alternativos (configuración anterior): {0}"
   },
   "加入群組": {
     "zh-CN": "加入群组",
@@ -7354,5 +7312,41 @@
     "en": "This field has more than 100 different values, too many for a single choice.",
     "ja": "このフィールドには 100 種類を超える値があるため、単一選択には向きません。",
     "es": "Este campo tiene más de 100 valores distintos, demasiados para una opción única."
+  },
+  "輸入選項後按 Enter 或逗號": {
+    "zh-CN": "输入选项后按 Enter 或逗号",
+    "en": "Type an option, then Enter or a comma",
+    "ja": "選択肢を入力して Enter かカンマ",
+    "es": "Escribe una opción y pulsa Intro o una coma"
+  },
+  "編輯群組": {
+    "zh-CN": "编辑群组",
+    "en": "Edit group",
+    "ja": "グループを編集",
+    "es": "Editar grupo"
+  },
+  "{0} 個欄位，依序取第一個有值的": {
+    "zh-CN": "{0} 个字段，依序取第一个有值的",
+    "en": "{0} fields; the first with a value shows",
+    "ja": "フィールド {0} 個、値のある最初のものを表示",
+    "es": "{0} campos; se muestra el primero con valor"
+  },
+  "備用來源（舊版）：{0} 個欄位": {
+    "zh-CN": "备用来源（旧版）：{0} 个字段",
+    "en": "Fallback fields (older setting): {0}",
+    "ja": "代替フィールド（旧設定）：{0} 個",
+    "es": "Campos alternativos (configuración anterior): {0}"
+  },
+  "目前：{0}（第 {1} 個）": {
+    "zh-CN": "目前：{0}（第 {1} 个）",
+    "en": "Now: {0} (number {1})",
+    "ja": "現在：{0}（{1} 番目）",
+    "es": "Ahora: {0} (n.º {1})"
+  },
+  "目前：都沒有值": {
+    "zh-CN": "目前：都没有值",
+    "en": "Now: no field has a value",
+    "ja": "現在：どれも値なし",
+    "es": "Ahora: ningún campo tiene valor"
   }
 }

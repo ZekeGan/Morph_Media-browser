@@ -101,7 +101,9 @@ try {
   await form.getByRole('button', { name: '新增欄位', exact: true }).click()
   await form.waitFor({ state: 'hidden' })
   assert.equal(await search.inputValue(), '', 'the search is cleared after creating')
-  await row('Zzz').getByText('使用 0 次', { exact: true }).waitFor()
+  await row('Zzz').waitFor()
+  // An added field has no state mark in the left list; use counts are in Manage fields (R-229).
+  assert.equal(await row('Zzz').locator('.palette-row-state').count(), 0)
 
   // The value filter on the section heading hides fields the previewed folder has no value for.
   await page.getByRole('textbox', { name: '使用真實資料預覽', exact: true }).click()
@@ -118,7 +120,7 @@ try {
   const before = await cells()
   await button('欄位操作 TITLE').click()
   await page.getByRole('menuitem', { name: '只引用欄位', exact: true }).click()
-  await row('TITLE').getByText('使用 0 次', { exact: true }).waitFor()
+  await row('TITLE').getByText('尚未加入', { exact: true }).waitFor({ state: 'detached' })
   assert.equal(await cells(), before)
   await row('TITLE').waitFor()
 
@@ -129,7 +131,7 @@ try {
     (n) => document.querySelectorAll('.editor-cell').length === n + 1,
     before
   )
-  await row('NAME').getByText('使用 1 次', { exact: true }).waitFor()
+  await row('NAME').getByText('尚未加入', { exact: true }).waitFor({ state: 'detached' })
 
   // Field group (R-226): NAME starts a group from its row menu, Genre (tags) joins it, and the selected component
   // shows the group. The preview shows the tags as text, from the first member with a value.
@@ -151,7 +153,11 @@ try {
   await page.getByRole('tab', { name: '內容', exact: true }).click()
   await button('更換').click()
   await page.getByRole('option', { name: groupName, exact: true }).click()
-  await page.getByRole('status').filter({ hasText: '預覽中的「Library」顯示：Genre' }).waitFor()
+  // One short line says what shows now and where it is in the order; "Edit group" opens the group on the left.
+  await page.getByRole('status').filter({ hasText: '目前：Genre（第 2 個）' }).waitFor()
+  await button('編輯群組').click()
+  await fields.getByRole('region', { name: '群組 ' + groupName, exact: true }).waitFor()
+  await button('返回欄位清單').click()
   const added = page.locator('.editor-cell.selected')
   await added.getByText('Action, RPG').waitFor()
   assert.equal(await button('找顯示後面欄位的資料夾').isDisabled(), false)
@@ -235,17 +241,18 @@ try {
   await manager.getByRole('button', { name: '新增欄位', exact: true }).click()
   await form.getByLabel('欄位名稱').fill('Cast')
   await form.getByRole('radio', { name: /^多個值/ }).check()
-  assert.equal(await form.getByLabel('選項（逗號或換行分隔）').count(), 0)
+  const optionInput = form.getByRole('textbox', { name: '選項', exact: true })
+  assert.equal(await optionInput.count(), 0)
   await form.getByRole('radio', { name: /^單選/ }).check()
-  await form.getByLabel('選項（逗號或換行分隔）').waitFor()
-  await form.getByLabel('選項（逗號或換行分隔）').fill(', ，')
-  await form.getByLabel('欄位名稱').fill('Cast')
+  // Options are tags: a comma (also full-width) or Enter makes one (R-229).
+  await optionInput.pressSequentially('A,B，')
+  await optionInput.fill('C')
+  await optionInput.press('Enter')
+  assert.deepEqual(await form.locator('.mantine-Pill-label').allInnerTexts(), ['A', 'B', 'C'])
   assert.equal(
     await form.getByRole('button', { name: '新增欄位', exact: true }).isDisabled(),
-    true,
-    'separators alone are not options'
+    false
   )
-  await form.getByLabel('選項（逗號或換行分隔）').fill('')
   await form.getByRole('radio', { name: /^多個值/ }).check()
   await form.getByRole('button', { name: '新增欄位', exact: true }).click()
   await heading('Cast').waitFor()

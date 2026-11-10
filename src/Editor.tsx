@@ -434,6 +434,8 @@ export function Editor({
     if (group)
       change(withLevel(level.map((c) => (c.cellId === selected ? bindCellToGroup(c, group) : c))))
   }
+  // "Edit group" in the Content tab opens that group in the left panel (a new request each time).
+  const [groupRequest, setGroupRequest] = useState<{ id: string; at: number }>()
   const convertToGroup = () => {
     const cell = level.find((c) => c.cellId === selected)
     if (!cell?.attributeId) return
@@ -1081,6 +1083,7 @@ export function Editor({
           availableFields={availableFields}
           attributes={attributes}
           bindSource={withSourceBinding}
+          groupRequest={groupRequest}
           rows={rows.filter((row) => row.projectId === project.projectId)}
           reference={(source) =>
             change({ ...draft, fieldBindings: withSourceBinding(draft.fieldBindings, source) })
@@ -1373,6 +1376,7 @@ export function Editor({
           setFieldIds={setFieldIds}
           setGroup={setGroup}
           convertToGroup={convertToGroup}
+          openGroup={(id) => setGroupRequest({ id, at: Date.now() })}
           enumOptions={enumOptions}
           hasContent={hasContent}
           hints={hints}

@@ -8,6 +8,7 @@ import { cellType } from '../shared/explorer'
 import { compatibleFieldTypes } from '../shared/fields'
 import { groupType } from '../shared/fieldGroups'
 import { fieldSource, fieldSourceGroups } from './fieldSources'
+import { importedFieldLabels } from './importedFieldLabels'
 
 const GROUP = 'group:'
 
@@ -22,6 +23,7 @@ export function DisplaySource({
   setFieldIds,
   setGroup,
   convertToGroup,
+  openGroup,
   setRenaming,
 }: {
   cell: Cell
@@ -32,6 +34,8 @@ export function DisplaySource({
   setFieldIds: (ids: string[], newSource?: string) => void
   setGroup: (groupId: string) => void
   convertToGroup: () => void
+  // Opens the group in the left panel, where its order is edited.
+  openGroup: (groupId: string) => void
   setRenaming: (value: { id: string; name: string }) => void
 }) {
   const [picking, setPicking] = useState(false)
@@ -47,6 +51,28 @@ export function DisplaySource({
     origin = (id: string) => fieldSource(id, attributes),
     shown = cellField(cell, preview, draft),
     chain = cell.fallbackIds?.length ? [cell.attributeId!, ...cell.fallbackIds] : undefined,
+    // Imported fields keep upper-case keys (TITLE_ORIGINAL_2); people read the plain name and the site instead.
+    labels = importedFieldLabels(),
+    friendly = (id: string) => {
+      const key = attributes.find((a) => a.attributeId === id)?.key,
+        plain = (key && labels[key]) || name(id),
+        site = origin(id)
+      return site === tr('自建') ? plain : `${plain} · ${site}`
+    },
+    members = group?.memberIds ?? chain ?? [],
+    // What the component shows now, and where that is in the order (R-229): one short line, no folder name.
+    nowText = !preview
+      ? group
+        ? tr('{0} 個欄位，依序取第一個有值的', members.length)
+        : tr('備用來源（舊版）：{0} 個欄位', members.length)
+      : isFilled(shown.value) && shown.attributeId
+        ? tr(
+            '目前：{0}（第 {1} 個）',
+            friendly(shown.attributeId),
+            members.indexOf(shown.attributeId) + 1
+          )
+        : tr('目前：都沒有值'),
+    nowTitle = members.map((id, i) => `${i + 1}. ${friendly(id)}（${name(id)}）`).join('\n'),
     current = group ? GROUP + group.groupId : (cell.attributeId ?? null)
   const choose = (value: string | null) => {
     setPicking(false)
@@ -118,19 +144,20 @@ export function DisplaySource({
           ]}
         />
       )}
-      {group && (
-        <Text size="xs" c="dimmed">
-          {tr('依序取第一個有值的：{0}', group.memberIds.map(name).join(' → '))}
-        </Text>
-      )}
-      {chain && (
-        <div className="display-source-legacy">
-          <Text size="xs" c="dimmed">
-            {tr('備用來源（舊版設定）：{0}', chain.map(name).join(' → '))}
+      {(group || chain) && (
+        <div className="display-source-now">
+          <Text size="xs" c="dimmed" role="status" title={nowTitle}>
+            {nowText}
           </Text>
-          <Button size="compact-xs" variant="light" onClick={convertToGroup}>
-            {tr('轉成群組')}
-          </Button>
+          {group ? (
+            <Button size="compact-xs" variant="subtle" onClick={() => openGroup(group.groupId)}>
+              {tr('編輯群組')}
+            </Button>
+          ) : (
+            <Button size="compact-xs" variant="light" onClick={convertToGroup}>
+              {tr('轉成群組')}
+            </Button>
+          )}
         </div>
       )}
       {['string', 'tags'].includes(display) &&
@@ -143,17 +170,6 @@ export function DisplaySource({
               : tr('文字整段顯示為一個標籤，不自動拆分。')}
           </Text>
         )}
-      {preview && (group || chain) && (
-        <Text size="xs" c="dimmed" role="status">
-          {isFilled(shown.value)
-            ? tr(
-                '預覽中的「{0}」顯示：{1}',
-                preview.name,
-                `${name(shown.attributeId!)} · ${origin(shown.attributeId!)}`
-              )
-            : tr('預覽中的「{0}」所有欄位都沒有值', preview.name)}
-        </Text>
-      )}
     </Stack>
   )
 }

@@ -39,6 +39,7 @@ export type EditorInspectorProps = {
   setFieldIds: (ids: string[], newSource?: string) => void
   setGroup: (groupId: string) => void
   convertToGroup: () => void
+  openGroup: (groupId: string) => void
   enumOptions: string[]
   hasContent: boolean
   hints: Record<CellKind, string>
@@ -71,6 +72,7 @@ export function EditorInspector(props: EditorInspectorProps) {
     setFieldIds,
     setGroup,
     convertToGroup,
+    openGroup,
     enumOptions,
     hasContent,
     hints,
@@ -162,6 +164,7 @@ export function EditorInspector(props: EditorInspectorProps) {
                       setFieldIds={setFieldIds}
                       setGroup={setGroup}
                       convertToGroup={convertToGroup}
+                      openGroup={openGroup}
                       setRenaming={setRenaming}
                     />
                   )}
