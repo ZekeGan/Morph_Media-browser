@@ -7348,5 +7348,53 @@
     "en": "Now: no field has a value",
     "ja": "現在：どれも値なし",
     "es": "Ahora: ningún campo tiene valor"
+  },
+  "範例文字": {
+    "zh-CN": "示例文字",
+    "en": "Sample text",
+    "ja": "サンプルテキスト",
+    "es": "Texto de ejemplo"
+  },
+  "標籤一": {
+    "zh-CN": "标签一",
+    "en": "Tag one",
+    "ja": "タグ 1",
+    "es": "Etiqueta uno"
+  },
+  "標籤二": {
+    "zh-CN": "标签二",
+    "en": "Tag two",
+    "ja": "タグ 2",
+    "es": "Etiqueta dos"
+  },
+  "標籤三": {
+    "zh-CN": "标签三",
+    "en": "Tag three",
+    "ja": "タグ 3",
+    "es": "Etiqueta tres"
+  },
+  "範例資料（沒有值的欄位填示意值）": {
+    "zh-CN": "示例数据（没有值的字段填示意值）",
+    "en": "Sample data (empty fields get sample values)",
+    "ja": "サンプルデータ（値のないフィールドに見本を入れる）",
+    "es": "Datos de ejemplo (los campos vacíos reciben valores de muestra)"
+  },
+  "範例資料：沒有值的欄位以示意值顯示，不是真實資料": {
+    "zh-CN": "示例数据：没有值的字段以示意值显示，不是真实数据",
+    "en": "Sample data: empty fields show sample values, not real data",
+    "ja": "サンプルデータ：値のないフィールドは見本の値で表示しています（実データではありません）",
+    "es": "Datos de ejemplo: los campos vacíos muestran valores de muestra, no datos reales"
+  },
+  "這個欄位還沒有任何資料夾有值。": {
+    "zh-CN": "这个字段还没有任何文件夹有值。",
+    "en": "No folder has a value for this field yet.",
+    "ja": "このフィールドに値のあるフォルダーはまだありません。",
+    "es": "Ninguna carpeta tiene todavía un valor en este campo."
+  },
+  "用範例資料預覽": {
+    "zh-CN": "用示例数据预览",
+    "en": "Preview with sample data",
+    "ja": "サンプルデータでプレビュー",
+    "es": "Previsualizar con datos de ejemplo"
   }
 }

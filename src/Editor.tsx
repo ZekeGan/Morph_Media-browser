@@ -42,10 +42,11 @@ import {
   removePreset,
   addCommonFields,
   extremePreviewRow,
+  samplePreviewRow,
 } from '../shared/layouts'
 import { commonFieldNames } from './commonFields'
 import { isGameFolder } from '../shared/media'
-import { cellField } from '../shared/cells'
+import { cellField, cellFieldIds, isFilled } from '../shared/cells'
 import { rowFieldAttributes } from './fieldSources'
 import { bindCellToGroup, freeGroupName, groupFromFallbacks } from '../shared/fieldGroups'
 import { refusalText } from './FieldGroupPalette'
@@ -56,7 +57,11 @@ const withoutGroup = (cell: Cell): Cell => {
 }
 
 // Preview choices that are not a folder (row ids are hashes, so these cannot collide).
-const EXTREME = { longest: 'extreme:longest', shortest: 'extreme:shortest' }
+const EXTREME = {
+  longest: 'extreme:longest',
+  shortest: 'extreme:shortest',
+  sample: 'extreme:sample',
+}
 const TAB_KEY = 'editor.inspectorTab'
 export function Editor({
   project,
@@ -253,14 +258,29 @@ export function Editor({
   )
   const extremePreview = useMemo(
     () =>
-      previewId === EXTREME.longest || previewId === EXTREME.shortest
-        ? extremePreviewRow(
+      previewId === EXTREME.sample
+        ? samplePreviewRow(
             rows,
             draft.fieldBindings,
-            previewId === EXTREME.longest ? 'longest' : 'shortest'
+            {
+              string: tr('範例文字'),
+              tags: [tr('標籤一'), tr('標籤二'), tr('標籤三')],
+              number: 4,
+              date: new Date().toISOString().slice(0, 10),
+              datetime: new Date().toISOString().slice(0, 10) + 'T12:00',
+              boolean: true,
+              url: 'https://example.com',
+            },
+            draft.fieldGroups
           )
-        : undefined,
-    [previewId, rows, draft.fieldBindings]
+        : previewId === EXTREME.longest || previewId === EXTREME.shortest
+          ? extremePreviewRow(
+              rows,
+              draft.fieldBindings,
+              previewId === EXTREME.longest ? 'longest' : 'shortest'
+            )
+          : undefined,
+    [previewId, rows, draft.fieldBindings, draft.fieldGroups]
   )
   // Components whose content is cut off in the current preview (hidden overflow; scrolling cells are fine).
   const [overflowing, setOverflowing] = useState<string[]>([])
@@ -789,13 +809,18 @@ export function Editor({
             placeholder={tr('尚無資料夾')}
             leftSection={<Icon name="eye" size={14} />}
             data={[
-              ...(rows.length > 1
+              ...(rows.length
                 ? [
                     {
                       group: tr('極端情況'),
                       items: [
-                        { value: EXTREME.longest, label: tr('各欄位最長的資料') },
-                        { value: EXTREME.shortest, label: tr('各欄位最短的資料') },
+                        { value: EXTREME.sample, label: tr('範例資料（沒有值的欄位填示意值）') },
+                        ...(rows.length > 1
+                          ? [
+                              { value: EXTREME.longest, label: tr('各欄位最長的資料') },
+                              { value: EXTREME.shortest, label: tr('各欄位最短的資料') },
+                            ]
+                          : []),
                       ],
                     },
                   ]
@@ -1120,6 +1145,12 @@ export function Editor({
               setSelected('')
           }}
         >
+          {previewId === EXTREME.sample && (
+            <div className="canvas-sample-note">
+              <Icon name="eye" size={14} />
+              {tr('範例資料：沒有值的欄位以示意值顯示，不是真實資料')}
+            </div>
+          )}
           <div className="canvas-status" role="status">
             {selectedCell && overflowing.includes(selectedCell.cellId) ? (
               <div className="cell-overflow-fix">
@@ -1377,6 +1408,16 @@ export function Editor({
           setGroup={setGroup}
           convertToGroup={convertToGroup}
           openGroup={(id) => setGroupRequest({ id, at: Date.now() })}
+          showSample={
+            selectedCell &&
+            previewId !== EXTREME.sample &&
+            isFieldKind(selectedCell.kind) &&
+            !rows.some((row) =>
+              cellFieldIds(selectedCell, draft).some((id) => !!id && isFilled(fieldValue(row, id)))
+            )
+              ? () => setPreviewId(EXTREME.sample)
+              : undefined
+          }
           enumOptions={enumOptions}
           hasContent={hasContent}
           hints={hints}

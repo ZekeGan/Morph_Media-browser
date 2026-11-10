@@ -351,6 +351,8 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .palette-row.is-unbound .palette-field-name { color:var(--muted); }
 .palette-row-more { flex-shrink:0; opacity:.55; }.palette-row:hover .palette-row-more,.palette-row-more:focus-visible,.palette-row-more[aria-expanded='true'] { opacity:1; }
 .palette-create { margin-top:6px; }.palette-menu-note { max-width:220px; white-space:normal; }
+.canvas-sample-note { display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:12px; color:var(--accent); }
+.display-source-empty { display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; }
 .canvas-status { display:flex; align-items:center; min-height:30px; margin-bottom:8px; font-size:12px; color:var(--muted); }
 .canvas-status > span,.cell-overflow-fix { display:flex; flex-wrap:wrap; align-items:center; gap:6px; min-width:0; }.canvas-status-warn,.cell-overflow-fix { color:var(--warning); }.cell-overflow-fix > span { color:var(--text); }
 .cell-float-toolbar { position:absolute; z-index:20; display:flex; gap:2px; padding:2px; transform:translateX(-100%); background:var(--surface); border:1px solid var(--line); border-radius:6px; box-shadow:0 2px 8px var(--shadow); }

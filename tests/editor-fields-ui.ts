@@ -314,6 +314,14 @@ try {
   await button('目前資料夾設定').click()
   const drawer = page.getByRole('region', { name: '資料夾設定 · Library', exact: true })
   await drawer.waitFor()
+  // Field sections start folded when there are several (R-231); their titles stay visible.
+  const sectionOf = (title: string) =>
+    drawer.locator('details.field-source-group').filter({
+      has: page.locator('summary', { hasText: title }),
+    })
+  assert.equal(await sectionOf('自建').getAttribute('open'), null)
+  await sectionOf('自建').locator('summary').click()
+  await sectionOf(groupName).locator('summary').click()
   assert.equal(await drawer.getByLabel('Score', { exact: true }).inputValue(), '0')
   assert.equal(await drawer.getByRole('textbox', { name: 'Flag', exact: true }).inputValue(), '否')
   // A group lists its members together; this folder can choose the member it shows (saved in the project), and a

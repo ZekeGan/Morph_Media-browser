@@ -291,6 +291,23 @@ export function FolderPanel({
       onAddOption={(option) => void addOption(f.attributeId, option)}
     />
   )
+  // Field sections (sources and groups) start folded so the Data tab stays short; the titles show how many hold data.
+  // A list with a single section shows it open. What the user opens stays open until another folder is shown (R-231).
+  const [openSections, setOpenSections] = useState<string[]>([])
+  useEffect(() => setOpenSections([]), [row.rowId])
+  const section = (key: string, alone: boolean) => ({
+    open: alone || openSections.includes(key),
+    onClick: (event: React.MouseEvent) => {
+      if (alone) return
+      event.preventDefault()
+      setOpenSections((now) =>
+        now.includes(key) ? now.filter((item) => item !== key) : [...now, key]
+      )
+    },
+  })
+  const mainSections =
+    (project.fieldGroups?.length ?? 0) +
+    fieldSourceGroups(mainFields.filter(visibleField), attributes).length
   // A field group: every member's value side by side, and which member this folder shows (saved in the project).
   const folderId = row.record?.folderId
   const renderFieldGroups = () =>
@@ -300,9 +317,14 @@ export function FolderPanel({
         shown = groupValue(project, group, row),
         chosen = folderId ? project.groupSources?.[folderId]?.[group.groupId] : undefined,
         members = group.memberIds.flatMap((id) => fields.find((f) => f.attributeId === id) ?? [])
+      const fold = section('group:' + group.groupId, mainSections <= 1)
       return (
-        <details key={group.groupId} className="field-source-group field-group-block" open>
-          <summary>
+        <details
+          key={group.groupId}
+          className="field-source-group field-group-block"
+          open={fold.open}
+        >
+          <summary onClick={fold.onClick}>
             {group.name}{' '}
             <Text component="span" size="xs" c="dimmed">
               {shown.attributeId ? tr('顯示「{0}」', alias(shown.attributeId)) : tr('都沒有值')}
@@ -347,18 +369,21 @@ export function FolderPanel({
         </details>
       )
     })
-  const renderGroups = (items: typeof fields) =>
-    fieldSourceGroups(items.filter(visibleField), attributes).map(({ source, fields }) => (
-      <details key={source} className="field-source-group" open>
-        <summary>
-          {source}{' '}
-          <Text component="span" size="xs" c="dimmed">
-            {tr('{0} 項有資料', fields.filter((f) => isFilled(effective(f.attributeId))).length)}
-          </Text>
-        </summary>
-        <Stack>{fields.map(renderField)}</Stack>
-      </details>
-    ))
+  const renderGroups = (items: typeof fields, sections: number, prefix = '') =>
+    fieldSourceGroups(items.filter(visibleField), attributes).map(({ source, fields }) => {
+      const fold = section(prefix + source, sections <= 1)
+      return (
+        <details key={source} className="field-source-group" open={fold.open}>
+          <summary onClick={fold.onClick}>
+            {source}{' '}
+            <Text component="span" size="xs" c="dimmed">
+              {tr('{0} 項有資料', fields.filter((f) => isFilled(effective(f.attributeId))).length)}
+            </Text>
+          </summary>
+          <Stack>{fields.map(renderField)}</Stack>
+        </details>
+      )
+    })
   const boundary = (state: 'root' | 'not-game' | 'candidate', traverse = false) => {
     if (!row.record || (fieldDirty && !window.confirm(tr('套用邊界前放棄欄位草稿？')))) return
     void run({
@@ -632,7 +657,7 @@ export function FolderPanel({
               </Text>
             )}
             {renderFieldGroups()}
-            {renderGroups(mainFields)}
+            {renderGroups(mainFields, mainSections)}
             {!mainFields.length && !project.fieldGroups?.length && (
               <Group justify="space-between" wrap="nowrap" gap="xs">
                 <Text c="dimmed" size="sm">
@@ -670,7 +695,13 @@ export function FolderPanel({
                     {otherFields.length}）
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <Stack>{renderGroups(otherFields)}</Stack>
+                    <Stack>
+                      {renderGroups(
+                        otherFields,
+                        fieldSourceGroups(otherFields.filter(visibleField), attributes).length,
+                        'other:'
+                      )}
+                    </Stack>
                   </Accordion.Panel>
                 </Accordion.Item>
               </Accordion>

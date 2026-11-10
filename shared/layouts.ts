@@ -296,3 +296,56 @@ export function extremePreviewRow(
     record: { ...base.record, attributes, projectOverrides: {} },
   }
 }
+
+// Editor preview for fields without data (R-230): every field takes a real value from any folder that has one, and a
+// sample of its type otherwise, so a new field shows how it will look before any folder holds a value. Never saved.
+export type PreviewSamples = Record<string, unknown>
+// A group shows its first member with a value, so within a group only the first member gets a sample, and none does
+// when any member has real data (a sample would hide it).
+export function samplePreviewRow(
+  rows: FolderRow[],
+  fields: Project['fieldBindings'],
+  samples: PreviewSamples,
+  groups: Project['fieldGroups'] = []
+): FolderRow | undefined {
+  const base = rows.find((row) => row.record)
+  if (!base?.record) return undefined
+  const filled = (value: unknown) => sizeOf(value) > 0
+  const real = new Map(
+    fields.map((field) => [
+      field.attributeId,
+      rows.map((row) => fieldValue(row, field.attributeId)).find(filled),
+    ])
+  )
+  const sampled = (attributeId: string) => {
+    const group = groups.find((g) => g.memberIds.includes(attributeId))
+    return (
+      !group ||
+      (group.memberIds[0] === attributeId &&
+        group.memberIds.every((id) => real.get(id) === undefined))
+    )
+  }
+  const attributes: Attribute[] = fields.flatMap((field) => {
+    const own = real.get(field.attributeId)
+    const value =
+      own !== undefined
+        ? own
+        : !sampled(field.attributeId)
+          ? undefined
+          : field.type === 'enum'
+            ? field.options?.[0]
+            : samples[field.type]
+    return value === undefined
+      ? []
+      : [
+          {
+            attributeId: field.attributeId,
+            key: field.alias,
+            type: field.type,
+            value,
+            source: 'manual',
+          },
+        ]
+  })
+  return { ...base, record: { ...base.record, attributes, projectOverrides: {} } }
+}

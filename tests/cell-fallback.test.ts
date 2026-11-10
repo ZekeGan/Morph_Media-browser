@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cellField, isFilled } from '../shared/cells'
 import { columnValue, fallbackColumns, sortRows } from '../shared/browse'
-import { addCommonFields, extremePreviewRow, rowCells } from '../shared/layouts'
+import { addCommonFields, extremePreviewRow, rowCells, samplePreviewRow } from '../shared/layouts'
 import {
   cellsWithoutField,
   fieldValue,
@@ -391,4 +391,35 @@ test("the editor preview can use each field's longest or shortest value across f
   assert.equal(fieldValue(shortest, 'title'), 'Short', 'an empty value is never the shortest')
   assert.deepEqual(fieldValue(shortest, 'tags'), ['x'])
   assert.equal(shortest.name, 'a')
+})
+
+test('the sample preview keeps real values and fills fields without data by type (R-230)', () => {
+  const fields = [
+    { attributeId: 'title', alias: 'Title', type: 'string' },
+    { attributeId: 'tags', alias: 'Tags', type: 'tags' },
+    { attributeId: 'state', alias: 'State', type: 'enum', options: ['Done', 'Todo'] },
+    { attributeId: 'score', alias: 'Score', type: 'number' },
+  ] as Project['fieldBindings']
+  const make = (name: string, values: Record<string, unknown>) =>
+    ({ ...row(values), rowId: name, name, path: 'C:/lib/' + name }) as FolderRow
+  const rows = [make('a', { title: '' }), make('b', { title: 'Real' })]
+  const sample = samplePreviewRow(rows, fields, { string: 'Sample', tags: ['t'], number: 4 })!
+  assert.equal(fieldValue(sample, 'title'), 'Real', 'a real value from any folder wins')
+  assert.deepEqual(fieldValue(sample, 'tags'), ['t'])
+  assert.equal(fieldValue(sample, 'state'), 'Done', 'a choice shows its first option')
+  assert.equal(fieldValue(sample, 'score'), 4)
+  assert.equal(sample.name, 'a')
+  // In a group, a sample never hides a member's real value, and only the first member gets one.
+  const grouped = samplePreviewRow(
+    rows,
+    [...fields, { attributeId: 'other', alias: 'Other', type: 'string' }],
+    { string: 'Sample' },
+    [
+      { groupId: 'g', name: 'G', memberIds: ['other', 'title'] },
+      { groupId: 'h', name: 'H', memberIds: ['tags', 'score'] },
+    ]
+  )!
+  assert.equal(fieldValue(grouped, 'other'), undefined)
+  assert.equal(fieldValue(grouped, 'title'), 'Real')
+  assert.equal(fieldValue(grouped, 'score'), undefined)
 })

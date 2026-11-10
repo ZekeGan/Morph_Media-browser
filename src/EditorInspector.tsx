@@ -40,6 +40,8 @@ export type EditorInspectorProps = {
   setGroup: (groupId: string) => void
   convertToGroup: () => void
   openGroup: (groupId: string) => void
+  // Set when no folder has a value for the selected component: switches the preview to sample data.
+  showSample?: () => void
   enumOptions: string[]
   hasContent: boolean
   hints: Record<CellKind, string>
@@ -73,6 +75,7 @@ export function EditorInspector(props: EditorInspectorProps) {
     setGroup,
     convertToGroup,
     openGroup,
+    showSample,
     enumOptions,
     hasContent,
     hints,
@@ -154,6 +157,16 @@ export function EditorInspector(props: EditorInspectorProps) {
                         }
                       />
                     )}
+                  {showSample && (
+                    <div className="display-source-empty">
+                      <Text size="xs" c="dimmed">
+                        {tr('這個欄位還沒有任何資料夾有值。')}
+                      </Text>
+                      <Button size="compact-xs" variant="light" onClick={showSample}>
+                        {tr('用範例資料預覽')}
+                      </Button>
+                    </div>
+                  )}
                   {isFieldKind(selectedCell.kind) && (
                     <DisplaySource
                       cell={selectedCell}
