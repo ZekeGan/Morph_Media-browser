@@ -17,6 +17,9 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix (R-246): importing from a website with "fill empty fields" no longer fails when one of the chosen fields was edited by hand; that field is left as it is and the others are filled. Replacing still refuses to overwrite a hand edit.
+- Checks (R-248): commits are refused when code imports across the window, shared and main-process layers.
+- Dates (R-240): imported release dates are saved as dates (Steam "12 Nov, 2020", 2020/11/12, English month names and so on become 2020-11-12) and the E-Hentai posting time as a date and time; a year alone stays text, and so does any value of a field the project uses as text. In Manage fields a date field can be changed to text (date comparisons on it are removed, with a count first) and a text field to a date, when every saved value reads as a date. Saved values are not rewritten: text in a date field is shown, sorted, compared and searched as a date. Folder text saving now refuses non-text fields (R-247).
 - Internal (R-241): every request from the window to the main process is checked for a known action and correctly typed fields before it runs; malformed requests are refused. The library request handling moved out of main.ts into its own module. No visible change.
 - Docs (R-242): specs describe current behaviour only (change history and "this round" notes removed), numbered headings renamed, ARCHITECTURE lists the missing modules, the metadata spec lists DLsite.
 - Conditions (R-239): a component can have up to five display conditions, all or any of which must match; date fields can be compared with today ("within N days", "more than N days ago"); and layout text can show different words by rule (for example "New" for releases within 90 days, "Classic" before 2016), with its own text when no rule matches. New keys `moreConditions`, `conditionMode`, `textRules` and operators `within`/`older`.

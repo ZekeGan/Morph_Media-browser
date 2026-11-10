@@ -555,6 +555,13 @@ test('source preview and fill/replace protect manual edits, preserve provenance,
     ],
   })
   await assert.rejects(apply(second.token, 'replace'), /來源衝突/)
+  // Filling empty fields skips the hand-edited field instead of failing the whole import (R-246).
+  await apply(second.token, 'fill')
+  assert.equal(
+    (await readFolder(media)).attributes.find((value) => value.attributeId === 'bangumi-title')!
+      .value,
+    'EDITED'
+  )
   assert.equal(
     (await readFolder(media)).attributes.find((value) => value.attributeId === 'bangumi-title')!
       .sourceRecord,

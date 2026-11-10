@@ -1,3 +1,4 @@
+import { dateOrText } from '../shared/fields'
 import { stabilizeQuery, type QueryField } from '../shared/query'
 import { projectImageCells } from '../shared/layouts'
 import fs from 'node:fs/promises'
@@ -479,16 +480,22 @@ export class Library {
       p = this.linked(row.projectId).project!
     const record = await readFolder(row.path)
     const allowed = new Map([
-      ...p.fieldBindings.map((f) => [f.attributeId, f.alias] as const),
+      // Only text fields: a number, date or other typed field is never stored as text here (R-247).
+      ...p.fieldBindings
+        .filter((f) => f.type === 'string')
+        .map((f) => [f.attributeId, f.alias] as const),
       ...record.attributes
         .filter((a) => a.type === 'string')
         .map((a) => [a.attributeId, a.key] as const),
     ])
     for (const [attributeId, value] of Object.entries(values)) {
+      if (p.fieldBindings.some((f) => f.attributeId === attributeId && f.type !== 'string'))
+        throw new Error('欄位型別不符，不自動轉換')
       if (!allowed.has(attributeId) || typeof value !== 'string' || value.length > 10000)
         throw new Error('文字欄位不合法或超過 10,000 字')
       const old = record.attributes.find((a) => a.attributeId === attributeId)
-      if (old && old.type !== 'string') throw new Error('欄位型別不符，不自動轉換')
+      // A date saved before the field became text is replaced by the text (R-240); other types are never converted.
+      if (old && !dateOrText(old.type, 'string')) throw new Error('欄位型別不符，不自動轉換')
       if (!old && !value) continue
       record.attributes = [
         ...record.attributes.filter((a) => a.attributeId !== attributeId),

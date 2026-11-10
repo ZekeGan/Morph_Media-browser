@@ -6,6 +6,7 @@ import {
   type FolderRow,
   type Project,
 } from './model'
+import { readDate } from './fields'
 
 export type GroupContext = Pick<Project, 'fieldGroups' | 'groupSources'>
 
@@ -35,6 +36,9 @@ export function displayedFieldValue(cell: Pick<Cell, 'kind'>, value: unknown): u
     return isFilled(value) ? value.join(', ') : undefined
   if (cell.kind === 'field-tags' && Array.isArray(value) && !isFilled(value)) return []
   if (cell.kind === 'field-tags' && typeof value === 'string') return value.trim() ? [value] : []
+  // Date components read dates written as text ("12 Nov, 2020"), so a field switched from text shows dates (R-240).
+  if (cell.kind === 'field-date-only') return readDate(value, 'date') ?? value
+  if (cell.kind === 'field-date') return readDate(value, 'datetime') ?? value
   return value
 }
 export function groupOf(project: GroupContext | undefined, groupId: string | undefined) {
@@ -110,12 +114,14 @@ export function conditionMet(
   // Within / older than N days from today, for date and date-and-time values (R-239).
   if (condition.operator === 'within' || condition.operator === 'older') {
     const days = typeof condition.value === 'number' ? condition.value : NaN
-    if (typeof value !== 'string' || Number.isNaN(days)) return false
-    const day = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+    // Text the field holds from before it was a date field is read as a date when it can be (R-240).
+    const date = readDate(value, 'datetime')
+    if (date === undefined || Number.isNaN(days)) return false
+    const day = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date)
     // A date alone is a calendar day here (local midnight), so the answer does not change during the day; a date and
     // time counts from this moment. Dates in the future count as within.
     const today = new Date(now)
-    const when = day ? new Date(+day[1], +day[2] - 1, +day[3]).getTime() : Date.parse(value),
+    const when = day ? new Date(+day[1], +day[2] - 1, +day[3]).getTime() : Date.parse(date),
       cutoff = day
         ? new Date(today.getFullYear(), today.getMonth(), today.getDate() - days).getTime()
         : now - days * 86400000
@@ -124,7 +130,11 @@ export function conditionMet(
   }
   if (condition.operator === 'gt' || condition.operator === 'lt') {
     const own =
-        typeof value === 'number' ? value : typeof value === 'string' ? Date.parse(value) : NaN,
+        typeof value === 'number'
+          ? value
+          : typeof value === 'string'
+            ? Date.parse(readDate(value, 'datetime') ?? '')
+            : NaN,
       target =
         typeof condition.value === 'number'
           ? condition.value

@@ -1,5 +1,6 @@
 import { fieldValue, type FolderRow, type Project } from './model'
 import { cellField, groupValue } from './cells'
+import { readDate } from './fields'
 import type { BrowseMode } from './explorer'
 export const pathKey = (p: string) => p.replace(/\\/g, '/').replace(/\/$/, '').toLocaleLowerCase()
 export const parentPath = (p: string) => p.replace(/[\\/][^\\/]+[\\/]?$/, '')
@@ -145,7 +146,12 @@ export function columnValue(project: Project, row: FolderRow, id: string): unkno
     const group = project.fieldGroups?.find((g) => GROUP_COLUMN + g.groupId === id)
     return group ? groupValue(project, group, row).value : undefined
   }
-  if (!id.startsWith(FALLBACK_COLUMN)) return fieldValue(row, id)
+  if (!id.startsWith(FALLBACK_COLUMN)) {
+    const value = fieldValue(row, id),
+      type = project.fieldBindings.find((f) => f.attributeId === id)?.type
+    // A date field shows and sorts text it can read as a date (R-240).
+    return type === 'date' || type === 'datetime' ? (readDate(value, type) ?? value) : value
+  }
   const cell = project.cells.find((c) => FALLBACK_COLUMN + c.cellId === id)
   return cell ? cellField(cell, row, project).value : undefined
 }

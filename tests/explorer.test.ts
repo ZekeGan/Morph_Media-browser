@@ -854,9 +854,13 @@ test('Steam import is namespaced, preserves manual values and rejects a source c
       row.record!.attributes.find((a) => a.attributeId === 'steam-title')!.value,
       'Portal 2'
     )
-    assert.equal(
-      row.record!.attributes.find((a) => a.attributeId === 'steam-store_release_date')!.value,
-      '18 Apr, 2011'
+    // Steam's "18 Apr, 2011" is saved as the date it names (R-240).
+    const released = row.record!.attributes.find(
+      (a) => a.attributeId === 'steam-store_release_date'
+    )!
+    assert.deepEqual(
+      { type: released.type, value: released.value },
+      { type: 'date', value: '2011-04-18' }
     )
     await explorer.request({
       action: 'attributes',
@@ -873,7 +877,22 @@ test('Steam import is namespaced, preserves manual values and rejects a source c
       ],
       private: false,
     })
+    // Filling empty fields leaves the hand-edited title alone (R-246).
     row = lib.snapshot().rows[0]
+    await explorer.request({
+      action: 'metadataApply',
+      rowId: row.rowId,
+      revision: row.record!.revision,
+      token: preview.token,
+      keys: ['TITLE'],
+      image: false,
+    })
+    row = lib.snapshot().rows[0]
+    assert.equal(
+      row.record!.attributes.find((a) => a.attributeId === 'steam-title')!.value,
+      'Manual'
+    )
+    // Replacing would overwrite it, so it is refused without writing anything.
     const { folderFile } = await import('../electron/files'),
       before = await fs.readFile(folderFile(media), 'utf8')
     await assert.rejects(
@@ -884,6 +903,7 @@ test('Steam import is namespaced, preserves manual values and rejects a source c
         token: preview.token,
         keys: ['TITLE'],
         image: false,
+        mode: 'replace',
       }),
       /來源衝突/
     )

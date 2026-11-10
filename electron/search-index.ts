@@ -1,4 +1,4 @@
-import { calendarDate } from '../shared/fields'
+import { calendarDate, readDate } from '../shared/fields'
 import { DatabaseSync } from 'node:sqlite'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -54,6 +54,7 @@ export class SearchIndex {
               {
                 alias: field.alias,
                 key: field.alias.toLocaleLowerCase(),
+                type: field.type,
               },
             ])
           ),
@@ -94,12 +95,16 @@ export class SearchIndex {
             )
           ) {
             const binding = linked?.bindings.get(a.attributeId),
-              alias = binding?.alias ?? a.key
+              alias = binding?.alias ?? a.key,
+              value = fieldValue(row, a.attributeId),
+              dateType =
+                binding?.type === 'date' || binding?.type === 'datetime' ? binding.type : undefined
+            // Text in a date field is indexed as the date it reads as, so date comparisons find it (R-240).
             values.push({
               field: a.attributeId,
               key: binding?.key ?? alias.toLocaleLowerCase(),
               type: a.type,
-              value: fieldValue(row, a.attributeId),
+              value: dateType ? (readDate(value, dateType) ?? value) : value,
             })
             keys.set(`${row.projectId}/${a.attributeId}`, {
               key: alias,

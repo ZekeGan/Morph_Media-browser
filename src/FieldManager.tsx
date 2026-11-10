@@ -34,9 +34,13 @@ import {
   purposeGlyph,
   purposeLabel,
   shownUses,
+  dateConditionCount,
+  switchDateToText,
   switchDateType,
+  switchTextToDate,
   switchTextType,
   textTypes,
+  type DateType,
   type TextType,
 } from './fieldTypes'
 
@@ -84,6 +88,8 @@ function FieldDetail({
   const [wording, setWording] = useState<{ trueLabel?: string; falseLabel?: string }>({}),
     [wordingError, setWordingError] = useState('')
   const [target, setTarget] = useState<TextType>(),
+    // Between date and text (R-240): 'string' for a date field, a date type for a text field.
+    [dateTarget, setDateTarget] = useState<'string' | DateType>(),
     [typed, setTyped] = useState<string[]>([]),
     [typedProblem, setTypedProblem] = useState(''),
     [optionProblem, setOptionProblem] = useState('')
@@ -115,6 +121,13 @@ function FieldDetail({
       ? planned.project.fieldBindings.find((field) => field.attributeId === id)?.options
       : undefined
   const impact = target ? purposeChangeImpact(draft, id, target) : 0
+  const datePlan = !dateTarget
+      ? undefined
+      : dateTarget === 'string'
+        ? switchDateToText(draft, id)
+        : switchTextToDate(draft, id, dateTarget, values),
+    removedConditions = dateTarget === 'string' ? dateConditionCount(draft, id) : 0,
+    shownCount = shownUses(draft, id, true).length
   const usage = (option: string) =>
     values.filter((value) => value === option || (Array.isArray(value) && value.includes(option)))
       .length
@@ -209,6 +222,18 @@ function FieldDetail({
               {binding.type === 'date' ? tr('改成包含時間') : tr('改成只有日期')}
             </Button>
           )}
+          {added && ['date', 'datetime'].includes(binding.type) && cardEditor && (
+            <Button
+              size="compact-xs"
+              variant="default"
+              onClick={() => {
+                setTarget(undefined)
+                setDateTarget('string')
+              }}
+            >
+              {tr('改成文字')}
+            </Button>
+          )}
           {added && isTextType(binding.type) && cardEditor && (
             <Menu position="bottom-start">
               <Menu.Target>
@@ -224,7 +249,20 @@ function FieldDetail({
                       key={type}
                       onClick={() => {
                         setTyped([])
+                        setDateTarget(undefined)
                         setTarget(type)
+                      }}
+                    >
+                      {purposeLabel(type)}
+                    </Menu.Item>
+                  ))}
+                {binding.type === 'string' &&
+                  (['date', 'datetime'] as const).map((type) => (
+                    <Menu.Item
+                      key={type}
+                      onClick={() => {
+                        setTarget(undefined)
+                        setDateTarget(type)
                       }}
                     >
                       {purposeLabel(type)}
@@ -251,10 +289,62 @@ function FieldDetail({
             : tr('目前沒有資料夾有值')}
         </dd>
       </dl>
-      {added && isTextType(binding.type) && !cardEditor && (
-        <Text size="xs" c="dimmed">
-          {tr('改用途請到卡片版面編輯器。')}
-        </Text>
+      {added &&
+        (isTextType(binding.type) || ['date', 'datetime'].includes(binding.type)) &&
+        !cardEditor && (
+          <Text size="xs" c="dimmed">
+            {tr('改用途請到卡片版面編輯器。')}
+          </Text>
+        )}
+      {dateTarget && datePlan && (
+        <div className="field-detail-change">
+          <Text size="sm" fw={600}>
+            {tr('改成「{0}」', purposeLabel(dateTarget))}
+          </Text>
+          {'error' in datePlan ? (
+            <Text size="xs" c="orange" role="alert">
+              {datePlan.error === 'unreadable'
+                ? tr(
+                    '有 {0} 個值讀不成日期，不能改：{1}',
+                    datePlan.values.length,
+                    datePlan.values.slice(0, 10).join('、') +
+                      (datePlan.values.length > 10 ? '…' : '')
+                  )
+                : reasons[datePlan.error]}
+            </Text>
+          ) : (
+            <ul>
+              <li>
+                {shownCount
+                  ? tr('卡片上 {0} 個組件會換成新的呈現', shownCount)
+                  : tr('卡片上的組件保留原本的呈現')}
+              </li>
+              {removedConditions > 0 && (
+                <li>{tr('{0} 個比較日期的條件（大於、小於、距今）會移除', removedConditions)}</li>
+              )}
+              <li>
+                {dateTarget === 'string'
+                  ? tr('資料夾裡已存的值不會改寫，照原樣顯示')
+                  : tr('資料夾裡已存的文字不會改寫，顯示時讀成日期')}
+              </li>
+            </ul>
+          )}
+          <Group gap="xs">
+            <Button
+              size="xs"
+              disabled={'error' in datePlan}
+              onClick={() => {
+                if ('project' in datePlan) change(datePlan.project)
+                setDateTarget(undefined)
+              }}
+            >
+              {tr('確認改用途')}
+            </Button>
+            <Button size="xs" variant="default" onClick={() => setDateTarget(undefined)}>
+              {tr('取消')}
+            </Button>
+          </Group>
+        </div>
       )}
       {target && planned && (
         <div className="field-detail-change">

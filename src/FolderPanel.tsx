@@ -1,3 +1,4 @@
+import { dateOrText } from '../shared/fields'
 import { metadataSources } from '../shared/sources'
 import {
   detectFolderKind,
@@ -142,19 +143,24 @@ export function FolderPanel({
     manual: '',
   }
   const fields = useMemo(
-    () => [
-      ...new Map(
-        [
-          ...project.fieldBindings.map((f) => ({
-            attributeId: f.attributeId,
-            key: f.alias,
-            type: f.type,
-          })),
-          ...(row.record?.attributes ?? []),
-          ...(row.record?.projectOverrides[row.projectId] ?? []),
-        ].map((a) => [a.attributeId, a])
-      ).values(),
-    ],
+    () =>
+      [
+        ...new Map(
+          [
+            ...project.fieldBindings.map((f) => ({
+              attributeId: f.attributeId,
+              key: f.alias,
+              type: f.type,
+            })),
+            ...(row.record?.attributes ?? []),
+            ...(row.record?.projectOverrides[row.projectId] ?? []),
+          ].map((a) => [a.attributeId, a])
+        ).values(),
+      ].map((a) => {
+        // A field switched between text and date is edited, and saved, with its current type (R-240).
+        const type = project.fieldBindings.find((f) => f.attributeId === a.attributeId)?.type
+        return type && type !== a.type && dateOrText(a.type, type) ? { ...a, type } : a
+      }),
     [project.fieldBindings, row.record]
   )
   const configured = new Set(project.fieldBindings.map((f) => f.attributeId)),

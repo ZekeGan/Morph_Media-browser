@@ -23,6 +23,7 @@
 | `pnpm status`（`--short`） | 依 [需求清單](WORK_ITEMS.md) 印出每次回覆結尾的狀態區塊 |
 | `pnpm stale` | 收尾時點名可能過時的內容：領域登錄表缺漏、程式在「最後確認」之後改過的規格卡、文件提到不存在的檔案、沒有程式使用的語系文字、清單殘留的完成項目、規格裡的「待實作」與過大的規格；只提示不阻擋（`--strict` 才失敗） |
 | `node scripts/areas.mjs check／readme／which <檔案>` | 領域登錄表：檢查涵蓋、重產 [README](README.md) 定位表、查某個檔案屬於哪個領域與該跑哪些 UI 測試 |
+| `node scripts/check-layers.mjs` | 分層引用檢查：`src/` 不得引用 `electron/`、Electron 或 Node 內建模組，`shared/` 不得引用 `src/`、`electron/`、Electron、Node、React 或 Mantine，`electron/` 不得引用 `src/`；`import type` 不受限。pre-commit 自動執行 |
 | `pnpm shot:docs [名稱…]` | `tests/support/docs-shots.ts`：用 `demo-data.ts` 產生的自製示範收藏（自製封面、虛構標題）重拍文件截圖，寫入 `docs/images/`；需先 `pnpm build`，示範資料建在磁碟根目錄的 `Morph-Demo` 並於結束時刪除 |
 
 不要臆造 lint／舊 UI script；需新命令先查 package.json。未改依賴且環境可用，不例行安裝或更新套件。

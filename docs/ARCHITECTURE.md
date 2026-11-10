@@ -25,7 +25,7 @@ flowchart LR
   class FR,PS source
 ```
 
-行程邊界與模組：只有 main 碰檔案系統，每個模組的責任見下方「按問題找入口」。`shared/`（型別與純邏輯）由 renderer 與 main 共同引用。
+行程邊界與模組：只有 main 碰檔案系統，每個模組的責任見下方「按問題找入口」。`shared/`（型別與純邏輯）由 renderer 與 main 共同引用。三層之間的引用方向由 `scripts/check-layers.mjs` 在提交前檢查（renderer 與 shared 不引用 main，shared 也不引用 renderer、Node、React）。
 
 ```mermaid
 flowchart TB
@@ -52,7 +52,7 @@ flowchart TB
 ```
 `src/main.tsx → PlaybackProvider → App → DesktopShell / BrowseWorkspace → window.media / explorer / desktop → preload → main → Library / Explorer / WorkspaceStore`
 
-Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗證請求與呼叫來源、執行檔案及系統操作。保留 contextIsolation、sandbox、停用 nodeIntegration；不能讓 renderer 任意讀路徑、執行命令或繞過 main 的身分／邊界檢查。
+Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗證請求與呼叫來源、執行檔案及系統操作。保留 contextIsolation、sandbox、停用 nodeIntegration；不能讓 renderer 任意讀路徑、執行命令或繞過 main 的身分／邊界檢查。renderer 沒有直接的 IPC，只能呼叫 preload 暴露的固定函式；唯一由畫面帶入的檔案路徑是拖入字幕：preload 用 `webUtils.getPathForFile` 從使用者實際拖入的檔案取得路徑，renderer 只能交出 File，無法指定路徑字串。
 
 側鍵導覽由 main 的 `app-command` 經 `folder:navigate`／`desktop.onFolderNavigation` 傳入工作區；preload 同時接收原生命令與一般 mouseup，取消側鍵 DOM 預設動作，以短時間配對去重，兼容僅送一般事件的驅動。main 換算內容座標及縮放，BrowseWorkspace 再檢查命中區域、可見浮層與忙碌狀態，最後仍經 `visit` 驗證目的地；此通知不授予讀寫路徑權限。訂閱隨工作區卸載清除。
 

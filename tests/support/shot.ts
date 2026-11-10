@@ -135,6 +135,8 @@ if (args.includes('--fields')) {
       { alias: 'Steam 遊戲名', attributeId: steam, type: 'string' },
       { alias: 'DLsite 作品名', attributeId: dlsite, type: 'string' },
       { alias: 'Getchu タイトル', attributeId: getchu, type: 'string' },
+      // A date field, to look at changing a field between date and text (R-240).
+      { alias: '發售日', attributeId: crypto.randomUUID(), type: 'date' },
     ],
     cells: [
       ...project.cells,

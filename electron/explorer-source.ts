@@ -8,6 +8,32 @@ import { newDetails, type ExplorerRequest, type MetadataPreview } from '../share
 import { metadata } from './metadata'
 import { fetchImageUrl } from './image-url'
 import type { Explorer } from './explorer'
+import { parseDate } from '../shared/fields'
+
+// Imported dates are stored as dates (R-240): the gallery's posting time with its time, release dates as the day
+// the source wrote. A value that is not a full date (a year, a year and month, "TBA") stays text, and so does every
+// value of a field the project has switched to text.
+const dateKeys: Record<string, 'date' | 'datetime'> = {
+  GALLERY_POSTED_UTC: 'datetime',
+  RELEASE_DATE: 'date',
+  STORE_RELEASE_DATE: 'date',
+}
+export function importedValue<T extends { key: string; type: string; value: unknown }>(
+  v: T,
+  fieldType: string | undefined
+): T {
+  const as = dateKeys[v.key]
+  if (!as || v.type !== 'string' || fieldType === 'string') return v
+  const parsed = parseDate(v.value)
+  if (!parsed) return v
+  if (as === 'datetime' && fieldType !== 'date')
+    return { ...v, type: parsed.type, value: parsed.value }
+  // A release date keeps the calendar day written at the source, not the day in this computer's time zone.
+  const written = /^\d{4}-\d{2}-\d{2}[T ]/.test(String(v.value))
+    ? String(v.value).slice(0, 10)
+    : parsed.value.slice(0, 10)
+  return { ...v, type: 'date', value: written }
+}
 
 export async function metadataPreview(
   ex: Explorer,
@@ -80,18 +106,25 @@ export async function applyMetadata(
   )
     throw new Error('匯入欄位不合法')
   const { row, record } = await ex.record(req.rowId, req.revision)
+  const bindings = ex.library.snapshot().projects.find((p) => p.projectId === row.projectId)
+    ?.project?.fieldBindings
   if (req.mode !== undefined && !['fill', 'replace'].includes(req.mode))
     throw new Error('來源匯入模式不合法')
-  for (const v of item.preview.values.filter((v) => req.keys.includes(v.key))) {
+  for (const raw of item.preview.values.filter((v) => req.keys.includes(v.key))) {
     const provider = item.preview.provider ?? 'eh',
-      attributeId = provider + '-' + v.key.toLowerCase(),
+      attributeId = provider + '-' + raw.key.toLowerCase(),
+      v = importedValue(raw, bindings?.find((f) => f.attributeId === attributeId)?.type),
       // ExHentai data saved before the two sites shared fields lives under exh-…; it is taken over by eh-….
-      legacyId = provider === 'eh' ? 'exh-' + v.key.toLowerCase() : undefined,
+      legacyId = provider === 'eh' ? 'exh-' + raw.key.toLowerCase() : undefined,
       old =
         record.attributes.find((attribute) => attribute.attributeId === attributeId) ??
         record.attributes.find((attribute) => attribute.attributeId === legacyId)
-    if (old && sourceFamily(sourceForUrl(old.source)) !== sourceFamily(provider))
+    if (old && sourceFamily(sourceForUrl(old.source)) !== sourceFamily(provider)) {
+      // Filling empty fields leaves a field the user edited by hand as it is and fills the rest (R-246);
+      // replacing would overwrite that edit, so it is still refused.
+      if (old.source === 'manual' && req.mode !== 'replace') continue
       throw new Error('既有欄位來源衝突')
+    }
     const filled =
       old &&
       old.value !== null &&

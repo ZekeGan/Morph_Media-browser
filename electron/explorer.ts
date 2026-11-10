@@ -1,6 +1,6 @@
 import { isFolderKind } from '../shared/kind'
 import { archiveIndex, type ArchiveIndex } from './archive'
-import { httpUrl, validFieldValue } from '../shared/fields'
+import { dateOrText, httpUrl, validFieldValue } from '../shared/fields'
 import { type MetadataSourceId } from '../shared/sources'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -193,7 +193,8 @@ export class Explorer {
     const valid = validFieldValue(a.type, a.value)
     if (!valid) throw new Error(`欄位 ${a.key} 的值與型別 ${a.type} 不符`)
     const old = record.attributes.find((v) => v.attributeId === a.attributeId)
-    if (old && old.type !== a.type) throw new Error('不能改變既有欄位型別')
+    if (old && old.type !== a.type && !dateOrText(old.type, a.type))
+      throw new Error('不能改變既有欄位型別')
   }
   async attributes(rowId: string, revision: number, values: Attribute[], privateValues: boolean) {
     if (
@@ -216,8 +217,12 @@ export class Explorer {
       : record.attributes
     for (const value of values) {
       this.checkValue(value, record)
-      const binding = allowed.get(value.attributeId)
-      if (!binding || binding.type !== value.type) throw new Error('欄位未配置或型別不符')
+      const binding = allowed.get(value.attributeId),
+        defined = project.fieldBindings.find((f) => f.attributeId === value.attributeId)
+      // A value is saved with the type it already has, or with the project's type for the field: a field switched
+      // between text and date saves new values with its current type (R-240).
+      if (!binding || (binding.type !== value.type && defined?.type !== value.type))
+        throw new Error('欄位未配置或型別不符')
       if (
         value.type === 'enum' &&
         !validFieldValue(
@@ -228,7 +233,8 @@ export class Explorer {
       )
         throw new Error('單選值不在選項內')
       const old = target.find((a) => a.attributeId === value.attributeId)
-      if (old && old.type !== value.type) throw new Error('覆寫型別不符')
+      if (old && old.type !== value.type && !dateOrText(old.type, value.type))
+        throw new Error('覆寫型別不符')
       const a = {
         ...value,
         key: binding.key ?? ('alias' in binding ? binding.alias : ''),

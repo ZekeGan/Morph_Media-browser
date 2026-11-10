@@ -7588,5 +7588,35 @@
     "en": "Leave empty to show nothing",
     "ja": "空欄なら表示しない",
     "es": "Vacío no muestra nada"
+  },
+  "改成文字": {
+    "zh-CN": "改成文字",
+    "en": "Change to text",
+    "ja": "テキストに変更",
+    "es": "Cambiar a texto"
+  },
+  "有 {0} 個值讀不成日期，不能改：{1}": {
+    "zh-CN": "有 {0} 个值读不成日期，不能改：{1}",
+    "en": "{0} values cannot be read as dates, so this cannot change: {1}",
+    "ja": "{0} 個の値を日付として読めないため変更できません：{1}",
+    "es": "{0} valores no se pueden leer como fechas, así que no se puede cambiar: {1}"
+  },
+  "資料夾裡已存的值不會改寫，照原樣顯示": {
+    "zh-CN": "文件夹里已存的值不会改写，照原样显示",
+    "en": "Values saved in folders are not rewritten; they show as they are",
+    "ja": "フォルダーに保存済みの値は書き換えず、そのまま表示します",
+    "es": "Los valores guardados en las carpetas no se reescriben; se muestran tal cual"
+  },
+  "資料夾裡已存的文字不會改寫，顯示時讀成日期": {
+    "zh-CN": "文件夹里已存的文字不会改写，显示时读成日期",
+    "en": "Text saved in folders is not rewritten; it is read as a date when shown",
+    "ja": "フォルダーに保存済みのテキストは書き換えず、表示時に日付として読みます",
+    "es": "El texto guardado en las carpetas no se reescribe; se lee como fecha al mostrarse"
+  },
+  "{0} 個比較日期的條件（大於、小於、距今）會移除": {
+    "zh-CN": "{0} 个比较日期的条件（大于、小于、距今）会移除",
+    "en": "{0} date comparison conditions (greater than, less than, days from today) will be removed",
+    "ja": "日付を比較する条件 {0} 個（より大きい・より小さい・今日から）は削除されます",
+    "es": "Se quitarán {0} condiciones que comparan fechas (mayor que, menor que, días desde hoy)"
   }
 }

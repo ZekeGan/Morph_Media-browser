@@ -1,3 +1,4 @@
+import { readDate } from '../shared/fields'
 import {
   Button,
   Group,
@@ -125,7 +126,8 @@ export function FolderFieldInput({
         label={f.key}
         description={note}
         type={f.type === 'url' ? 'url' : 'date'}
-        value={String(value ?? '')}
+        // Text kept from before the field was a date shows as the date it reads as (R-240).
+        value={f.type === 'date' ? (readDate(value, 'date') ?? '') : String(value ?? '')}
         disabled={disabled}
         onChange={(event) => onChange(event.currentTarget.value || null)}
       />
@@ -158,7 +160,7 @@ export function FolderFieldInput({
         label={f.key}
         description={note}
         type="datetime-local"
-        value={String(value ?? '')}
+        value={readDate(value, 'datetime')?.replace(/^(\d{4}-\d{2}-\d{2})$/, '$1T00:00') ?? ''}
         disabled={disabled}
         onChange={(e) => onChange(e.currentTarget.value)}
       />

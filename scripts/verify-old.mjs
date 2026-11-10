@@ -43,8 +43,13 @@ try {
   const add = run('git', ['worktree', 'add', '--detach', JSON.stringify(dir), ref], { cwd: root })
   if (add.status !== 0) throw new Error('git worktree add failed: ' + add.stderr)
   fs.symlinkSync(path.join(root, 'node_modules'), path.join(dir, 'node_modules'), 'junction')
-  // Today's tests (and their support files) against yesterday's app.
-  fs.cpSync(path.join(root, 'tests'), path.join(dir, 'tests'), { recursive: true, force: true })
+  // Today's UI tests (and their support files) against yesterday's app. Unit tests (*.test.ts) stay as they were
+  // at that commit: new ones may use code the old version does not have, and the build type-checks them.
+  fs.cpSync(path.join(root, 'tests'), path.join(dir, 'tests'), {
+    recursive: true,
+    force: true,
+    filter: (source) => !source.endsWith('.test.ts'),
+  })
   console.log(`Building ${ref} in ${path.relative(root, dir)} …`)
   const build = run('pnpm', ['build'], { cwd: dir, timeout: 5 * 60 * 1000 })
   if (build.status !== 0)

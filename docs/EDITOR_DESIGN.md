@@ -1,6 +1,6 @@
 # CELL 編輯器
 
-> 最後確認：2026-11-10。積木（卡片版面）編輯器的現行規則。程式：`src/Editor.tsx`、`src/EditorPalette.tsx`、`src/EditorInspector.tsx`、`src/CellStyleEditor.tsx`、`src/FieldManager.tsx`、`src/FieldGroupPalette.tsx`、`src/DisplaySource.tsx`、`src/OptionTagsInput.tsx`、`src/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
+> 最後確認：2026-11-11。積木（卡片版面）編輯器的現行規則。程式：`src/Editor.tsx`、`src/EditorPalette.tsx`、`src/EditorInspector.tsx`、`src/CellStyleEditor.tsx`、`src/FieldManager.tsx`、`src/FieldGroupPalette.tsx`、`src/DisplaySource.tsx`、`src/OptionTagsInput.tsx`、`src/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/date-fields.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
 
 本頁持有模板編輯與編輯器內的方案管理行為；CELL 種類只列在 [CELL_CATALOG](CELL_CATALOG.md)，瀏覽時的 CARD 工具列與方案切換由 [工作區](WORKSPACE_REVISION.md) 持有。實作入口：[Editor](../src/Editor.tsx)、[Card](../src/Card.tsx)、[shared/layouts](../shared/layouts.ts)。
 
@@ -84,6 +84,7 @@ CARD 專案方案與單一資料夾指定既有方案共用穩定方案身分；
 | 網址 | 官網 | `url` |
 
 - 新增欄位的「日期」卡下有「包含時間」勾選，決定是 `date` 或 `datetime`；清單與詳細仍分別顯示「日期」「日期和時間」。欄位詳細可「改成包含時間／改成只有日期」：組件跟著換呈現，條件比較值只留日期；有資料夾的值含時間時先提醒，已存的值不改寫，只有日期的組件只顯示日期部分。欄位在群組（多個成員）或備用來源中時不能切換並說明。
+- **日期與文字互換**：日期／日期和時間欄位的「改成文字」與文字欄位「改成…」裡的「日期」「日期和時間」。改成文字時，日期組件換成文字組件，讀這個欄位的大於／小於／距今條件移除（確認前顯示數量），其他條件保留；已存的值照原樣顯示。改成日期時，所有已存的值都要讀得成日期（規則同 [外部匯入](METADATA_ENRICHMENT.md#預覽套用與追溯)，只有年份不算），否則列出讀不成的值並拒絕；用在「等於／不等於」且比較值不是日期時要先改條件。資料夾記錄不改寫，卡片、表格、排序、條件與搜尋都把文字讀成日期；資料夾設定用欄位目前的用途編輯，保存時才改存成該型別。欄位在群組（多個成員）或備用來源中時不能切換。
 - 是／否欄位可在欄位詳細設定「是」「否」的顯示文字（各 1～20 字，留空用是／否），卡片、表格、資料夾設定與搜尋都用同一組文字。是／否組件的內容分頁另有「只在「是」時顯示」（條件：等於是）。
 
 - 選「單選」才出現選項輸入，用標籤輸入：逗號（含全形，輸入法輸入的也算）或 Enter 建立一個選項，與管理欄位的選項輸入相同（`src/OptionTagsInput.tsx`）。清單與詳細用用途短名顯示型別。

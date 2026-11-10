@@ -1,4 +1,6 @@
 import { cellConditions, type Cell, type CellCondition, type Project } from '../shared/model'
+import { isFilled } from '../shared/cells'
+import { readDate } from '../shared/fields'
 import { t as tr } from './i18n'
 
 // R-223: a field is chosen by what it is for, each purpose with an example. Underneath they stay the existing
@@ -225,6 +227,165 @@ export function switchDateType(
 export type SwitchResult =
   | { project: Project }
   | { error: 'fallback' | 'group' | 'condition' | 'condition-option' | 'options' | 'too-many' }
+
+// Applies one change to every cell list of a project (the card, saved layouts and content templates).
+function mapCells(project: Project, map: (cell: Cell) => Cell): Project {
+  const all = (list: Cell[]) => list.map(map)
+  return {
+    ...project,
+    cells: all(project.cells),
+    ...(project.layoutPresets
+      ? {
+          layoutPresets: project.layoutPresets.map((preset) => ({
+            ...preset,
+            cells: all(preset.cells),
+          })),
+        }
+      : {}),
+    ...(project.contentCells
+      ? {
+          contentCells: Object.fromEntries(
+            Object.entries(project.contentCells).map(([key, list]) => [key, all(list)])
+          ),
+        }
+      : {}),
+  }
+}
+// A date field in a group with other fields, or in a fallback chain, cannot change between date and text: the
+// fields shown together must keep matching types.
+function sharedDisplay(project: Project, attributeId: string): 'group' | 'fallback' | undefined {
+  if (
+    (project.fieldGroups?.find((g) => g.memberIds.includes(attributeId))?.memberIds.length ?? 0) > 1
+  )
+    return 'group'
+  if (
+    cellLists(project)
+      .flat()
+      .some(
+        (cell) =>
+          cell.fallbackIds?.includes(attributeId) ||
+          (cell.attributeId === attributeId && cell.fallbackIds?.length)
+      )
+  )
+    return 'fallback'
+}
+function withType(project: Project, attributeId: string, type: string): Project {
+  return {
+    ...project,
+    fieldBindings: project.fieldBindings.map((field) =>
+      field.attributeId === attributeId ? { ...field, type } : field
+    ),
+  } as Project
+}
+
+const dateComparisons = ['gt', 'lt', 'within', 'older']
+// Comparisons with a date ("after", "before", "within N days") that read this field; they go when it becomes text.
+export function dateConditionCount(project: Project, attributeId: string) {
+  // The active layout's saved copy is the card being edited; it is counted once.
+  return [
+    project.cells,
+    ...(project.layoutPresets ?? [])
+      .filter((preset) => preset.id !== project.activeLayoutId)
+      .map((preset) => preset.cells),
+    ...Object.values(project.contentCells ?? {}),
+  ]
+    .flat()
+    .flatMap(cellConditions)
+    .filter((c) => c.attributeId === attributeId && dateComparisons.includes(c.operator)).length
+}
+export type DateTextResult = SwitchResult | { error: 'unreadable'; values: string[] }
+// A date or date-and-time field becomes text (R-240). Stored values are not rewritten; they already are text. Date
+// components become text components, and conditions comparing this field as a date are removed.
+export function switchDateToText(project: Project, attributeId: string): DateTextResult {
+  const binding = project.fieldBindings.find((field) => field.attributeId === attributeId)
+  if (!binding || !['date', 'datetime'].includes(binding.type)) return { project }
+  const shared = sharedDisplay(project, attributeId)
+  if (shared) return { error: shared }
+  const keep = (c: CellCondition) =>
+    !(c.attributeId === attributeId && dateComparisons.includes(c.operator))
+  return {
+    project: mapCells(withType(project, attributeId, 'string'), (cell) => {
+      let next: Cell = cell
+      if (
+        cell.attributeId === attributeId &&
+        ['field-date', 'field-date-only'].includes(cell.kind)
+      ) {
+        const { presentation: _presentation, ...plain } = next
+        next = { ...plain, kind: 'field-text' } as Cell
+      }
+      const conditions = [
+        ...(next.condition ? [next.condition] : []),
+        ...(next.moreConditions ?? []),
+      ].filter(keep)
+      const rules = next.textRules?.filter((rule) => keep(rule.when))
+      const {
+        condition: _condition,
+        moreConditions: _more,
+        conditionMode,
+        textRules: _rules,
+        ...rest
+      } = next
+      return {
+        ...rest,
+        ...(conditions.length ? { condition: conditions[0] } : {}),
+        ...(conditions.length > 1 ? { moreConditions: conditions.slice(1) } : {}),
+        ...(conditions.length > 1 && conditionMode ? { conditionMode } : {}),
+        ...(rules?.length ? { textRules: rules } : {}),
+      } as Cell
+    }),
+  }
+}
+// A text field becomes a date or date-and-time field (R-240) only when every stored value reads as a date; the
+// values that do not are listed. Folder records keep the text; it is read as a date wherever it is shown.
+export function switchTextToDate(
+  project: Project,
+  attributeId: string,
+  next: DateType,
+  values: unknown[]
+): DateTextResult {
+  const binding = project.fieldBindings.find((field) => field.attributeId === attributeId)
+  if (!binding || binding.type !== 'string') return { project }
+  const shared = sharedDisplay(project, attributeId)
+  if (shared) return { error: shared }
+  const unreadable = [
+    ...new Set(
+      values
+        .filter((value) => isFilled(value))
+        .filter((value) => readDate(value, next) === undefined)
+        .map((value) => (Array.isArray(value) ? value.join(', ') : String(value)))
+    ),
+  ]
+  if (unreadable.length) return { error: 'unreadable', values: unreadable }
+  // "Equals" conditions compare with text that is not a date.
+  if (
+    cellLists(project)
+      .flat()
+      .flatMap(cellConditions)
+      .some(
+        (c) =>
+          c.attributeId === attributeId &&
+          ['equals', 'not-equals'].includes(c.operator) &&
+          readDate(c.value, next) !== c.value
+      )
+  )
+    return { error: 'condition' }
+  const kind: Cell['kind'] = next === 'date' ? 'field-date-only' : 'field-date'
+  return {
+    project: mapCells(withType(project, attributeId, next), (cell) => {
+      // Text and tag components can both show a text field; either becomes a date component.
+      if (cell.attributeId !== attributeId || !['field-text', 'field-tags'].includes(cell.kind))
+        return cell
+      const {
+        wrap: _wrap,
+        scroll: _scroll,
+        tagColors: _tagColors,
+        tagPrefix: _tagPrefix,
+        ...plain
+      } = cell
+      return { ...plain, kind } as Cell
+    }),
+  }
+}
 
 export function switchTextType(
   project: Project,

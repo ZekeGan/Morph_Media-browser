@@ -193,7 +193,7 @@
         "shared/layouts*"
       ],
       "ui": ["cell-editor-ui", "field-edit-ui", "editor-fields-ui", "decided-ui", "yes-no-wording-ui", "condition-rules-ui"],
-      "tests": ["decided.test.ts", "field-types.test.ts", "field-groups.test.ts"]
+      "tests": ["decided.test.ts", "field-types.test.ts", "field-groups.test.ts", "date-fields.test.ts"]
     },
     {
       "id": "cells",
@@ -275,7 +275,7 @@
         "src/FolderSourceImport*"
       ],
       "ui": ["media-feedback-ui"],
-      "tests": ["metadata.test.ts", "decided-media.test.ts"]
+      "tests": ["metadata.test.ts", "decided-media.test.ts", "date-fields.test.ts"]
     },
     {
       "id": "appearance",
