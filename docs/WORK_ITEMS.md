@@ -17,30 +17,12 @@
 - **R-241** library 請求分派移出 main.ts，IPC 參數在入口逐項驗證 ｜中｜安全邊界｜無｜領域：core｜依賴：無
   驗收：開程式後建立／開啟專案、改欄位值、播放影片、搜尋、切換群組與主題都照常；`pnpm exec tsx --test tests/ipc-requests.test.ts` 通過。
   `dispatch` 搬到 electron 同層模組；`library:request`、`explorer:request`、`workspace:update` 在入口檢查請求形狀（動作名稱在允許清單、各欄位型別正確），不符合就拒絕。行為與回應不變。
-- **R-240** 外部匯入的日期存成日期，文字與日期可互轉 ｜中｜資料寫入｜設定｜領域：metadata、editor、cells、search｜依賴：無
-  ①匯入：E-Hentai 上傳時間存成「日期時間」，Steam（`12 Nov, 2020`）與其他來源的發售日轉成 `YYYY-MM-DD` 的「日期」；只有年份或年月等解讀不了的值照舊存文字，不補日期。專案裡該欄位已被使用者改成文字時，新匯入照文字存。②管理欄位：日期／日期時間可改成文字（顯示原值；讀這個欄位的大於／小於／距今條件會移除，改之前預覽數量）。③文字改日期：所有已存的值都要能解讀成日期才允許，否則列出不符合的值並拒絕；不改寫資料夾記錄，讀取時解讀。只有年份（`1999`）算解讀不了。
-  驗收：①管理欄位選一個日期欄位 →「改成文字」，看到影響說明（會移除的日期比較條件數量）後確認；②選一個文字欄位 →「改成…」→「日期」，有讀不成日期的值時會列出並不能確認；③從 Steam 或 Bangumi 匯入發售日，資料夾設定裡該欄位是日期；只有年份的來源照文字存。
-- **R-247** 資料夾設定存值時檢查欄位型別 ｜小｜資料寫入｜無｜領域：panel、storage｜依賴：無
-  `saveValues` 對尚無值的數字／日期欄位直接建立文字屬性，規格要求型別不符時保留並標示、不默默轉換。
-- **R-244** 拖入字幕路徑的來源（核對後不需改程式） ｜小｜安全邊界｜無｜領域：video、core｜依賴：無
-  `explorer:subtitleDrop` 收 renderer 給的路徑，任何位置 5MB 以內的 .srt／.vtt 都能讀回畫面，違反「renderer 不得任意讀路徑」。方向：只接受受管資料夾內的檔案，或改由 main 端在拖放時取得路徑。
-  核對結果：preload 用 `webUtils.getPathForFile` 從使用者實際拖入的 File 取得路徑，renderer 沒有直接 IPC，只能交出 File，無法指定任意路徑字串；代理的回報高估了風險。只在 ARCHITECTURE 補上這條說明。驗收：看 ARCHITECTURE「資料流與邊界」最後新增的一句。
-- **R-248** 分層引用檢查 ｜小｜一般｜無｜領域：core｜依賴：無
-  pre-commit 加一項：`src/` 不得引用 `electron/`，`shared/` 不得引用 Node、Electron 或 React。參考 VS Code 的分層規則（[C-133](DECISIONS.md#c-133架構與文件檢查結論2026-11-11)）。
-  完成：`scripts/check-layers.mjs`，pre-commit 自動執行；用刻意違規的暫存檔確認能抓到 5 種越界（Node、Electron、React、跨資料夾、動態 import），`import type` 不擋。驗收：`node scripts/check-layers.mjs` 印出無越界。
-- **R-246** 外部匯入在「只填空值」時跳過手動改過的來源欄位 ｜小｜資料寫入｜無｜領域：metadata｜依賴：無
-  現在只要勾選的欄位中有一個曾手動修改（`source: manual`），整批匯入就以「既有欄位來源衝突」失敗；規格的意思是該欄位保留、其他照填。
-  驗收：在資料夾設定手動改一個已匯入的來源欄位（例如 Bangumi 標題），再從同一網址用「只填空值」匯入：不再出現「既有欄位來源衝突」，手改的值保留，其他欄位照填；勾「覆寫」時仍會拒絕。
-- **R-245** 清理不得改寫遊戲 ROOT 內的記錄 ｜小｜資料寫入｜無｜領域：storage、detection｜依賴：無
-  使用者決定（2026-11-11）：ROOT 內殘留記錄一律整筆刪除。只清私有覆寫會改寫記錄，在預覽與執行時都拒絕；整筆刪除照舊可用。重新掃描後 ROOT 內的資料夾本來就不列出，這條只擋掃描前已列出的情況。驗收：`pnpm exec tsx --test --test-name-pattern R-245 tests/game-detection.test.ts` 通過。
-- **R-242** 文件整理：規格只寫現行規則，出處移到決策紀錄 ｜中｜一般｜無｜領域：shell、browse、panel、editor、storage、core｜依賴：無
-  ①規格裡「已移除／不再」等變更語句改寫成現狀描述，「本輪」等出處移出規格；②遊戲與漫畫規格的章節去掉編號與「本輪圖」，連動 areas.json；③ARCHITECTURE 補上漏列的模組與 `workspace-backups/`，外部來源規格補 DLsite。驗收：看 GAME_VIEWER_DESIGN、MANGA_VIEWER_DESIGN 的章節名稱與 ARCHITECTURE 的模組表。不改檔名：決策紀錄只增不改，裡面的舊連結會失效。
 
 ## 進行中
 
 ## 已核定（未做）
 
-順序（2026-11-11 核定）：R-240＋R-247（已完成，待查收）→ R-244＋R-246（已完成，待查收；R-244 核對後不需改程式）→ R-248＋R-249（搬移會改到每個檔案，排最後；R-248 已完成）。
+順序（2026-11-11 核定）：其餘已完成並查收，剩 R-249。
 
 - **R-249** src 依功能分資料夾 ｜中｜一般｜無｜領域：shell、browse、panel、files、media、gallery、reader、video、documents、editor、cells、search、game、metadata、appearance、notices、storage、project｜依賴：R-248
   依 areas.json 領域分（`src/browse/`、`src/editor/`、`src/media/`、`src/video/`、`src/game/`、`src/search/`、`src/panel/` 等，共用放 `src/common/`）；功能的 css 跟元件放一起，全域樣式放 `src/styles/`。只搬檔案與改引用，不改行為；連動 areas.json、ARCHITECTURE 與規格連結。
