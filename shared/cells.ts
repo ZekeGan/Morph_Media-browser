@@ -1,4 +1,11 @@
-import { fieldValue, type Cell, type FieldGroup, type FolderRow, type Project } from './model'
+import {
+  fieldValue,
+  type Cell,
+  type CellCondition,
+  type FieldGroup,
+  type FolderRow,
+  type Project,
+} from './model'
 
 export type GroupContext = Pick<Project, 'fieldGroups' | 'groupSources'>
 
@@ -77,42 +84,78 @@ export function cellField(
     index: 0,
   }
 }
-export function cellVisible(cell: Cell, row?: FolderRow, project?: GroupContext): boolean {
-  if (!cell.condition) return true
+// Whether one condition holds for a folder. `now` is injectable for tests (relative dates count from today).
+export function conditionMet(
+  condition: CellCondition,
+  cell: Cell,
+  row?: FolderRow,
+  project?: GroupContext,
+  now = Date.now()
+): boolean {
   // "Hide when empty" on the component's own field looks at what it shows, so a group or fallback component stays
   // visible while any of its fields has a value (R-232).
   const shown =
-    ['set', 'unset'].includes(cell.condition.operator) &&
-    cell.condition.attributeId === cell.attributeId &&
+    ['set', 'unset'].includes(condition.operator) &&
+    condition.attributeId === cell.attributeId &&
     (!!cell.groupId || !!cell.fallbackIds?.length)
   const value = !row
       ? undefined
       : shown
         ? cellField(cell, row, project).value
-        : fieldValue(row, cell.condition.attributeId),
+        : fieldValue(row, condition.attributeId),
     set = isFilled(value)
-  if (cell.condition.operator === 'set') return set
-  if (cell.condition.operator === 'unset') return !set
+  if (condition.operator === 'set') return set
+  if (condition.operator === 'unset') return !set
   if (!set) return false
-  if (cell.condition.operator === 'gt' || cell.condition.operator === 'lt') {
+  // Within / older than N days from today, for date and date-and-time values (R-239).
+  if (condition.operator === 'within' || condition.operator === 'older') {
+    const days = typeof condition.value === 'number' ? condition.value : NaN
+    if (typeof value !== 'string' || Number.isNaN(days)) return false
+    const day = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+    // A date alone is a calendar day here (local midnight), so the answer does not change during the day; a date and
+    // time counts from this moment. Dates in the future count as within.
+    const today = new Date(now)
+    const when = day ? new Date(+day[1], +day[2] - 1, +day[3]).getTime() : Date.parse(value),
+      cutoff = day
+        ? new Date(today.getFullYear(), today.getMonth(), today.getDate() - days).getTime()
+        : now - days * 86400000
+    if (Number.isNaN(when)) return false
+    return condition.operator === 'within' ? when >= cutoff : when < cutoff
+  }
+  if (condition.operator === 'gt' || condition.operator === 'lt') {
     const own =
         typeof value === 'number' ? value : typeof value === 'string' ? Date.parse(value) : NaN,
       target =
-        typeof cell.condition.value === 'number'
-          ? cell.condition.value
-          : typeof cell.condition.value === 'string'
-            ? Date.parse(cell.condition.value)
+        typeof condition.value === 'number'
+          ? condition.value
+          : typeof condition.value === 'string'
+            ? Date.parse(condition.value)
             : NaN
-    if (typeof value !== typeof cell.condition.value || Number.isNaN(own) || Number.isNaN(target))
+    if (typeof value !== typeof condition.value || Number.isNaN(own) || Number.isNaN(target))
       return false
-    return cell.condition.operator === 'gt' ? own > target : own < target
+    return condition.operator === 'gt' ? own > target : own < target
   }
   return (
-    typeof value === typeof cell.condition.value &&
-    (cell.condition.operator === 'equals'
-      ? value === cell.condition.value
-      : value !== cell.condition.value)
+    typeof value === typeof condition.value &&
+    (condition.operator === 'equals' ? value === condition.value : value !== condition.value)
   )
+}
+// A cell shows when its conditions hold: all of them, or any one with conditionMode 'any' (R-239).
+export function cellVisible(
+  cell: Cell,
+  row?: FolderRow,
+  project?: GroupContext,
+  now = Date.now()
+): boolean {
+  if (!cell.condition) return true
+  const all = [cell.condition, ...(cell.moreConditions ?? [])]
+  const met = (condition: CellCondition) => conditionMet(condition, cell, row, project, now)
+  return cell.conditionMode === 'any' ? all.some(met) : all.every(met)
+}
+// Layout text with rules: the first rule that holds gives the text, otherwise the cell's own text (R-239).
+export function ruleText(cell: Cell, row?: FolderRow, project?: GroupContext, now = Date.now()) {
+  const rule = cell.textRules?.find((r) => conditionMet(r.when, cell, row, project, now))
+  return rule ? rule.text : (cell.text ?? '')
 }
 export function numericDisplay(value: unknown, maximum: number) {
   return typeof value === 'number' && Number.isFinite(value)

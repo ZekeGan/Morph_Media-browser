@@ -1,4 +1,4 @@
-import type { Cell, Project } from '../shared/model'
+import { cellConditions, type Cell, type CellCondition, type Project } from '../shared/model'
 import { t as tr } from './i18n'
 
 // R-223: a field is chosen by what it is for, each purpose with an example. Underneath they stay the existing
@@ -77,7 +77,7 @@ export function fieldUses(project: Project, attributeId: string, cardEditor: boo
         ? 'main'
         : cell.fallbackIds?.includes(attributeId)
           ? 'fallback'
-          : cell.condition?.attributeId === attributeId
+          : cellConditions(cell).some((c) => c.attributeId === attributeId)
             ? 'condition'
             : undefined
   return cellUses(project, cardEditor, role)
@@ -182,14 +182,17 @@ export function switchDateType(
       let next2 = cell
       if (cell.attributeId === attributeId && ['field-date', 'field-date-only'].includes(cell.kind))
         next2 = { ...next2, kind }
-      if (
-        cell.condition?.attributeId === attributeId &&
-        next === 'date' &&
-        typeof cell.condition.value === 'string'
-      )
+      // Comparison values on this field keep only their date (every condition: display ones and text rules).
+      const trim = (c: CellCondition): CellCondition =>
+        c.attributeId === attributeId && next === 'date' && typeof c.value === 'string'
+          ? { ...c, value: c.value.slice(0, 10) }
+          : c
+      if (next2.condition) next2 = { ...next2, condition: trim(next2.condition) }
+      if (next2.moreConditions) next2 = { ...next2, moreConditions: next2.moreConditions.map(trim) }
+      if (next2.textRules)
         next2 = {
           ...next2,
-          condition: { ...cell.condition, value: cell.condition.value.slice(0, 10) },
+          textRules: next2.textRules.map((rule) => ({ ...rule, when: trim(rule.when) })),
         }
       return next2
     })
@@ -251,10 +254,10 @@ export function switchTextType(
   // "Equals" conditions are not offered for tag lists.
   if (
     next === 'tags' &&
-    cells.some(
-      (cell) =>
-        cell.condition?.attributeId === attributeId &&
-        ['equals', 'not-equals'].includes(cell.condition.operator)
+    cells.some((cell) =>
+      cellConditions(cell).some(
+        (c) => c.attributeId === attributeId && ['equals', 'not-equals'].includes(c.operator)
+      )
     )
   )
     return { error: 'condition' }
@@ -268,11 +271,13 @@ export function switchTextType(
     if (!options.length) return { error: 'options' }
     // An "equals" condition on a choice field must compare with one of its options.
     if (
-      cells.some(
-        (cell) =>
-          cell.condition?.attributeId === attributeId &&
-          ['equals', 'not-equals'].includes(cell.condition.operator) &&
-          !options!.includes(String(cell.condition.value ?? ''))
+      cells.some((cell) =>
+        cellConditions(cell).some(
+          (c) =>
+            c.attributeId === attributeId &&
+            ['equals', 'not-equals'].includes(c.operator) &&
+            !options!.includes(String(c.value ?? ''))
+        )
       )
     )
       return { error: 'condition-option' }

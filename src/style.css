@@ -359,6 +359,7 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .inspector-head h3 { margin:0 0 2px; font-size:14px; }.inspector-empty h3 { margin:0; font-size:14px; }
 .inspector-tab-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--accent); }
 .style-section { border-top:1px solid var(--line); padding-top:4px; }.style-section-head { display:flex; align-items:center; gap:6px; min-width:0; }.style-section-toggle { flex-shrink:0; }.style-section-summary { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }.style-section-reset { margin-left:auto; }.style-changed { width:6px; height:6px; flex-shrink:0; border-radius:50%; background:var(--accent); }
+.inspector-condition,.inspector-rule { display:grid; gap:6px; padding:6px 0; border-bottom:1px dashed var(--line); }.inspector-rules { display:grid; gap:6px; }.inspector-rule > button { justify-self:start; }
 .inspector-display-mode { display:grid; gap:4px; }.inspector-options-link { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 8px; }.inspector-more { border-top:1px solid var(--line); padding-top:4px; }
 /* Field groups (R-226): a group row is a field row with an accent picture; an opened group replaces the list. */
 .palette-row-icon.is-group { background:var(--accent); color:var(--accent-contrast, #fff); }

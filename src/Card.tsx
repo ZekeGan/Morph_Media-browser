@@ -2,7 +2,14 @@ import { t as tr, useLocale, currentLocale } from './i18n'
 import { Badge, Button, Progress, Rating } from '@mantine/core'
 import { TagList } from './TagList'
 import { fieldValue, type Cell, type FolderRow, type Project } from '../shared/model'
-import { cellField, cellVisible, copyableValue, isFilled, numericDisplay } from '../shared/cells'
+import {
+  cellField,
+  cellVisible,
+  copyableValue,
+  isFilled,
+  numericDisplay,
+  ruleText,
+} from '../shared/cells'
 import { describeError } from './errors'
 import { launchChoice } from '../shared/explorer'
 import { rowCells } from '../shared/layouts'
@@ -124,7 +131,7 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
   const stats = useFolderStats(row?.rowId),
     [linkError, setLinkError] = useState('')
   if (cell.kind === 'static-text')
-    return <span style={{ whiteSpace: 'pre-wrap' }}>{cell.text ?? ''}</span>
+    return <span style={{ whiteSpace: 'pre-wrap' }}>{ruleText(cell, row, project)}</span>
   if (cell.kind === 'spacer')
     return preview ? <span className="spacer-preview" aria-label={tr('空白間距')} /> : null
   if (cell.kind === 'system-info') {

@@ -1,7 +1,13 @@
 import { parseQuery, stabilizeQuery, type QueryField } from '../shared/query'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
-import { validateFolder, validateProject, type Project, type FolderRecord } from '../shared/model'
+import {
+  cellConditions,
+  validateFolder,
+  validateProject,
+  type Project,
+  type FolderRecord,
+} from '../shared/model'
 import {
   exists,
   fingerprint,
@@ -169,7 +175,7 @@ export async function previewDeleteField(
               project.fieldGroups
                 ?.find((g) => g.groupId === cell.groupId)
                 ?.memberIds.includes(attributeId)) ||
-            cell.condition?.attributeId === attributeId
+            cellConditions(cell).some((c) => c.attributeId === attributeId)
         ).length
       preview.searches += (project.savedSearches?.length ?? 0) - (next.savedSearches?.length ?? 0)
       const group = project.fieldGroups?.find((g) => g.memberIds.includes(attributeId))

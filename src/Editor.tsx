@@ -358,9 +358,6 @@ export function Editor({
   const withLevel = (cells: Cell[]): Project => ({ ...draft, cells })
   const selectedCell = level.find((c) => c.cellId === selected),
     preview = extremePreview ?? rows.find((r) => r.rowId === previewId)
-  const conditionField = draft.fieldBindings.find(
-    (field) => field.attributeId === selectedCell?.condition?.attributeId
-  )
   const hasContent =
     !!selectedCell &&
     (isFieldKind(selectedCell.kind) ||
@@ -1398,7 +1395,6 @@ export function Editor({
         <EditorInspector
           selectedCell={selectedCell}
           draft={draft}
-          conditionField={conditionField}
           preview={preview}
           fieldSources={availableFields.filter((f) => !f.conflict)}
           attributes={attributes}

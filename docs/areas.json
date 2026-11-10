@@ -187,11 +187,12 @@
         "src/FieldGroup*",
         "src/DisplaySource*",
         "src/OptionTagsInput*",
+        "src/ConditionEditor*",
         "shared/fieldGroups*",
         "src/fieldTypes*",
         "shared/layouts*"
       ],
-      "ui": ["cell-editor-ui", "field-edit-ui", "editor-fields-ui", "decided-ui", "yes-no-wording-ui"],
+      "ui": ["cell-editor-ui", "field-edit-ui", "editor-fields-ui", "decided-ui", "yes-no-wording-ui", "condition-rules-ui"],
       "tests": ["decided.test.ts", "field-types.test.ts", "field-groups.test.ts"]
     },
     {
@@ -220,7 +221,7 @@
         "enum-add-option-ui",
         "editor-fields-ui"
       ],
-      "tests": ["cells.test.ts", "cell-fallback.test.ts", "model.test.ts"]
+      "tests": ["cells.test.ts", "cell-fallback.test.ts", "model.test.ts", "conditions.test.ts"]
     },
     {
       "id": "search",

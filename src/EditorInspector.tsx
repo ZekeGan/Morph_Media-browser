@@ -15,16 +15,24 @@ import {
   Textarea,
   TextInput,
 } from '@mantine/core'
-import type { Attribute, Cell, CellKind, FolderRow, Project } from '../shared/model'
+import {
+  MAX_MORE_CONDITIONS,
+  MAX_TEXT_RULES,
+  type Attribute,
+  type Cell,
+  type CellCondition,
+  type CellKind,
+  type FolderRow,
+  type Project,
+} from '../shared/model'
 import { isFieldKind, launchTemplates } from '../shared/explorer'
-import { typeKinds } from './editorKinds'
 import { DisplaySource } from './DisplaySource'
 import { yesNo } from './fieldTypes'
+import { ConditionEditor } from './ConditionEditor'
 import { CellStyleEditor } from './CellStyleEditor'
 import { EnumColors } from './EnumColors'
 import { FallbackActions } from './FallbackActions'
 
-type Binding = Project['fieldBindings'][number]
 export type InspectorTab = 'content' | 'style'
 
 // The right-hand settings: content and style tabs for the selected cell, or the whole card when nothing is selected.
@@ -33,7 +41,6 @@ export type InspectorTab = 'content' | 'style'
 export type EditorInspectorProps = {
   selectedCell?: Cell
   draft: Project
-  conditionField?: Binding
   preview?: FolderRow
   fieldSources: { attributeId: string; key: string; type: string }[]
   attributes: Attribute[]
@@ -65,7 +72,6 @@ export function EditorInspector(props: EditorInspectorProps) {
   const {
     selectedCell,
     draft,
-    conditionField,
     preview,
     fieldSources,
     attributes,
@@ -106,7 +112,8 @@ export function EditorInspector(props: EditorInspectorProps) {
     conditionValue.operator === 'equals' &&
     conditionValue.value === true &&
     conditionValue.attributeId === selectedCell?.attributeId
-  const customCondition = !!conditionValue && !hidesWhenEmpty && !showsOnlyTrue
+  const customCondition =
+    (!!conditionValue && !hidesWhenEmpty && !showsOnlyTrue) || !!selectedCell?.moreConditions
   const copyable =
     !!selectedCell && ['field-text', 'field-url', 'field-tags'].includes(selectedCell.kind)
   // One switch for how a field shows, for every field kind (R-232).
@@ -184,6 +191,22 @@ export function EditorInspector(props: EditorInspectorProps) {
         )}
     </div>
   )
+  const conditionRows = selectedCell?.condition
+    ? [selectedCell.condition, ...(selectedCell.moreConditions ?? [])]
+    : []
+  // The first condition is `condition`; the rest are `moreConditions`, and the mode only matters with several.
+  const setConditions = (list: CellCondition[]) =>
+    updateCell({
+      condition: list[0],
+      moreConditions: list.length > 1 ? list.slice(1) : undefined,
+      conditionMode: list.length > 1 ? selectedCell?.conditionMode : undefined,
+    })
+  // The checkboxes replace or clear the main condition; with extra conditions the next one becomes the main one.
+  const setMainCondition = (next: CellCondition | undefined) =>
+    setConditions(next ? [next, ...conditionRows.slice(1)] : conditionRows.slice(1))
+  const rules = selectedCell?.textRules ?? []
+  const setRules = (next: NonNullable<Cell['textRules']>) =>
+    updateCell({ textRules: next.length ? next : undefined })
   const moreOpen = more || customCondition || (copyable && !!selectedCell?.copyValue)
   const moreOptions = selectedCell && (
     <div className="inspector-more">
@@ -210,133 +233,70 @@ export function EditorInspector(props: EditorInspectorProps) {
             />
           )}
 
-          <Select
-            label={
-              <HelpLabel
-                label={tr('顯示條件欄位')}
-                help={tr('只在所選欄位符合條件時顯示這個組件；不符合時保留空位。')}
+          {/* "Show only when…": up to five conditions, all or any of them (R-239). */}
+          {(conditionRows.length ? conditionRows : [undefined]).map((condition, index) => (
+            <div key={index} className="inspector-condition">
+              <ConditionEditor
+                condition={condition}
+                fields={draft.fieldBindings}
+                placeholder={index === 0 ? tr('一律顯示') : undefined}
+                help={
+                  index === 0
+                    ? tr('只在所選欄位符合條件時顯示這個組件；不符合時保留空位。')
+                    : undefined
+                }
+                labels={
+                  index === 0
+                    ? { field: tr('顯示條件欄位'), operator: tr('顯示條件'), value: tr('比較值') }
+                    : {
+                        field: tr('條件 {0} 的欄位', index + 1),
+                        operator: tr('條件 {0}', index + 1),
+                        value: tr('條件 {0} 的比較值', index + 1),
+                      }
+                }
+                onChange={(next) =>
+                  setConditions(
+                    !condition
+                      ? next
+                        ? [next]
+                        : []
+                      : next
+                        ? conditionRows.map((c, i) => (i === index ? next : c))
+                        : conditionRows.filter((_, i) => i !== index)
+                  )
+                }
               />
-            }
-            placeholder={tr('一律顯示')}
-            clearable
-            value={selectedCell.condition?.attributeId ?? null}
-            data={draft.fieldBindings
-              .filter((field) => Object.hasOwn(typeKinds, field.type))
-              .map((field) => ({ value: field.attributeId, label: field.alias }))}
-            onChange={(attributeId) =>
-              updateCell({
-                condition: attributeId ? { attributeId, operator: 'set' } : undefined,
-              })
-            }
-          />
-          {selectedCell.condition && (
-            <>
-              <Select
-                label={tr('顯示條件')}
-                allowDeselect={false}
-                value={selectedCell.condition.operator}
-                data={[
-                  { value: 'set', label: tr('已有值') },
-                  { value: 'unset', label: tr('未填') },
-                  ...(conditionField?.type === 'tags'
-                    ? []
-                    : [
-                        { value: 'equals', label: tr('等於') },
-                        { value: 'not-equals', label: tr('不等於') },
-                      ]),
-                  ...(['number', 'date', 'datetime'].includes(conditionField?.type ?? '')
-                    ? [
-                        { value: 'gt', label: tr('大於') },
-                        { value: 'lt', label: tr('小於') },
-                      ]
-                    : []),
-                ]}
-                onChange={(operator) => {
-                  if (!operator) return
-                  const condition = {
-                    ...selectedCell.condition!,
-                    operator: operator as NonNullable<Cell['condition']>['operator'],
-                  }
-                  if (operator === 'set' || operator === 'unset') delete condition.value
-                  else
-                    condition.value =
-                      conditionField?.type === 'boolean'
-                        ? false
-                        : conditionField?.type === 'number'
-                          ? 0
-                          : conditionField?.type === 'enum'
-                            ? (conditionField.options?.[0] ?? '')
-                            : ''
-                  updateCell({ condition })
-                }}
-              />
-              {['equals', 'not-equals', 'gt', 'lt'].includes(selectedCell.condition.operator) &&
-                (conditionField?.type === 'boolean' ? (
-                  <Select
-                    label={tr('比較值')}
-                    allowDeselect={false}
-                    value={String(selectedCell.condition.value)}
-                    data={[
-                      { value: 'true', label: tr('是') },
-                      { value: 'false', label: tr('否') },
-                    ]}
-                    onChange={(value) =>
-                      value &&
-                      updateCell({
-                        condition: {
-                          ...selectedCell.condition!,
-                          value: value === 'true',
-                        },
-                      })
-                    }
-                  />
-                ) : conditionField?.type === 'enum' ? (
-                  <Select
-                    label={tr('比較值')}
-                    allowDeselect={false}
-                    value={String(selectedCell.condition.value ?? '')}
-                    data={(conditionField.options ?? []).map((option) => ({
-                      value: option,
-                      label: option,
-                    }))}
-                    onChange={(value) =>
-                      value && updateCell({ condition: { ...selectedCell.condition!, value } })
-                    }
-                  />
-                ) : conditionField?.type === 'number' ? (
-                  <NumberInput
-                    label={tr('比較值')}
-                    value={selectedCell.condition.value as number}
-                    onChange={(value) =>
-                      typeof value === 'number' &&
-                      updateCell({ condition: { ...selectedCell.condition!, value } })
-                    }
-                  />
-                ) : (
-                  <TextInput
-                    label={tr('比較值')}
-                    value={String(selectedCell.condition.value ?? '')}
-                    maxLength={10000}
-                    type={
-                      conditionField?.type === 'date'
-                        ? 'date'
-                        : conditionField?.type === 'datetime'
-                          ? 'datetime-local'
-                          : conditionField?.type === 'url'
-                            ? 'url'
-                            : 'text'
-                    }
-                    onChange={(event) =>
-                      updateCell({
-                        condition: {
-                          ...selectedCell.condition!,
-                          value: event.currentTarget.value,
-                        },
-                      })
-                    }
-                  />
-                ))}
-            </>
+            </div>
+          ))}
+          {conditionRows.length > 1 && (
+            <SegmentedControl
+              size="xs"
+              fullWidth
+              aria-label={tr('條件要')}
+              value={selectedCell.conditionMode ?? 'all'}
+              data={[
+                { value: 'all', label: tr('全部符合') },
+                { value: 'any', label: tr('任一符合') },
+              ]}
+              onChange={(value) =>
+                updateCell({ conditionMode: value === 'any' ? 'any' : undefined })
+              }
+            />
+          )}
+          {conditionRows.length > 0 && conditionRows.length <= MAX_MORE_CONDITIONS && (
+            <Button
+              size="compact-xs"
+              variant="subtle"
+              leftSection={<Icon name="plus" size={12} />}
+              onClick={() =>
+                setConditions([
+                  ...conditionRows,
+                  { attributeId: conditionRows[0].attributeId, operator: 'set' },
+                ])
+              }
+            >
+              {tr('新增條件')}
+            </Button>
           )}
         </Stack>
       </Collapse>
@@ -492,11 +452,87 @@ export function EditorInspector(props: EditorInspectorProps) {
                       />
                     )}
                     {displayMode}
+                    {selectedCell.kind === 'static-text' && (
+                      <div className="inspector-rules">
+                        <HelpLabel
+                          label={
+                            <Text size="sm" fw={500}>
+                              {tr('依條件顯示文字')}
+                            </Text>
+                          }
+                          help={tr(
+                            '由上往下比對，第一個符合的規則顯示它的文字；都不符合時顯示下方的文字，留空就不顯示。'
+                          )}
+                        />
+                        {rules.map((rule, index) => (
+                          <div key={index} className="inspector-rule">
+                            <ConditionEditor
+                              condition={rule.when}
+                              fields={draft.fieldBindings}
+                              labels={{
+                                field: tr('規則 {0} 的欄位', index + 1),
+                                operator: tr('規則 {0} 的條件', index + 1),
+                                value: tr('規則 {0} 的比較值', index + 1),
+                              }}
+                              onChange={(when) =>
+                                setRules(
+                                  when
+                                    ? rules.map((r, i) => (i === index ? { ...r, when } : r))
+                                    : rules.filter((_, i) => i !== index)
+                                )
+                              }
+                            />
+                            <TextInput
+                              label={tr('規則 {0} 顯示的文字', index + 1)}
+                              maxLength={1000}
+                              value={rule.text}
+                              placeholder={tr('留空就不顯示')}
+                              onChange={(event) => {
+                                const text = event.currentTarget.value
+                                setRules(rules.map((r, i) => (i === index ? { ...r, text } : r)))
+                              }}
+                            />
+                            <Button
+                              size="compact-xs"
+                              variant="subtle"
+                              color="red"
+                              onClick={() => setRules(rules.filter((_, i) => i !== index))}
+                            >
+                              {tr('移除規則 {0}', index + 1)}
+                            </Button>
+                          </div>
+                        ))}
+                        {rules.length < MAX_TEXT_RULES && (
+                          <Button
+                            size="compact-xs"
+                            variant="subtle"
+                            leftSection={<Icon name="plus" size={12} />}
+                            disabled={!draft.fieldBindings.length}
+                            onClick={() =>
+                              setRules([
+                                ...rules,
+                                {
+                                  when: {
+                                    attributeId: draft.fieldBindings[0].attributeId,
+                                    operator: 'set',
+                                  },
+                                  text: tr('文字'),
+                                },
+                              ])
+                            }
+                          >
+                            {tr('新增規則')}
+                          </Button>
+                        )}
+                      </div>
+                    )}
                     {(selectedCell.kind === 'static-text' || selectedCell.kind === 'field-url') && (
                       <Textarea
                         label={
                           selectedCell.kind === 'static-text'
-                            ? tr('版面文字內容')
+                            ? rules.length
+                              ? tr('其他情況顯示的文字（留空就不顯示）')
+                              : tr('版面文字內容')
                             : tr('連結顯示文字')
                         }
                         value={selectedCell.text ?? ''}
@@ -711,11 +747,11 @@ export function EditorInspector(props: EditorInspectorProps) {
                         checked={hidesWhenEmpty}
                         disabled={!!selectedCell.condition && !hidesWhenEmpty && !showsOnlyTrue}
                         onChange={(event) =>
-                          updateCell({
-                            condition: event.currentTarget.checked
+                          setMainCondition(
+                            event.currentTarget.checked
                               ? { attributeId: selectedCell.attributeId!, operator: 'set' }
-                              : undefined,
-                          })
+                              : undefined
+                          )
                         }
                       />
                     )}
@@ -725,15 +761,15 @@ export function EditorInspector(props: EditorInspectorProps) {
                         checked={showsOnlyTrue}
                         disabled={!!selectedCell.condition && !showsOnlyTrue && !hidesWhenEmpty}
                         onChange={(event) =>
-                          updateCell({
-                            condition: event.currentTarget.checked
+                          setMainCondition(
+                            event.currentTarget.checked
                               ? {
                                   attributeId: selectedCell.attributeId!,
                                   operator: 'equals',
                                   value: true,
                                 }
-                              : undefined,
-                          })
+                              : undefined
+                          )
                         }
                       />
                     )}

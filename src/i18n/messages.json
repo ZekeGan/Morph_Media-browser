@@ -7468,5 +7468,125 @@
     "en": "{0} ({1})",
     "ja": "{0}（{1}）",
     "es": "{0} ({1})"
+  },
+  "距今 N 天內": {
+    "zh-CN": "距今 N 天内",
+    "en": "Within N days of today",
+    "ja": "今日から N 日以内",
+    "es": "En los últimos N días"
+  },
+  "距今超過 N 天": {
+    "zh-CN": "距今超过 N 天",
+    "en": "More than N days ago",
+    "ja": "今日から N 日より前",
+    "es": "Hace más de N días"
+  },
+  "天數，依今天計算": {
+    "zh-CN": "天数，依今天计算",
+    "en": "Days, counted from today",
+    "ja": "日数（今日から数えます）",
+    "es": "Días, contados desde hoy"
+  },
+  "條件 {0} 的欄位": {
+    "zh-CN": "条件 {0} 的字段",
+    "en": "Condition {0} field",
+    "ja": "条件 {0} のフィールド",
+    "es": "Campo de la condición {0}"
+  },
+  "條件 {0}": {
+    "zh-CN": "条件 {0}",
+    "en": "Condition {0}",
+    "ja": "条件 {0}",
+    "es": "Condición {0}"
+  },
+  "條件 {0} 的比較值": {
+    "zh-CN": "条件 {0} 的比较值",
+    "en": "Condition {0} value",
+    "ja": "条件 {0} の比較値",
+    "es": "Valor de la condición {0}"
+  },
+  "條件要": {
+    "zh-CN": "条件要",
+    "en": "Conditions must",
+    "ja": "条件の扱い",
+    "es": "Las condiciones deben"
+  },
+  "全部符合": {
+    "zh-CN": "全部符合",
+    "en": "All match",
+    "ja": "すべて一致",
+    "es": "Cumplirse todas"
+  },
+  "任一符合": {
+    "zh-CN": "任一符合",
+    "en": "Any matches",
+    "ja": "いずれか一致",
+    "es": "Cumplirse alguna"
+  },
+  "新增條件": {
+    "zh-CN": "新增条件",
+    "en": "Add condition",
+    "ja": "条件を追加",
+    "es": "Añadir condición"
+  },
+  "依條件顯示文字": {
+    "zh-CN": "依条件显示文字",
+    "en": "Text by condition",
+    "ja": "条件で文字を切り替え",
+    "es": "Texto según condición"
+  },
+  "由上往下比對，第一個符合的規則顯示它的文字；都不符合時顯示下方的文字，留空就不顯示。": {
+    "zh-CN": "由上往下比对，第一个符合的规则显示它的文字；都不符合时显示下方的文字，留空就不显示。",
+    "en": "Rules are checked from the top; the first that matches shows its text. If none matches, the text below shows, or nothing when it is empty.",
+    "ja": "上から順に比べ、最初に一致したルールの文字を表示します。どれも一致しないときは下の文字を表示し、空欄なら何も表示しません。",
+    "es": "Las reglas se comprueban desde arriba; la primera que se cumple muestra su texto. Si ninguna se cumple, se muestra el texto de abajo, o nada si está vacío."
+  },
+  "規則 {0} 的欄位": {
+    "zh-CN": "规则 {0} 的字段",
+    "en": "Rule {0} field",
+    "ja": "ルール {0} のフィールド",
+    "es": "Campo de la regla {0}"
+  },
+  "規則 {0} 的條件": {
+    "zh-CN": "规则 {0} 的条件",
+    "en": "Rule {0} condition",
+    "ja": "ルール {0} の条件",
+    "es": "Condición de la regla {0}"
+  },
+  "規則 {0} 的比較值": {
+    "zh-CN": "规则 {0} 的比较值",
+    "en": "Rule {0} value",
+    "ja": "ルール {0} の比較値",
+    "es": "Valor de la regla {0}"
+  },
+  "規則 {0} 顯示的文字": {
+    "zh-CN": "规则 {0} 显示的文字",
+    "en": "Rule {0} text",
+    "ja": "ルール {0} の表示文字",
+    "es": "Texto de la regla {0}"
+  },
+  "移除規則 {0}": {
+    "zh-CN": "移除规则 {0}",
+    "en": "Remove rule {0}",
+    "ja": "ルール {0} を削除",
+    "es": "Quitar la regla {0}"
+  },
+  "新增規則": {
+    "zh-CN": "新增规则",
+    "en": "Add rule",
+    "ja": "ルールを追加",
+    "es": "Añadir regla"
+  },
+  "其他情況顯示的文字（留空就不顯示）": {
+    "zh-CN": "其他情况显示的文字（留空就不显示）",
+    "en": "Text otherwise (empty shows nothing)",
+    "ja": "それ以外のときの文字（空欄なら表示しない）",
+    "es": "Texto en otros casos (vacío no muestra nada)"
+  },
+  "留空就不顯示": {
+    "zh-CN": "留空就不显示",
+    "en": "Leave empty to show nothing",
+    "ja": "空欄なら表示しない",
+    "es": "Vacío no muestra nada"
   }
 }

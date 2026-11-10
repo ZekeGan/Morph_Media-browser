@@ -77,11 +77,28 @@ export interface Cell {
   // Image cell only: without a picture chosen for the folder, show its n-th image file (by name, 1-based).
   imageIndex?: number
   copyValue?: boolean
-  condition?: {
-    attributeId: string
-    operator: 'set' | 'unset' | 'equals' | 'not-equals' | 'gt' | 'lt'
-    value?: string | number | boolean
-  }
+  condition?: CellCondition
+  // More conditions (R-239): with `condition` they must all hold, or any one with conditionMode 'any'.
+  moreConditions?: CellCondition[]
+  conditionMode?: 'any'
+  // Layout text only (R-239): the first rule whose condition holds gives the text; otherwise `text` is shown.
+  textRules?: { when: CellCondition; text: string }[]
+}
+// "within" / "older": a date or date-and-time field compared with today, `value` in days (R-239).
+export interface CellCondition {
+  attributeId: string
+  operator: 'set' | 'unset' | 'equals' | 'not-equals' | 'gt' | 'lt' | 'within' | 'older'
+  value?: string | number | boolean
+}
+export const MAX_MORE_CONDITIONS = 4
+export const MAX_TEXT_RULES = 10
+// Every condition a cell reads: its display conditions and its text rules.
+export function cellConditions(cell: Cell): CellCondition[] {
+  return [
+    ...(cell.condition ? [cell.condition] : []),
+    ...(cell.moreConditions ?? []),
+    ...(cell.textRules ?? []).map((rule) => rule.when),
+  ]
 }
 export interface SourceRecord {
   provider: string
@@ -343,6 +360,20 @@ function validAsset(a: unknown): boolean {
   )
 }
 
+function conditionShape(c: unknown): boolean {
+  return (
+    obj(c) &&
+    id(c.attributeId) &&
+    ['set', 'unset', 'equals', 'not-equals', 'gt', 'lt', 'within', 'older'].includes(c.operator) &&
+    (['set', 'unset'].includes(c.operator)
+      ? c.value === undefined
+      : ['within', 'older'].includes(c.operator)
+        ? integer(c.value, 1, 36500)
+        : typeof c.value === 'boolean' ||
+          (typeof c.value === 'number' && Number.isFinite(c.value)) ||
+          text(c.value, 10000))
+  )
+}
 function validFieldBinding(f: unknown): boolean {
   return (
     obj(f) &&
@@ -442,15 +473,23 @@ function validCell(c: unknown): boolean {
         c.maximum <= 1e9)) &&
     (c.copyValue === undefined ||
       (c.kind.startsWith('field-') && typeof c.copyValue === 'boolean')) &&
-    (c.condition === undefined ||
-      (obj(c.condition) &&
-        id(c.condition.attributeId) &&
-        ['set', 'unset', 'equals', 'not-equals', 'gt', 'lt'].includes(c.condition.operator) &&
-        (['set', 'unset'].includes(c.condition.operator)
-          ? c.condition.value === undefined
-          : typeof c.condition.value === 'boolean' ||
-            (typeof c.condition.value === 'number' && Number.isFinite(c.condition.value)) ||
-            text(c.condition.value, 10000)))) &&
+    (c.condition === undefined || conditionShape(c.condition)) &&
+    (c.moreConditions === undefined ||
+      (c.condition !== undefined &&
+        Array.isArray(c.moreConditions) &&
+        c.moreConditions.length >= 1 &&
+        c.moreConditions.length <= MAX_MORE_CONDITIONS &&
+        c.moreConditions.every(conditionShape))) &&
+    (c.conditionMode === undefined ||
+      (c.conditionMode === 'any' && c.moreConditions !== undefined)) &&
+    (c.textRules === undefined ||
+      (c.kind === 'static-text' &&
+        Array.isArray(c.textRules) &&
+        c.textRules.length >= 1 &&
+        c.textRules.length <= MAX_TEXT_RULES &&
+        c.textRules.every(
+          (rule: unknown) => obj(rule) && conditionShape(rule.when) && text(rule.text, 1000)
+        ))) &&
     (!c.kind.startsWith('field-') || id(c.attributeId)) &&
     (c.kind !== 'image' || c.attributeId === undefined || id(c.attributeId)) &&
     obj(c.grid) &&
@@ -694,11 +733,12 @@ export function validateProject(v: unknown): asserts v is Project {
     }
   validateFieldGroups(v as Project)
   for (const cell of v.cells)
-    if (cell.condition) {
-      const condition = cell.condition
+    for (const condition of cellConditions(cell)) {
       const field = v.fieldBindings.find((field) => field.attributeId === condition.attributeId)
       if (
         !field ||
+        (['within', 'older'].includes(condition.operator) &&
+          !['date', 'datetime'].includes(field.type)) ||
         (['gt', 'lt'].includes(condition.operator) &&
           (!['number', 'date', 'datetime'].includes(field.type) ||
             !validFieldValue(field.type, condition.value))) ||
@@ -905,7 +945,25 @@ function validateFieldGroups(v: Project) {
 // Removing a field from layouts: cells that show it alone and cells whose condition reads it go away,
 // a cell with fallbacks moves on to its next field, and a fallback entry is simply dropped.
 export function cellsWithoutField(cells: Cell[], attributeId: string): Cell[] {
-  return cells.flatMap((cell) => {
+  return cells.flatMap((original) => {
+    // Extra conditions and text rules reading the field are dropped; the main condition still removes the cell.
+    let cell = original
+    if (cell.moreConditions?.some((c) => c.attributeId === attributeId)) {
+      const more = cell.moreConditions.filter((c) => c.attributeId !== attributeId)
+      const { moreConditions: _m, conditionMode: _c, ...plain } = cell
+      cell = more.length
+        ? {
+            ...plain,
+            moreConditions: more,
+            ...(cell.conditionMode ? { conditionMode: cell.conditionMode } : {}),
+          }
+        : plain
+    }
+    if (cell.textRules?.some((rule) => rule.when.attributeId === attributeId)) {
+      const rules = cell.textRules.filter((rule) => rule.when.attributeId !== attributeId)
+      const { textRules: _r, ...plain } = cell
+      cell = rules.length ? { ...plain, textRules: rules } : plain
+    }
     if (cell.condition?.attributeId === attributeId) return []
     const rest = (cell.fallbackIds ?? []).filter((id) => id !== attributeId)
     if (cell.attributeId === attributeId) {
