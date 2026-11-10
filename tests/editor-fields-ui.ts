@@ -120,9 +120,10 @@ try {
   const before = await cells()
   await button('欄位操作 TITLE').click()
   await page.getByRole('menuitem', { name: '只引用欄位', exact: true }).click()
-  await row('TITLE').getByText('尚未加入', { exact: true }).waitFor({ state: 'detached' })
+  // A website field is added under its plain name and site (R-236).
+  await row('名稱（DLsite）').waitFor()
+  assert.equal(await row('名稱（DLsite）').getByText('尚未加入', { exact: true }).count(), 0)
   assert.equal(await cells(), before)
-  await row('TITLE').waitFor()
 
   // A click on a not-yet-added field adds it and puts it on the card, selected.
   await unfold('Steam')
@@ -181,7 +182,10 @@ try {
   assert.equal(cell.groupId, group.groupId)
   assert.equal(cell.fallbackIds, undefined)
   assert.ok(saved.fieldBindings.some((f) => f.attributeId === 'genre'))
-  assert.ok(saved.fieldBindings.some((f) => f.attributeId === 'dlsite-title'))
+  assert.equal(
+    saved.fieldBindings.find((f) => f.attributeId === 'dlsite-title')?.alias,
+    '名稱（DLsite）'
+  )
   assert.ok(saved.fieldBindings.some((f) => f.alias === 'Zzz'))
   assert.deepEqual(await records(), originalRecords, 'the editor never rewrites folder records')
 

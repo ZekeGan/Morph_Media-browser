@@ -47,7 +47,8 @@ import {
 import { commonFieldNames } from './commonFields'
 import { isGameFolder } from '../shared/media'
 import { cellFieldIds, isFilled } from '../shared/cells'
-import { rowFieldAttributes } from './fieldSources'
+import { fieldSource, rowFieldAttributes } from './fieldSources'
+import { importedFieldLabels } from './importedFieldLabels'
 import { bindCellToGroup, freeGroupName, groupFromFallbacks } from '../shared/fieldGroups'
 import { refusalText } from './FieldGroupPalette'
 
@@ -486,14 +487,23 @@ export function Editor({
     source: Project['fieldBindings'][number]
   ) => {
     if (bindings.some((f) => f.attributeId === source.attributeId)) return bindings
-    let alias = source.alias || tr('欄位'),
+    // A website field gets its plain name and site, e.g. TITLE_ORIGINAL → "Original title (E-Hentai)" (R-236);
+    // other fields keep their key.
+    const plain = source.alias ? importedFieldLabels()[source.alias] : undefined,
+      site = fieldSource(source.attributeId, attributes),
+      base = plain
+        ? site === tr('自建')
+          ? plain
+          : tr('{0}（{1}）', plain, site)
+        : source.alias || tr('欄位')
+    let alias = base,
       i = 2
     const taken = (name: string) =>
       bindings.some((f) => f.alias.toLocaleLowerCase() === name.toLocaleLowerCase()) ||
       !!draft.fieldGroups?.some(
         (g) => g.name.trim().toLocaleLowerCase() === name.trim().toLocaleLowerCase()
       )
-    while (taken(alias)) alias = (source.alias || tr('欄位')) + '_' + i++
+    while (taken(alias)) alias = base + '_' + i++
     return [
       ...bindings,
       {
