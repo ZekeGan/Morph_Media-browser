@@ -15,6 +15,20 @@
 
 上述方向依各主文件持有的核定與更新；漫畫預設與縮小下限 100% 亦已定案，見 [漫畫閱讀器](MANGA_VIEWER_DESIGN.md)。已實作範圍以各主文件及實際驗證為準；延後功能的細部範圍仍待指定。
 
+## 架構改進候選
+
+2026-11-11 架構討論提出、尚未決定是否登記的項目（背景見 [C-133](DECISIONS.md#c-133架構與文件檢查結論2026-11-11)）。決定做的移到 [需求清單](WORK_ITEMS.md)。
+
+| 項目 | 內容與取捨 | 建議 |
+| --- | --- | --- |
+| 分層引用檢查 | 參考 VS Code 依執行環境分層並用 lint 禁止跨層引用；`src`／`electron`／`shared` 已是這個分法、目前無違規，但只靠慣例。加進 pre-commit：renderer 不得引用 electron/，shared/ 不得引用 Node／Electron／React | 成本低、最值得做 |
+| src 依功能分資料夾 | src 平放 85 個檔案。依 areas.json 領域分（`src/browse/`、`src/editor/`、`src/media/`、`src/video/`、`src/game/`、`src/search/`、`src/panel/`，共用放 `src/common/`）；各功能的 css 跟元件放一起，只有全域樣式放 `src/styles/`。不依檔案類型分，以免改一個功能要在多個資料夾來回。成本：引用路徑、areas.json 樣式、ARCHITECTURE 連結一起改；決策與封存區的舊連結失效 | 在沒有其他需求進行中時一次做完，可排在 R-240 前 |
+| IPC 合約只寫一份 | 目前型別在 shared/、入口檢查在 electron/ipc-requests.ts，兩份可能不同步。改成由同一份定義同時產生型別與檢查 | 中等，可與下一個新增 IPC 的需求一起做 |
+| 耗時工作移出主程序 | 掃描、縮圖、SQLite 都在 main，大型收藏可能讓 IPC 卡住；可用 Electron `utilityProcess` | 出現卡頓再做 |
+| 狀態放在 React 之外 | App 的狀態拆成小 store、以事件通知畫面，即 R-243 的方向 | 隨 R-243 |
+
+不採用：依賴注入框架、擴充套件 API、monorepo，規模不需要。
+
 ## 查收限制，不是重新決策
 
 實機遊戲／格式變體、真實網站、跨設備故障等仍需樣本與環境驗收，見 [WORK_ITEMS](WORK_ITEMS.md)。不應為了完成本頁自行掃描真實收藏、安裝新的媒體後端或更改已確認的保護規則。
