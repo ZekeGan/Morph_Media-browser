@@ -14,10 +14,6 @@
 
 ## 待查收
 
-- **R-249** src 依功能分資料夾 ｜中｜一般｜無｜領域：shell、browse、panel、files、media、gallery、reader、video、documents、editor、cells、search、game、metadata、appearance、notices、storage、project｜依賴：R-248
-  驗收：`src/` 根目錄只剩 App.tsx、main.tsx、index.html、env.d.ts 與功能資料夾；開程式後瀏覽 CARD／TABLE／TREE、開資料夾設定、編輯器、播放影片、看圖、搜尋、切換主題都照常（外觀與行為不變）。
-  80 個檔案依領域搬到 `browse/`、`panel/`、`editor/`、`cells/`、`media/`、`video/`、`gallery/`、`reader/`、`documents/`、`files/`、`search/`、`game/`、`metadata/`、`settings/`、`shell/`、`notices/`、`storage/`、`common/`、`styles/`；引用路徑、areas.json、ARCHITECTURE 與規格連結一起更新，程式內容不變。
-
 ## 進行中
 
 ## 已核定（未做）
