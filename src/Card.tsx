@@ -276,6 +276,13 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
       : cell.kind === 'path'
         ? row?.path
         : cellField(cell, row, project).value
+  // Every field component reads the same when its folder has no value; "Hide when empty" leaves it blank (R-237).
+  if (
+    cell.kind.startsWith('field-') &&
+    !isFilled(value) &&
+    (value == null || typeof value === 'string' || Array.isArray(value))
+  )
+    return <span className="cell-empty">{tr('沒有值')}</span>
   const label =
     typeof value === 'string' ? value : value == null ? '' : tr('⚠ 型別不符：{0}', String(value))
   if (cell.kind === 'field-tags')

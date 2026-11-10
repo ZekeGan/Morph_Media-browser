@@ -43,6 +43,8 @@ export type EditorInspectorProps = {
   openGroup: (groupId: string) => void
   // Set when no folder has a value for the selected component: switches the preview to sample data.
   showSample?: () => void
+  // Whether the selected tag component's data has "namespace:tag" tags (R-238).
+  hasNamespaces: boolean
   hasContent: boolean
   hints: Record<CellKind, string>
   labels: Record<CellKind, string>
@@ -72,6 +74,7 @@ export function EditorInspector(props: EditorInspectorProps) {
     convertToGroup,
     openGroup,
     showSample,
+    hasNamespaces,
     hasContent,
     hints,
     labels,
@@ -153,30 +156,32 @@ export function EditorInspector(props: EditorInspectorProps) {
               })
         }
       />
-      {selectedCell.kind === 'field-tags' && (
-        <Stack gap={6} mt={6}>
-          <SegmentedControl
-            size="xs"
-            fullWidth
-            aria-label={tr('標籤顏色')}
-            value={selectedCell.tagColors ?? 'default'}
-            data={[
-              { value: 'default', label: tr('一律灰色') },
-              { value: 'namespace', label: tr('依分類上色') },
-            ]}
-            onChange={(value) =>
-              updateCell({ tagColors: value === 'namespace' ? 'namespace' : undefined })
-            }
-          />
-          <Checkbox
-            label={tr('顯示分類前綴')}
-            checked={selectedCell.tagPrefix !== false}
-            onChange={(event) =>
-              updateCell({ tagPrefix: event.currentTarget.checked ? undefined : false })
-            }
-          />
-        </Stack>
-      )}
+      {/* Namespace colours and prefixes only mean something for "namespace:tag" data (R-238). */}
+      {selectedCell.kind === 'field-tags' &&
+        (hasNamespaces || !!selectedCell.tagColors || selectedCell.tagPrefix === false) && (
+          <Stack gap={6} mt={6}>
+            <SegmentedControl
+              size="xs"
+              fullWidth
+              aria-label={tr('標籤顏色')}
+              value={selectedCell.tagColors ?? 'default'}
+              data={[
+                { value: 'default', label: tr('一律灰色') },
+                { value: 'namespace', label: tr('依分類上色') },
+              ]}
+              onChange={(value) =>
+                updateCell({ tagColors: value === 'namespace' ? 'namespace' : undefined })
+              }
+            />
+            <Checkbox
+              label={tr('顯示分類前綴')}
+              checked={selectedCell.tagPrefix !== false}
+              onChange={(event) =>
+                updateCell({ tagPrefix: event.currentTarget.checked ? undefined : false })
+              }
+            />
+          </Stack>
+        )}
     </div>
   )
   const moreOpen = more || customCondition || (copyable && !!selectedCell?.copyValue)

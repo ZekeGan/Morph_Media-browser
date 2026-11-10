@@ -21,3 +21,6 @@
 .help-tip { vertical-align:middle; opacity:.75; } .help-tip:hover,.help-tip:focus-visible { opacity:1; }
 .boundary-flag { display:inline-flex; align-items:center; margin-left:6px; color:var(--warning, #d98f2b); vertical-align:middle; } .boundary-flag:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
 .palette-field-value { display:block; margin-top:4px; font-size:11px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .palette-field-value.is-empty { color:var(--muted); font-style:italic; }
+
+/* An empty field component (R-237): dimmed so it never reads like a value. */
+.cell-empty { opacity:.55; font-style:italic; }

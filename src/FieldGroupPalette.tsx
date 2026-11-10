@@ -50,7 +50,7 @@ export function FieldValuePreview({
       className={clean ? 'palette-field-value' : 'palette-field-value is-empty'}
       title={clean ? clean.slice(0, 2000) : undefined}
     >
-      {clean || tr('（此筆沒有值）')}
+      {clean || tr('沒有值')}
     </span>
   )
 }

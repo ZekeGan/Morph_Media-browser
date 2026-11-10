@@ -1406,6 +1406,19 @@ export function Editor({
           setGroup={setGroup}
           convertToGroup={convertToGroup}
           openGroup={(id) => setGroupRequest({ id, at: Date.now() })}
+          hasNamespaces={
+            !!selectedCell &&
+            selectedCell.kind === 'field-tags' &&
+            rows.some((row) =>
+              cellFieldIds(selectedCell, draft).some((id) => {
+                const value = id ? fieldValue(row, id) : undefined
+                return (
+                  Array.isArray(value) &&
+                  value.some((tag) => typeof tag === 'string' && /^[^:\s]+:\S/.test(tag))
+                )
+              })
+            )
+          }
           showSample={
             selectedCell &&
             previewId !== EXTREME.sample &&

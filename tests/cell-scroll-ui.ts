@@ -114,7 +114,7 @@ try {
   await page.getByRole('button', { name: '編輯版面', exact: true }).click()
   const value = page.locator('.palette-field[data-attribute-id="tags"] .palette-field-value')
   await value.waitFor()
-  assert.equal(await value.innerText(), '（此筆沒有值）', 'a folder without the field')
+  assert.equal(await value.innerText(), '沒有值', 'a folder without the field')
   await page.getByRole('textbox', { name: '使用真實資料預覽', exact: true }).click()
   await page.getByRole('option', { name: /^Many/ }).click()
   assert.ok((await value.innerText()).startsWith('female:tag number 0, '))
