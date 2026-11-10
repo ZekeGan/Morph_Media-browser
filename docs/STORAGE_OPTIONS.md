@@ -1,6 +1,6 @@
 # 可攜儲存與清理安全
 
-> 最後確認：2026-11-10。可攜記錄的寫入、清理、移除與復原規則；程式：`electron/files.ts`、`electron/maintenance.ts`、`electron/library-removal.ts`。
+> 最後確認：2026-11-11。可攜記錄的寫入、清理、移除與復原規則；程式：`electron/files.ts`、`electron/maintenance.ts`、`electron/library-removal.ts`。
 
 本頁持有資料安全及失敗語意，適用所有寫入／掃描／遷移／清理工作。身分與共用值語意見 [資料模型](FOLDER_PROJECT_MODEL.md)；位置與程式入口見 [架構](ARCHITECTURE.md)。原研究／舊方案見 [封存原文](history/agent-docs-before-cleanup.md#storage-options)。
 
@@ -11,7 +11,7 @@
 - 損壞原檔保留，復原不得用空預設蓋掉好資料；保留受損副本供診斷，未知檔案不當成垃圾刪除。格式升版／遷移先定義相容性、備份、失敗回復與驗收，再寫資料；規則見 [DATA_FORMAT](DATA_FORMAT.md#格式升級與相容規則)（可攜記錄讀取時升級、存檔才寫回，`%APPDATA%` 啟動時升級並先備份，較新版本的資料唯讀不寫入）。
 - 圖片 CELL 可用自身穩定位置 ID 綁定 FolderDetails.cellImages 中的 assetId，資產仍屬資料夾共用可攜資料；舊無位置 ID 的圖片 CELL 保留封面／首張相容回退。新的空白組件不自動借用首張圖片。新增綁定不自動初始化其他資料夾，失敗寫入須撤回新複製資產。
 - 自訂圖片複製原檔到受管可攜資產，以相對參照保存；不覆寫原媒體，不依賴外部絕對路徑。縮圖是本機快取，原圖仍可回退。
-- 掃描跳過 symlink／junction 及保留資料目錄；Windows 大小寫變體亦須排除。遊戲 ROOT 只可有自身記錄，內部不寫，明確層數設定也不能繞過邊界。
+- 掃描跳過 symlink／junction 及保留資料目錄；Windows 大小寫變體亦須排除。遊戲 ROOT 只可有自身記錄，內部不寫，明確層數設定也不能繞過邊界。ROOT 內殘留的舊記錄清理時一律整筆刪除，不能只清私有覆寫（那會改寫記錄）；預覽與執行時都檢查邊界。
 
 ## 清理與範圍
 

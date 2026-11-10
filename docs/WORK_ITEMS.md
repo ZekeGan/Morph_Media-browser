@@ -11,9 +11,6 @@
 
 ## 待你決定
 
-- **R-245** 清理不得寫入或刪除遊戲 ROOT 內的記錄 ｜小｜資料寫入｜無｜領域：storage、detection｜依賴：無
-  `previewCleanup`／`cleanup` 沒有檢查 `protectedAncestor`／`readonly`；還原、移除與欄位刪除都有。ROOT 內殘留的舊記錄是否仍允許由使用者明確清理（只刪不寫），還是一律拒絕。
-  其餘已核定項目照順序先做，這項等你決定後再排。
 
 ## 待查收
 
@@ -34,6 +31,8 @@
 - **R-246** 外部匯入在「只填空值」時跳過手動改過的來源欄位 ｜小｜資料寫入｜無｜領域：metadata｜依賴：無
   現在只要勾選的欄位中有一個曾手動修改（`source: manual`），整批匯入就以「既有欄位來源衝突」失敗；規格的意思是該欄位保留、其他照填。
   驗收：在資料夾設定手動改一個已匯入的來源欄位（例如 Bangumi 標題），再從同一網址用「只填空值」匯入：不再出現「既有欄位來源衝突」，手改的值保留，其他欄位照填；勾「覆寫」時仍會拒絕。
+- **R-245** 清理不得改寫遊戲 ROOT 內的記錄 ｜小｜資料寫入｜無｜領域：storage、detection｜依賴：無
+  使用者決定（2026-11-11）：ROOT 內殘留記錄一律整筆刪除。只清私有覆寫會改寫記錄，在預覽與執行時都拒絕；整筆刪除照舊可用。重新掃描後 ROOT 內的資料夾本來就不列出，這條只擋掃描前已列出的情況。驗收：`pnpm exec tsx --test --test-name-pattern R-245 tests/game-detection.test.ts` 通過。
 - **R-242** 文件整理：規格只寫現行規則，出處移到決策紀錄 ｜中｜一般｜無｜領域：shell、browse、panel、editor、storage、core｜依賴：無
   ①規格裡「已移除／不再」等變更語句改寫成現狀描述，「本輪」等出處移出規格；②遊戲與漫畫規格的章節去掉編號與「本輪圖」，連動 areas.json；③ARCHITECTURE 補上漏列的模組與 `workspace-backups/`，外部來源規格補 DLsite。驗收：看 GAME_VIEWER_DESIGN、MANGA_VIEWER_DESIGN 的章節名稱與 ARCHITECTURE 的模組表。不改檔名：決策紀錄只增不改，裡面的舊連結會失效。
 

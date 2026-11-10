@@ -1020,3 +1020,32 @@ test('Japanese visual-novel engines are recognised from their runtime and archiv
     'a named engine wins over the Steam fallback'
   )
 })
+test('cleanup inside a game ROOT only removes whole records, never rewrites them (R-245)', async (t) => {
+  const { media, lib, files } = await fixture(t),
+    game = path.join(media, 'Leftover'),
+    child = path.join(game, 'www/data')
+  await fs.mkdir(child, { recursive: true })
+  let state = await lib.create(media, input)
+  const projectId = state.projects[0].projectId
+  // A record from before the folder was recognised as a game, with a private override.
+  let record = await readFolder(child)
+  record.projectOverrides[projectId] = [
+    { attributeId: 'note', key: 'note', type: 'string', value: 'old', source: 'manual' },
+  ]
+  await saveFolder(child, record, record.revision)
+  state = await lib.scan()
+  // The window still lists the folder when the game files appear; after a rescan rows inside a ROOT are gone.
+  const row = state.rows.find((row) => row.path === child)!
+  // A preview taken before the game files appeared is refused when it is carried out.
+  const early = await lib.previewCleanup(row.rowId, 'private')
+  await files(game, ['Leftover.exe', ...nwMarkers])
+  const unchanged = await fs.readFile(folderFile(child))
+  await assert.rejects(lib.cleanup(early.token, false), /邊界保護/)
+  assert.deepEqual(await fs.readFile(folderFile(child)), unchanged)
+  const before = await fs.readFile(folderFile(child))
+  await assert.rejects(lib.previewCleanup(row.rowId, 'private'), /邊界保護/)
+  assert.deepEqual(await fs.readFile(folderFile(child)), before)
+  const preview = await lib.previewCleanup(row.rowId, 'folder')
+  await lib.cleanup(preview.token, false)
+  assert.equal(await exists(folderFile(child)), false)
+})

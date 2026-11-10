@@ -39,6 +39,9 @@ export async function previewCleanup(
   const dirs = new Set<string>(),
     skipped: string[] = []
   const row = rowId ? ex.row(rowId) : undefined
+  // Inside a game ROOT nothing is written: leftover records there can only be removed whole (R-245).
+  if (scope === 'private' && row && (row.readonly || (await ex.protectedAncestor(row.path))))
+    throw new Error('此資料夾在遊戲邊界保護內，只能整筆刪除記錄，不能只清私有覆寫')
   if (row) dirs.add(row.path)
   else {
     const walk = async (dir: string, root: string): Promise<void> => {
@@ -137,8 +140,11 @@ export async function cleanup(
     }
   const result: CleanupResult = { removed: 0, failed: [], skipped: plan.preview.skipped }
   if (plan.preview.scope === 'private') {
-    const e = plan.entries[0],
-      record = await readFolder(e.dir)
+    const e = plan.entries[0]
+    // The boundary may have appeared since the preview.
+    if (await ex.protectedAncestor(e.dir))
+      throw new Error('此資料夾在遊戲邊界保護內，只能整筆刪除記錄，不能只清私有覆寫')
+    const record = await readFolder(e.dir)
     delete record.projectOverrides[plan.projectId!]
     await saveFolder(e.dir, record, record.revision)
     result.removed = 1
@@ -152,7 +158,8 @@ export async function cleanup(
       const targets = plan.entries
         .filter((e) => within(linked.root, e.dir))
         .map((e) => relPath(linked.root, e.dir))
-      if (!targets.length) continue
+      // A project whose root has since ended up inside a game ROOT is not written (R-245); the deletion still runs.
+      if (!targets.length || (await ex.protectedAncestor(linked.root))) continue
       const p = await ex.currentProject(linked)
       await atomicJson(
         projectFile(linked.root, p.projectId),
