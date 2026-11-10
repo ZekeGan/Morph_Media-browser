@@ -9,8 +9,8 @@ import {
   optionsFromValues,
   purposeChangeImpact,
   switchTextType,
-} from '../src/fieldTypes'
-import { orderedFieldSourceGroups } from '../src/fieldSources'
+} from '../src/editor/fieldTypes'
+import { orderedFieldSourceGroups } from '../src/editor/fieldSources'
 import { t as tr } from '../src/i18n'
 
 const style = { textColor: '#ffffff', backgroundColor: 'transparent' }
@@ -226,7 +226,7 @@ test('a field lists its uses once per layout, and only choice changes alter comp
 })
 
 test('date and date-and-time switch into each other; components follow (R-234)', async () => {
-  const { switchDateType } = await import('../src/fieldTypes')
+  const { switchDateType } = await import('../src/editor/fieldTypes')
   const p = project(
     [cell({ kind: 'field-date', attributeId: 'when', condition: undefined })],
     [{ alias: 'When', attributeId: 'when', type: 'datetime' }]
@@ -249,7 +249,7 @@ test('date and date-and-time switch into each other; components follow (R-234)',
 })
 
 test('yes/no wording is optional, 1-20 characters, and only on yes/no fields (R-234)', async () => {
-  const { yesNo } = await import('../src/fieldTypes')
+  const { yesNo } = await import('../src/editor/fieldTypes')
   const p = project([], [{ alias: 'Owned', attributeId: 'owned', type: 'boolean' }])
   const labelled = (patch: object): Project => ({
     ...p,

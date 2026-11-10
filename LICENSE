@@ -33,7 +33,7 @@ branding for your own product, package, repository, domain or account, and
 do not imply that the author makes, supports, approves or endorses your work.
 Publish modified versions with their own name and logo, not merely recolored
 or cropped copies of ours. These rules cover the artwork in docs/brand/,
-build/icon.*, build/icons/ and the mark drawn by src/BrandMark.tsx.
+build/icon.*, build/icons/ and the mark drawn by src/common/BrandMark.tsx.
 Official builds are those published on this repository's Releases page.
 When sharing an unchanged official build, identify it as a third-party copy
 and link to the official download. Sales must also comply with section 2.

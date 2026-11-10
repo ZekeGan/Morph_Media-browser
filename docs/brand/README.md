@@ -13,7 +13,7 @@ A blocky **M** with the **colon** set in its notch (the colon is the "key : valu
 | `morph-icon.svg` | Square app icon, 48 px and larger |
 | `morph-icon-small.svg` | Square app icon for 16 to 32 px: bigger M, bigger colon squares, no outline |
 
-In the app the mark is drawn by `src/BrandMark.tsx` with the surrounding text colour (`currentColor`), so it follows all three themes. The app icon is always the same near-black tile with a white mark, so the Windows taskbar looks the same whatever the theme.
+In the app the mark is drawn by `src/common/BrandMark.tsx` with the surrounding text colour (`currentColor`), so it follows all three themes. The app icon is always the same near-black tile with a white mark, so the Windows taskbar looks the same whatever the theme.
 
 ## Rules
 

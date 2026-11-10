@@ -1,6 +1,6 @@
 # 圖片／相簿內容與圖片檢視窗
 
-> 最後確認：2026-11-05。相簿與圖片檢視窗的現行規則；共用焦點與媒體生命週期見 [UI_RULES](UI_RULES.md)，跨層檔案總覽見 [媒體工作區](MEDIA_WORKSPACE.md#檔案總覽)。程式：`src/Gallery.tsx`、`src/Reader.tsx`、`shared/gallery.ts`；取捨見 [決策索引](DECISIONS.md)（C-81、C-83、C-85）。線稿不指定最終風格，格式不限於早期的四種。
+> 最後確認：2026-11-05。相簿與圖片檢視窗的現行規則；共用焦點與媒體生命週期見 [UI_RULES](UI_RULES.md)，跨層檔案總覽見 [媒體工作區](MEDIA_WORKSPACE.md#檔案總覽)。程式：`src/gallery/Gallery.tsx`、`src/reader/Reader.tsx`、`shared/gallery.ts`；取捨見 [決策索引](DECISIONS.md)（C-81、C-83、C-85）。線稿不指定最終風格，格式不限於早期的四種。
 
 <a id="已確認要求"></a>
 

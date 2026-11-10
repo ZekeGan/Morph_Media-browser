@@ -1,6 +1,6 @@
 # 漫畫資料夾內容與閱讀器
 
-> 最後確認：2026-11-05。漫畫內容與閱讀器的現行規則；共用焦點與媒體生命週期見 [UI_RULES](UI_RULES.md)，工作區位置見 [WORKSPACE_REVISION](WORKSPACE_REVISION.md)。程式：`src/Reader.tsx`、`src/FolderContent.tsx`、`shared/reader.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-76、C-85）。
+> 最後確認：2026-11-05。漫畫內容與閱讀器的現行規則；共用焦點與媒體生命週期見 [UI_RULES](UI_RULES.md)，工作區位置見 [WORKSPACE_REVISION](WORKSPACE_REVISION.md)。程式：`src/reader/Reader.tsx`、`src/panel/FolderContent.tsx`、`shared/reader.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-76、C-85）。
 
 <a id="漫畫閱讀器"></a>
 

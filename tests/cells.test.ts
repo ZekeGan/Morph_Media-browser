@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { cellVisible, copyableValue, numericDisplay } from '../shared/cells'
-import { localDragPosition } from '../src/editorDrag'
+import { localDragPosition } from '../src/editor/editorDrag'
 import { validateProject, type Cell, type FolderRow } from '../shared/model'
 import { withoutField } from '../electron/maintenance'
 import { modelFolder, modelProject } from './support/model-fixtures'

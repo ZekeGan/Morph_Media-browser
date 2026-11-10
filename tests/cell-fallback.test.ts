@@ -12,7 +12,7 @@ import {
   type Project,
 } from '../shared/model'
 import { modelProject } from './support/model-fixtures'
-import { fieldSource, fieldSourceGroups, rowFieldAttributes } from '../src/fieldSources'
+import { fieldSource, fieldSourceGroups, rowFieldAttributes } from '../src/editor/fieldSources'
 
 const row = (values: Record<string, unknown>): FolderRow =>
   ({

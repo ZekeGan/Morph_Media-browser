@@ -25,7 +25,7 @@ flowchart LR
   class FR,PS source
 ```
 
-行程邊界與模組：只有 main 碰檔案系統，每個模組的責任見下方「按問題找入口」。`shared/`（型別與純邏輯）由 renderer 與 main 共同引用。三層之間的引用方向由 `scripts/check-layers.mjs` 在提交前檢查（renderer 與 shared 不引用 main，shared 也不引用 renderer、Node、React）。
+行程邊界與模組：只有 main 碰檔案系統，每個模組的責任見下方「按問題找入口」。`shared/`（型別與純邏輯）由 renderer 與 main 共同引用。三層之間的引用方向由 `scripts/check-layers.mjs` 在提交前檢查（renderer 與 shared 不引用 main，shared 也不引用 renderer、Node、React）。renderer 的 `src/` 依功能分資料夾，名稱對應 [領域登錄表](areas.json)（`browse/`、`panel/`、`editor/`、`media/`、`video/` 等；共用元件在 `common/`，全域樣式在 `styles/`，主題與語系在 `themes/`、`i18n/`）；功能專屬的 css 與元件放在同一資料夾，`App.tsx`、`main.tsx` 留在 `src/` 根目錄。
 
 ```mermaid
 flowchart TB
@@ -70,18 +70,18 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | 本機 UI 設定 | [workspace](../electron/workspace.ts) `WorkspaceStore` | 群組／排序／窗格／偏好，驗證、保存、尺寸正規化；settings-package／settings-file 處理允許清單、移轉預覽與備份復原 |
 | 外部來源 | [metadata](../electron/metadata.ts) | [sources](../shared/sources.ts) 分類註冊、metadata／metadata-public 固定端點、[metadata-common](../electron/metadata-common.ts) 大小限制、來源預覽與追溯 |
 | 契約與驗證 | [model](../shared/model.ts)、[explorer](../shared/explorer.ts)、[workspace](../shared/workspace.ts) | 型別及寫入前的 runtime 驗證（validateProject、validateDetails 等）；IPC 入口的形狀檢查在 ipc-requests。修改 IPC 時型別、ipc-requests 與呼叫端一起改 |
-| 操作通知契約 | [notifications](../shared/notifications.ts)、[Toasts](../src/Toasts.tsx) | main／Explorer 以完成數與問題數建立通知等級；App 接收 notice，例外明確標為 error；Toasts 負責標題、角色及收起時機。專案匯出、清理等操作的顯示文字由 main 組合；均屬瞬時回應，不改可攜 schema |
+| 操作通知契約 | [notifications](../shared/notifications.ts)、[Toasts](../src/notices/Toasts.tsx) | main／Explorer 以完成數與問題數建立通知等級；App 接收 notice，例外明確標為 error；Toasts 負責標題、角色及收起時機。專案匯出、清理等操作的顯示文字由 main 組合；均屬瞬時回應，不改可攜 schema |
 | 共用純邏輯 | [browse](../shared/browse.ts)、[layouts](../shared/layouts.ts)、[fieldGroups](../shared/fieldGroups.ts)、[images](../shared/images.ts)、[query](../shared/query.ts)、[subtitles](../shared/subtitles.ts)、[reader](../shared/reader.ts)、[gallery](../shared/gallery.ts) | 模式／樹分支、方案、欄位群組、格式、查詢、字幕解析、閱讀分頁及適應尺寸、圖庫尺寸與可見範圍模型 |
-| 應用狀態／外框 | [App](../src/App.tsx)、[DesktopShell](../src/DesktopShell.tsx)、[ProjectSettings](../src/ProjectSettings.tsx) | snapshot／草稿／保存、側欄、搜尋入口與視窗控制 |
-| 全域外觀／語言／圖示 | [ApplicationSettings](../src/ApplicationSettings.tsx)、[themes](../src/themes/ThemeProvider.tsx)、[i18n](../src/i18n/index.ts)、[icons](../src/icons.tsx) | 主題／語言預覽與本機保存、共用 CSS 變數、介面翻譯；不改寫使用者資料 |
-| 瀏覽與設定 | [BrowseWorkspace](../src/BrowseWorkspace.tsx)（狀態與導覽）、[BrowseToolbar](../src/BrowseToolbar.tsx)（工具列）、[BrowsePanel](../src/BrowsePanel.tsx)（右側面板）、[BrowseNav](../src/BrowseNav.tsx)（返回／前進與路徑）、[FolderCards](../src/FolderCards.tsx)（卡片格）、`useCardSettings`／`useTableColumns`（CARD 顯示設定保存、TABLE 欄位順序）、[TreeView](../src/TreeView.tsx)、[FolderPanel](../src/FolderPanel.tsx)（資料夾設定；網站匯入、欄位輸入、圖片分頁分別在 FolderSourceImport、FolderFieldInput、FolderImages） | 三模式、歷史、獨立右區、設定分頁；TREE 用 React Flow＋Dagre；排序在 `shared/browse.ts` 的 `sortRows` |
-| CELL／內容 | [Card](../src/Card.tsx)、[Editor](../src/Editor.tsx)（狀態與畫布）、[EditorPalette](../src/EditorPalette.tsx)（左側組件與欄位）、[EditorInspector](../src/EditorInspector.tsx)（右側組件設定）、[FolderContent](../src/FolderContent.tsx) | 共用編輯引擎、分開版面、各屬性內容 |
-| 統一媒體／音訊 | [MediaBrowser](../src/MediaBrowser.tsx)、[MediaViewer](../src/MediaViewer.tsx)、[MediaQueue](../src/MediaQueue.tsx)、[AudioViewer](../src/AudioViewer.tsx) | 跨層 `overview`、來源身分、來源分組與圖片／文件單來源清單；舊四分類以共用媒體頁相容讀取，保留單檔預覽。main 的 `audio-cover` 透過 Explorer 與 music-metadata 讀取封面，播放器仍用 Video.js；影音由 [PlaybackProvider](../src/Playback.tsx) 在 App 外持有唯一工作階段、跨專案佇列與大小視窗呈現。轉換僅增可選的 mediaSourceCategory，保留舊內容模板與原始分類恢復入口 |
-| 媒體／搜尋／通知 | [Gallery](../src/Gallery.tsx)、[Reader](../src/Reader.tsx)、[VideoViewer](../src/VideoViewer.tsx)、[SearchDialog](../src/SearchDialog.tsx)、[Toasts](../src/Toasts.tsx) | 相簿／閱讀器、Video.js、查詢 UI、右下通知 |
-| 影片控制與本機音量 | [VideoControls](../src/VideoControls.tsx)、[useVideoAudio](../src/useVideoAudio.ts) | native video 操作、控制列、可選接續；本機音量經 WorkspaceStore 保存。main 的 `window:state` 另發布可見／最小化狀態，供播放器暫停與取消倒數 |
-| 影片字幕設定畫面 | [VideoSubtitleSettings](../src/VideoSubtitleSettings.tsx) | 控制列內受控字幕群組、來源選擇、外觀／時間／編碼欄位；狀態、讀取／解析／保存由 VideoViewer 管理，選單留在播放器容器內 |
-| 檔案總覽／文件 | [FileOverview](../src/FileOverview.tsx)、[DocumentViewer](../src/DocumentViewer.tsx)、[archive](../electron/archive.ts) | 已納管來源分頁／虛擬列、來源身分與生命週期；ZIP 受限直接讀取、PDF 內建 viewer，原文件唯讀 |
-| 影片／字幕樣式 | [video-player.css](../src/video-player.css) | 播放區、字幕、檔案列、控制列、設定與響應式規則集中於此；main.tsx 在共用 style.css 後、themes.css 前固定載入，主題仍持有色票及共用圓角覆蓋。播放器 JS 維持延遲載入 |
+| 應用狀態／外框 | [App](../src/App.tsx)、[DesktopShell](../src/shell/DesktopShell.tsx)、[ProjectSettings](../src/settings/ProjectSettings.tsx) | snapshot／草稿／保存、側欄、搜尋入口與視窗控制 |
+| 全域外觀／語言／圖示 | [ApplicationSettings](../src/settings/ApplicationSettings.tsx)、[themes](../src/themes/ThemeProvider.tsx)、[i18n](../src/i18n/index.ts)、[icons](../src/common/icons.tsx) | 主題／語言預覽與本機保存、共用 CSS 變數、介面翻譯；不改寫使用者資料 |
+| 瀏覽與設定 | [BrowseWorkspace](../src/browse/BrowseWorkspace.tsx)（狀態與導覽）、[BrowseToolbar](../src/browse/BrowseToolbar.tsx)（工具列）、[BrowsePanel](../src/browse/BrowsePanel.tsx)（右側面板）、[BrowseNav](../src/browse/BrowseNav.tsx)（返回／前進與路徑）、[FolderCards](../src/browse/FolderCards.tsx)（卡片格）、`useCardSettings`／`useTableColumns`（CARD 顯示設定保存、TABLE 欄位順序）、[TreeView](../src/browse/TreeView.tsx)、[FolderPanel](../src/panel/FolderPanel.tsx)（資料夾設定；網站匯入、欄位輸入、圖片分頁分別在 FolderSourceImport、FolderFieldInput、FolderImages） | 三模式、歷史、獨立右區、設定分頁；TREE 用 React Flow＋Dagre；排序在 `shared/browse.ts` 的 `sortRows` |
+| CELL／內容 | [Card](../src/cells/Card.tsx)、[Editor](../src/editor/Editor.tsx)（狀態與畫布）、[EditorPalette](../src/editor/EditorPalette.tsx)（左側組件與欄位）、[EditorInspector](../src/editor/EditorInspector.tsx)（右側組件設定）、[FolderContent](../src/panel/FolderContent.tsx) | 共用編輯引擎、分開版面、各屬性內容 |
+| 統一媒體／音訊 | [MediaBrowser](../src/media/MediaBrowser.tsx)、[MediaViewer](../src/media/MediaViewer.tsx)、[MediaQueue](../src/media/MediaQueue.tsx)、[AudioViewer](../src/media/AudioViewer.tsx) | 跨層 `overview`、來源身分、來源分組與圖片／文件單來源清單；舊四分類以共用媒體頁相容讀取，保留單檔預覽。main 的 `audio-cover` 透過 Explorer 與 music-metadata 讀取封面，播放器仍用 Video.js；影音由 [PlaybackProvider](../src/media/Playback.tsx) 在 App 外持有唯一工作階段、跨專案佇列與大小視窗呈現。轉換僅增可選的 mediaSourceCategory，保留舊內容模板與原始分類恢復入口 |
+| 媒體／搜尋／通知 | [Gallery](../src/gallery/Gallery.tsx)、[Reader](../src/reader/Reader.tsx)、[VideoViewer](../src/video/VideoViewer.tsx)、[SearchDialog](../src/search/SearchDialog.tsx)、[Toasts](../src/notices/Toasts.tsx) | 相簿／閱讀器、Video.js、查詢 UI、右下通知 |
+| 影片控制與本機音量 | [VideoControls](../src/video/VideoControls.tsx)、[useVideoAudio](../src/media/useVideoAudio.ts) | native video 操作、控制列、可選接續；本機音量經 WorkspaceStore 保存。main 的 `window:state` 另發布可見／最小化狀態，供播放器暫停與取消倒數 |
+| 影片字幕設定畫面 | [VideoSubtitleSettings](../src/video/VideoSubtitleSettings.tsx) | 控制列內受控字幕群組、來源選擇、外觀／時間／編碼欄位；狀態、讀取／解析／保存由 VideoViewer 管理，選單留在播放器容器內 |
+| 檔案總覽／文件 | [FileOverview](../src/files/FileOverview.tsx)、[DocumentViewer](../src/documents/DocumentViewer.tsx)、[archive](../electron/archive.ts) | 已納管來源分頁／虛擬列、來源身分與生命週期；ZIP 受限直接讀取、PDF 內建 viewer，原文件唯讀 |
+| 影片／字幕樣式 | [video-player.css](../src/video/video-player.css) | 播放區、字幕、檔案列、控制列、設定與響應式規則集中於此；main.tsx 在共用 style.css 後、themes.css 前固定載入，主題仍持有色票及共用圓角覆蓋。播放器 JS 維持延遲載入 |
 
 先 `rg -n "符號" 相關目錄`，再讀函式及呼叫端；不為定位一個問題全讀以上檔案。
 

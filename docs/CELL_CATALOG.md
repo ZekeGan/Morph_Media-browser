@@ -1,6 +1,6 @@
 # CELL 目錄
 
-> 最後確認：2026-11-10。卡片組件與欄位型別的現行契約；共用編輯行為見 [EDITOR_DESIGN](EDITOR_DESIGN.md)。值、版面與受控動作分開；取捨見 [決策索引](DECISIONS.md)。
+> 最後確認：2026-11-11。卡片組件與欄位型別的現行契約；共用編輯行為見 [EDITOR_DESIGN](EDITOR_DESIGN.md)。值、版面與受控動作分開；取捨見 [決策索引](DECISIONS.md)。
 
 ## 現行契約
 
@@ -61,7 +61,7 @@
 
 候選的來源、renderer、格式／空值／樣式及操作需各自明確；衍生值標示計算狀態／更新時間，不阻塞基本列表。其他外部應用不得變成任意系統命令輸入。更完整例子見 [封存目錄](history/agent-docs-before-cleanup.md#cell-catalog)，不是本輪必做清單。
 
-系統檔案數與容量採已開啟內容的直接檔案快取，顯示最後計算時間；未知顯示「尚未計算」，不在卡片渲染時掃描。網址只允許 HTTP(S)，拒絕內嵌帳密與系統命令；單選定義 1～100 個唯一非空選項，已不在選項內的舊值仍可讀取，寫入新值時驗證。純日期檢查真實曆日，是／否以 null 表未填並保留 false；未知舊型別原樣保留。入口 shared/fields.ts、src/folderStats.ts、tests/decided.test.ts。
+系統檔案數與容量採已開啟內容的直接檔案快取，顯示最後計算時間；未知顯示「尚未計算」，不在卡片渲染時掃描。網址只允許 HTTP(S)，拒絕內嵌帳密與系統命令；單選定義 1～100 個唯一非空選項，已不在選項內的舊值仍可讀取，寫入新值時驗證。純日期檢查真實曆日，是／否以 null 表未填並保留 false；未知舊型別原樣保留。入口 shared/fields.ts、src/browse/folderStats.ts、tests/decided.test.ts。
 
 ## 編輯器操作
 

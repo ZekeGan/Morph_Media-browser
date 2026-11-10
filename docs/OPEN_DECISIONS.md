@@ -22,7 +22,6 @@
 | 項目 | 內容與取捨 | 建議 |
 | --- | --- | --- |
 | 分層引用檢查 | 參考 VS Code 依執行環境分層並用 lint 禁止跨層引用；`src`／`electron`／`shared` 已是這個分法、目前無違規，但只靠慣例。加進 pre-commit：renderer 不得引用 electron/，shared/ 不得引用 Node／Electron／React | 成本低、最值得做 |
-| src 依功能分資料夾 | src 平放 85 個檔案。依 areas.json 領域分（`src/browse/`、`src/editor/`、`src/media/`、`src/video/`、`src/game/`、`src/search/`、`src/panel/`，共用放 `src/common/`）；各功能的 css 跟元件放一起，只有全域樣式放 `src/styles/`。不依檔案類型分，以免改一個功能要在多個資料夾來回。成本：引用路徑、areas.json 樣式、ARCHITECTURE 連結一起改；決策與封存區的舊連結失效 | 在沒有其他需求進行中時一次做完，可排在 R-240 前 |
 | IPC 合約只寫一份 | 目前型別在 shared/、入口檢查在 electron/ipc-requests.ts，兩份可能不同步。改成由同一份定義同時產生型別與檢查 | 中等，可與下一個新增 IPC 的需求一起做 |
 | 耗時工作移出主程序 | 掃描、縮圖、SQLite 都在 main，大型收藏可能讓 IPC 卡住；可用 Electron `utilityProcess` | 出現卡頓再做 |
 | 狀態放在 React 之外 | App 的狀態拆成小 store、以事件通知畫面，即 R-243 的方向 | 隨 R-243 |

@@ -223,7 +223,7 @@ test('a saved search on a dissolved group searches its first member', () => {
 })
 
 test('a field sharing a group cannot become a choice field', async () => {
-  const { switchTextType } = await import('../src/fieldTypes')
+  const { switchTextType } = await import('../src/editor/fieldTypes')
   const p = createGroup(base(), ['steam', 'dlsite'], 'Title', 'g1')
   assert.deepEqual(switchTextType(p, 'steam', 'enum', []), { error: 'group' })
   // Alone in its group it may.

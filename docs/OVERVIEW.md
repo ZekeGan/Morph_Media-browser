@@ -20,7 +20,7 @@ The data flow and the process boundary are drawn in [ARCHITECTURE](ARCHITECTURE.
 | --- | --- |
 | Main process, IPC, file access | `electron/main.ts`, `electron/preload.ts`, `electron/library.ts`, `electron/explorer.ts` |
 | Shared contracts and validation | `shared/model.ts`, `shared/explorer.ts`, `shared/workspace.ts` |
-| UI | `src/App.tsx`, `src/BrowseWorkspace.tsx`, `src/Editor.tsx` |
+| UI | `src/App.tsx`, `src/browse/BrowseWorkspace.tsx`, `src/editor/Editor.tsx` |
 
 Module responsibilities: [ARCHITECTURE](ARCHITECTURE.md#按問題找入口). Decisions and what superseded what: [DECISIONS](DECISIONS.md). End-user documentation: [User guide](USER_GUIDE.md).
 

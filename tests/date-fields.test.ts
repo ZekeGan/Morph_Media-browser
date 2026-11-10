@@ -10,7 +10,7 @@ import { parseDate, readDate } from '../shared/fields'
 import { columnValue } from '../shared/browse'
 import { cellField, conditionMet } from '../shared/cells'
 import { validateProject, type Cell, type FolderRow, type Project } from '../shared/model'
-import { dateConditionCount, switchDateToText, switchTextToDate } from '../src/fieldTypes'
+import { dateConditionCount, switchDateToText, switchTextToDate } from '../src/editor/fieldTypes'
 import { modelProject } from './support/model-fixtures'
 import { tinyPng } from './support/archive-fixture'
 

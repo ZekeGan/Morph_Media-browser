@@ -14,23 +14,21 @@
 
 ## 待查收
 
-- **R-241** library 請求分派移出 main.ts，IPC 參數在入口逐項驗證 ｜中｜安全邊界｜無｜領域：core｜依賴：無
-  驗收：開程式後建立／開啟專案、改欄位值、播放影片、搜尋、切換群組與主題都照常；`pnpm exec tsx --test tests/ipc-requests.test.ts` 通過。
-  `dispatch` 搬到 electron 同層模組；`library:request`、`explorer:request`、`workspace:update` 在入口檢查請求形狀（動作名稱在允許清單、各欄位型別正確），不符合就拒絕。行為與回應不變。
+- **R-249** src 依功能分資料夾 ｜中｜一般｜無｜領域：shell、browse、panel、files、media、gallery、reader、video、documents、editor、cells、search、game、metadata、appearance、notices、storage、project｜依賴：R-248
+  驗收：`src/` 根目錄只剩 App.tsx、main.tsx、index.html、env.d.ts 與功能資料夾；開程式後瀏覽 CARD／TABLE／TREE、開資料夾設定、編輯器、播放影片、看圖、搜尋、切換主題都照常（外觀與行為不變）。
+  80 個檔案依領域搬到 `browse/`、`panel/`、`editor/`、`cells/`、`media/`、`video/`、`gallery/`、`reader/`、`documents/`、`files/`、`search/`、`game/`、`metadata/`、`settings/`、`shell/`、`notices/`、`storage/`、`common/`、`styles/`；引用路徑、areas.json、ARCHITECTURE 與規格連結一起更新，程式內容不變。
 
 ## 進行中
 
 ## 已核定（未做）
 
-順序（2026-11-11 核定）：其餘已完成並查收，剩 R-249。
-
-- **R-249** src 依功能分資料夾 ｜中｜一般｜無｜領域：shell、browse、panel、files、media、gallery、reader、video、documents、editor、cells、search、game、metadata、appearance、notices、storage、project｜依賴：R-248
-  依 areas.json 領域分（`src/browse/`、`src/editor/`、`src/media/`、`src/video/`、`src/game/`、`src/search/`、`src/panel/` 等，共用放 `src/common/`）；功能的 css 跟元件放一起，全域樣式放 `src/styles/`。只搬檔案與改引用，不改行為；連動 areas.json、ARCHITECTURE 與規格連結。
-
 ## 已登記（未核定）
 
 - **R-250** `file-overview-ui` 捲動檢查時好時壞 ｜小｜一般｜無｜領域：files｜依賴：無
   捲動後只等 100ms 就檢查畫面內有沒有檔案，電腦忙時會失敗：2026-11-11 新舊版輪流各跑 3 次都只過 1～2 次，與 R-240 無關。方向：改成等到條件成立（有逾時）而不是固定等待。
+
+- **R-251** `audio-playback-ui` 點側欄專案時好時壞 ｜小｜一般｜無｜領域：media｜依賴：無
+  縮小播放後點「開啟專案 Audio legacy」，按鈕一直重新渲染，等到逾時。2026-11-11 量測：新版連跑 3 次過 2 次，上一版也要重跑才過（兩版打包出的程式完全相同）。方向：查縮小播放後側欄為何持續重繪，或等到畫面穩定再點。
 
 ## 擱置
 

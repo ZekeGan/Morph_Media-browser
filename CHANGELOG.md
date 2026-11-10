@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Internal (R-249): the window's source files are grouped into one folder per feature (browse, panel, editor, media, video and so on) instead of one flat folder. No visible change.
 - Cleanup (R-245): leftover records inside a game folder are only removed whole; clearing just a project's private values there, which would rewrite the record, is refused.
 - Fix (R-246): importing from a website with "fill empty fields" no longer fails when one of the chosen fields was edited by hand; that field is left as it is and the others are filled. Replacing still refuses to overwrite a hand edit.
 - Checks (R-248): commits are refused when code imports across the window, shared and main-process layers.

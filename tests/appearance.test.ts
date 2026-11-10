@@ -4,12 +4,15 @@ import fs from 'node:fs'
 import ts from 'typescript'
 import { catalog } from '../src/i18n/catalog'
 import { setLocale, t as tr, fieldTypeLabel } from '../src/i18n'
-import { cellColors } from '../src/themes/cellStyle'
+import { cellColors } from '../src/cells/cellStyle'
 import { defaultCells } from '../shared/model'
 
 test('every UI message has complete translations and preserves substitution values', () => {
   const sources = new Set<string>()
-  for (const file of fs.readdirSync('src').filter((file) => /\.tsx?$/.test(file))) {
+  const files = (fs.readdirSync('src', { recursive: true }) as string[]).filter((file) =>
+    /\.tsx?$/.test(file)
+  )
+  for (const file of files) {
     const sf = ts.createSourceFile(
       file,
       fs.readFileSync('src/' + file, 'utf8'),
