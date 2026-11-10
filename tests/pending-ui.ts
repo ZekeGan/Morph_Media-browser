@@ -112,10 +112,12 @@ try {
   await button('目前資料夾設定').click()
   const drawer = page.locator('.folder-panel-dock-settings'),
     scheme = drawer.getByRole('textbox', { name: '此資料夾的卡片外觀', exact: true })
-  assert.match(await scheme.inputValue(), /^遵循類型與專案設定（目前：/)
   // Pending Manga shows the same folder, so the shared / this-project switch is offered here.
   await drawer.locator('label').filter({ hasText: '僅目前專案' }).waitFor()
   assert.equal(await drawer.locator('.mantine-Divider-root').count(), 1)
+  // The card layout is in the Appearance tab (R-235).
+  await drawer.getByRole('tab', { name: '外觀', exact: true }).click()
+  assert.match(await scheme.inputValue(), /^遵循類型與專案設定（目前：/)
   await scheme.click()
   await page.getByRole('option', { name: '預設版面', exact: true }).click()
   await page.waitForFunction(() =>

@@ -58,7 +58,8 @@ try {
   assert.equal(await page.getByRole('textbox', { name: '狀態', exact: true }).inputValue(), '')
   // The shared / this-project switch only appears when another linked project also shows this folder.
   assert.equal(await page.locator('label').filter({ hasText: '僅目前專案' }).count(), 0)
-  // The folder type is detected and can be set by hand.
+  // The folder type is detected and can be set by hand, in the Appearance tab (R-235).
+  await page.getByRole('tab', { name: '外觀', exact: true }).click()
   const kind = page.getByRole('textbox', { name: '資料夾類型', exact: true })
   await kind.waitFor()
   assert.match(await kind.inputValue(), /^自動（偵測為 /)

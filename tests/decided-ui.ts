@@ -211,7 +211,10 @@ try {
       row.record?.attributes.some((attribute) => attribute.value === false)
     )
   })
+  // Folder type and card layout are in the Appearance tab (R-235).
+  await drawer.getByRole('tab', { name: '外觀', exact: true }).click()
   await choose('此資料夾的卡片外觀', '預設版面')
+  await drawer.getByRole('tab', { name: /^資料/ }).click()
   // The source is recognised from the address; the preview button is enabled only for a known site.
   const address = drawer.getByRole('textbox', { name: '作品網址或 ID', exact: true }),
     preview = drawer.getByRole('button', { name: '取得預覽', exact: true })

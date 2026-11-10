@@ -173,8 +173,13 @@ export function FolderPanel({
   const assets = row.record?.assets ?? []
   const showImages = imageCells.length > 0 || assets.length > 0 || isGame
   useEffect(() => {
-    if ((tab === 'images' && !showImages) || (tab === 'game' && !isGame)) setTab('fields')
-  }, [tab, showImages, isGame])
+    if (
+      (tab === 'images' && !showImages) ||
+      (tab === 'game' && !isGame) ||
+      (tab === 'appearance' && !row.record)
+    )
+      setTab('fields')
+  }, [tab, showImages, isGame, row.record])
   const original = useMemo(
     () =>
       Object.fromEntries(
@@ -515,6 +520,7 @@ export function FolderPanel({
               </Badge>
             )}
           </Tabs.Tab>
+          {row.record && <Tabs.Tab value="appearance">{tr('外觀')}</Tabs.Tab>}
           {showImages && <Tabs.Tab value="images">{tr('圖片')}</Tabs.Tab>}
           {isGame && <Tabs.Tab value="game">{tr('遊戲操作')}</Tabs.Tab>}
           <Tabs.Tab value="advanced">{tr('進階')}</Tabs.Tab>
@@ -557,72 +563,6 @@ export function FolderPanel({
                 />
               )}
             </Group>
-            {row.record && (
-              <Select
-                label={
-                  <HelpLabel
-                    label={tr('資料夾類型')}
-                    help={
-                      row.record.details?.kind
-                        ? tr('已手動指定類型；選「自動」可改回自動判斷。')
-                        : (sample || detectedKind.source !== 'default'
-                            ? kindReason[detectedKind.source]
-                            : tr('偵測中…')) +
-                          '。' +
-                          tr('也可以手動指定。')
-                    }
-                  />
-                }
-                allowDeselect={false}
-                value={row.record.details?.kind ?? 'auto'}
-                data={[
-                  {
-                    value: 'auto',
-                    label: tr('自動（偵測為 {0}）', kindLabel[detectedKind.kind]),
-                  },
-                  ...folderKinds.map((kind) => ({ value: kind, label: kindLabel[kind] })),
-                ]}
-                disabled={disabled || fieldDirty}
-                onChange={(value) =>
-                  value &&
-                  void run({
-                    action: 'folderKind',
-                    rowId: row.rowId,
-                    revision: row.record!.revision,
-                    kind: value === 'auto' ? null : (value as (typeof folderKinds)[number]),
-                  })
-                }
-              />
-            )}
-            {row.record && (
-              <Select
-                label={
-                  <HelpLabel
-                    label={tr('此資料夾的卡片外觀')}
-                    help={tr('版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。')}
-                  />
-                }
-                allowDeselect={false}
-                value={project.folderLayouts?.[row.record.folderId] ?? ''}
-                data={[
-                  { value: '', label: tr('遵循類型與專案設定（目前：{0}）', effectiveLayout) },
-                  ...cardPresets(project).map((preset) => ({
-                    value: preset.id,
-                    label:
-                      preset.id === 'default' && preset.name === '預設版面'
-                        ? tr('預設版面')
-                        : preset.name,
-                  })),
-                ]}
-                disabled={busy || fieldDirty}
-                onChange={(id) => {
-                  const folderLayouts = { ...project.folderLayouts }
-                  if (id) folderLayouts[row.record!.folderId] = id
-                  else delete folderLayouts[row.record!.folderId]
-                  void act({ action: 'saveProject', project: { ...project, folderLayouts } })
-                }}
-              />
-            )}
             <FolderSourceImport
               importer={importer}
               row={row}
@@ -719,6 +659,77 @@ export function FolderPanel({
                   </Button>
                 </Group>
               </div>
+            )}
+          </Stack>
+        </Tabs.Panel>
+        {/* Folder type and card layout: how this folder looks, apart from its data (R-235). */}
+        <Tabs.Panel value="appearance" pt="md">
+          <Stack>
+            {row.record && (
+              <Select
+                label={
+                  <HelpLabel
+                    label={tr('資料夾類型')}
+                    help={
+                      row.record.details?.kind
+                        ? tr('已手動指定類型；選「自動」可改回自動判斷。')
+                        : (sample || detectedKind.source !== 'default'
+                            ? kindReason[detectedKind.source]
+                            : tr('偵測中…')) +
+                          '。' +
+                          tr('也可以手動指定。')
+                    }
+                  />
+                }
+                allowDeselect={false}
+                value={row.record.details?.kind ?? 'auto'}
+                data={[
+                  {
+                    value: 'auto',
+                    label: tr('自動（偵測為 {0}）', kindLabel[detectedKind.kind]),
+                  },
+                  ...folderKinds.map((kind) => ({ value: kind, label: kindLabel[kind] })),
+                ]}
+                disabled={disabled || fieldDirty}
+                onChange={(value) =>
+                  value &&
+                  void run({
+                    action: 'folderKind',
+                    rowId: row.rowId,
+                    revision: row.record!.revision,
+                    kind: value === 'auto' ? null : (value as (typeof folderKinds)[number]),
+                  })
+                }
+              />
+            )}
+            {row.record && (
+              <Select
+                label={
+                  <HelpLabel
+                    label={tr('此資料夾的卡片外觀')}
+                    help={tr('版面套用優先序：資料夾自選 › 類型預設 › 專案目前版面。')}
+                  />
+                }
+                allowDeselect={false}
+                value={project.folderLayouts?.[row.record.folderId] ?? ''}
+                data={[
+                  { value: '', label: tr('遵循類型與專案設定（目前：{0}）', effectiveLayout) },
+                  ...cardPresets(project).map((preset) => ({
+                    value: preset.id,
+                    label:
+                      preset.id === 'default' && preset.name === '預設版面'
+                        ? tr('預設版面')
+                        : preset.name,
+                  })),
+                ]}
+                disabled={busy || fieldDirty}
+                onChange={(id) => {
+                  const folderLayouts = { ...project.folderLayouts }
+                  if (id) folderLayouts[row.record!.folderId] = id
+                  else delete folderLayouts[row.record!.folderId]
+                  void act({ action: 'saveProject', project: { ...project, folderLayouts } })
+                }}
+              />
             )}
           </Stack>
         </Tabs.Panel>

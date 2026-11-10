@@ -7456,5 +7456,11 @@
     "en": "Yes and no need different wording",
     "ja": "「はい」と「いいえ」は別の文字にしてください",
     "es": "Sí y no necesitan textos distintos"
+  },
+  "外觀": {
+    "zh-CN": "外观",
+    "en": "Appearance",
+    "ja": "外観",
+    "es": "Apariencia"
   }
 }
