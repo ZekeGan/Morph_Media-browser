@@ -1,5 +1,8 @@
 
 * { box-sizing: border-box; }
+/* R-272: pictures are never dragged out by the browser; its drag ghost would swallow the clicks and drags of the
+   viewers and lists underneath. Dragging rows (queue order, cards) uses their own draggable elements. */
+img { -webkit-user-drag: none; }
 * { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; }
 *::-webkit-scrollbar { width: 9px; height: 9px; } *::-webkit-scrollbar-track { background: transparent; } *::-webkit-scrollbar-thumb { background: var(--scroll); border: 2px solid transparent; border-radius: 12px; background-clip: padding-box; } *::-webkit-scrollbar-thumb:hover { background-color: var(--scroll-hover); } *::-webkit-scrollbar-corner { background: transparent; }
 .mantine-ScrollArea-thumb { background: var(--scroll); border-radius: 12px; }.mantine-ScrollArea-thumb:hover { background: var(--scroll-hover); }

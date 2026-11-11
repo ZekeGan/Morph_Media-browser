@@ -320,6 +320,31 @@ try {
     document.querySelector('.statusbar')?.textContent?.includes('就緒')
   )
   await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].maximize())
+  // R-272: images never start the browser's own drag (a ghost copy that swallows the pointer), on thumbnails or pages.
+  await page.evaluate(() => {
+    ;(window as any).__drags = 0
+    document.addEventListener('dragstart', () => (window as any).__drags++, true)
+  })
+  const thumbBox = (await page.locator('.manga-gallery .media-thumbnail').first().boundingBox())!
+  await page.mouse.move(thumbBox.x + thumbBox.width / 2, thumbBox.y + thumbBox.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(
+    thumbBox.x + thumbBox.width / 2 + 60,
+    thumbBox.y + thumbBox.height / 2 + 40,
+    {
+      steps: 6,
+    }
+  )
+  await page.mouse.up()
+  assert.equal(
+    await page.evaluate(() => (window as any).__drags),
+    0,
+    'no native drag on a thumbnail'
+  )
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(200)
+  if (await reader().isVisible()) await page.keyboard.press('Escape')
+  await reader().waitFor({ state: 'hidden' })
   await page.locator('.manga-gallery .media-thumbnail').first().click()
   // R-253: opening from the first page continues where the reader was left, with a way back to the start.
   const resume = reader().locator('.reader-notice')
@@ -327,6 +352,18 @@ try {
   await page.waitForTimeout(300)
   assert.match((await resume.textContent()) ?? '', /^從第 \d+ 頁繼續/)
   await resume.getByRole('button', { name: '從頭開始', exact: true }).click()
+  await waitPages('1–2')
+  const dragBox = (await reader().locator('.reader-stage').boundingBox())!
+  await page.mouse.move(dragBox.x + dragBox.width / 2, dragBox.y + dragBox.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(dragBox.x + dragBox.width / 2 + 30, dragBox.y + dragBox.height / 2 + 160, {
+    steps: 8,
+  })
+  await page.screenshot({ path: path.join(root, 'reader-drag.png') })
+  await page.mouse.up()
+  await page.waitForTimeout(300)
+  await page.screenshot({ path: path.join(root, 'reader-after-drag.png') })
+  assert.equal(await page.evaluate(() => (window as any).__drags), 0, 'no native drag on the page')
   await waitPages('1–2')
   // R-255: past the last page the reader says so instead of doing nothing; Escape only closes the note.
   await page.keyboard.press('g')

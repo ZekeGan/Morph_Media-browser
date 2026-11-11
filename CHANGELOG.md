@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fix (R-272): dragging a thumbnail a little while clicking it no longer leaves a ghost copy of the picture over the viewer that swallowed clicks and drags; pictures are never dragged out by the browser.
 - Reading place (R-253): opening a manga from its first page continues where you left it ("Continuing from page N", with Start over); a book left on its last pages opens from the start. The play order is remembered after restart (stored in local settings as `playOrder`).
 - Next book (R-255): pressing Next on the last page says "This is the last page" and names the next folder in the browse list; pressing again opens it and starts reading.
 - Reader toolbar (R-263): page mode, first-page-alone, reading direction and fit are icon buttons with names and shortcuts in tooltips; the "Reading settings" menu is gone. In immersive reading the same tools slide in from the left edge, a progress bar with page previews from the bottom edge (R-262, R-254), and the media queue from the right edge (R-261); the project sidebar no longer slides out there.
