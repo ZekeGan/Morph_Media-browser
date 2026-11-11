@@ -13,6 +13,9 @@
 
 ## 待查收
 
+- **R-301** 真實網站健康檢查 `pnpm check:sources` ｜小｜一般｜無｜領域：metadata｜依賴：R-300
+  驗收：執行 `pnpm check:sources`，12 個來源各列一行 OK（附欄位數、有無封面、標題）；`pnpm check:sources bangumi=https://bgm.tv/subject/999999999` 列出 FAIL notFound。RELEASING 的發布關卡多了這一步。
+
 - **R-297** 修正：Hitomi.la 資料取不到 ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
   驗收：資料夾設定 →「資料」→ 從網站補充資訊，貼一個 Hitomi 作品網址（如 `https://hitomi.la/reader/<ID>.html`）→ 取得預覽，看到標題與欄位。
 
@@ -27,9 +30,6 @@
 
 - **R-299** 補遊戲引擎辨識規則（先用合成資料） ｜中｜一般｜無｜領域：detection｜依賴：無｜取代：R-211 — 使用者 2026-11-12 核定
   新增規則：SRPG Studio、HSP（Hot Soup Processor）、Flash（`.swf`＋Projector）、Pixel Game Maker MV、QLIE、Malie、Entis／Cotopha、Escude、ExHIBIT、Light.vn、Visual Novel Maker（目前被列為 NW.js 候選）、Java（`.jar`）、Majiro、FVP。辨識特徵先依公開資料整理，接入前逐一查證；每種引擎用合成資料夾做正例與反例測試（`tests/game-detection.test.ts`），在 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md#尚未涵蓋) 列為「只用合成資料夾驗證」，與既有候選同等級。使用者之後提供真實樣本時用 `pnpm detect` 對照，再轉為已驗證。特徵不夠可靠的引擎只列候選、不推定。
-
-- **R-301** 真實網站健康檢查 `pnpm check:sources` ｜小｜一般｜無｜領域：metadata｜依賴：R-300 — 使用者 2026-11-12 核定
-  每個來源用一個已知作品實際請求一次，列出成功、失敗與 R-300 的錯誤類型。只在手動或發布前執行，不進提交檢查；不寫入任何資料夾。發布流程（RELEASING）加一步。
 
 - **R-302** 網站轉接器拆檔 ｜中｜安全邊界｜無｜領域：metadata｜依賴：R-300 — 使用者 2026-11-12 核定
   `electron/metadata-public.ts` 的 switch 拆成一站一個檔案，加一份共用的來源設定：允許的請求主機、封面主機白名單、額外標頭、User-Agent（同時把舊的 `MediaViewer/0.9.0` 改成現行名稱與版號）。行為不變，既有測試照過。排在 R-284 等新增網站之前。
@@ -61,6 +61,9 @@
   資料夾有來源網址（Steam、DLsite 等）時，自動提供「開啟商店頁」動作；用系統瀏覽器開啟，只開 https。
 
 ## 已登記（未核定）
+
+- **R-311** 修正：E-Hentai 封面拿不到（WebP） ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
+  `pnpm check:sources` 實測（2026-11-12）：E-Hentai／ExHentai 的 `thumb` 現在是 `https://ehgt.org/w/…/….webp`，`ehMetadata` 的封面格式只認 JPG／PNG，所以預覽一律「封面縮圖無法取得」。改為也接受 WebP（與 metadata-public 的格式判斷一致），測試補 WebP 固定回應。
 
 - **R-294** 修正：音樂資料夾在右側資料夾內容不顯示專輯封面 ｜小｜一般｜無｜領域：media、panel｜依賴：無
   使用者回報（2026-11-12）：音樂類型的資料夾在右側「資料夾內容」裡看不到專輯封面。右側這時顯示的是統一媒體頁（`MediaBrowser`）；規格的封面優先序是「指定封面 → 音訊內嵌封面 → 同資料夾 cover／folder／front／album 圖片 → 佔位」（[MEDIA_WORKSPACE](MEDIA_WORKSPACE.md#統一媒體工作區)）。先重現並確認是哪一層沒接上（右側沒有封面區塊、內嵌封面沒讀、或候選圖片被「音樂」篩選排除），再修。
