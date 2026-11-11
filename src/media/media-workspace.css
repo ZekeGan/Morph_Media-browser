@@ -404,8 +404,41 @@
     flex-shrink: 0;
 }
 
-.media-viewer-shell:has(.reader-focused) .media-queue-slot {
+.media-viewer-shell:has(.reader-focused) .media-queue-slot:not(.queue-edge) {
     display: none;
+}
+
+/* Immersive reading (R-261): the queue waits behind the right edge and slides in while the pointer rests there. */
+.media-viewer-layout>.media-queue-slot.queue-edge {
+    top: 0;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(calc(100% - 14px));
+    transition: transform 160ms ease-out;
+}
+
+.media-viewer-layout>.media-queue-slot.queue-edge>.media-queue {
+    opacity: 0;
+    transition: opacity 160ms ease-out;
+}
+
+.media-viewer-layout>.media-queue-slot.queue-edge:hover,
+.media-viewer-layout>.media-queue-slot.queue-edge:focus-within {
+    transform: translateX(0);
+    transition-delay: 80ms;
+}
+
+.media-viewer-layout>.media-queue-slot.queue-edge:hover>.media-queue,
+.media-viewer-layout>.media-queue-slot.queue-edge:focus-within>.media-queue {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .media-viewer-layout>.media-queue-slot.queue-edge,
+    .media-viewer-layout>.media-queue-slot.queue-edge>.media-queue {
+        transition: none;
+    }
 }
 
 .media-viewer-content>.video-viewer {

@@ -1,17 +1,8 @@
 import { t as tr, useLocale } from '../i18n'
-import { Icon } from '../common/icons'
+import { Icon, type IconName } from '../common/icons'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import {
-  ActionIcon,
-  Button,
-  FocusTrap,
-  Group,
-  Menu,
-  SegmentedControl,
-  Select,
-  Tooltip,
-} from '@mantine/core'
+import { ActionIcon, Button, FocusTrap, Group, Select, Slider, Tooltip } from '@mantine/core'
 import type { MediaEntry, ReadingPrefs } from '../../shared/explorer'
 import { readingGroups, readerArrowStep, spreadGeometry, type ImageSize } from '../../shared/reader'
 interface Frame {
@@ -39,6 +30,7 @@ export function Reader({
   onActive,
   extraTools,
   openFolder,
+  onImmersive,
 }: {
   images: MediaEntry[]
   start: number
@@ -51,6 +43,8 @@ export function Reader({
   onActive?: (id: string) => void
   extraTools?: ReactNode
   openFolder?: () => void
+  // Told when immersive reading starts or ends, so the media viewer can offer its queue on the right edge.
+  onImmersive?: (value: boolean) => void
 }) {
   useLocale()
 
@@ -62,7 +56,6 @@ export function Reader({
     [rtl, setRtl] = useState(prefs?.rtl ?? manga),
     [first, setFirst] = useState(prefs?.firstSingle ?? false)
   const [toolbar, setToolbar] = useState(true),
-    [readingMenu, setReadingMenu] = useState(false),
     [pageDropdown, setPageDropdown] = useState(false),
     [immersive, setImmersive] = useState(false),
     [zoom, setZoom] = useState(1),
@@ -75,6 +68,9 @@ export function Reader({
   useEffect(() => {
     if (error) setToolbar(true)
   }, [error])
+  useEffect(() => {
+    onImmersive?.(immersive)
+  }, [immersive])
   const select = useRef<HTMLInputElement>(null),
     viewport = useRef<HTMLDivElement>(null),
     drag = useRef<
@@ -85,6 +81,7 @@ export function Reader({
           top: number
           pan: boolean
           moved: boolean
+          time: number
         }
       | undefined
     >(undefined)
@@ -148,7 +145,6 @@ export function Reader({
       }
       if (mounted.current) {
         setPageDropdown(false)
-        setReadingMenu(false)
         setImmersive(true)
         setToolbar(false)
         focusStage()
@@ -192,7 +188,7 @@ export function Reader({
   )
   const trim = () => {
     for (const [url, item] of cache.current) {
-      if (cache.current.size <= 8) break
+      if (cache.current.size <= 10) break
       if (!protectedUrls.current.has(url)) {
         cache.current.delete(url)
         item.image.src = ''
@@ -264,7 +260,7 @@ export function Reader({
   useEffect(() => {
     if (!active) return
     const index = groups.findIndex((group) => group.includes(active.indices[0]))
-    for (const next of [groups[index + 1], groups[index - 1]])
+    for (const next of [groups[index + 1], groups[index + 2], groups[index - 1]])
       for (const i of next ?? [])
         if (images[i]?.mime !== 'image/gif') void load(images[i]).catch(() => {})
     for (const [url, item] of cache.current)
@@ -383,14 +379,6 @@ export function Reader({
         if (!event.repeat) void toggleImmersive()
         return
       }
-      if (readingMenu) {
-        if (event.key === 'Escape') {
-          event.preventDefault()
-          event.stopImmediatePropagation()
-          setReadingMenu(false)
-        }
-        return
-      }
       if (
         (event.target as HTMLElement)?.closest(
           'input:not([type="checkbox"]):not([type="radio"]),textarea,select,[role="combobox"],[role="listbox"],[contenteditable="true"]'
@@ -454,32 +442,16 @@ export function Reader({
       setActiveKey(frame.key)
       setLoading(false)
       viewport.current?.scrollTo(0, 0)
-      requestAnimationFrame(() =>
+      // The new page fades in over the old one (R-260); the old layer goes once the fade is done.
+      const settle = () =>
         setFrames((previous) =>
           previous.filter((item) => item.key === frame.key || item.token > frame.token)
         )
-      )
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+        requestAnimationFrame(settle)
+      else setTimeout(settle, 180)
     })
   }
-  const tool = (
-    label: string,
-    key: string,
-    action: () => void,
-    disabled = false,
-    pressed?: boolean
-  ) => (
-    <Tooltip zIndex={510} label={label + ' · ' + key}>
-      <Button
-        size="xs"
-        variant={pressed ? 'light' : 'default'}
-        aria-pressed={pressed}
-        disabled={disabled}
-        onClick={action}
-      >
-        {label}
-      </Button>
-    </Tooltip>
-  )
   useEffect(() => {
     const index = images.findIndex((entry) => entry.id === selectedId)
     if (index >= 0 && !groups[groupIndex]?.includes(index)) setPage(index)
@@ -522,6 +494,196 @@ export function Reader({
         {icon(kind)}
       </ActionIcon>
     </Tooltip>
+  )
+  // One list of tools for the top toolbar and the immersive left rail (R-263): icons only, name and shortcut in the
+  // tooltip, the mode in use marked as pressed.
+  type ReaderTool = {
+    label: string
+    key: string
+    icon: IconName
+    action: () => void
+    disabled?: boolean
+    pressed?: boolean
+  }
+  const modeTools: ReaderTool[] = manga
+    ? [
+        {
+          label: tr('單頁'),
+          key: 'D',
+          icon: 'page-single',
+          pressed: !spread,
+          action: () => setSpread(false),
+        },
+        {
+          label: tr('雙頁'),
+          key: 'D',
+          icon: 'page-spread',
+          pressed: spread,
+          action: () => setSpread(true),
+        },
+        {
+          label: tr('首張獨立顯示'),
+          key: '',
+          icon: 'page-cover',
+          pressed: first,
+          disabled: !spread,
+          action: () => setFirst((value) => !value),
+        },
+        {
+          label: rtl ? tr('由右至左') : tr('由左至右'),
+          key: '',
+          icon: rtl ? 'read-rtl' : 'read-ltr',
+          action: () => setRtl((value) => !value),
+        },
+      ]
+    : [
+        {
+          label: tr('寬度適應'),
+          key: 'W',
+          icon: 'fit-width',
+          pressed: fit === 'width',
+          action: () => setFitMode('width'),
+        },
+        {
+          label: tr('高度適應'),
+          key: 'H',
+          icon: 'fit-height',
+          pressed: fit === 'height',
+          action: () => setFitMode('height'),
+        },
+      ]
+  const zoomOut: ReaderTool = {
+      label: tr('縮小'),
+      key: '−',
+      icon: 'minus',
+      action: () => changeZoom(zoom / 1.25),
+      disabled: zoom <= (manga ? 1 : 0.1),
+    },
+    zoomIn: ReaderTool = {
+      label: tr('放大'),
+      key: '+',
+      icon: 'plus',
+      action: () => changeZoom(zoom * 1.25),
+      disabled: zoom >= 10,
+    },
+    zoomReset: ReaderTool = {
+      label: tr('重設縮放'),
+      key: 'R',
+      icon: 'refresh',
+      action: () => setFitMode(fit),
+    },
+    immersiveTool: ReaderTool = {
+      label: immersive ? tr('退出沉浸閱讀') : tr('沉浸閱讀'),
+      key: 'F11 / T',
+      icon: immersive ? 'focus-exit' : 'focus',
+      action: () => void toggleImmersive(),
+    }
+  const toolButton = (tool: ReaderTool, position?: 'right') => (
+    <Tooltip
+      key={tool.icon}
+      zIndex={510}
+      position={position}
+      label={tool.label + (tool.key ? ' · ' + tool.key : '')}
+    >
+      <ActionIcon
+        aria-label={tool.label}
+        aria-pressed={tool.pressed}
+        size="lg"
+        variant={tool.pressed ? 'light' : 'subtle'}
+        color={tool.pressed ? undefined : 'gray'}
+        disabled={tool.disabled}
+        onClick={tool.action}
+      >
+        <Icon name={tool.icon} />
+      </ActionIcon>
+    </Tooltip>
+  )
+  // Immersive edges (R-262, R-254): the bottom bar scrubs through pages and previews the page under the pointer.
+  const track = useRef<HTMLDivElement>(null)
+  const [scrub, setScrub] = useState<number>(),
+    [hovered, setHovered] = useState<number>()
+  const last = Math.max(1, groups.length - 1),
+    place = (index: number) => {
+      const ratio = index / last
+      return (rtl ? 1 - ratio : ratio) * (track.current?.clientWidth ?? 0)
+    },
+    previewIndex = scrub ?? hovered,
+    previewEntry = previewIndex === undefined ? undefined : images[groups[previewIndex]?.[0] ?? -1]
+  const [zoomFlash, setZoomFlash] = useState(false)
+  useEffect(() => {
+    if (!immersive) return
+    setZoomFlash(true)
+    const timer = setTimeout(() => setZoomFlash(false), 900)
+    return () => clearTimeout(timer)
+  }, [zoom])
+  const edges = immersive && (
+    <>
+      <div className="reader-edge reader-edge-left" aria-hidden="true" />
+      <nav className="reader-rail" aria-label={tr('閱讀工具')}>
+        {modeTools.map((tool) => toolButton(tool, 'right'))}
+        <span className="reader-rail-gap" />
+        {[zoomOut, zoomIn, zoomReset].map((tool) => toolButton(tool, 'right'))}
+        <span className="reader-rail-gap" />
+        {toolButton(immersiveTool, 'right')}
+      </nav>
+      <div className="reader-edge reader-edge-bottom" aria-hidden="true" />
+      <div className="reader-progress" role="group" aria-label={tr('閱讀進度')}>
+        {iconTool(
+          rtl ? tr('下一頁') : tr('上一頁'),
+          '←',
+          'prev',
+          () => step(rtl ? 1 : -1),
+          rtl ? groupIndex === groups.length - 1 : groupIndex === 0
+        )}
+        <div
+          ref={track}
+          className="reader-progress-track"
+          onMouseMove={(event) => {
+            const bounds = event.currentTarget.getBoundingClientRect(),
+              ratio = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width))
+            setHovered(Math.round((rtl ? 1 - ratio : ratio) * last))
+          }}
+          onMouseLeave={() => setHovered(undefined)}
+        >
+          <Slider
+            aria-label={tr('閱讀進度')}
+            min={0}
+            max={last}
+            step={1}
+            inverted={rtl}
+            label={null}
+            disabled={groups.length < 2}
+            value={scrub ?? groupIndex}
+            onChange={setScrub}
+            onChangeEnd={(value) => {
+              setScrub(undefined)
+              goToGroup(value)
+            }}
+          />
+          {previewEntry && previewIndex !== undefined && (
+            <div className="reader-progress-preview" style={{ left: place(previewIndex) }}>
+              <img src={previewEntry.thumb ?? previewEntry.url} alt="" draggable={false} />
+              <span>{pageLabel(groups[previewIndex])}</span>
+            </div>
+          )}
+        </div>
+        {iconTool(
+          rtl ? tr('上一頁') : tr('下一頁'),
+          '→',
+          'next',
+          () => step(rtl ? -1 : 1),
+          rtl ? groupIndex === 0 : groupIndex === groups.length - 1
+        )}
+        <span className="reader-progress-pages">
+          {tr('第 {0} / {1} 頁', pageLabel(groups[scrub ?? groupIndex] ?? []), images.length)}
+        </span>
+      </div>
+      {zoomFlash && (
+        <div className="reader-zoom-flash" aria-hidden="true">
+          {Math.round(zoom * 100)}%
+        </div>
+      )}
+    </>
   )
   const view = (
     <FocusTrap active={!embedded}>
@@ -598,90 +760,20 @@ export function Reader({
                 rtl ? groupIndex === 0 : groupIndex === groups.length - 1
               )}
             </Group>
-            <Group className="reader-tool-group" gap="xs" wrap="nowrap">
-              {manga ? (
-                <>
-                  <Tooltip zIndex={510} label={tr('單／雙頁 · D')}>
-                    <SegmentedControl
-                      size="xs"
-                      aria-label={tr('閱讀頁面模式')}
-                      value={spread ? 'spread' : 'single'}
-                      data={[
-                        { value: 'single', label: tr('單頁') },
-                        { value: 'spread', label: tr('雙頁') },
-                      ]}
-                      onChange={(value) => setSpread(value === 'spread')}
-                    />
-                  </Tooltip>
-                  <Menu
-                    position="bottom"
-                    withinPortal
-                    zIndex={510}
-                    opened={readingMenu}
-                    onChange={setReadingMenu}
-                  >
-                    <Menu.Target>
-                      <Button
-                        size="xs"
-                        variant="subtle"
-                        color="gray"
-                        leftSection={icon('settings')}
-                      >
-                        {tr('閱讀設定')}
-                      </Button>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Label>{tr('套用目前漫畫')}</Menu.Label>
-                      <Menu.Item
-                        aria-label={first ? tr('取消首張獨立顯示') : tr('首張獨立顯示')}
-                        disabled={!spread}
-                        leftSection={first ? <Icon name="check" size={15} /> : null}
-                        onClick={() => setFirst((value) => !value)}
-                      >
-                        {tr('首張獨立顯示')}
-                      </Menu.Item>
-                      <Menu.Item
-                        aria-label={rtl ? tr('由右至左') : tr('由左至右')}
-                        leftSection={rtl ? <Icon name="check" size={15} /> : null}
-                        onClick={() => setRtl((value) => !value)}
-                      >
-                        {rtl ? tr('由右至左') : tr('由左至右')}
-                      </Menu.Item>
-                      <Menu.Label>
-                        {rtl ? tr('← 下一頁 · → 上一頁') : tr('← 上一頁 · → 下一頁')}
-                      </Menu.Label>
-                    </Menu.Dropdown>
-                  </Menu>
-                </>
-              ) : (
-                <>
-                  {tool(tr('寬度適應'), 'W', () => setFitMode('width'), false, fit === 'width')}
-                  {tool(tr('高度適應'), 'H', () => setFitMode('height'), false, fit === 'height')}
-                </>
-              )}
+            <Group className="reader-tool-group" gap={3} wrap="nowrap">
+              {modeTools.map((tool) => toolButton(tool))}
             </Group>
             <Group className="reader-tool-group reader-zoom-tools" gap={3} wrap="nowrap">
-              {iconTool(
-                tr('縮小'),
-                '−',
-                'minus',
-                () => changeZoom(zoom / 1.25),
-                zoom <= (manga ? 1 : 0.1)
-              )}
+              {toolButton(zoomOut)}
               <span
                 className="reader-zoom-value"
                 title={manga ? tr('100%＝貼合可視區高度；可繼續放大查看細節') : undefined}
               >
                 {Math.round(zoom * 100)}%
               </span>
-              {iconTool(tr('放大'), '+', 'plus', () => changeZoom(zoom * 1.25), zoom >= 10)}
-              {iconTool(tr('重設縮放'), 'R', 'reset', () => setFitMode(fit))}
-              {iconTool(
-                immersive ? tr('退出沉浸閱讀') : tr('沉浸閱讀'),
-                'F11 / T',
-                'focus',
-                () => void toggleImmersive()
-              )}
+              {toolButton(zoomIn)}
+              {toolButton(zoomReset)}
+              {toolButton(immersiveTool)}
             </Group>
             {extraTools}
           </div>
@@ -705,6 +797,7 @@ export function Reader({
               top: element.scrollTop,
               pan,
               moved: false,
+              time: performance.now(),
             }
             element.setPointerCapture(event.pointerId)
           }}
@@ -720,6 +813,25 @@ export function Reader({
           onPointerUp={(event) => {
             const start = drag.current
             drag.current = undefined
+            // R-264: a sideways drag on a page that fits turns it, like a swipe. Short drags stay clicks, a zoomed
+            // page keeps panning, and drags starting at the left, right or bottom edge belong to the edge panels.
+            if (manga && start && !start.pan && start.moved) {
+              const bounds = event.currentTarget.getBoundingClientRect(),
+                dx = event.clientX - start.x,
+                dy = event.clientY - start.y,
+                fast = Math.abs(dx) > 40 && performance.now() - start.time < 250,
+                edge =
+                  start.x - bounds.left < 24 ||
+                  bounds.right - start.x < 24 ||
+                  bounds.bottom - start.y < 24
+              if (
+                !edge &&
+                Math.abs(dx) > Math.abs(dy) &&
+                (Math.abs(dx) > bounds.width * 0.15 || fast)
+              )
+                step(readerArrowStep(dx < 0 ? 'ArrowRight' : 'ArrowLeft', rtl))
+              return
+            }
             if (
               manga &&
               start &&
@@ -795,6 +907,7 @@ export function Reader({
             )}
           </div>
         </div>
+        {edges}
         {toolbar && (
           <div className="reader-info" aria-live="polite">
             <strong>

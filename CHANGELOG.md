@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Reader toolbar (R-263): page mode, first-page-alone, reading direction and fit are icon buttons with names and shortcuts in tooltips; the "Reading settings" menu is gone. In immersive reading the same tools slide in from the left edge, a progress bar with page previews from the bottom edge (R-262, R-254), and the media queue from the right edge (R-261); the project sidebar no longer slides out there.
+- Reading (R-260, R-264, R-252): pages fade in instead of switching at once (off with reduced motion); a sideways drag on a page that fits turns it; the next two pages in reading order are prepared in advance.
 - Media queue (R-257, R-258): the video and music queue looks like the image and manga queue: each row has a preview square (video frame, or the music file's embedded cover) with the file name; image view shows only the previews, with names on hover.
 - Play order (R-268): one button decides what happens when a track or video ends: stop, play next, repeat all or repeat this one. It replaces "Auto advance" in the queue and "Play the next track automatically" in the music player, and sits in the music controls and the queue header.
 - Queue fixes: adding the file that is playing as a one-off makes it the playing queue entry instead of a second copy (R-266); removing the playing entry plays the next one, or pauses when none is left, instead of closing the player (R-267).

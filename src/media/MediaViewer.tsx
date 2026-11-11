@@ -49,6 +49,7 @@ export function MediaViewer({
   const [queueView, setQueueView] = useState<'list' | 'images'>('list')
   const [selected, setSelected] = useState(file.id),
     [showQueue, setShowQueue] = useState(false),
+    [immersive, setImmersive] = useState(false),
     [queueMounted, setQueueMounted] = useState(false),
     [manga, setManga] = useState(
       mangaHint ?? (effectiveKind(row) === 'book' || row.record?.details?.reading?.mode === 'manga')
@@ -86,8 +87,8 @@ export function MediaViewer({
     if (!slot) return
     if (!showQueue && slot.contains(document.activeElement))
       queueToggle.current?.focus({ preventScroll: true })
-    slot.inert = !showQueue
-  }, [showQueue, supported])
+    slot.inert = !showQueue && !immersive
+  }, [showQueue, supported, immersive])
   const queueButton = (
     <Tooltip zIndex={450} label={showQueue ? tr('隱藏佇列') : tr('顯示佇列')}>
       <ActionIcon
@@ -158,6 +159,10 @@ export function MediaViewer({
                   start={index}
                   selectedId={selected}
                   onActive={setSelected}
+                  onImmersive={(value) => {
+                    setImmersive(value)
+                    if (value) setQueueMounted(true)
+                  }}
                   manga={manga}
                   prefs={row.record?.details?.reading}
                   close={close}
@@ -232,8 +237,12 @@ export function MediaViewer({
           <div
             ref={queueSlot}
             id="media-viewer-queue"
-            className={'media-queue-slot' + (showQueue ? ' queue-open' : '')}
-            aria-hidden={!showQueue}
+            className={
+              'media-queue-slot' +
+              (showQueue ? ' queue-open' : '') +
+              (immersive ? ' queue-edge' : '')
+            }
+            aria-hidden={!showQueue && !immersive}
           >
             {queueMounted && (
               <MediaQueue

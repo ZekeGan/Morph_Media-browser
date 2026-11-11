@@ -2123,18 +2123,6 @@
     "en": "Next page",
     "es": "Página siguiente"
   },
-  "單／雙頁 · D": {
-    "ja": "単ページ／見開き · D",
-    "zh-CN": "单／双页 · D",
-    "en": "Single / spread · D",
-    "es": "Una / dos páginas · D"
-  },
-  "閱讀頁面模式": {
-    "ja": "ページ表示モード",
-    "zh-CN": "阅读页面模式",
-    "en": "Reading page mode",
-    "es": "Modo de página"
-  },
   "單頁": {
     "ja": "単ページ",
     "zh-CN": "单页",
@@ -2147,24 +2135,6 @@
     "en": "Two-page spread",
     "es": "Dos páginas"
   },
-  "閱讀設定": {
-    "ja": "読書設定",
-    "zh-CN": "阅读设定",
-    "en": "Reading settings",
-    "es": "Ajustes de lectura"
-  },
-  "套用目前漫畫": {
-    "ja": "現在の漫画に適用",
-    "zh-CN": "套用目前漫画",
-    "en": "Apply to current manga",
-    "es": "Aplicar al manga actual"
-  },
-  "取消首張獨立顯示": {
-    "ja": "最初のページの単独表示を解除",
-    "zh-CN": "取消首张独立显示",
-    "en": "Disable standalone first page",
-    "es": "Desactivar primera página independiente"
-  },
   "首張獨立顯示": {
     "ja": "最初のページを単独表示",
     "zh-CN": "首张独立显示",
@@ -2176,18 +2146,6 @@
     "zh-CN": "由右至左",
     "en": "Right to left",
     "es": "De derecha a izquierda"
-  },
-  "← 下一頁 · → 上一頁": {
-    "ja": "← 次へ · → 前へ",
-    "zh-CN": "← 下一页 · → 上一页",
-    "en": "← Next · → Previous",
-    "es": "← Siguiente · → Anterior"
-  },
-  "← 上一頁 · → 下一頁": {
-    "ja": "← 前へ · → 次へ",
-    "zh-CN": "← 上一页 · → 下一页",
-    "en": "← Previous · → Next",
-    "es": "← Anterior · → Siguiente"
   },
   "寬度適應": {
     "ja": "幅に合わせる",
@@ -7630,5 +7588,17 @@
     "en": "{0} date comparison conditions (greater than, less than, days from today) will be removed",
     "ja": "日付を比較する条件 {0} 個（より大きい・より小さい・今日から）は削除されます",
     "es": "Se quitarán {0} condiciones que comparan fechas (mayor que, menor que, días desde hoy)"
+  },
+  "閱讀工具": {
+    "en": "Reading tools",
+    "ja": "閲覧ツール",
+    "es": "Herramientas de lectura",
+    "zh-CN": "阅读工具"
+  },
+  "閱讀進度": {
+    "en": "Reading progress",
+    "ja": "読書の進み具合",
+    "es": "Progreso de lectura",
+    "zh-CN": "阅读进度"
   }
 }

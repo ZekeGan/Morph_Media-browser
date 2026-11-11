@@ -173,6 +173,8 @@ export function DesktopShell(props: Props) {
   }
   const openPeek = () => {
     clearTimeout(peekTimer.current)
+    // Immersive reading owns the left edge for its tool rail.
+    if (document.querySelector('.reader-focused')) return
     if (prefs.sidebarHidden && !peekBlocked.current) setPeek(true)
   }
   const closePeekSoon = () => {

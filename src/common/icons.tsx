@@ -174,6 +174,24 @@ const paths = {
   'chevron-down': <path d="m4 8 6 6 6-6" />,
   check: <path d="m4 10 4 4 8-8" />,
   focus: <path d="M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4" />,
+  'focus-exit': <path d="M7 3v4H3M17 7h-4V3M13 17v-4h4M3 13h4v4" />,
+  // Reader page modes: one page, two pages side by side, a cover followed by pairs.
+  'page-single': <rect x="6" y="3" width="8" height="14" rx="1" />,
+  'page-spread': <path d="M2.5 4.5h7v11h-7ZM10.5 4.5h7v11h-7Z" />,
+  'page-cover': <path d="M2 5h5v10H2ZM9.5 5h4v10h-4ZM13.5 5h4.5v10h-4.5Z" />,
+  // Reading direction: an open book with the way pages turn.
+  'read-ltr': (
+    <path d="M10 6C8 4.7 5.5 4.5 3 5.2v10c2.5-.7 5-.5 7 .8 2-1.3 4.5-1.5 7-.8v-10C14.5 4.5 12 4.7 10 6v10M12.5 10.5h3m-1.2-1.4 1.4 1.4-1.4 1.4" />
+  ),
+  'read-rtl': (
+    <path d="M10 6C8 4.7 5.5 4.5 3 5.2v10c2.5-.7 5-.5 7 .8 2-1.3 4.5-1.5 7-.8v-10C14.5 4.5 12 4.7 10 6v10M7.5 10.5h-3m1.2-1.4-1.4 1.4 1.4 1.4" />
+  ),
+  'fit-width': (
+    <path d="M2.5 3v14M17.5 3v14M5.5 10h9M7.5 7.5 5 10l2.5 2.5M12.5 7.5 15 10l-2.5 2.5" />
+  ),
+  'fit-height': (
+    <path d="M3 2.5h14M3 17.5h14M10 5.5v9M7.5 7.5 10 5l2.5 2.5M7.5 12.5 10 15l2.5-2.5" />
+  ),
   play: <path d="m7 3 10 7-10 7Z" />,
   pause: (
     <>
