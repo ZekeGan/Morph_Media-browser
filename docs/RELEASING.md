@@ -26,15 +26,16 @@
 3. **整理 CHANGELOG。** Unreleased 改成版本標題與日期，更新 Version guide 表，重新開一個空的 Unreleased。
 4. **改 `package.json` 版本。** 同批檢查 README 與文件中寫死的版本號。
 5. **發布關卡。**
-   - `pnpm build`、`pnpm test`、`pnpm test:ui:all`。
+   - `pnpm build`、`pnpm test`、`pnpm test:ui:all`。`pnpm test` 含舊版資料檢查（`tests/compat.test.ts`）：`tests/compat/<版本>/` 裡每個已發布版本產生的樣本，在這一版都要讀出相同的專案、資料夾記錄與本機設定，而且開啟時不改寫任何檔案。
    - [文案與語系關卡](IMPLEMENTATION.md#發行前文案與語系關卡)。
    - 若這版改了任何 `schemaVersion`：[升級驗收](DATA_FORMAT.md#每次升格式版本的必備項目)全部通過。
    - 文件現況審閱：先跑 `pnpm stale`（規格卡與已知限制的確認日期、文件提到的檔名與函式名、首包大小）；再讓一個代理只讀規格的現況描述與已知限制，對照程式列出可能過時的句子。它只點名，刪改由我處理、使用者查收。
    - 授權、名稱與隱私清理（[WORKFLOW_PROMPT](WORKFLOW_PROMPT.md#9-發布前關卡只在使用者說要發布時執行) 第 4～7 項）。
-6. **打包。** `pnpm dist`，輸出在 `release/morph <版本>/`。
+6. **打包。** `pnpm dist`，輸出在 `release/morph <版本>/`；接著 `pnpm check:packaged`，用暫時的資料夾啟動打包後的程式，確認首頁出現、狀態列是這個版本、沒有錯誤。
 7. **安裝驗證。** 實際安裝、啟動、解除安裝；免安裝版直接執行。用上一個發布版建立的資料升級開啟一次，確認資料還在、沒有要求使用者做額外操作。
-8. **commit、推送。** 版本改動單獨一個 commit。次版號以上先問使用者。
-9. **打 tag 與發布（只有 Beta 之後）。** 在該 commit 打 `v<版本>` tag 並推送，再用打包出的兩個檔案建立 GitHub Release（Beta 勾選 Pre-release），內文取自 CHANGELOG。已發布的 tag 不移動、不刪除；發現問題就發下一個 `beta.N`。
+8. **保存這一版的舊資料樣本。** `pnpm compat:sample` 寫出 `tests/compat/<版本>/`，與版本改動一起提交；之後每一版都會用它檢查。
+9. **commit、推送。** 版本改動單獨一個 commit。次版號以上先問使用者。
+10. **打 tag 與發布（只有 Beta 之後）。** 在該 commit 打 `v<版本>` tag 並推送，再用打包出的兩個檔案建立 GitHub Release（Beta 勾選 Pre-release），內文取自 CHANGELOG。已發布的 tag 不移動、不刪除；發現問題就發下一個 `beta.N`。
 
 ## `release/` 資料夾
 

@@ -333,7 +333,7 @@
       "docs": ["DATA_FORMAT.md#格式升級與相容規則"],
       "code": ["shared/upgrade*"],
       "ui": ["problems-ui"],
-      "tests": ["upgrade.test.ts", "model.test.ts"]
+      "tests": ["upgrade.test.ts", "model.test.ts", "compat.test.ts"]
     },
     {
       "id": "backup",

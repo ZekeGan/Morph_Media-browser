@@ -35,6 +35,8 @@
     "format": "prettier --write \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",
     "format:check": "prettier --check \"{src,shared,electron,tests,scripts}/**/*.{ts,tsx,mjs}\"",
     "dist": "pnpm build && electron-builder --win",
+    "check:packaged": "tsx tests/support/check-packaged.ts",
+    "compat:sample": "tsx tests/support/make-compat-sample.ts",
     "dist:dir": "pnpm build && electron-builder --win dir",
     "prepare": "node scripts/setup-hooks.mjs"
   },

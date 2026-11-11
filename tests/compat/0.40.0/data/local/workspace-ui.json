@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "revision": 4,
+  "nextOrder": 2,
+  "sidebarWidth": 240,
+  "sidebarHidden": false,
+  "collapsed": {
+    "favorites": false,
+    "recent": false,
+    "unclassified": false
+  },
+  "sections": [
+    "favorites",
+    "unclassified"
+  ],
+  "projectOrder": {},
+  "groups": [],
+  "projects": {
+    "f5800668-ebd1-4cb2-8db5-56eb658d8b18": {
+      "groupId": null,
+      "favorite": false,
+      "addedOrder": 1
+    }
+  },
+  "locale": "ja",
+  "theme": "paper",
+  "videoAudio": {
+    "volume": 0.4,
+    "muted": false
+  },
+  "playOrder": "all"
+}

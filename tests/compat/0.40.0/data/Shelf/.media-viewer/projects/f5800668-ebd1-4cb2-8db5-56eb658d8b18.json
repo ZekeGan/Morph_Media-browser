@@ -1,0 +1,67 @@
+{
+  "kind": "media-viewer.project",
+  "schemaVersion": 1,
+  "projectId": "f5800668-ebd1-4cb2-8db5-56eb658d8b18",
+  "rootFolderId": "686a2256-5ad7-4199-a9f3-f7718a1a7c20",
+  "revision": 1,
+  "name": "Compat",
+  "depth": {
+    "mode": "through",
+    "level": 1
+  },
+  "fieldBindings": [],
+  "cells": [
+    {
+      "cellId": "221ac80f-9354-48c4-a2ee-d151287aad20",
+      "kind": "name",
+      "grid": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 1
+      },
+      "style": {
+        "textColor": "#e4e6e8",
+        "backgroundColor": "transparent"
+      }
+    },
+    {
+      "cellId": "a7fe104f-13b5-4ca9-82f2-86c314719fe6",
+      "kind": "path",
+      "grid": {
+        "x": 0,
+        "y": 1,
+        "w": 12,
+        "h": 1
+      },
+      "style": {
+        "textColor": "#e4e6e8",
+        "backgroundColor": "transparent"
+      }
+    },
+    {
+      "cellId": "32dd7001-8a79-4209-9e25-9c1839130391",
+      "kind": "open-folder",
+      "grid": {
+        "x": 0,
+        "y": 2,
+        "w": 12,
+        "h": 1
+      },
+      "style": {
+        "textColor": "#e4e6e8",
+        "backgroundColor": "transparent"
+      }
+    }
+  ],
+  "list": {
+    "itemsPerRow": 3,
+    "pageSize": 100
+  },
+  "excludedRelativePaths": [],
+  "cardView": {
+    "mode": "single",
+    "level": 1
+  },
+  "scanAll": true
+}

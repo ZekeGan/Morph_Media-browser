@@ -1,0 +1,58 @@
+{
+  "projects": [
+    {
+      "name": "Compat",
+      "error": null,
+      "fields": [],
+      "cells": 3
+    }
+  ],
+  "rows": [
+    {
+      "name": "Book 1",
+      "error": null,
+      "details": {
+        "schemaVersion": 1,
+        "reading": {
+          "mode": "manga",
+          "page": 2,
+          "spread": true,
+          "rtl": true,
+          "firstSingle": false
+        }
+      },
+      "attributes": []
+    },
+    {
+      "name": "Book 2",
+      "error": null,
+      "details": null,
+      "attributes": []
+    },
+    {
+      "name": "Notes",
+      "error": null,
+      "details": {
+        "schemaVersion": 1,
+        "kind": "general"
+      },
+      "attributes": []
+    },
+    {
+      "name": "Shelf",
+      "error": null,
+      "details": null,
+      "attributes": []
+    }
+  ],
+  "settings": {
+    "theme": "paper",
+    "locale": "ja",
+    "videoAudio": {
+      "volume": 0.4,
+      "muted": false
+    },
+    "playOrder": "all",
+    "error": null
+  }
+}
