@@ -129,10 +129,14 @@ export function Reader({
     return () => {
       mounted.current = false
       document.removeEventListener('fullscreenchange', changed)
-      if (ownsFullscreen.current && document.fullscreenElement && !handover.current) {
-        ownsFullscreen.current = false
-        void document.exitFullscreen().catch(() => {})
-      }
+      // Leave fullscreen only once the reader is really gone: React's development mode unmounts and remounts every
+      // component once, and a reader that just took fullscreen over from the previous book must keep it (R-275).
+      if (ownsFullscreen.current && !handover.current)
+        setTimeout(() => {
+          if (mounted.current || !document.fullscreenElement) return
+          ownsFullscreen.current = false
+          void document.exitFullscreen().catch(() => {})
+        }, 0)
     }
   }, [])
   useEffect(() => {

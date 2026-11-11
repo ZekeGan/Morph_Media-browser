@@ -147,7 +147,7 @@
       "name": "漫畫閱讀器",
       "docs": ["MANGA_VIEWER_DESIGN.md#漫畫閱讀器"],
       "code": ["src/reader/Reader*", "shared/reader*"],
-      "ui": ["reader-ui", "media-scope-ui"],
+      "ui": ["reader-ui", "reader-next-ui", "media-scope-ui"],
       "tests": ["reader.test.ts"]
     },
     {
