@@ -7684,5 +7684,35 @@
     "en": "The source changed its data format and the reply couldn't be read. No remote code was run.",
     "ja": "取得元のデータ形式が変わったため読み取れません。リモートのコードは実行していません",
     "es": "El origen cambió el formato de sus datos y no se pudo leer la respuesta. No se ejecutó código remoto."
+  },
+  "社團／品牌": {
+    "zh-CN": "社团／品牌",
+    "en": "Circle / brand",
+    "ja": "サークル／ブランド",
+    "es": "Círculo / marca"
+  },
+  "作品類型名稱": {
+    "zh-CN": "作品类型名称",
+    "en": "Work type name",
+    "ja": "作品形式名",
+    "es": "Nombre del tipo de obra"
+  },
+  "劇本": {
+    "zh-CN": "剧本",
+    "en": "Scenario",
+    "ja": "シナリオ",
+    "es": "Guion"
+  },
+  "插畫": {
+    "zh-CN": "插画",
+    "en": "Illustration",
+    "ja": "イラスト",
+    "es": "Ilustración"
+  },
+  "聲優": {
+    "zh-CN": "声优",
+    "en": "Voice actors",
+    "ja": "声優",
+    "es": "Actores de voz"
   }
 }

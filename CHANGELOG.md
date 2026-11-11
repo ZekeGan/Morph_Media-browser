@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Website sources: E-Hentai covers show again (they are WebP now); DLsite imports the circle name, creators by role (author, scenario, illustration, voice, music), genres and series (R-311, R-296).
 - Website sources: Hitomi.la works again (its data moved to a new host), and a failed source now says why — can't connect, work not found, needs a key or sign-in, or the site changed its format — in all five languages (R-297, R-300).
 - `pnpm check:sources` asks every website source for one known work and lists which still answer and why the others fail; part of the release checks (R-301).
 - Website sources: one adapter file per site with a shared list of allowed request and cover hosts; requests now identify as `M:orph/<version>` instead of the old `MediaViewer/0.9.0` (R-302).

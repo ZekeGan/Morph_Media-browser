@@ -1,5 +1,5 @@
 import type { MetadataPreview } from '../shared/explorer'
-import { limitedBytes, SourceError, sourceJson, sourceRequest } from './metadata-common'
+import { imageType, limitedBytes, SourceError, sourceJson, sourceRequest } from './metadata-common'
 import { sourceConfig, userAgent, type PublicSourceId } from './sources/config'
 import { clean, tags, type Adapter, type Site } from './sources/site'
 import { anilist } from './sources/anilist'
@@ -117,18 +117,10 @@ export async function publicMetadata(
         }),
         10 * 1024 * 1024
       )
-      const [ext, mime] =
-        bytes[0] === 255 && bytes[1] === 216
-          ? ['jpg', 'image/jpeg']
-          : bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))
-            ? ['png', 'image/png']
-            : bytes.subarray(0, 4).toString() === 'RIFF' &&
-                bytes.subarray(8, 12).toString() === 'WEBP'
-              ? ['webp', 'image/webp']
-              : []
-      if (!ext || !mime) throw new Error('封面格式未支援')
-      result.cover = { bytes, ext, mime }
-      result.preview.image = 'data:' + mime + ';base64,' + bytes.toString('base64')
+      const type = imageType(bytes)
+      if (!type) throw new Error('封面格式未支援')
+      result.cover = { bytes, ...type }
+      result.preview.image = 'data:' + type.mime + ';base64,' + bytes.toString('base64')
     } catch {
       values.push({ key: 'COVER_STATUS', type: 'string', value: '封面無法取得；可略過或手動匯入' })
     }

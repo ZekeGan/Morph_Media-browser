@@ -67,6 +67,14 @@ export function sourceJson(text: string) {
     throw new SourceError('format')
   }
 }
+// A cover is kept only when its bytes are a JPEG, PNG or WebP image, whatever the server says it is.
+export function imageType(bytes: Buffer): { ext: string; mime: string } | undefined {
+  if (bytes[0] === 255 && bytes[1] === 216) return { ext: 'jpg', mime: 'image/jpeg' }
+  if (bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])))
+    return { ext: 'png', mime: 'image/png' }
+  if (bytes.subarray(0, 4).toString() === 'RIFF' && bytes.subarray(8, 12).toString() === 'WEBP')
+    return { ext: 'webp', mime: 'image/webp' }
+}
 export const decode = (value: unknown) =>
   String(value ?? '').replace(/&(amp|quot|apos|lt|gt|#\d+|#x[0-9a-f]+);/gi, (m, key: string) => {
     const common: Record<string, string> = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>' }

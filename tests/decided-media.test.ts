@@ -121,18 +121,24 @@ test('public metadata adapters use no credentials, retain source identities and 
     [
       'dlsite',
       'https://www.dlsite.com/maniax/work/=/product_id/RJ123456.html',
-      {
-        RJ123456: {
-          work_name: 'Title',
-          maker_id: 'RG1',
-          work_type: 'ADV',
-          regist_date: '2025-01-02 00:00:00',
-          age_category: 3,
-          price: 1100,
-          dl_count: 5,
-          rate_average_2dp: 4.5,
-        },
-      },
+      // R-296: product.json has the names; info/ajax adds sales figures.
+      (url: string) =>
+        url.includes('/api/=/product.json')
+          ? [
+              {
+                workno: 'RJ123456',
+                work_name: 'Title',
+                maker_id: 'RG1',
+                maker_name: 'Circle',
+                work_type: 'ADV',
+                work_type_string: 'Adventure',
+                regist_date: '2025-01-02 00:00:00',
+                age_category: 3,
+                creaters: { created_by: [{ name: 'Writer' }], voice_by: [{ name: 'Voice' }] },
+                genres: [{ name: 'Genre' }],
+              },
+            ]
+          : { RJ123456: { price: 1100, dl_count: 5, rate_average_2dp: 4.5 } },
     ],
     [
       'hitomi',
@@ -150,13 +156,32 @@ test('public metadata adapters use no credentials, retain source identities and 
       const headers = new Headers(init?.headers)
       assert.equal(headers.has('Authorization'), false)
       assert.equal(headers.has('Cookie'), false)
-      return new Response(typeof body === 'string' ? body : JSON.stringify(body))
+      const reply = typeof body === 'function' ? body(String(input)) : body
+      return new Response(typeof reply === 'string' ? reply : JSON.stringify(reply))
     }) as typeof fetch
     const result = await metadata(url, fetcher)
     assert.equal(result.preview.provider, provider)
     assert.equal(result.preview.title, 'Title')
     assert.ok(result.preview.values.some((value) => value.key === 'SOURCE_URL'))
-    assert.equal(requests.length, 1)
+    assert.equal(requests.length, provider === 'dlsite' ? 2 : 1)
+    if (provider === 'dlsite') {
+      const value = (key: string) => result.preview.values.find((v) => v.key === key)?.value
+      assert.equal(value('MAKER_NAME'), 'Circle')
+      assert.deepEqual(value('CREATED_BY'), ['Writer'])
+      assert.deepEqual(value('VOICE_BY'), ['Voice'])
+      assert.deepEqual(value('GENRES'), ['Genre'])
+      assert.equal(value('DOWNLOAD_COUNT'), 5)
+      // Without creators and without the optional sales endpoint the work still imports.
+      const plain = await metadata(url, (async (input: RequestInfo | URL) =>
+        String(input).includes('product.json')
+          ? new Response(JSON.stringify([{ workno: 'RJ123456', work_name: 'Title' }]))
+          : new Response('', { status: 500 })) as typeof fetch)
+      assert.equal(plain.preview.title, 'Title')
+      assert.equal(
+        plain.preview.values.some((v) => v.key === 'CREATED_BY'),
+        false
+      )
+    }
     if (provider === 'commons')
       assert.equal((await metadata(result.preview.source, fetcher)).preview.title, 'Title')
     await assert.rejects(

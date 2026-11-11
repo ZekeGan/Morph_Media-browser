@@ -1,5 +1,12 @@
 import type { MetadataPreview } from '../shared/explorer'
-import { limitedBytes, decode, SourceError, sourceJson, sourceRequest } from './metadata-common'
+import {
+  limitedBytes,
+  decode,
+  imageType,
+  SourceError,
+  sourceJson,
+  sourceRequest,
+} from './metadata-common'
 export { limitedBytes } from './metadata-common'
 import { sourceForUrl, type MetadataSourceId } from '../shared/sources'
 import { publicMetadata } from './metadata-public'
@@ -144,15 +151,11 @@ export async function ehMetadata(
         await fetcher(image, { signal: AbortSignal.timeout(15000), redirect: 'error' }),
         10 * 1024 * 1024
       )
-      const [ext, mime] =
-        bytes[0] === 255 && bytes[1] === 216
-          ? ['jpg', 'image/jpeg']
-          : bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))
-            ? ['png', 'image/png']
-            : []
-      if (!ext || !mime) throw new Error('封面格式未支援')
-      cover = { bytes, ext, mime }
-      preview.image = `data:${mime};base64,${bytes.toString('base64')}`
+      // E-Hentai thumbnails are WebP since 2026 (R-311).
+      const type = imageType(bytes)
+      if (!type) throw new Error('封面格式未支援')
+      cover = { bytes, ...type }
+      preview.image = `data:${type.mime};base64,${bytes.toString('base64')}`
     } catch {
       preview.values.push({
         key: 'COVER_STATUS',

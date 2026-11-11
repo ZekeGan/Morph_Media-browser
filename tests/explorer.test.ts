@@ -609,6 +609,20 @@ test('E-Hentai public API validates host/identity, namespaces and portable previ
     'other:test',
   ])
   assert.ok(preview.cover)
+  // R-311: E-Hentai thumbnails are WebP now.
+  const webp = Buffer.concat([
+    Buffer.from('RIFF'),
+    Buffer.alloc(4),
+    Buffer.from('WEBPVP8 '),
+    Buffer.alloc(8),
+  ])
+  const webpPreview = await ehMetadata('https://e-hentai.org/g/123/abcdef0123/', (async (
+    input: RequestInfo | URL
+  ) =>
+    String(input).includes('api.php')
+      ? new Response(JSON.stringify(payload))
+      : new Response(webp)) as typeof fetch)
+  assert.equal(webpPreview.cover?.mime, 'image/webp')
   const original = globalThis.fetch
   globalThis.fetch = mock
   try {
