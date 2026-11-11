@@ -20,6 +20,7 @@ const writeUndo = (value?: { id: string; at: string }) => {
 }
 import type { Request, Response } from '../../shared/model'
 import { t as tr, useLocale } from '../i18n'
+import { LocaleEmulatorSetting } from '../game/LocaleEmulatorSetting'
 import { HelpLabel, HelpTip } from '../common/HelpTip'
 import { useEffect, useState } from 'react'
 import { Alert, Button, Checkbox, Group, Modal, Select, Stack, Tabs, Text } from '@mantine/core'
@@ -248,6 +249,7 @@ export function ApplicationSettings({
           <Text size="xs" c="dimmed" mt="md" role="status">
             {applied ? tr('已套用') : ''}
           </Text>
+          <LocaleEmulatorSetting opened={opened} />
         </Tabs.Panel>
         <Tabs.Panel value="data" pt="lg">
           <Stack gap="lg">

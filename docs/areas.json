@@ -251,9 +251,15 @@
         "GAME_VIEWER_DESIGN.md#遊戲內容頁",
         "GAME_VIEWER_DESIGN.md#路徑參數與執行責任"
       ],
-      "code": ["src/game/GameActions*", "src/game/game-actions.css", "shared/launchArgs*"],
+      "code": ["src/game/GameActions*",
+        "src/game/GameExtras*",
+        "src/game/useGameExtras*",
+        "src/game/playtime*",
+        "src/game/LocaleEmulatorSetting*",
+        "electron/game-extras*", "src/game/game-actions.css", "shared/launchArgs*"],
       "ui": ["game-actions-ui", "game-launch-cell-ui", "game-folder-page-ui"],
-      "tests": ["game-actions.test.ts", "game-shortcut.test.ts", "launch-args.test.ts"]
+      "tests": ["game-actions.test.ts",
+        "game-extras.test.ts", "game-shortcut.test.ts", "launch-args.test.ts"]
     },
     {
       "id": "detection",

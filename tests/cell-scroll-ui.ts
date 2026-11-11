@@ -84,6 +84,14 @@ try {
         ?.getAttribute('style')
         ?.includes('display: none') === false
   )
+  // The fit settles over a few frames; read once the "+N" text matches the hidden tags.
+  await page.waitForFunction(() => {
+    const list = document.querySelector('.folder-card .tag-list-fit')
+    const hidden = [...(list?.querySelectorAll<HTMLElement>('[data-tag]') ?? [])].filter(
+      (node) => node.style.display === 'none'
+    ).length
+    return hidden > 0 && list?.querySelector<HTMLElement>('[data-more]')?.innerText === '+' + hidden
+  })
   const hidden = await cut
     .locator('[data-tag]')
     .evaluateAll(

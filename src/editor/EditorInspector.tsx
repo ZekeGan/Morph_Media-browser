@@ -549,6 +549,8 @@ export function EditorInspector(props: EditorInspectorProps) {
                           { value: 'category', label: tr('分類') },
                           { value: 'files', label: tr('檔案數') },
                           { value: 'size', label: tr('容量') },
+                          { value: 'playTime', label: tr('遊玩時間') },
+                          { value: 'lastPlayed', label: tr('最後遊玩') },
                         ]}
                         onChange={(value) =>
                           updateCell({ systemInfo: value as Cell['systemInfo'] })
@@ -622,7 +624,7 @@ export function EditorInspector(props: EditorInspectorProps) {
                             value={selectedCell.actionId ?? null}
                             data={launchTemplates(draft).map((t) => ({
                               value: t.id,
-                              label: t.id === 'default-launch-game' ? tr(t.label) : t.label,
+                              label: tr(t.label),
                             }))}
                             onChange={(value) => updateCell({ actionId: value ?? undefined })}
                           />

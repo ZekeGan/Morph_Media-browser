@@ -3,6 +3,7 @@ import {
   ActionIcon,
   Alert,
   Button,
+  Checkbox,
   ColorPicker,
   ColorSwatch,
   Group,
@@ -25,6 +26,7 @@ import { t as tr } from '../i18n'
 import { Icon } from '../common/icons'
 import { describeError } from '../notices/errors'
 import { parseLaunchArgs } from '../../shared/launchArgs'
+import { useGameExtras } from './useGameExtras'
 import './game-actions.css'
 
 const kindLabel = (kind: ActionKind) =>
@@ -34,6 +36,7 @@ const kindLabel = (kind: ActionKind) =>
     'file-app': tr('以指定應用程式開啟檔案'),
     url: tr('開啟網址'),
     shortcut: tr('執行資料夾內的捷徑'),
+    file: tr('開啟資料夾內的檔案'),
   })[kind]
 
 const exampleArgs = '["-run","D:\\\\Games\\\\Title\\\\game.exe"]'
@@ -64,6 +67,7 @@ export function GameActionTargets({
     [shortcuts, setShortcuts] = useState<string[]>(),
     [choice, setChoice] = useState<Record<string, string>>({})
   const templates = gameActionTemplates(project)
+  const localeReady = useGameExtras(row)?.localeEmulator
   const wantsShortcuts = templates.some((t) => t.kind === 'shortcut')
   // The folder's own shortcuts (.lnk/.url), e.g. one made by Locale Emulator, are listed for picking.
   useEffect(() => {
@@ -143,9 +147,7 @@ export function GameActionTargets({
             key={template.id}
           >
             <Group justify="space-between" wrap="nowrap">
-              <Text fw={600}>
-                {template.id === 'default-launch-game' ? tr(template.label) : template.label}
-              </Text>
+              <Text fw={600}>{tr(template.label)}</Text>
               <Group gap={6} wrap="nowrap">
                 <Text size="xs" c="dimmed">
                   {kindLabel(template.kind)}
@@ -205,7 +207,7 @@ export function GameActionTargets({
                 </Tooltip>
               </Group>
             </Group>
-            {['exe', 'folder', 'file-app'].includes(template.kind) && (
+            {['exe', 'folder', 'file-app', 'file'].includes(template.kind) && (
               <Text size="sm" c="dimmed" className="path-line" title={target?.path}>
                 {target?.kind === template.kind ? target.path : tr('尚未綁定目標')}
               </Text>
@@ -244,6 +246,27 @@ export function GameActionTargets({
                 {tr('應用程式')} · {target.application.path}
               </Text>
             )}
+            {template.kind === 'exe' && bound && (
+              <Checkbox
+                label={tr('用日文語系啟動（Locale Emulator）')}
+                description={
+                  localeReady === false
+                    ? tr('先到「應用程式設定」指定 LEProc.exe 才能使用')
+                    : undefined
+                }
+                checked={!!target?.localeEmulator}
+                disabled={disabled || (localeReady === false && !target?.localeEmulator)}
+                onChange={(event) =>
+                  void run({
+                    action: 'targetLocale',
+                    rowId: row.rowId,
+                    revision: row.record!.revision,
+                    templateId: template.id,
+                    value: event.currentTarget.checked,
+                  })
+                }
+              />
+            )}
             {['exe', 'file-app'].includes(template.kind) && (
               <Textarea
                 label={tr('啟動參數（JSON 字串陣列）')}
@@ -266,11 +289,13 @@ export function GameActionTargets({
                   ? tr('保存網址')
                   : template.kind === 'shortcut'
                     ? tr('綁定此捷徑')
-                    : template.kind === 'file-app'
-                      ? tr('選擇應用程式與檔案')
-                      : template.kind === 'exe'
-                        ? tr('選擇 EXE 並保存參數')
-                        : tr('選擇資料夾')}
+                    : template.kind === 'file'
+                      ? tr('選擇遊戲資料夾內的檔案')
+                      : template.kind === 'file-app'
+                        ? tr('選擇應用程式與檔案')
+                        : template.kind === 'exe'
+                          ? tr('選擇 EXE 並保存參數')
+                          : tr('選擇資料夾')}
               </Button>
               {changed && (
                 <Button
@@ -397,7 +422,7 @@ export function GameActionEditor({
                 ⠿
               </span>
               <span className="game-action-dot" style={{ background: task.color }} />
-              <span>{task.id === 'default-launch-game' ? tr(task.label) : task.label}</span>
+              <span>{tr(task.label)}</span>
             </button>
             <Tooltip label={tr('移除')}>
               <ActionIcon
@@ -439,10 +464,12 @@ export function GameActionEditor({
             label={tr('任務類型')}
             value={current.kind}
             disabled={disabled}
-            data={(['exe', 'folder', 'file-app', 'url', 'shortcut'] as const).map((kind) => ({
-              value: kind,
-              label: kindLabel(kind),
-            }))}
+            data={(['exe', 'folder', 'file-app', 'url', 'shortcut', 'file'] as const).map(
+              (kind) => ({
+                value: kind,
+                label: kindLabel(kind),
+              })
+            )}
             onChange={(value) => value && update({ kind: value as ActionKind })}
           />
           <div>
@@ -484,7 +511,7 @@ export function GameActionEditor({
               {tr('預覽')}
             </Text>
             <Button size="xs" style={{ background: current.color, color: '#fff' }} tabIndex={-1}>
-              {current.id === 'default-launch-game' ? tr(current.label) : current.label}
+              {tr(current.label)}
             </Button>
           </div>
         </Stack>

@@ -138,7 +138,7 @@ else {
           if (error) throw new Error(error)
         },
         reveal: (file) => shell.showItemInFolder(file),
-        launch: (file, args) =>
+        launch: (file, args, onExit) =>
           new Promise<void>((resolve, reject) => {
             const child = spawn(file, args, {
               cwd: path.dirname(file),
@@ -149,10 +149,21 @@ else {
             })
             child.once('error', reject)
             child.once('spawn', () => {
+              // R-308: only this process is followed; if M:orph closes first, the session is not counted.
+              const started = Date.now()
+              if (onExit) child.once('exit', () => onExit(started, Date.now()))
               child.unref()
               resolve()
             })
           }),
+        protocolReady: (scheme) => !!app.getApplicationNameForProtocol(scheme + '://'),
+        localeEmulator: () => workspace.localeEmulatorPath(),
+        setLocaleEmulator: async (file) => {
+          await workspace.setLocaleEmulator(file)
+        },
+        played: (folderId, started, ended) => {
+          void workspace.recordPlay(folderId, started, ended).catch(() => {})
+        },
         thumbnail: async (file, mime, url) => {
           if (mime?.startsWith('video/')) {
             // A box, not a fixed size: the shell keeps the aspect ratio. 160x90 looked blurry in tiles.

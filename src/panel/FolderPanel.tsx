@@ -8,6 +8,7 @@ import {
   type KindSample,
 } from '../../shared/kind'
 import { GameActionEditor, GameActionTargets } from '../game/GameActions'
+import { GameExtraSettings } from '../game/GameExtras'
 import {
   addCommonFields,
   cardPresets,
@@ -776,6 +777,11 @@ export function FolderPanel({
               disabled={disabled || fieldDirty}
               run={run}
               onDirty={setTargetDirty}
+            />
+            <GameExtraSettings
+              row={row}
+              disabled={disabled || fieldDirty || targetDirty}
+              run={run}
             />
           </Stack>
         </Tabs.Panel>

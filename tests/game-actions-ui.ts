@@ -20,6 +20,9 @@ for (const [name, value] of Object.entries({
   'Game.exe': 'CONTROLLED FAKE EXE',
   'UnityPlayer.dll': 'CONTROLLED MARKER',
   'notes.txt': 'ORIGINAL NOTES',
+  // R-306 / R-307: a bundled manual and a Steam App ID file.
+  'manual.pdf': 'CONTROLLED MANUAL',
+  'steam_appid.txt': '620',
 }))
   await fs.writeFile(path.join(game, name), value)
 const library = new Library(local, undefined, false)
@@ -86,6 +89,12 @@ try {
     0
   )
   await page.locator('.game-launch-hint').waitFor()
+  // R-307: steam_appid.txt offers a Steam launch button next to the bound actions (disabled without Steam).
+  await page
+    .locator('.game-actions')
+    .getByRole('button', { name: '用 Steam 啟動', exact: true })
+    .waitFor()
+  await page.screenshot({ path: path.join(base, 'shot', 'r305-game-extras.png') })
   await button('自訂遊戲操作').click()
   const drawer = page.locator('.folder-panel-dock-settings')
   await drawer.getByRole('tab', { name: '遊戲操作', exact: true }).waitFor()
@@ -93,6 +102,10 @@ try {
     await drawer.getByRole('tab', { name: '遊戲操作', exact: true }).getAttribute('aria-selected'),
     'true'
   )
+  // R-305 / R-306: the save folder line and the bundled manual offered as a suggestion, not added on its own.
+  await drawer.getByText('存檔資料夾', { exact: true }).waitFor()
+  await drawer.getByRole('button', { name: '加入 manual.pdf', exact: true }).waitFor()
+  await page.screenshot({ path: path.join(base, 'shot', 'r305-game-extras-settings.png') })
   const args = drawer.getByRole('textbox', { name: '啟動參數（JSON 字串陣列）', exact: true })
   await args.fill('["with spaces", "\\\"quoted\\\"", "$(literal)"]')
   await drawer.getByRole('tab', { name: '資料', exact: true }).click()

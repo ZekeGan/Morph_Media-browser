@@ -7,6 +7,7 @@ import {
   HTMLAttributes,
 } from 'react'
 import { t as tr } from '../i18n'
+import { formatPlayValue } from '../game/playtime'
 import { yesNo } from '../editor/fieldTypes'
 import { Icon } from '../common/icons'
 import { BoundaryFlag } from '../game/BoundaryFlag'
@@ -258,6 +259,8 @@ export function FolderTable({
                     r.path
                   ) : c.id === 'depth' ? (
                     r.depth
+                  ) : c.id.startsWith('@') ? (
+                    formatPlayValue(c.id, valueOf(r, c.id))
                   ) : Array.isArray(valueOf(r, c.id)) ? (
                     (valueOf(r, c.id) as unknown[]).join(', ')
                   ) : typeof valueOf(r, c.id) === 'boolean' ? (

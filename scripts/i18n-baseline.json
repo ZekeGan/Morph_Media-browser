@@ -373,7 +373,6 @@
   "electron/workspace.ts | 側欄設定格式不合法",
   "electron/workspace.ts | 側欄設定無法讀取，原檔保留；暫用預設且停止保存。",
   "electron/workspace.ts | 外觀設定不合法",
-  "electron/workspace.ts | 專案尚未連結",
   "electron/workspace.ts | 專案身分不合法",
   "electron/workspace.ts | 專案順序不合法",
   "electron/workspace.ts | 影片音量設定不合法",

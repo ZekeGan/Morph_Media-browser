@@ -1,5 +1,6 @@
 import '../media/media-workspace.css'
 import { isGameFolder } from '../../shared/media'
+import { playValue, usePlaytimes } from '../game/playtime'
 import { FileOverview } from '../files/FileOverview'
 import type { OverviewEntry } from '../../shared/explorer'
 import type { FolderNavigation } from '../../shared/workspace'
@@ -245,10 +246,12 @@ export function BrowseWorkspace({
       ).filter((row) => !boundariesOnly || browse.mode === 'TREE' || isGameFolder(row)),
     [all, project, root, browse.mode, location, display, density, boundariesOnly]
   )
-  const valueOf = (row: FolderRow, id: string) => columnValue(project, row, id)
+  const plays = usePlaytimes()
+  const valueOf = (row: FolderRow, id: string) =>
+    id.startsWith('@') ? playValue(row, id, plays) : columnValue(project, row, id)
   const filtered = useMemo(
     () => sortRows(base, sort, currentLocale(), valueOf),
-    [base, sort, locale, project.cells]
+    [base, sort, locale, project.cells, plays]
   )
   const pageSize = browse.mode === 'CARD' ? liveList.pageSize : 100,
     pages = Math.max(1, Math.ceil(filtered.length / pageSize)),
@@ -538,6 +541,7 @@ export function BrowseWorkspace({
     browse,
     busy,
     saveOrder: (columnOrder) => persist({ ...state.current, columnOrder }),
+    games: all.some(isGameFolder),
   })
   const crumbs = folderBreadcrumbs(all, root, currentFolder?.path ?? root)
   const overviewRoot = currentFolder ?? rootRow

@@ -1,6 +1,6 @@
 # 遊戲內容頁、動作與掃描邊界
 
-> 最後確認：2026-11-11。遊戲內容頁與啟動按鈕的現行規則；辨識規則見 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md)，有效記錄與導覽邊界見 [工作區](WORKSPACE_REVISION.md)。程式：`src/game/GameActions.tsx`、`src/panel/FolderContent.tsx`、`shared/launchArgs.ts`、`electron/explorer.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-78～C-80、C-85、C-92）。
+> 最後確認：2026-11-12。遊戲內容頁與啟動按鈕的現行規則；辨識規則見 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md)，有效記錄與導覽邊界見 [工作區](WORKSPACE_REVISION.md)。程式：`src/game/GameActions.tsx`、`src/panel/FolderContent.tsx`、`shared/launchArgs.ts`、`electron/explorer.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-78～C-80、C-85、C-92）。
 
 ## 遊戲內容頁
 
@@ -122,3 +122,20 @@ C-80 採特徵候選＋人工修正與集中處理；純手動仍作無法辨識
 ## 操作編輯與目標
 
 版型以可拖放清單及屬性區編輯，提供鍵盤排序；保存／取消保持草稿語意。從內容「自訂操作與目標」直接開遊戲操作 TAB。目標選擇器以當前資料夾作初始位置，選取並保存後才綁定；參數屬對應動作並用字串陣列保存。指定應用程式開檔分別選 EXE 與檔案，任一步取消都不寫入；執行用 argv、不經 shell。網址限定無憑證的 http(s)，路徑／連結／目標型別於保存與執行時驗證。
+
+### 自動提供的操作（R-305～R-310）
+
+不必綁定，main 依遊戲資料夾與記錄推算後放在內容頁按鈕列的已綁定動作後面；只顯示推算得出的項目，按下才執行。路徑只由 main 推算或使用者在系統對話框選擇，畫面只知道名稱與狀態。
+
+- **用 Steam 啟動**（R-307）：ROOT 有 `steam_appid.txt`（只接受數字），或資料夾有 Steam 匯入的 App ID 時出現，開啟 `steam://run/<appid>`，讓疊加介面、成就與 DRM 正常。沒有程式處理 `steam://` 時按鈕停用並說明「這台電腦沒有安裝 Steam」。
+- **開啟商店頁**（R-310）：資料夾有網站匯入的商店／來源網址（Steam 商店網址優先）時出現；只開 `https`，用系統瀏覽器。
+- **開啟存檔資料夾**（R-305）：Unity 讀 `*_Data/app.info` 的公司與產品名 → `AppData\LocalLow\公司\產品`；Ren’Py 讀 `game/options.rpy` 的 `config.save_directory` → `AppData\Roaming\RenPy\…`；RPG Maker MV/MZ 用 `www/save`／`save`；RPG Maker XP～Ace 與 WOLF 用 `Save`。名稱只接受單一資料夾名（不含路徑符號），推算出的資料夾必須存在。推算不出來時，在設定「遊戲操作」分頁「存檔資料夾」自己指定（存在記錄的 `details.saveFolder`，暫定），也能改回自動。只開啟資料夾，不讀寫存檔。
+- **遊玩時間**（R-308）：只記從 M:orph 直接啟動的 EXE 程序，程序結束才算一次（不到一秒不算）；M:orph 先關閉、經 Locale Emulator 或 Steam 啟動的那次不計。累計秒數、次數與最後遊玩時間存在本機設定 `playtime`（依資料夾身分），不寫進可攜記錄、不進設定包。內容頁按鈕列後面顯示；卡片的「系統資訊」組件可選「遊玩時間」「最後遊玩」；有遊戲的專案在表格多兩欄，可排序。
+
+### 附帶程式與說明書（R-306）
+
+設定「遊戲操作」分頁列出 ROOT 第一層的設定程式（`config.exe`、`setup.exe`、`環境設定*.exe`、`*config*.exe`）與說明書（PDF、HTML，或 `readme*`／`manual*`／`説明書*` 等文字檔），排除 `unins*`、`vcredist*`、`dxsetup*` 等安裝與執行環境程式。按「加入」才綁定：沒用過的同類按鈕（「設定程式」「說明書」）沿用，否則新增一個按鈕到專案工具列；說明書用新的動作類型「開啟資料夾內的檔案」（`file`，只限遊戲資料夾內的 PDF、HTML、TXT、MD、RTF，用系統預設程式開啟；程式、腳本與可夾帶程式碼的 CHM 不能用這個類型，以免變成執行）。已綁定的檔案不再列出。不自動加入、不執行。
+
+### Locale Emulator（R-309）
+
+應用程式設定「一般」可指定 `LEProc.exe`（只在 main 的檔案對話框選，檔名必須是 `LEProc.exe`），存本機設定 `localeEmulator`。已綁定的 EXE 動作可勾選「用日文語系啟動」（記錄在該目標的 `localeEmulator`，暫定），執行時改為 `LEProc.exe -run <exe> <參數…>`；未指定 LEProc.exe 時勾選停用並提示。原本用 `.lnk` 捷徑的做法照常可用。

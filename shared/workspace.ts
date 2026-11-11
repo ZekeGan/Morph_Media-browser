@@ -6,6 +6,12 @@ export const playOrders = ['stop', 'next', 'all', 'one'] as const
 export type PlayOrder = (typeof playOrders)[number]
 export const isPlayOrder = (value: unknown): value is PlayOrder =>
   playOrders.includes(value as PlayOrder)
+// Seconds played in total, sessions counted, and when the last session ended (ISO time).
+export interface PlayRecord {
+  total: number
+  count: number
+  last: string
+}
 export interface ProjectPlacement {
   groupId: string | null
   favorite: boolean
@@ -26,6 +32,10 @@ export interface WorkspacePrefs {
   videoAudio?: { volume: number; muted: boolean }
   playOrder?: PlayOrder
   fileVisibility?: { hidden: boolean; dotfiles: boolean }
+  // Locale Emulator's LEProc.exe (R-309), chosen in a main-process dialog; only main reads it to start a game.
+  localeEmulator?: string
+  // Play time of games started from M:orph (R-308), by folder identity. Local only, never in portable records.
+  playtime?: Record<string, PlayRecord>
   groups: { id: string; name: string; collapsed: boolean }[]
   projects: Record<string, ProjectPlacement>
 }

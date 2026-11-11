@@ -77,12 +77,20 @@ export interface FolderDetails {
       relative: boolean
       args: string[]
       application?: { path: string; relative: boolean }
+      // EXE actions only (R-309, provisional): start through Locale Emulator's LEProc.exe in Japanese locale.
+      localeEmulator?: boolean
     }
   >
+  // R-305, provisional: the save folder the user picked when it could not be worked out from the engine.
+  saveFolder?: { path: string; relative: boolean }
   subtitles?: { id: string; name: string; relativePath: string }[]
 }
 // 'shortcut': a .lnk/.url file inside the game folder, opened through the system so its own arguments and compatibility settings apply.
-export type ActionKind = 'exe' | 'folder' | 'file-app' | 'url' | 'shortcut'
+// 'file': a file inside the game folder (a manual, a readme) opened with the system's default application (R-306).
+export type ActionKind = 'exe' | 'folder' | 'file-app' | 'url' | 'shortcut' | 'file'
+// A 'file' action opens documents only: opening a program or script this way would run it. CHM help files are left out:
+// they can carry scripts and start programs.
+export const documentFile = (name: string) => /\.(pdf|html?|txt|md|rtf)$/i.test(name)
 export interface ActionTemplate {
   id: string
   label: string
@@ -248,6 +256,8 @@ export type ExplorerRequest =
       url?: string
       // File name (not a path) of a shortcut inside the game folder, for 'shortcut' actions.
       shortcut?: string
+      // EXE actions: start through Locale Emulator (R-309).
+      localeEmulator?: boolean
     }
   | {
       action: 'actionVisible'
@@ -258,6 +268,14 @@ export type ExplorerRequest =
     }
   | { action: 'listShortcuts'; rowId: string }
   | { action: 'runTarget'; rowId: string; templateId: string }
+  // R-305–R-310: what the game folder offers beyond its bound actions, worked out by main.
+  | { action: 'gameExtras'; rowId: string }
+  | { action: 'runExtra'; rowId: string; extra: 'steam' | 'store' | 'save' }
+  | { action: 'chooseSaveFolder'; rowId: string; revision: number; clear?: boolean }
+  // R-306: bind a suggested file (by its name in the game folder) as an action.
+  | { action: 'addSuggestion'; rowId: string; revision: number; name: string }
+  | { action: 'chooseLocaleEmulator'; clear?: boolean }
+  | { action: 'targetLocale'; rowId: string; revision: number; templateId: string; value: boolean }
   | {
       action: 'subtitle'
       rowId: string
@@ -287,11 +305,26 @@ export interface ExplorerResponse {
   search?: SearchResult
   subtitle?: { token: string; name: string; text: string; portable: boolean }
   shortcuts?: string[]
+  extras?: GameExtras
+  localeEmulator?: string
   probe?: { kind: 'zip' | 'rar' | '7z' | 'gzip' | 'html' | 'empty' | 'media' | 'unknown' }
   preview?: MetadataPreview
   imagePreview?: { token: string; image: string; name: string; size: number }
   cancelled?: boolean
   notice?: Notice
+}
+// Game page extras (R-305–R-310). Paths stay in main; the window only learns what can be offered.
+export interface GameExtras {
+  // Steam App ID from steam_appid.txt or the folder's Steam source; steamReady is false when no Steam is installed.
+  steamAppId?: string
+  steamReady: boolean
+  storeUrl?: string
+  // Where the save folder comes from: worked out from the engine, picked by the user, or not known.
+  save: 'engine' | 'user' | 'none'
+  saveEngine?: string
+  // Bundled tools and manuals at the top of the game folder, not yet bound as actions.
+  suggestions: { name: string; role: 'config' | 'manual' }[]
+  localeEmulator: boolean
 }
 export interface ExplorerApi {
   request(request: ExplorerRequest): Promise<ExplorerResponse>

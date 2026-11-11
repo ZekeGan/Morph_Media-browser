@@ -6792,9 +6792,9 @@
     "es": "Fecha y hora"
   },
   "最後遊玩": {
-    "ja": "最後に遊んだ日時",
     "zh-CN": "最后游玩",
     "en": "Last played",
+    "ja": "最終プレイ",
     "es": "Última partida"
   },
   "已收藏": {
@@ -7786,5 +7786,281 @@
     "en": "resident.dll + EXE (candidate)",
     "ja": "resident.dll + EXE（候補）",
     "es": "resident.dll + EXE (candidato)"
+  },
+  "遊玩時間": {
+    "zh-CN": "游玩时间",
+    "en": "Play time",
+    "ja": "プレイ時間",
+    "es": "Tiempo de juego"
+  },
+  "尚未遊玩": {
+    "zh-CN": "尚未游玩",
+    "en": "Not played yet",
+    "ja": "未プレイ",
+    "es": "Sin jugar"
+  },
+  "{0} 次": {
+    "zh-CN": "{0} 次",
+    "en": "{0} sessions",
+    "ja": "{0} 回",
+    "es": "{0} sesiones"
+  },
+  "開啟資料夾內的檔案": {
+    "zh-CN": "打开文件夹内的文件",
+    "en": "Open a file in the folder",
+    "ja": "フォルダー内のファイルを開く",
+    "es": "Abrir un archivo de la carpeta"
+  },
+  "用日文語系啟動（Locale Emulator）": {
+    "zh-CN": "以日文语系启动（Locale Emulator）",
+    "en": "Start in Japanese locale (Locale Emulator)",
+    "ja": "日本語ロケールで起動（Locale Emulator）",
+    "es": "Iniciar con configuración regional japonesa (Locale Emulator)"
+  },
+  "先到「應用程式設定」指定 LEProc.exe 才能使用": {
+    "zh-CN": "先到“应用程序设置”指定 LEProc.exe 才能使用",
+    "en": "Choose LEProc.exe in the application settings first",
+    "ja": "先に「アプリの設定」で LEProc.exe を指定してください",
+    "es": "Primero elige LEProc.exe en la configuración de la aplicación"
+  },
+  "選擇遊戲資料夾內的檔案": {
+    "zh-CN": "选择游戏文件夹内的文件",
+    "en": "Choose a file in the game folder",
+    "ja": "ゲームフォルダー内のファイルを選択",
+    "es": "Elegir un archivo de la carpeta del juego"
+  },
+  "透過 Steam 啟動，疊加介面與成就才會正常運作": {
+    "zh-CN": "通过 Steam 启动，覆盖界面与成就才会正常运作",
+    "en": "Start through Steam so the overlay and achievements work",
+    "ja": "Steam 経由で起動すると、オーバーレイと実績が正しく動作します",
+    "es": "Inicia a través de Steam para que funcionen la superposición y los logros"
+  },
+  "這台電腦沒有安裝 Steam": {
+    "zh-CN": "这台电脑没有安装 Steam",
+    "en": "Steam is not installed on this computer",
+    "ja": "このパソコンには Steam がインストールされていません",
+    "es": "Steam no está instalado en este equipo"
+  },
+  "用 Steam 啟動": {
+    "zh-CN": "用 Steam 启动",
+    "en": "Start with Steam",
+    "ja": "Steam で起動",
+    "es": "Iniciar con Steam"
+  },
+  "開啟商店頁": {
+    "zh-CN": "打开商店页",
+    "en": "Open store page",
+    "ja": "ストアページを開く",
+    "es": "Abrir página de la tienda"
+  },
+  "開啟存檔資料夾": {
+    "zh-CN": "打开存档文件夹",
+    "en": "Open save folder",
+    "ja": "セーブフォルダーを開く",
+    "es": "Abrir carpeta de guardado"
+  },
+  "遊玩時間 {0} · 最後遊玩 {1}": {
+    "zh-CN": "游玩时间 {0} · 最后游玩 {1}",
+    "en": "Played {0} · Last played {1}",
+    "ja": "プレイ時間 {0}・最終プレイ {1}",
+    "es": "Jugado {0} · Última partida {1}"
+  },
+  "存檔資料夾": {
+    "zh-CN": "存档文件夹",
+    "en": "Save folder",
+    "ja": "セーブフォルダー",
+    "es": "Carpeta de guardado"
+  },
+  "依引擎推算（{0}）": {
+    "zh-CN": "按引擎推算（{0}）",
+    "en": "Worked out from the engine ({0})",
+    "ja": "エンジンから推定（{0}）",
+    "es": "Deducida del motor ({0})"
+  },
+  "你指定的資料夾": {
+    "zh-CN": "你指定的文件夹",
+    "en": "The folder you chose",
+    "ja": "指定したフォルダー",
+    "es": "La carpeta que elegiste"
+  },
+  "推算不出來；可以自己指定": {
+    "zh-CN": "无法推算；可以自己指定",
+    "en": "Couldn't be worked out; you can choose it",
+    "ja": "推定できません。自分で指定できます",
+    "es": "No se pudo deducir; puedes elegirla"
+  },
+  "指定資料夾": {
+    "zh-CN": "指定文件夹",
+    "en": "Choose folder",
+    "ja": "フォルダーを指定",
+    "es": "Elegir carpeta"
+  },
+  "改回自動": {
+    "zh-CN": "改回自动",
+    "en": "Back to automatic",
+    "ja": "自動に戻す",
+    "es": "Volver a automático"
+  },
+  "附帶的程式與說明書": {
+    "zh-CN": "附带的程序与说明书",
+    "en": "Bundled tools and manuals",
+    "ja": "付属のツールと説明書",
+    "es": "Herramientas y manuales incluidos"
+  },
+  "在遊戲資料夾找到的設定程式與說明書；按「加入」才會變成操作按鈕，不會自動執行。": {
+    "zh-CN": "在游戏文件夹找到的设置程序与说明书；按“加入”才会变成操作按钮，不会自动执行。",
+    "en": "Settings tools and manuals found in the game folder. They become action buttons only when you click Add, and never run on their own.",
+    "ja": "ゲームフォルダーで見つかった設定ツールと説明書です。「追加」を押すと操作ボタンになります。自動では実行しません。",
+    "es": "Herramientas de configuración y manuales encontrados en la carpeta del juego. Solo se convierten en botones al pulsar Añadir y nunca se ejecutan solos."
+  },
+  "設定程式": {
+    "zh-CN": "设置程序",
+    "en": "Settings tool",
+    "ja": "設定ツール",
+    "es": "Herramienta de configuración"
+  },
+  "說明書": {
+    "zh-CN": "说明书",
+    "en": "Manual",
+    "ja": "説明書",
+    "es": "Manual"
+  },
+  "加入 {0}": {
+    "zh-CN": "加入 {0}",
+    "en": "Add {0}",
+    "ja": "{0} を追加",
+    "es": "Añadir {0}"
+  },
+  "加入": {
+    "zh-CN": "加入",
+    "en": "Add",
+    "ja": "追加",
+    "es": "Añadir"
+  },
+  "指定 LEProc.exe 後，遊戲的 EXE 操作可以勾選「用日文語系啟動」。": {
+    "zh-CN": "指定 LEProc.exe 后，游戏的 EXE 操作可以勾选“以日文语系启动”。",
+    "en": "After choosing LEProc.exe, a game's EXE actions can be set to start in Japanese locale.",
+    "ja": "LEProc.exe を指定すると、ゲームの EXE 操作で「日本語ロケールで起動」を選べます。",
+    "es": "Tras elegir LEProc.exe, las acciones EXE de un juego pueden iniciarse con configuración regional japonesa."
+  },
+  "尚未指定": {
+    "zh-CN": "尚未指定",
+    "en": "Not set",
+    "ja": "未指定",
+    "es": "Sin definir"
+  },
+  "選擇 LEProc.exe": {
+    "zh-CN": "选择 LEProc.exe",
+    "en": "Choose LEProc.exe",
+    "ja": "LEProc.exe を選択",
+    "es": "Elegir LEProc.exe"
+  },
+  "清除": {
+    "zh-CN": "清除",
+    "en": "Clear",
+    "ja": "クリア",
+    "es": "Borrar"
+  },
+  "{0} 小時 {1} 分": {
+    "zh-CN": "{0} 小时 {1} 分",
+    "en": "{0} h {1} min",
+    "ja": "{0} 時間 {1} 分",
+    "es": "{0} h {1} min"
+  },
+  "{0} 分": {
+    "zh-CN": "{0} 分",
+    "en": "{0} min",
+    "ja": "{0} 分",
+    "es": "{0} min"
+  },
+  "尚未設定 Locale Emulator（LEProc.exe）；請到應用程式設定指定": {
+    "zh-CN": "尚未设置 Locale Emulator（LEProc.exe）；请到应用程序设置指定",
+    "en": "Locale Emulator (LEProc.exe) is not set. Choose it in the application settings.",
+    "ja": "Locale Emulator（LEProc.exe）が未設定です。アプリの設定で指定してください",
+    "es": "Locale Emulator (LEProc.exe) no está definido. Elígelo en la configuración de la aplicación."
+  },
+  "找不到這個遊戲的 Steam App ID": {
+    "zh-CN": "找不到这个游戏的 Steam App ID",
+    "en": "This game has no Steam App ID",
+    "ja": "このゲームの Steam App ID が見つかりません",
+    "es": "Este juego no tiene un App ID de Steam"
+  },
+  "這台電腦沒有安裝 Steam，無法用 Steam 啟動": {
+    "zh-CN": "这台电脑没有安装 Steam，无法用 Steam 启动",
+    "en": "Steam is not installed on this computer, so the game can't start through Steam",
+    "ja": "このパソコンには Steam がないため、Steam で起動できません",
+    "es": "Steam no está instalado en este equipo, así que no se puede iniciar con Steam"
+  },
+  "這個資料夾沒有商店網址": {
+    "zh-CN": "这个文件夹没有商店网址",
+    "en": "This folder has no store address",
+    "ja": "このフォルダーにはストアの URL がありません",
+    "es": "Esta carpeta no tiene dirección de tienda"
+  },
+  "找不到存檔資料夾；可以在遊戲操作裡自己指定": {
+    "zh-CN": "找不到存档文件夹；可以在游戏操作里自己指定",
+    "en": "No save folder found. You can choose one in the game actions.",
+    "ja": "セーブフォルダーが見つかりません。ゲーム操作で指定できます",
+    "es": "No se encontró la carpeta de guardado. Puedes elegirla en las acciones del juego."
+  },
+  "這個檔案不在建議清單裡": {
+    "zh-CN": "这个文件不在建议列表里",
+    "en": "This file isn't in the suggestions",
+    "ja": "このファイルは候補にありません",
+    "es": "Este archivo no está en las sugerencias"
+  },
+  "專案尚未連結": {
+    "zh-CN": "项目尚未连接",
+    "en": "The project isn't linked",
+    "ja": "プロジェクトがリンクされていません",
+    "es": "El proyecto no está vinculado"
+  },
+  "遊戲操作按鈕已達上限（30 個）": {
+    "zh-CN": "游戏操作按钮已达上限（30 个）",
+    "en": "The game action buttons are at the limit (30)",
+    "ja": "ゲーム操作ボタンが上限（30 個）に達しています",
+    "es": "Los botones de acción del juego llegaron al límite (30)"
+  },
+  "只有 EXE 操作可以用日文語系啟動": {
+    "zh-CN": "只有 EXE 操作可以用日文语系启动",
+    "en": "Only EXE actions can start in Japanese locale",
+    "ja": "日本語ロケールで起動できるのは EXE 操作だけです",
+    "es": "Solo las acciones EXE pueden iniciarse con configuración regional japonesa"
+  },
+  "無法設定 Locale Emulator": {
+    "zh-CN": "无法设置 Locale Emulator",
+    "en": "Locale Emulator can't be set",
+    "ja": "Locale Emulator を設定できません",
+    "es": "No se puede definir Locale Emulator"
+  },
+  "請選擇 Locale Emulator 的 LEProc.exe": {
+    "zh-CN": "请选择 Locale Emulator 的 LEProc.exe",
+    "en": "Choose Locale Emulator's LEProc.exe",
+    "ja": "Locale Emulator の LEProc.exe を選んでください",
+    "es": "Elige el LEProc.exe de Locale Emulator"
+  },
+  "Locale Emulator 路徑不合法": {
+    "zh-CN": "Locale Emulator 路径不合法",
+    "en": "The Locale Emulator path is invalid",
+    "ja": "Locale Emulator のパスが正しくありません",
+    "es": "La ruta de Locale Emulator no es válida"
+  },
+  "遊玩時間紀錄不合法": {
+    "zh-CN": "游玩时间记录不合法",
+    "en": "The play time record is invalid",
+    "ja": "プレイ時間の記録が正しくありません",
+    "es": "El registro de tiempo de juego no es válido"
+  },
+  "存檔資料夾設定不合法": {
+    "zh-CN": "存档文件夹设置不合法",
+    "en": "The save folder setting is invalid",
+    "ja": "セーブフォルダーの設定が正しくありません",
+    "es": "La configuración de la carpeta de guardado no es válida"
+  },
+  "請選擇遊戲資料夾內的說明文件（PDF、HTML、TXT、MD、RTF）": {
+    "zh-CN": "请选择游戏文件夹内的说明文件（PDF、HTML、TXT、MD、RTF）",
+    "en": "Choose a document inside the game folder (PDF, HTML, TXT, MD, RTF)",
+    "ja": "ゲームフォルダー内の説明文書を選んでください（PDF、HTML、TXT、MD、RTF）",
+    "es": "Elige un documento dentro de la carpeta del juego (PDF, HTML, TXT, MD, RTF)"
   }
 }

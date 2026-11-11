@@ -74,6 +74,29 @@ export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
   )
     throw new Error('影片音量設定不合法')
   if (v.playOrder !== undefined && !isPlayOrder(v.playOrder)) throw new Error('播放順序設定不合法')
+  if (
+    v.localeEmulator !== undefined &&
+    (typeof v.localeEmulator !== 'string' ||
+      !path.isAbsolute(v.localeEmulator) ||
+      !/^leproc\.exe$/i.test(path.basename(v.localeEmulator)) ||
+      v.localeEmulator.length > 4000)
+  )
+    throw new Error('Locale Emulator 路徑不合法')
+  if (
+    v.playtime !== undefined &&
+    (!object(v.playtime) ||
+      Object.keys(v.playtime).length > 100000 ||
+      !Object.entries(v.playtime).every(
+        ([id, p]) =>
+          key(id) &&
+          object(p) &&
+          integer(p.total, 0) &&
+          integer(p.count, 1) &&
+          typeof p.last === 'string' &&
+          !Number.isNaN(Date.parse(p.last))
+      ))
+  )
+    throw new Error('遊玩時間紀錄不合法')
   const groups = new Set(v.groups.map((g) => g.id)),
     names = new Set(v.groups.map((g) => g.name.toLocaleLowerCase()))
   if (
@@ -343,6 +366,39 @@ export class WorkspaceStore {
       if (next.nextOrder !== this.prefs.nextOrder) await this.commit(next)
       return this.state()
     })
+  }
+  // R-308: one finished session of a game M:orph started. Sessions shorter than a second are not counted.
+  recordPlay(folderId: string, started: number, ended: number) {
+    return this.run(async () => {
+      if (this.error || !key(folderId)) return
+      const seconds = Math.floor((ended - started) / 1000)
+      if (!(seconds >= 1)) return
+      const next = structuredClone(this.prefs),
+        previous = next.playtime?.[folderId]
+      next.playtime = {
+        ...next.playtime,
+        [folderId]: {
+          total: (previous?.total ?? 0) + seconds,
+          count: (previous?.count ?? 0) + 1,
+          last: new Date(ended).toISOString(),
+        },
+      }
+      await this.commit(next)
+    })
+  }
+  // R-309: the LEProc.exe path, set from a main-process file dialog (never from the window), or cleared.
+  setLocaleEmulator(file: string | undefined) {
+    return this.run(async () => {
+      if (this.error) throw new Error(this.error)
+      const next = structuredClone(this.prefs)
+      if (file) next.localeEmulator = file
+      else delete next.localeEmulator
+      await this.commit(next)
+      return this.state()
+    })
+  }
+  localeEmulatorPath() {
+    return this.prefs.localeEmulator
   }
   update(command: WorkspaceCommand, ids: string[]): Promise<WorkspaceState> {
     return this.run(async () => {

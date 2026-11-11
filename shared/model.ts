@@ -1,4 +1,4 @@
-import type { ActionTemplate, FolderDetails } from './explorer'
+import { documentFile, type ActionTemplate, type FolderDetails } from './explorer'
 import type { Notice } from './notifications'
 import { imageTypes } from './images'
 import { compatibleFieldTypes, httpUrl, validFieldValue } from './fields'
@@ -65,7 +65,8 @@ export interface Cell {
   unit?: string
   unitPosition?: 'prefix' | 'suffix'
   decimals?: number
-  systemInfo?: 'category' | 'files' | 'size'
+  // playTime / lastPlayed: games started from M:orph (R-308), from the local play record.
+  systemInfo?: 'category' | 'files' | 'size' | 'playTime' | 'lastPlayed'
   presentation?: 'badge' | 'rating' | 'progress'
   // 'blur': the whole picture, with its own blurred copy filling the leftover space.
   imageFit?: 'contain' | 'cover' | 'blur'
@@ -431,7 +432,8 @@ function validCell(c: unknown): boolean {
       'game-launch',
     ].includes(c.kind) &&
     (c.text === undefined || text(c.text, 10000)) &&
-    (c.systemInfo === undefined || ['category', 'files', 'size'].includes(c.systemInfo)) &&
+    (c.systemInfo === undefined ||
+      ['category', 'files', 'size', 'playTime', 'lastPlayed'].includes(c.systemInfo)) &&
     (c.presentation === undefined ||
       (c.presentation === 'badge' && ['field-enum', 'field-boolean'].includes(c.kind)) ||
       (['rating', 'progress'].includes(c.presentation) && c.kind === 'field-number')) &&
@@ -533,7 +535,7 @@ function validTargetEntry([k, t]: [string, unknown]): boolean {
   return (
     id(k) &&
     obj(t) &&
-    ['exe', 'folder', 'file-app', 'url', 'shortcut'].includes(t.kind) &&
+    ['exe', 'folder', 'file-app', 'url', 'shortcut', 'file'].includes(t.kind) &&
     text(t.path, 10000) &&
     typeof t.relative === 'boolean' &&
     (!t.relative || relative(t.path)) &&
@@ -545,6 +547,10 @@ function validTargetEntry([k, t]: [string, unknown]): boolean {
     (t.kind !== 'shortcut' ||
       (t.args.length === 0 && t.relative === true && /^[^\\/]+\.(lnk|url)$/i.test(t.path))) &&
     (t.kind !== 'url' || (httpUrl(t.path) && t.relative === false)) &&
+    // A bundled file (manual, readme) opens with its default application from inside the game folder (R-306).
+    (t.kind !== 'file' || (t.args.length === 0 && t.relative === true && documentFile(t.path))) &&
+    (t.localeEmulator === undefined ||
+      (t.kind === 'exe' && typeof t.localeEmulator === 'boolean')) &&
     (t.kind === 'file-app'
       ? obj(t.application) &&
         text(t.application.path, 10000) &&
@@ -651,6 +657,16 @@ export function validateDetails(v: unknown): asserts v is FolderDetails {
     throw new Error('閱讀設定不合法')
   if (v.targets && (!obj(v.targets) || !Object.entries(v.targets).every(validTargetEntry)))
     throw new Error('任務設定不合法')
+  if (
+    v.saveFolder !== undefined &&
+    (!obj(v.saveFolder) ||
+      !text(v.saveFolder.path, 10000) ||
+      typeof v.saveFolder.relative !== 'boolean' ||
+      (v.saveFolder.relative && !relative(v.saveFolder.path)) ||
+      // Outside the game it must be a local drive path; a network share would be contacted when opened.
+      (!v.saveFolder.relative && !/^[A-Za-z]:[\\/]/.test(v.saveFolder.path)))
+  )
+    throw new Error('存檔資料夾設定不合法')
   if (
     v.subtitles &&
     (!Array.isArray(v.subtitles) ||
@@ -831,7 +847,7 @@ export function validateProject(v: unknown): asserts v is Project {
           obj(t) &&
           id(t.id) &&
           text(t.label, 100) &&
-          ['exe', 'folder', 'file-app', 'url', 'shortcut'].includes(t.kind) &&
+          ['exe', 'folder', 'file-app', 'url', 'shortcut', 'file'].includes(t.kind) &&
           /^#[0-9a-f]{6}$/i.test(t.color)
       ))
   )

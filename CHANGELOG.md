@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Games: Start with Steam, Open store page and Open save folder buttons when the game offers them; bundled settings tools and manuals suggested as buttons; play time and last played for games started from M:orph (game page, table columns, card component); Locale Emulator can start an EXE action in Japanese locale (R-305–R-310).
 - Games: engine detection for SRPG Studio, HSP, Flash, QLIE, Malie, Entis GLS／Cotopha, Escu:de, ExHIBIT, Light.vn, Majiro, FVP and Java; Pixel Game Maker MV is listed as a candidate (R-299).
 - Media: a music folder's page shows its album cover; the central Files view can Ctrl/Shift-click music and videos and add them to the play queue from the right-click menu, and its type filter has Music (R-294, R-295).
 - Website sources: E-Hentai covers show again (they are WebP now); DLsite imports the circle name, creators by role (author, scenario, illustration, voice, music), genres and series (R-311, R-296).

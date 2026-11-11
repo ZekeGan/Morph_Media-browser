@@ -9,6 +9,7 @@ import type { Library } from './library'
 import { readFolder, relPath, safePath, saveFolder, within } from './files'
 import { DATA_DIR, validateDetails, type Attribute, type FolderRecord } from '../shared/model'
 import {
+  documentFile,
   gameActionTemplates,
   newDetails,
   type ContentResult,
@@ -27,6 +28,8 @@ import * as contentFns from './explorer-content'
 import * as streamFns from './explorer-stream'
 import * as sourceFns from './explorer-source'
 import * as overviewFns from './explorer-overview'
+import { bundledSuggestions, engineSaveFolder, steamAppId, storeUrl } from './game-extras'
+import { detectGame } from './game-detection'
 export { probeFile }
 
 export interface DesktopOperations {
@@ -37,7 +40,19 @@ export interface DesktopOperations {
   ): Promise<string | undefined>
   open(file: string): Promise<void>
   reveal?(file: string): void
-  launch(file: string, args: string[]): Promise<void>
+  // onExit is told when a started program ends (R-308 play time); it is not called when the program cannot be followed.
+  launch(
+    file: string,
+    args: string[],
+    onExit?: (started: number, ended: number) => void
+  ): Promise<void>
+  // R-307: whether some application handles this URL scheme (e.g. 'steam').
+  protocolReady?(scheme: string): boolean
+  // R-309: Locale Emulator's LEProc.exe from the app settings, and setting it.
+  localeEmulator?(): string | undefined
+  setLocaleEmulator?(file: string | undefined): Promise<void>
+  // R-308: a session of a game started from M:orph ended.
+  played?(folderId: string, started: number, ended: number): void
   thumbnail(file: string, mime?: string, url?: string): Promise<Buffer>
 }
 export class Explorer {
@@ -529,7 +544,8 @@ export class Explorer {
           !req.args.every(
             (arg) => typeof arg === 'string' && arg.length <= 10000 && !arg.includes('\0')
           ) ||
-          (['url', 'folder', 'shortcut'].includes(template.kind) && req.args.length)
+          (['url', 'folder', 'shortcut', 'file'].includes(template.kind) && req.args.length) ||
+          (req.localeEmulator !== undefined && typeof req.localeEmulator !== 'boolean')
         )
           throw new Error('參數不合法')
         let target: NonNullable<NonNullable<FolderRecord['details']>['targets']>[string]
@@ -556,8 +572,11 @@ export class Explorer {
           const selected = await this.targetPath(
             row.path,
             chosen,
-            template.kind === 'folder' ? 'folder' : 'exe'
+            template.kind === 'folder' ? 'folder' : template.kind === 'file' ? 'file' : 'exe'
           )
+          // A bundled document is opened from inside the game folder only (R-306).
+          if (template.kind === 'file' && (!selected.relative || !documentFile(selected.path)))
+            throw new Error('請選擇遊戲資料夾內的說明文件（PDF、HTML、TXT、MD、RTF）')
           if (template.kind === 'file-app') {
             const file = await this.desktop.choose('file', row.path)
             if (!file) return { cancelled: true }
@@ -567,7 +586,13 @@ export class Explorer {
               args: req.args,
               application: selected,
             }
-          } else target = { kind: template.kind, ...selected, args: req.args }
+          } else
+            target = {
+              kind: template.kind,
+              ...selected,
+              args: template.kind === 'file' ? [] : req.args,
+              ...(template.kind === 'exe' && req.localeEmulator ? { localeEmulator: true } : {}),
+            }
         }
         record.details ??= newDetails()
         record.details.targets ??= {}
@@ -596,15 +621,165 @@ export class Explorer {
             target,
             target.kind === 'folder' ? 'folder' : target.kind === 'exe' ? 'exe' : 'file'
           )
-          if (target.kind === 'folder') await this.desktop.open(file)
-          else if (target.kind === 'exe') await this.desktop.launch(file, target.args)
-          else {
+          if (target.kind === 'file' && !documentFile(file)) throw new Error('目標類型不符')
+          if (target.kind === 'folder' || target.kind === 'file') await this.desktop.open(file)
+          else if (target.kind === 'exe' && target.localeEmulator) {
+            // R-309: LEProc.exe starts the game in Japanese locale and exits at once, so this session is not timed.
+            const runner = this.desktop.localeEmulator?.()
+            if (!runner)
+              throw new Error('尚未設定 Locale Emulator（LEProc.exe）；請到應用程式設定指定')
+            await this.desktop.launch(runner, ['-run', file, ...target.args])
+          } else if (target.kind === 'exe') {
+            const folderId = record.folderId
+            await this.desktop.launch(file, target.args, (started, ended) =>
+              this.desktop.played?.(folderId, started, ended)
+            )
+          } else {
             if (!target.application) throw new Error('應用程式尚未綁定')
             const application = await this.resolvedTarget(row.path, target.application, 'exe')
             await this.desktop.launch(application, [...target.args, file])
           }
         }
         return { notice: { level: 'success', message: '已開啟指定目標' } }
+      }
+      case 'gameExtras': {
+        const row = await this.library.checkedRow(req.rowId),
+          record = await readFolder(row.path).catch(() => undefined),
+          engines =
+            row.boundary?.engines ??
+            (await detectGame(row.path).catch(() => undefined))?.engines ??
+            [],
+          id = await steamAppId(row.path, record),
+          user = record?.details?.saveFolder,
+          engineFolder = user ? undefined : await engineSaveFolder(row.path, engines),
+          bound = new Set(
+            Object.values(record?.details?.targets ?? {})
+              .filter((t) => t.relative)
+              .map((t) => t.path.toLowerCase())
+          )
+        return {
+          extras: {
+            ...(id ? { steamAppId: id } : {}),
+            steamReady: !!this.desktop.protocolReady?.('steam'),
+            ...(storeUrl(record) ? { storeUrl: storeUrl(record) } : {}),
+            save: user ? 'user' : engineFolder ? 'engine' : 'none',
+            ...(engineFolder ? { saveEngine: engines.join('／') } : {}),
+            suggestions: (await bundledSuggestions(row.path)).filter(
+              (item) => !bound.has(item.name.toLowerCase())
+            ),
+            localeEmulator: !!this.desktop.localeEmulator?.(),
+          },
+        }
+      }
+      case 'runExtra': {
+        const row = await this.library.checkedRow(req.rowId),
+          record = await readFolder(row.path)
+        if (req.extra === 'steam') {
+          const id = await steamAppId(row.path, record)
+          if (!id) throw new Error('找不到這個遊戲的 Steam App ID')
+          if (!this.desktop.protocolReady?.('steam') || !this.desktop.external)
+            throw new Error('這台電腦沒有安裝 Steam，無法用 Steam 啟動')
+          await this.desktop.external('steam://run/' + id)
+          return {}
+        }
+        if (req.extra === 'store') {
+          const url = storeUrl(record)
+          if (!url || !this.desktop.external) throw new Error('這個資料夾沒有商店網址')
+          await this.desktop.external(url)
+          return {}
+        }
+        const user = record.details?.saveFolder
+        const folder = user
+          ? await this.resolvedTarget(row.path, user, 'folder')
+          : await engineSaveFolder(
+              row.path,
+              row.boundary?.engines ??
+                (await detectGame(row.path).catch(() => undefined))?.engines ??
+                []
+            )
+        if (!folder) throw new Error('找不到存檔資料夾；可以在遊戲操作裡自己指定')
+        await this.desktop.open(folder)
+        return {}
+      }
+      case 'chooseSaveFolder': {
+        if (req.clear)
+          return this.after(
+            await this.details(req.rowId, req.revision, (d) => {
+              delete d.saveFolder
+            })
+          )
+        const row = await this.library.checkedRow(req.rowId, true),
+          chosen = await this.desktop.choose('folder', row.path)
+        if (!chosen) return { cancelled: true }
+        const picked = await this.targetPath(row.path, chosen, 'folder')
+        return this.after(
+          await this.details(req.rowId, req.revision, (d) => {
+            d.saveFolder = picked
+          })
+        )
+      }
+      case 'addSuggestion': {
+        const { row, record } = await this.record(req.rowId, req.revision),
+          suggestion = (await bundledSuggestions(row.path)).find((item) => item.name === req.name)
+        if (!suggestion) throw new Error('這個檔案不在建議清單裡')
+        const kind = suggestion.role === 'config' ? 'exe' : 'file',
+          target = await this.targetPath(
+            row.path,
+            path.join(row.path, suggestion.name),
+            kind === 'exe' ? 'exe' : 'file'
+          )
+        if (!target.relative) throw new Error('目標路徑不合法')
+        const link = this.library.snapshot().projects.find((p) => p.projectId === row.projectId),
+          project = link?.project
+        if (!project) throw new Error('專案尚未連結')
+        // Reuse a button of the same kind and name that this game has not used yet; otherwise add one.
+        const base = suggestion.role === 'config' ? '設定程式' : '說明書',
+          templates = gameActionTemplates(project)
+        let template = templates.find(
+          (t) =>
+            t.kind === kind &&
+            (t.label === base || t.label.startsWith(base + ' ')) &&
+            !record.details?.targets?.[t.id]
+        )
+        if (!template) {
+          if (templates.length >= 30) throw new Error('遊戲操作按鈕已達上限（30 個）')
+          const used = new Set(templates.map((t) => t.label))
+          let label = base
+          for (let n = 2; used.has(label); n++) label = base + ' ' + n
+          template = { id: randomUUID(), label, kind, color: '#868e96' }
+          await this.library.saveProject({ ...project, actionTemplates: [...templates, template] })
+        }
+        record.details ??= newDetails()
+        record.details.targets ??= {}
+        record.details.targets[template.id] = { kind, ...target, args: [] }
+        validateDetails(record.details)
+        await saveFolder(row.path, record, req.revision)
+        return this.after(await this.library.refreshRecord(req.rowId))
+      }
+      case 'targetLocale':
+        return this.after(
+          await this.details(req.rowId, req.revision, (d) => {
+            const target = d.targets?.[req.templateId]
+            if (target?.kind !== 'exe') throw new Error('只有 EXE 操作可以用日文語系啟動')
+            if (req.value) target.localeEmulator = true
+            else delete target.localeEmulator
+          })
+        )
+      case 'chooseLocaleEmulator': {
+        if (!this.desktop.setLocaleEmulator) throw new Error('無法設定 Locale Emulator')
+        if (req.clear) {
+          await this.desktop.setLocaleEmulator(undefined)
+          return {}
+        }
+        const chosen = await this.desktop.choose('exe')
+        if (!chosen) return { cancelled: true }
+        if (!/^leproc\.exe$/i.test(path.basename(chosen)))
+          throw new Error('請選擇 Locale Emulator 的 LEProc.exe')
+        const file = await fs.realpath(chosen)
+        if (!/^leproc\.exe$/i.test(path.basename(file)) || !(await fs.stat(file)).isFile())
+          throw new Error('請選擇 Locale Emulator 的 LEProc.exe')
+        await this.desktop.setLocaleEmulator(file)
+        return { localeEmulator: file }
       }
       case 'listShortcuts': {
         const row = await this.library.checkedRow(req.rowId)

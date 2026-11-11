@@ -21,7 +21,7 @@ export function FallbackActions({
     all = launchTemplates(draft),
     label = (id: string) => {
       const t = all.find((item) => item.id === id)
-      return t ? (t.id === 'default-launch-game' ? tr(t.label) : t.label) : id
+      return t ? tr(t.label) : id
     },
     main = launchChoice(draft, cell.actionId, undefined, undefined)?.id,
     used = new Set([main, ...fallbacks]),

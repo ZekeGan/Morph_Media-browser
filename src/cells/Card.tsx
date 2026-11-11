@@ -17,6 +17,7 @@ import { effectiveKind } from '../../shared/kind'
 import { useEffect, useState } from 'react'
 import { httpUrl } from '../../shared/fields'
 import { useFolderStats } from '../browse/folderStats'
+import { formatLastPlayed, formatPlayTime, usePlaytime } from '../game/playtime'
 import { cellColors } from './cellStyle'
 import './cells.css'
 import { yesNo } from '../editor/fieldTypes'
@@ -126,6 +127,16 @@ export function CellContent(props: CellProps) {
     </>
   )
 }
+// R-308: play time or the last play date of a game started from M:orph; empty until it has been played.
+function PlayInfo({ cell, row }: Pick<CellProps, 'cell' | 'row'>) {
+  const play = usePlaytime(row?.record?.folderId)
+  if (!play) return <span className="muted">{tr('尚未遊玩')}</span>
+  return (
+    <span title={tr('{0} 次', play.count)}>
+      {cell.systemInfo === 'playTime' ? formatPlayTime(play.total) : formatLastPlayed(play.last)}
+    </span>
+  )
+}
 function CellValue({ cell, row, open, preview = false, project }: CellProps) {
   useLocale()
   const stats = useFolderStats(row?.rowId),
@@ -134,6 +145,11 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     return <span style={{ whiteSpace: 'pre-wrap' }}>{ruleText(cell, row, project)}</span>
   if (cell.kind === 'spacer')
     return preview ? <span className="spacer-preview" aria-label={tr('空白間距')} /> : null
+  if (
+    cell.kind === 'system-info' &&
+    (cell.systemInfo === 'playTime' || cell.systemInfo === 'lastPlayed')
+  )
+    return <PlayInfo cell={cell} row={row} />
   if (cell.kind === 'system-info') {
     const kinds: Record<string, string> = {
       book: tr('書籍／漫畫'),
@@ -209,12 +225,7 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
             if (!row || !template) return
             if (
               ['exe', 'file-app', 'shortcut'].includes(template.kind) &&
-              !window.confirm(
-                tr(
-                  '啟動「{0}」？',
-                  template.id === 'default-launch-game' ? tr(template.label) : template.label
-                )
-              )
+              !window.confirm(tr('啟動「{0}」？', tr(template.label)))
             )
               return
             try {

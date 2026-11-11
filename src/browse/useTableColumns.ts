@@ -3,6 +3,7 @@ import type { BrowseState } from '../../shared/explorer'
 import { fallbackColumns, groupColumns } from '../../shared/browse'
 import type { Project } from '../../shared/model'
 import { t as tr } from '../i18n'
+import { LAST_PLAYED, PLAY_TIME } from '../game/playtime'
 
 // TABLE columns: the project's fields after the three built-in ones, in the saved order, minus hidden ones (the
 // name column always stays). Dragging a header moves a column; the moved one flashes briefly where it landed.
@@ -11,11 +12,14 @@ export function useTableColumns({
   browse,
   busy,
   saveOrder,
+  games = false,
 }: {
   project: Project
   browse: BrowseState
   busy: boolean
   saveOrder: (columnOrder: string[]) => void
+  // Projects with games also get play time and last played columns (R-308).
+  games?: boolean
 }) {
   // dragover can arrive before React re-renders with the dragged column; the ref is set at once.
   const dragNow = useRef('')
@@ -26,6 +30,12 @@ export function useTableColumns({
     { id: 'name', label: tr('資料夾名稱') },
     { id: 'path', label: tr('目前路徑') },
     { id: 'depth', label: tr('層級') },
+    ...(games
+      ? [
+          { id: PLAY_TIME, label: tr('遊玩時間') },
+          { id: LAST_PLAYED, label: tr('最後遊玩') },
+        ]
+      : []),
     ...groupColumns(project),
     ...project.fieldBindings.map((f) => ({ id: f.attributeId, label: f.alias })),
     ...fallbackColumns(project).map(({ id, attributeId }) => ({

@@ -9,6 +9,7 @@ import { useFileVisibility } from '../files/useFileVisibility'
 import { DocumentViewer } from '../documents/DocumentViewer'
 import '../game/game-actions.css'
 import { cacheFolderStats } from '../browse/folderStats'
+import { GameExtraButtons } from '../game/GameExtras'
 import { t as tr, useLocale } from '../i18n'
 import { yesNo } from '../editor/fieldTypes'
 import { Icon } from '../common/icons'
@@ -484,15 +485,16 @@ export function FolderContent({
                 onClick={() => {
                   if (
                     ['exe', 'file-app', 'shortcut'].includes(t.kind) &&
-                    !window.confirm(tr('啟動「{0}」？', t.label))
+                    !window.confirm(tr('啟動「{0}」？', tr(t.label)))
                   )
                     return
                   void run({ action: 'runTarget', rowId: row.rowId, templateId: t.id })
                 }}
               >
-                {t.id === 'default-launch-game' ? tr(t.label) : t.label}
+                {tr(t.label)}
               </Button>
             ))}
+          <GameExtraButtons row={row} busy={busy} run={run} />
           {!gameActionTemplates(project).length && (
             <small className="muted">{tr('尚未設定操作按鈕')}</small>
           )}
