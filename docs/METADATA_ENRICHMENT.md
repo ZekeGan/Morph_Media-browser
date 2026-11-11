@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-> 最後確認：2026-11-12。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
+> 最後確認：2026-11-12（R-297、R-300）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
 
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
@@ -48,6 +48,17 @@
 - **年齡確認**：只有使用者對該網站明確勾選「我已成年」後才帶年齡確認 Cookie；不收集或保存登入 Cookie。
 
 ExHentai、Hitomi、Pixiv、DLsite 可能因登入、站方限制或公開回應變更而失敗；失敗保留原資料並顯示原因。公開端點不等於官方提供長期相容承諾，Hitomi、Pixiv、DLsite 的內部端點尤其如此。
+
+失敗原因分四種，各是一句固定訊息（五種語系）：
+
+| 類型 | 判定 | 使用者看到 |
+| --- | --- | --- |
+| 連不上 | 網域解析失敗、連線被拒、逾時、重新導向、HTTP 5xx／429 等 | 無法連線到來源網站；網站可能暫時無法使用或已更換網址 |
+| 找不到作品 | HTTP 404／410，或回應裡沒有這個 ID（含身分不符） | 來源找不到這個作品；請確認網址或 ID 是否正確 |
+| 需要權限 | HTTP 401／403，或來源明確回報需要登入（Pixiv `error`） | 來源需要金鑰、登入或成人內容權限才能取得這個作品 |
+| 格式變更 | 回應不是預期的 JSON／galleryinfo，或缺少標題 | 來源資料格式已變更，無法解析；未執行遠端程式 |
+
+Hitomi 的作品資料主機是 `ltn.gold-usergeneratedcontent.net`（2026-11 起取代已沒有 DNS 記錄的 `ltn.hitomi.la`）；這個主機名稱可能再換，Hitomi 出現「連不上」時先查主機是否搬家。
 
 ## 預覽、套用與追溯
 

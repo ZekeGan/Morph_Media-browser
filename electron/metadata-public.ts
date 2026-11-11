@@ -1,6 +1,6 @@
 import type { MetadataPreview } from '../shared/explorer'
 import type { MetadataSourceId } from '../shared/sources'
-import { decode, limitedBytes } from './metadata-common'
+import { decode, limitedBytes, SourceError, sourceJson, sourceRequest } from './metadata-common'
 
 const clean = (value: unknown) =>
   decode(value)
@@ -31,7 +31,7 @@ export async function publicMetadata(
 ): Promise<Result> {
   const input = new URL(source)
   const request = async (url: string, body?: unknown) => {
-    const response = await fetcher(url, {
+    const bytes = await sourceRequest(fetcher, url, {
       method: body ? 'POST' : 'GET',
       headers: {
         Accept: 'application/json',
@@ -43,9 +43,9 @@ export async function publicMetadata(
       signal: AbortSignal.timeout(15000),
       redirect: 'error',
     })
-    return (await limitedBytes(response, 2 * 1024 * 1024)).toString('utf8')
+    return bytes.toString('utf8')
   }
-  const json = async (url: string, body?: unknown) => JSON.parse(await request(url, body))
+  const json = async (url: string, body?: unknown) => sourceJson(await request(url, body))
   let title = '',
     canonical = source,
     image: string | undefined
@@ -71,7 +71,7 @@ export async function publicMetadata(
     case 'bangumi': {
       const id = match(/^\/subject\/([1-9]\d{0,11})\/?$/)[1],
         data = await json('https://api.bgm.tv/v0/subjects/' + id)
-      if (String(data.id) !== id) throw new Error('來源作品身分不符')
+      if (String(data.id) !== id) throw new SourceError('notFound')
       canonical = 'https://bgm.tv/subject/' + id
       title = clean(data.name_cn || data.name)
       text('TITLE_ORIGINAL', data.name)
@@ -95,7 +95,7 @@ export async function publicMetadata(
           variables: { id },
         })
       ).data?.Media
-      if (!data || data.id !== id) throw new Error('來源無法取得或作品身分不符')
+      if (!data || data.id !== id) throw new SourceError('notFound')
       canonical = 'https://anilist.co/' + parts[1] + '/' + id + '/'
       title = clean(data.title?.native || data.title?.english || data.title?.romaji)
       text('TITLE_ORIGINAL', data.title?.native)
@@ -130,7 +130,7 @@ export async function publicMetadata(
           results: 1,
         })
       ).results?.[0]
-      if (!data || data.id !== id) throw new Error('來源作品身分不符')
+      if (!data || data.id !== id) throw new SourceError('notFound')
       canonical = 'https://vndb.org/' + id
       title = clean(data.title)
       text('TITLE_ORIGINAL', data.alttitle)
@@ -151,7 +151,7 @@ export async function publicMetadata(
       const data = await json(
         'https://musicbrainz.org/ws/2/release/' + id + '?inc=artist-credits+recordings&fmt=json'
       )
-      if (data.id !== id) throw new Error('來源發行版本身分不符')
+      if (data.id !== id) throw new SourceError('notFound')
       canonical = 'https://musicbrainz.org/release/' + id
       title = clean(data.title)
       text('RELEASE_DATE', data.date)
@@ -174,7 +174,7 @@ export async function publicMetadata(
       const parts = match(/^\/(works|books)\/(OL[1-9]\d{0,12}[WM])(?:\/[^/]*)?\/?$/)
       canonical = 'https://openlibrary.org/' + parts[1] + '/' + parts[2]
       const data = await json(canonical + '.json')
-      if (data.key !== '/' + parts[1] + '/' + parts[2]) throw new Error('來源書目身分不符')
+      if (data.key !== '/' + parts[1] + '/' + parts[2]) throw new SourceError('notFound')
       title = clean(data.title)
       text(
         'DESCRIPTION',
@@ -222,7 +222,7 @@ export async function publicMetadata(
           ? data.title?.replaceAll('_', ' ') !== file.replaceAll('_', ' ')
           : String(data.pageid) !== pageId)
       )
-        throw new Error('來源圖片身分不符')
+        throw new SourceError('notFound')
       canonical = 'https://commons.wikimedia.org/?curid=' + data.pageid
       const info = data.imageinfo?.[0],
         meta = info?.extmetadata ?? {}
@@ -250,8 +250,7 @@ export async function publicMetadata(
             '&cdn_cache_min=1'
         )
       )[id]
-      if (!data || typeof data !== 'object')
-        throw new Error('無法取得公開作品資料；作品可能已下架或不存在')
+      if (!data || typeof data !== 'object') throw new SourceError('notFound')
       canonical = 'https://www.dlsite.com/' + site + '/work/=/product_id/' + id + '.html'
       title = clean(data.work_name)
       text('PRODUCT_ID', id)
@@ -275,7 +274,7 @@ export async function publicMetadata(
         response = await json('https://www.pixiv.net/ajax/illust/' + id)
       const data = response.body
       if (response.error || !data || String(data.id ?? data.illustId) !== id)
-        throw new Error('無法取得公開作品資料；來源可能需要登入')
+        throw new SourceError('restricted')
       canonical = 'https://www.pixiv.net/artworks/' + id
       title = clean(data.title)
       text('AUTHORS', data.userName)
@@ -295,13 +294,16 @@ export async function publicMetadata(
       )
         .slice(1)
         .find(Boolean)!
-      const script = await request('https://ltn.hitomi.la/galleries/' + id + '.js')
+      // ltn.hitomi.la lost its DNS record in 2026-11; the gallery data moved here (R-297). The host may change again.
+      const script = await request(
+        'https://ltn.gold-usergeneratedcontent.net/galleries/' + id + '.js'
+      )
       const payload = /^\s*(?:var|let|const)\s+galleryinfo\s*=\s*(\{[\s\S]*\})\s*;?\s*$/.exec(
         script
       )
-      if (!payload) throw new Error('來源資料格式已變更，未執行遠端程式')
-      const data = JSON.parse(payload[1])
-      if (String(data.id) !== id) throw new Error('來源作品身分不符')
+      if (!payload) throw new SourceError('format')
+      const data = sourceJson(payload[1])
+      if (String(data.id) !== id) throw new SourceError('notFound')
       canonical = 'https://hitomi.la/reader/' + id + '.html'
       title = clean(data.title)
       text('TITLE_ORIGINAL', data.japanese_title)
@@ -320,7 +322,7 @@ export async function publicMetadata(
       break
     }
   }
-  if (!title.trim()) throw new Error('來源缺少標題')
+  if (!title.trim()) throw new SourceError('format')
   values.unshift(
     { key: 'TITLE', type: 'string', value: title },
     { key: 'SOURCE_URL', type: 'string', value: canonical }

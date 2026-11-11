@@ -1,5 +1,5 @@
 import type { MetadataPreview } from '../shared/explorer'
-import { limitedBytes, decode } from './metadata-common'
+import { limitedBytes, decode, SourceError, sourceJson, sourceRequest } from './metadata-common'
 export { limitedBytes } from './metadata-common'
 import { sourceForUrl, type MetadataSourceId } from '../shared/sources'
 import { publicMetadata } from './metadata-public'
@@ -69,7 +69,7 @@ export async function ehMetadata(
     throw new Error(
       '只接受 E-Hentai／ExHentai 的完整公開圖庫網址（/g/ID/token/）；其他頁面連結未支援'
     )
-  const response = await fetcher('https://api.e-hentai.org/api.php', {
+  const reply = await sourceRequest(fetcher, 'https://api.e-hentai.org/api.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -80,16 +80,19 @@ export async function ehMetadata(
     signal: AbortSignal.timeout(15000),
     redirect: 'error',
   })
-  const data = JSON.parse((await limitedBytes(response, 2 * 1024 * 1024)).toString()).gmetadata?.[0]
+  const data = sourceJson(reply.toString()).gmetadata?.[0]
   if (
     !data ||
     data.error ||
     Number(data.gid) !== Number(match[1]) ||
     String(data.token).toLowerCase() !== match[2].toLowerCase()
   )
-    throw new Error(`無法取得公開圖庫資料：${String(data?.error ?? '身分不符／來源可能需登入')}`)
+    // "Key missing, or incorrect key provided" means a wrong gallery token; other API errors are access limits.
+    throw new SourceError(
+      data?.error && !/\bkey\b/i.test(String(data.error)) ? 'restricted' : 'notFound'
+    )
   const title = decode(data.title).slice(0, 10000)
-  if (!title) throw new Error('來源缺少標題')
+  if (!title) throw new SourceError('format')
   const values: MetadataPreview['values'] = [
     { key: 'TITLE', type: 'string', value: title },
     { key: 'TITLE_ORIGINAL', type: 'string', value: decode(data.title_jpn).slice(0, 10000) },
@@ -191,11 +194,12 @@ export async function steamMetadata(
     appId = match[1]
   }
   if (Number(appId) > 4294967295) throw new Error('Steam App ID 超出範圍')
-  const response = await fetcher(
+  const reply = await sourceRequest(
+    fetcher,
     'https://store.steampowered.com/api/appdetails?appids=' + appId + '&l=english',
     { signal: AbortSignal.timeout(15000), redirect: 'error' }
   )
-  const item = JSON.parse((await limitedBytes(response, 2 * 1024 * 1024)).toString())[appId],
+  const item = sourceJson(reply.toString())?.[appId],
     data = item?.data
   if (
     item?.success !== true ||

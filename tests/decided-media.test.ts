@@ -204,6 +204,51 @@ test('public metadata adapters use no credentials, retain source identities and 
     ),
     /未執行/
   )
+  // R-297: Hitomi gallery data comes from its current data host, not the retired ltn.hitomi.la.
+  const hitomiRequests: string[] = []
+  await metadata('https://hitomi.la/reader/12.html', (async (input: RequestInfo | URL) => {
+    hitomiRequests.push(String(input))
+    return new Response('var galleryinfo = {"id":12,"title":"Title"};')
+  }) as typeof fetch)
+  assert.deepEqual(hitomiRequests, ['https://ltn.gold-usergeneratedcontent.net/galleries/12.js'])
+  // R-300: a failed source says why: unreachable, no such work, needs access, or a changed format.
+  const kinds: [string, typeof fetch, RegExp][] = [
+    [
+      'https://hitomi.la/reader/12.html',
+      (async () => {
+        throw new TypeError('fetch failed')
+      }) as typeof fetch,
+      /無法連線/,
+    ],
+    [
+      'https://hitomi.la/reader/12.html',
+      (async () => new Response('', { status: 404 })) as typeof fetch,
+      /找不到這個作品/,
+    ],
+    [
+      'https://www.pixiv.net/artworks/12',
+      (async () => new Response('{}', { status: 403 })) as typeof fetch,
+      /需要金鑰、登入或成人內容權限/,
+    ],
+    [
+      'https://bgm.tv/subject/12',
+      (async () => new Response('<html>moved</html>')) as typeof fetch,
+      /格式已變更/,
+    ],
+    [
+      'https://www.dlsite.com/maniax/work/=/product_id/RJ123456.html',
+      (async () => new Response('[]')) as typeof fetch,
+      /找不到這個作品/,
+    ],
+    [
+      'https://e-hentai.org/g/12/0123456789/',
+      (async () =>
+        new Response('{"gmetadata":[{"gid":12,"error":"Key missing"}]}')) as typeof fetch,
+      /找不到這個作品/,
+    ],
+  ]
+  for (const [url, fetcher, expected] of kinds)
+    await assert.rejects(metadata(url, fetcher), expected)
   const cover = await metadata(
     'https://bgm.tv/subject/12',
     (async () =>

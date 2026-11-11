@@ -7660,5 +7660,29 @@
     "ja": "{0}（クリックで「{1}」）",
     "es": "{0} (haz clic para: {1})",
     "zh-CN": "{0}（点一下改为{1}）"
+  },
+  "無法連線到來源網站；網站可能暫時無法使用或已更換網址": {
+    "zh-CN": "无法连接到来源网站；网站可能暂时无法使用或已更换网址",
+    "en": "Couldn't reach the source website. It may be down for now or may have moved to a new address.",
+    "ja": "取得元のサイトに接続できません。一時的に利用できないか、アドレスが変わった可能性があります",
+    "es": "No se pudo conectar con el sitio de origen. Puede que no esté disponible ahora o que haya cambiado de dirección."
+  },
+  "來源找不到這個作品；請確認網址或 ID 是否正確": {
+    "zh-CN": "来源找不到这个作品；请确认网址或 ID 是否正确",
+    "en": "The source has no work at this address. Check that the URL or ID is correct.",
+    "ja": "取得元にこの作品が見つかりません。URL または ID が正しいか確認してください",
+    "es": "El origen no tiene ninguna obra en esta dirección. Comprueba que la URL o el ID sean correctos."
+  },
+  "來源需要金鑰、登入或成人內容權限才能取得這個作品": {
+    "zh-CN": "来源需要密钥、登录或成人内容权限才能获取这个作品",
+    "en": "The source needs a key, a sign-in or adult-content access to show this work.",
+    "ja": "この作品の取得には、取得元のキー、ログイン、または成人向けコンテンツの閲覧権限が必要です",
+    "es": "El origen necesita una clave, iniciar sesión o acceso a contenido para adultos para mostrar esta obra."
+  },
+  "來源資料格式已變更，無法解析；未執行遠端程式": {
+    "zh-CN": "来源数据格式已变更，无法解析；未执行远程程序",
+    "en": "The source changed its data format and the reply couldn't be read. No remote code was run.",
+    "ja": "取得元のデータ形式が変わったため読み取れません。リモートのコードは実行していません",
+    "es": "El origen cambió el formato de sus datos y no se pudo leer la respuesta. No se ejecutó código remoto."
   }
 }

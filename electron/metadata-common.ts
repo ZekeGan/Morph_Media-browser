@@ -18,6 +18,55 @@ export async function limitedBytes(response: Response, limit: number) {
   }
   return Buffer.concat(chunks)
 }
+// Why a website source failed (R-300). Each kind is one fixed sentence so the window can translate it by lookup.
+export type SourceErrorKind = 'offline' | 'notFound' | 'restricted' | 'format'
+export const sourceErrorText: Record<SourceErrorKind, string> = {
+  offline: '無法連線到來源網站；網站可能暫時無法使用或已更換網址',
+  notFound: '來源找不到這個作品；請確認網址或 ID 是否正確',
+  restricted: '來源需要金鑰、登入或成人內容權限才能取得這個作品',
+  format: '來源資料格式已變更，無法解析；未執行遠端程式',
+}
+export class SourceError extends Error {
+  constructor(readonly kind: SourceErrorKind) {
+    super(sourceErrorText[kind])
+  }
+}
+export function sourceStatusKind(status: number): SourceErrorKind {
+  if (status === 404 || status === 410) return 'notFound'
+  if (status === 401 || status === 403) return 'restricted'
+  return 'offline'
+}
+// Requests a website source: a failed lookup, refused connection or timeout is "offline", and an HTTP error is
+// classified by its status before the body is read.
+export async function sourceRequest(
+  fetcher: typeof fetch,
+  url: string | URL,
+  init: RequestInit,
+  limit = 2 * 1024 * 1024
+) {
+  let response: Response
+  try {
+    response = await fetcher(url, init)
+  } catch {
+    throw new SourceError('offline')
+  }
+  if (!response.ok) throw new SourceError(sourceStatusKind(response.status))
+  try {
+    return await limitedBytes(response, limit)
+  } catch (error) {
+    // An oversized reply keeps its own message; a timeout or dropped connection mid-body is "offline".
+    if (error instanceof Error && error.message === '來源回應過大') throw error
+    throw new SourceError('offline')
+  }
+}
+// Parses a source's JSON reply; text that is not JSON means the site changed its format.
+export function sourceJson(text: string) {
+  try {
+    return JSON.parse(text)
+  } catch {
+    throw new SourceError('format')
+  }
+}
 export const decode = (value: unknown) =>
   String(value ?? '').replace(/&(amp|quot|apos|lt|gt|#\d+|#x[0-9a-f]+);/gi, (m, key: string) => {
     const common: Record<string, string> = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>' }

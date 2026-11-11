@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Website sources: Hitomi.la works again (its data moved to a new host), and a failed source now says why — can't connect, work not found, needs a key or sign-in, or the site changed its format — in all five languages (R-297, R-300).
 - Layout editor: the Content tab names the field or group directly with [Change], without the "Shows:" label in front.
 - Release checks (R-278): data saved by 0.40.0 is kept as a sample that every later version must open unchanged (part of `pnpm test`); `pnpm check:packaged` starts the packaged build with throw-away data and checks the home page and version.
 - Checks (R-279): `pnpm stale` also points at docs naming functions or components the code no longer has, a first-bundle size that no longer matches the last build, and known limitations whose areas changed after they were confirmed.

@@ -119,7 +119,7 @@ test('Steam rejects unavailable/mismatched/oversized replies and treats blocked 
     )
   await assert.rejects(
     steamMetadata('620', (async () => new Response('{}', { status: 429 })) as typeof fetch),
-    /HTTP 429/
+    /無法連線/
   )
   await assert.rejects(
     steamMetadata(
