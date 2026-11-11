@@ -7600,5 +7600,41 @@
     "ja": "読書の進み具合",
     "es": "Progreso de lectura",
     "zh-CN": "阅读进度"
+  },
+  "從第 {0} 頁繼續": {
+    "en": "Continuing from page {0}",
+    "ja": "{0} ページから続きを表示",
+    "es": "Continuando desde la página {0}",
+    "zh-CN": "从第 {0} 页继续"
+  },
+  "從頭開始": {
+    "en": "Start over",
+    "ja": "最初から",
+    "es": "Empezar desde el principio",
+    "zh-CN": "从头开始"
+  },
+  "已是最後一頁": {
+    "en": "This is the last page",
+    "ja": "最後のページです",
+    "es": "Esta es la última página",
+    "zh-CN": "已是最后一页"
+  },
+  "下一本：{0}": {
+    "en": "Next: {0}",
+    "ja": "次の本：{0}",
+    "es": "Siguiente: {0}",
+    "zh-CN": "下一本：{0}"
+  },
+  "再按一次下一頁開啟": {
+    "en": "press Next page again to open it",
+    "ja": "もう一度「次のページ」で開く",
+    "es": "pulsa de nuevo Página siguiente para abrirlo",
+    "zh-CN": "再按一次下一页打开"
+  },
+  "留在這裡": {
+    "en": "Stay here",
+    "ja": "このまま",
+    "es": "Quedarse aquí",
+    "zh-CN": "留在这里"
   }
 }

@@ -12,6 +12,7 @@ const keys = [
   'theme',
   'locale',
   'videoAudio',
+  'playOrder',
 ] as const
 // Explicit allowlist: registry paths, authentication and future unknown fields do
 // not become portable simply because they happen to be stored in workspace prefs.
@@ -94,7 +95,7 @@ export function mergeSettings(
         groupId: project.groupId ? (groupIds.get(project.groupId) ?? null) : null,
         addedOrder: next.nextOrder++,
       }
-  for (const key of ['theme', 'locale', 'videoAudio'] as const)
+  for (const key of ['theme', 'locale', 'videoAudio', 'playOrder'] as const)
     if (next[key] === undefined && incoming[key] !== undefined)
       Object.assign(next, { [key]: structuredClone(incoming[key]) })
   next.sections = [

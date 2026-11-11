@@ -73,6 +73,9 @@ export function FolderContent({
   onSource,
   mediaPrefs,
   onMediaPrefs,
+  nextBook,
+  autoRead,
+  onAutoRead,
 }: {
   row: FolderRow
   project: Project
@@ -88,6 +91,10 @@ export function FolderContent({
   onMediaPrefs?: (prefs: MediaPrefs) => void
   selectedFileId?: string
   selectedEntry?: ContentResult['entries'][number]
+  // R-255: the next folder in the browse list, and whether this folder was opened as that next book.
+  nextBook?: { name: string; open: () => void }
+  autoRead?: boolean
+  onAutoRead?: () => void
 }) {
   useLocale()
   const { visibility } = useFileVisibility()
@@ -198,6 +205,18 @@ export function FolderContent({
     setFileReader(false)
     setDocumentFile(undefined)
   }, [row.rowId, selectedFileId])
+  // Opened as the next book: go straight to reading from its first image. Remembered from the first render, since
+  // the workspace drops the request as soon as the panel has switched.
+  const readFirst = useRef(autoRead)
+  useEffect(() => {
+    if (!readFirst.current || !content) return
+    readFirst.current = false
+    const first = content.entries.find(
+      (entry) => entry.kind === 'image' && visibleFile(entry, visibility)
+    )
+    if (first) setGalleryFile(first)
+    onAutoRead?.()
+  }, [content])
   if (error && !content)
     return (
       <p role="alert" className="media-content-error">
@@ -281,14 +300,15 @@ export function FolderContent({
                   manga={kind === 'book'}
                   prefs={row.record?.details?.reading}
                   close={() => setFileReader(false)}
-                  save={(prefs) =>
-                    void run({
-                      action: 'reading',
-                      rowId: row.rowId,
-                      revision: row.record!.revision,
-                      prefs,
-                    })
-                  }
+                  save={(prefs) => {
+                    if (row.record && !row.readonly && !row.stopped && !row.error)
+                      void run({
+                        action: 'reading',
+                        rowId: row.rowId,
+                        revision: row.record.revision,
+                        prefs,
+                      })
+                  }}
                 />
               </Suspense>
             )}
@@ -578,6 +598,7 @@ export function FolderContent({
           busy={busy}
           manga={kind === 'book' || row.record?.details?.reading?.mode === 'manga'}
           close={() => setGalleryFile(undefined)}
+          nextBook={nextBook}
         />
       )}
       {documentFile && (

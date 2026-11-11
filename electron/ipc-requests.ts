@@ -171,6 +171,7 @@ const workspace: Record<WorkspaceCommand['action'], Shape> = {
   restorePackage: { backupId: ref },
   listBackups: {},
   videoAudio: { value: object },
+  playOrder: { value: oneOf('stop', 'next', 'all', 'one') },
   fileVisibility: { value: object },
   appearance: { theme: ref, locale: ref },
   createGroup: { name: text },

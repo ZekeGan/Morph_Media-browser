@@ -101,6 +101,21 @@ test('global theme and language save together, survive unrelated changes, and re
   assert.equal(await fs.readFile(store.file, 'utf8'), before)
 })
 
+test('play order is kept locally and only the four known orders are accepted', async (t) => {
+  const { root, store } = await fixture(t),
+    ids = ['p1']
+  await store.read(ids)
+  await store.update({ action: 'playOrder', value: 'one' }, ids)
+  const reopened = new WorkspaceStore(root)
+  await reopened.init()
+  assert.equal((await reopened.read(ids)).prefs.playOrder, 'one')
+  const before = await fs.readFile(store.file)
+  for (const value of [undefined, null, 'loop', 1, { value: 'all' }]) {
+    await assert.rejects(reopened.update({ action: 'playOrder', value } as WorkspaceCommand, ids))
+    assert.deepEqual(await fs.readFile(store.file), before)
+  }
+})
+
 test('video audio is local, survives other preferences, and invalid or failed saves preserve the last value', async (t) => {
   const { root, store } = await fixture(t),
     ids = ['p1']

@@ -3,22 +3,44 @@ import { ActionIcon, Tooltip } from '@mantine/core'
 import { Icon, type IconName } from '../common/icons'
 import { t as tr } from '../i18n'
 
-// What happens when a track or video ends, shared by every player in the window (R-268). It lasts for this
-// session; keeping it across restarts is part of the local record (R-253).
-export type PlayOrder = 'stop' | 'next' | 'all' | 'one'
+import { isPlayOrder, playOrders, type PlayOrder } from '../../shared/workspace'
 
-const orders: PlayOrder[] = ['stop', 'next', 'all', 'one']
-let order: PlayOrder = 'stop'
+// What happens when a track or video ends, shared by every player in the window (R-268) and kept in the local
+// workspace settings. A failed save keeps the choice for this session.
+let order: PlayOrder = 'stop',
+  loaded = false,
+  chosen = false
 const listeners = new Set<() => void>()
+const notify = () => {
+  for (const listener of listeners) listener()
+}
 
 export function setPlayOrder(value: PlayOrder) {
   order = value
-  for (const listener of listeners) listener()
+  chosen = true
+  notify()
+  void window.desktop.updateWorkspace({ action: 'playOrder', value }).catch(() => {})
+}
+
+function load() {
+  if (loaded) return
+  loaded = true
+  void window.desktop
+    .workspace()
+    .then((state) => {
+      const saved = state.prefs.playOrder
+      if (!chosen && isPlayOrder(saved) && saved !== order) {
+        order = saved
+        notify()
+      }
+    })
+    .catch(() => {})
 }
 
 export function usePlayOrder() {
   return useSyncExternalStore(
     (listener) => {
+      load()
       listeners.add(listener)
       return () => listeners.delete(listener)
     },
@@ -52,7 +74,9 @@ export function PlayOrderButton({ zIndex }: { zIndex?: number }) {
         aria-label={label}
         aria-pressed={value !== 'stop'}
         variant={value === 'stop' ? 'subtle' : 'light'}
-        onClick={() => setPlayOrder(orders[(orders.indexOf(value) + 1) % orders.length])}
+        onClick={() =>
+          setPlayOrder(playOrders[(playOrders.indexOf(value) + 1) % playOrders.length])
+        }
       >
         <Icon name={icons[value]} />
       </ActionIcon>

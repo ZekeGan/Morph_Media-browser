@@ -416,3 +416,5 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .reader-progress-preview img { display:block; width:auto; height:120px; max-width:160px; object-fit:contain; }
 .reader-zoom-flash { position:absolute; z-index:10; left:50%; top:50%; padding:6px 14px; border-radius:var(--radius); background:var(--overlay); font-size:18px; font-weight:600; transform:translate(-50%, -50%); pointer-events:none; }
 @media (prefers-reduced-motion: reduce) { .reader-frame-layer, .reader-rail, .reader-progress { transition:none; } }
+.reader-notice { position:absolute; z-index:11; left:50%; bottom:76px; display:flex; align-items:center; gap:10px; max-width:calc(100% - 40px); padding:8px 12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--overlay); backdrop-filter:blur(12px); font-size:13px; transform:translateX(-50%); }
+.reader-notice>span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

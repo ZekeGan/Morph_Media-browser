@@ -32,6 +32,7 @@ export function MediaViewer({
   act,
   busy,
   manga: mangaHint,
+  nextBook,
 }: {
   row: FolderRow
   project: Project
@@ -45,6 +46,7 @@ export function MediaViewer({
   busy: boolean
   // The folder page already knows the folder's type (it looked at the files); without it only the record is used.
   manga?: boolean
+  nextBook?: { name: string; open: () => void }
 }) {
   const [queueView, setQueueView] = useState<'list' | 'images'>('list')
   const [selected, setSelected] = useState(file.id),
@@ -164,6 +166,7 @@ export function MediaViewer({
                     if (value) setQueueMounted(true)
                   }}
                   manga={manga}
+                  nextBook={nextBook}
                   prefs={row.record?.details?.reading}
                   close={close}
                   save={(prefs) => {

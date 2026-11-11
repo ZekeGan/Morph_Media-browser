@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { atomicJson, missing, readJson, safePath } from './files'
 import {
   defaultWorkspace,
+  isPlayOrder,
   sectionIds,
   sectionProjects,
   type WorkspaceCommand,
@@ -72,6 +73,7 @@ export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
       typeof v.videoAudio.muted !== 'boolean')
   )
     throw new Error('影片音量設定不合法')
+  if (v.playOrder !== undefined && !isPlayOrder(v.playOrder)) throw new Error('播放順序設定不合法')
   const groups = new Set(v.groups.map((g) => g.id)),
     names = new Set(v.groups.map((g) => g.name.toLocaleLowerCase()))
   if (
@@ -474,6 +476,10 @@ export class WorkspaceStore {
         case 'videoAudio':
           if (!object(command.value)) throw new Error('影片音量設定不合法')
           next.videoAudio = structuredClone(command.value)
+          break
+        case 'playOrder':
+          if (!isPlayOrder(command.value)) throw new Error('播放順序設定不合法')
+          next.playOrder = command.value
           break
         case 'appearance':
           if (!isThemeId(command.theme) || !isLocaleId(command.locale))

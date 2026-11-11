@@ -1,6 +1,11 @@
 import type { BrowseState } from './explorer'
 import type { ThemeId } from './themes'
 import type { LocaleId } from './locales'
+// What a player does when a track or video ends (R-268).
+export const playOrders = ['stop', 'next', 'all', 'one'] as const
+export type PlayOrder = (typeof playOrders)[number]
+export const isPlayOrder = (value: unknown): value is PlayOrder =>
+  playOrders.includes(value as PlayOrder)
 export interface ProjectPlacement {
   groupId: string | null
   favorite: boolean
@@ -19,6 +24,7 @@ export interface WorkspacePrefs {
   theme?: ThemeId
   locale?: LocaleId
   videoAudio?: { volume: number; muted: boolean }
+  playOrder?: PlayOrder
   fileVisibility?: { hidden: boolean; dotfiles: boolean }
   groups: { id: string; name: string; collapsed: boolean }[]
   projects: Record<string, ProjectPlacement>
@@ -49,6 +55,7 @@ export type WorkspaceCommand =
   | { action: 'restorePackage'; backupId: string }
   | { action: 'listBackups' }
   | { action: 'videoAudio'; value: { volume: number; muted: boolean } }
+  | { action: 'playOrder'; value: PlayOrder }
   | { action: 'fileVisibility'; value: { hidden: boolean; dotfiles: boolean } }
   | { action: 'appearance'; theme: ThemeId; locale: LocaleId }
   | { action: 'createGroup'; name: string }

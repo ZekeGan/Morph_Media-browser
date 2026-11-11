@@ -31,6 +31,7 @@ export function Reader({
   extraTools,
   openFolder,
   onImmersive,
+  nextBook,
 }: {
   images: MediaEntry[]
   start: number
@@ -45,10 +46,26 @@ export function Reader({
   openFolder?: () => void
   // Told when immersive reading starts or ends, so the media viewer can offer its queue on the right edge.
   onImmersive?: (value: boolean) => void
+  // The folder after this one in the browse list; offered after the last page (R-255).
+  nextBook?: { name: string; open: () => void }
 }) {
   useLocale()
 
-  const [page, setPage] = useState(Math.max(0, Math.min(start, images.length - 1))),
+  // R-253: opening a manga from its first page continues where it was left (the page the folder record keeps).
+  // Decided once when the reader opens: the viewer's selection (and so start) follows the resumed page afterwards.
+  const [resumeAt] = useState(() =>
+    manga &&
+    start <= 0 &&
+    prefs?.page &&
+    prefs.page > 0 &&
+    // A book left on its last page counts as finished and opens from the start.
+    prefs.page < images.length - (prefs.spread ? 2 : 1)
+      ? prefs.page
+      : undefined
+  )
+  const [page, setPage] = useState(resumeAt ?? Math.max(0, Math.min(start, images.length - 1))),
+    [resumed, setResumed] = useState(resumeAt !== undefined),
+    [ending, setEnding] = useState(false),
     [fit, setFit] = useState<'height' | 'width'>(
       !manga && prefs?.fit === 'width' ? 'width' : 'height'
     )
@@ -353,23 +370,67 @@ export function Reader({
     setZoom(1)
     viewport.current?.scrollTo(0, 0)
   }
+  const readingNow = (): ReadingPrefs => ({
+    page,
+    ...(!manga ? { fit } : {}),
+    spread,
+    rtl,
+    firstSingle: first,
+  })
+  // Leaving a manga any other way than exit (closing the viewer, another folder) keeps the reading place, but only
+  // when it moved since opening: just looking, or a book still loading that could not resume, writes nothing.
+  const savedOnExit = useRef(false),
+    opened = useRef<ReadingPrefs | undefined>(undefined),
+    leaving = useRef({ readingNow, save, manga })
+  opened.current ??= readingNow()
+  leaving.current = { readingNow, save, manga }
+  useEffect(
+    () => () => {
+      if (savedOnExit.current || !leaving.current.manga) return
+      const { readingNow, save } = leaving.current,
+        now = readingNow(),
+        start = opened.current
+      if ((Object.keys(now) as (keyof ReadingPrefs)[]).some((key) => now[key] !== start?.[key]))
+        save(now)
+    },
+    []
+  )
   const exit = () => {
     if (ownsFullscreen.current && document.fullscreenElement) {
       ownsFullscreen.current = false
       void document.exitFullscreen().catch(() => {})
     }
-    save({ page, ...(!manga ? { fit } : {}), spread, rtl, firstSingle: first })
+    savedOnExit.current = true
+    save(readingNow())
     close()
   }
   const goToGroup = (index: number) => {
     const target = groups[index]
     if (target) {
+      setEnding(false)
       setPage(target[0])
       setPageDropdown(false)
       focusStage()
     }
   }
-  const step = (delta: number) => goToGroup(groupIndex + delta)
+  const step = (delta: number) => {
+    // Past the last page: the first press says so (and names the next book), the second opens it.
+    if (manga && delta > 0 && groupIndex === groups.length - 1) {
+      if (ending && nextBook) {
+        setEnding(false)
+        nextBook.open()
+      } else setEnding(true)
+      return
+    }
+    setEnding(false)
+    goToGroup(groupIndex + delta)
+  }
+  const canForward = manga || groupIndex < groups.length - 1
+  useEffect(() => {
+    if (!resumed) return
+    const timer = setTimeout(() => setResumed(false), 4000)
+    return () => clearTimeout(timer)
+  }, [resumed])
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (event.isComposing) return
@@ -407,7 +468,8 @@ export function Reader({
           if (!event.repeat) void toggleImmersive()
         },
         Escape: () => {
-          if (immersive || ownsFullscreen.current) void leaveImmersive()
+          if (ending) setEnding(false)
+          else if (immersive || ownsFullscreen.current) void leaveImmersive()
           else exit()
         },
         '+': () => changeZoom(zoom * 1.25),
@@ -452,7 +514,10 @@ export function Reader({
       else setTimeout(settle, 180)
     })
   }
+  const openedWith = useRef(selectedId)
   useEffect(() => {
+    // The viewer's selection still points at the clicked first page while resuming elsewhere.
+    if (resumeAt !== undefined && selectedId === openedWith.current) return
     const index = images.findIndex((entry) => entry.id === selectedId)
     if (index >= 0 && !groups[groupIndex]?.includes(index)) setPage(index)
   }, [selectedId])
@@ -633,7 +698,7 @@ export function Reader({
           '←',
           'prev',
           () => step(rtl ? 1 : -1),
-          rtl ? groupIndex === groups.length - 1 : groupIndex === 0
+          rtl ? !canForward : groupIndex === 0
         )}
         <div
           ref={track}
@@ -672,7 +737,7 @@ export function Reader({
           '→',
           'next',
           () => step(rtl ? -1 : 1),
-          rtl ? groupIndex === 0 : groupIndex === groups.length - 1
+          rtl ? groupIndex === 0 : !canForward
         )}
         <span className="reader-progress-pages">
           {tr('第 {0} / {1} 頁', pageLabel(groups[scrub ?? groupIndex] ?? []), images.length)}
@@ -721,7 +786,7 @@ export function Reader({
                 '←',
                 'prev',
                 () => step(rtl ? 1 : -1),
-                rtl ? groupIndex === groups.length - 1 : groupIndex === 0
+                rtl ? !canForward : groupIndex === 0
               )}
               <Tooltip zIndex={510} label={tr('跳至頁碼 · G')}>
                 <div className="reader-page-select">
@@ -757,7 +822,7 @@ export function Reader({
                 '→',
                 'next',
                 () => step(rtl ? -1 : 1),
-                rtl ? groupIndex === 0 : groupIndex === groups.length - 1
+                rtl ? groupIndex === 0 : !canForward
               )}
             </Group>
             <Group className="reader-tool-group" gap={3} wrap="nowrap">
@@ -908,6 +973,41 @@ export function Reader({
           </div>
         </div>
         {edges}
+        {resumed && resumeAt !== undefined && (
+          <div className="reader-notice" role="status">
+            <span>{tr('從第 {0} 頁繼續', String(resumeAt + 1))}</span>
+            <Button
+              size="compact-xs"
+              variant="subtle"
+              onClick={() => {
+                setResumed(false)
+                goToGroup(0)
+              }}
+            >
+              {tr('從頭開始')}
+            </Button>
+          </div>
+        )}
+        {ending && (
+          <div className="reader-notice reader-end" role="status">
+            <strong>{tr('已是最後一頁')}</strong>
+            {nextBook && (
+              <span>
+                {tr('下一本：{0}', nextBook.name)} · {tr('再按一次下一頁開啟')}
+              </span>
+            )}
+            <Button
+              size="compact-xs"
+              variant="subtle"
+              onClick={() => {
+                setEnding(false)
+                focusStage()
+              }}
+            >
+              {tr('留在這裡')}
+            </Button>
+          </div>
+        )}
         {toolbar && (
           <div className="reader-info" aria-live="polite">
             <strong>

@@ -50,6 +50,10 @@ type Props = {
   switchTo?: FolderRow
   switchDiscard: () => void
   switchStay: () => void
+  // R-255: the folder after the shown one in the browse list, and the folder to open straight into reading.
+  nextBook?: { name: string; open: () => void }
+  readNext?: string
+  readNextDone: () => void
 }
 
 // The right-hand content panel: folder content or settings tabs, with its resizer and footer.
@@ -86,7 +90,7 @@ export function BrowsePanel(props: Props) {
     togglePanel,
     history,
   } = props
-  const { canEnter, switchTo, switchDiscard, switchStay } = props
+  const { canEnter, switchTo, switchDiscard, switchStay, nextBook, readNext, readNextDone } = props
   const kind = detail ? effectiveKind(detail) : 'general'
   return (
     <div
@@ -289,6 +293,9 @@ export function BrowsePanel(props: Props) {
                   onMediaPrefs={(media) => persist({ ...browse, media })}
                   sourceRows={all}
                   onSource={(id) => void open(id)}
+                  nextBook={nextBook}
+                  autoRead={readNext === detail.rowId}
+                  onAutoRead={readNextDone}
                   childNames={all
                     .filter(
                       (row) =>

@@ -92,6 +92,7 @@ export function BrowseWorkspace({
   const locale = useLocale()
 
   const [browse, setBrowse] = useState(initial),
+    [readNext, setReadNext] = useState<string>(),
     [ready, setReady] = useState(false),
     [page, setPage] = useState(1)
   const [sort, setSort] = useState({ field: 'name', asc: true }),
@@ -315,6 +316,15 @@ export function BrowseWorkspace({
   }
   // A single click shows that folder in the right panel at once, without entering it: the center stays where it is.
   const previewing = useRef<Promise<void> | undefined>(undefined)
+  // R-255: the folder after the shown one in the current list and order, if it can be read.
+  const detailAt = detail ? filtered.findIndex((row) => row.rowId === detail.rowId) : -1,
+    following = detailAt >= 0 ? filtered[detailAt + 1] : undefined,
+    nextBook =
+      following?.record && !following.error && !following.stopped && !following.readonly
+        ? following
+        : undefined
+  // The folder to open straight into reading is only good for the switch it was asked for.
+  useEffect(() => setReadNext(undefined), [detail?.rowId])
   const previewDetail = (id: string) => {
     const target = all.find((r) => r.rowId === id)
     if (!ready || !target || id === state.current.detailId) return
@@ -913,6 +923,18 @@ export function BrowseWorkspace({
         switchTo={switching ? all.find((r) => r.rowId === switching.id) : undefined}
         switchDiscard={switchDiscard}
         switchStay={switchStay}
+        nextBook={
+          nextBook && {
+            name: nextBook.name,
+            open: () => {
+              setReadNext(nextBook.rowId)
+              previewDetail(nextBook.rowId)
+              setTimeout(() => setReadNext((id) => (id === nextBook.rowId ? undefined : id)), 5000)
+            },
+          }
+        }
+        readNext={readNext}
+        readNextDone={() => setReadNext(undefined)}
         moveWidth={moveWidth}
         navHistory={navHistory}
         open={open}
