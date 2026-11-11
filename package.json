@@ -1,7 +1,7 @@
 {
   "name": "morph",
   "productName": "Morph",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "M:orph (Media Browser): a local-first folder viewer where you decide how each folder is shown.",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Zeke Gan",

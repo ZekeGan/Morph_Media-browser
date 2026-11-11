@@ -236,7 +236,7 @@ For the full architecture, module responsibilities and how changes are verified,
 
 ## Project status
 
-Current version: **0.39.0 Alpha**
+Current version: **0.40.0 Alpha**
 
 M:orph is a personal source-available project led by its author and is still under active development. Features, the interface and the data format may change as it progresses.
 

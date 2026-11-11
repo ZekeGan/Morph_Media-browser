@@ -6,6 +6,7 @@ The application version is independent of portable record `schemaVersion`.
 
 | Versions | Theme |
 | --- | --- |
+| 0.40 | Media queue previews and covers, one play-order button; reader icon toolbar, immersive edge panels (tools, progress with previews, queue), sliding page turns, swipe to turn, resume reading, next book; src grouped by feature |
 | 0.39 | Folder settings redesign (import inside Data, sticky save bar, image thumbnails and delete, "still to add" card, test launch), one top-bar refresh button, smaller package, translation fixes |
 | 0.38 | First packaged Windows build (installer and portable) |
 | 0.36 – 0.37 | M:orph identity, mark and icon; GPL-3.0 licence and name policy; five-language README; code split into modules; release tidy-up |
@@ -16,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 | 0.20 – 0.21 | Japanese visual-novel engine detection, video failure help, UI audit fixes |
 
 ## Unreleased
+
+## 0.40.0 — 2026-11-12
 
 - Fix (R-275): moving on to the next book while reading immersively also stays immersive when the app runs in development mode.
 - Fixes (R-273 to R-276): the play-order tooltip shows above the player and names what a click switches to; immersive edge panels close again after their buttons are clicked; moving on to the next book keeps immersive reading; a second press-and-drag on a page no longer drags a ghost copy (nothing in the reader or queues can be selected).
