@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Checks (R-279): `pnpm stale` also points at docs naming functions or components the code no longer has, a first-bundle size that no longer matches the last build, and known limitations whose areas changed after they were confirmed.
 - Checks (R-277): commits are refused when window text skips translation or the main process adds a message without a translation key; existing untranslated main-process messages (507) are listed so they can only shrink.
 
 ## 0.40.0 — 2026-11-12

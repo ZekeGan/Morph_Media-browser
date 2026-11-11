@@ -73,6 +73,83 @@ for (const file of docs.filter((f) => f !== 'docs/DECISIONS.md')) {
       note('文件提到不存在的檔案', `${file}：${match[1]}`)
 }
 
+// 3b. Docs naming functions or components (`sortRows`, `MediaQueue`) the code no longer has (R-279).
+// Names that are rightly absent from the code: platform APIs and retired settings the docs say are ignored.
+const knownOutside = new Set([
+  'utilityProcess', // Electron API, discussed as an option
+  'autoOpenContent', // old workspace setting, documented as ignored
+])
+const codeText = git('ls-files', 'src', 'electron', 'shared', 'scripts', 'tests')
+  .filter((file) => /\.(ts|tsx|mjs|cjs|js)$/.test(file))
+  .map(read)
+  .join('\n')
+for (const file of [...docs.filter((f) => f !== 'docs/DECISIONS.md'), 'docs/WORK_ITEMS.md']) {
+  const named = new Set(
+    [...read(file).matchAll(/`([a-z]+[A-Z][A-Za-z0-9]*|[A-Z][a-z]+[A-Z][A-Za-z0-9]*)`/g)].map(
+      (match) => match[1]
+    )
+  )
+  for (const name of named)
+    if (!knownOutside.has(name) && !new RegExp(`\\b${name}\\b`).test(codeText))
+      note('文件提到不存在的名稱', `${file}：${name}`)
+}
+
+// 3c. Measured numbers written in the docs, compared with a fresh measurement (R-279). The first bundle is the
+// window's main script in the last build; run pnpm build first for a current figure.
+const assets = path.join(root, 'out', 'renderer', 'assets')
+if (fs.existsSync(assets)) {
+  const bytes = fs
+    .readdirSync(assets)
+    .filter((name) => /^index-.*\.js$/.test(name))
+    .reduce((sum, name) => sum + fs.statSync(path.join(assets, name)).size, 0)
+  const written = /前端首包約 ([\d.]+) MB/.exec(read('docs/WORK_ITEMS.md'))?.[1]
+  const measured = bytes / 1024 / 1024
+  if (written && bytes && Math.abs(measured - Number(written)) / measured > 0.15)
+    note(
+      '文件中的量測值過時',
+      `docs/WORK_ITEMS.md：前端首包寫 ${written} MB，最近一次建置是 ${measured.toFixed(1)} MB`
+    )
+}
+
+// 3d. Known limitations carry their areas and the date they were last confirmed, like spec cards (R-279).
+const areaCode = (ids) =>
+  git('ls-files', 'src', 'electron', 'shared').filter((file) =>
+    areas
+      .filter((area) => ids.includes(area.id))
+      .some((area) =>
+        area.code.some((pattern) =>
+          new RegExp(
+            '^' +
+              pattern
+                .split('*')
+                .map((p) => p.replace(/[.+?^${}()|[\]\\]/g, '\\$&'))
+                .join('[^/]*') +
+              '$'
+          ).test(file)
+        )
+      )
+  )
+const limits = /## 已知限制[^\n]*\n([\s\S]*?)(?=\n## |\n<a id|$)/.exec(
+  read('docs/WORK_ITEMS.md')
+)?.[1]
+for (const line of (limits ?? '').split('\n').filter((l) => l.startsWith('- '))) {
+  const tag = /（領域：([^｜）]+)｜確認：(\d{4}-\d{2}-\d{2})）\s*$/.exec(line)
+  const head = line.slice(2, 24)
+  if (!tag) {
+    note('已知限制缺少領域與確認日期', `${head}…（行尾補「（領域：id｜確認：日期）」）`)
+    continue
+  }
+  const ids = tag[1].split('、').map((id) => id.trim()),
+    code = areaCode(ids)
+  const changed = code.some((file) => dirty.has(file))
+    ? today
+    : code.length
+      ? git('log', '-1', '--format=%cs', '--', ...code)[0]
+      : undefined
+  if (changed && changed > tag[2])
+    note('已知限制可能過時', `${head}…：${tag[1]} 的程式 ${changed} 有改動，確認 ${tag[2]}`)
+}
+
 // 4. Translations no source text uses any more.
 const source = git(
   'ls-files',
