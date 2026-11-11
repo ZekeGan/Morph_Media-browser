@@ -23,6 +23,9 @@
 - **R-256** 條漫模式 ｜大｜一般｜設定｜領域：reader｜依賴：R-253（已完成）— 使用者 2026-11-12 核定
   第三種頁面模式（工具列 `[▯ | ▯▯ | ▥]`，快捷鍵 V；D 仍只切單／雙頁）。頁面上下連續捲動、無間隙；寬度滑桿 30%～100%（Ctrl＋滾輪也可調），取代寬高適應與縮放；隱藏上下頁、首張獨立、閱讀方向。頁碼依畫面中央的頁，方向鍵／空白鍵往下捲一個畫面高。前幾頁高度超過寬度約 2.5 倍時提示「這本看起來是條漫 [切換到條漫] [不用]」，只提示一次、不自動切換。頁面模式與寬度依每本記在 R-253 的本機閱讀紀錄，沒記過的沿用上次寬度。
 
+- **R-299** 補遊戲引擎辨識規則（先用合成資料） ｜中｜一般｜無｜領域：detection｜依賴：無｜取代：R-211 — 使用者 2026-11-12 核定
+  新增規則：SRPG Studio、HSP（Hot Soup Processor）、Flash（`.swf`＋Projector）、Pixel Game Maker MV、QLIE、Malie、Entis／Cotopha、Escude、ExHIBIT、Light.vn、Visual Novel Maker（目前被列為 NW.js 候選）、Java（`.jar`）、Majiro、FVP。辨識特徵先依公開資料整理，接入前逐一查證；每種引擎用合成資料夾做正例與反例測試（`tests/game-detection.test.ts`），在 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md#尚未涵蓋) 列為「只用合成資料夾驗證」，與既有候選同等級。使用者之後提供真實樣本時用 `pnpm detect` 對照，再轉為已驗證。特徵不夠可靠的引擎只列候選、不推定。
+
 ## 已登記（未核定）
 
 - **R-294** 修正：音樂資料夾在右側資料夾內容不顯示專輯封面 ｜小｜一般｜無｜領域：media、panel｜依賴：無
@@ -104,7 +107,6 @@
   App 有 27 個 useState，BrowseWorkspace 有 18 個 useEffect。使用者不再規劃大功能，原定「隨下一個大改需求一起做」的時機不會出現；程式運作正常，只在修改時有成本，擱置（2026-11-11）。
 - **R-220** 讓程式能在 Mac 上執行（不含 Mac 遊戲啟動，見 C-130）｜大｜安全邊界｜無｜領域：core、files、storage — 使用者決定擱置（2026-11-10）
   ①已完成（2026-11-05）：macOS 上型別檢查與全部資料測試通過（只有 2 個本來就只屬 Windows 的測試跳過：隱藏屬性批次、寫入權限 ACL）；隱藏屬性在 Mac 不執行，`.media-viewer` 以點開頭本來就隱藏；路徑比較只在 Windows 不分大小寫（Mac 的 APFS 預設也不分，之後要留意）。下一步建議：CI 在 macOS 跑 UI smoke，看視窗、標題列按鈕與側鍵導覽。其餘步驟：②處理 Windows 專屬處：`process.platform` 判斷 6 處、隱藏屬性（`attrib`）、在檔案總管開啟、`.lnk` 捷徑與 Locale Emulator、以 EXE 為主的遊戲辨識；③electron-builder 產出 `.dmg`（未簽章會被 Gatekeeper 擋，正式簽章與公證需 Apple 開發者帳號）；④需要實機 Mac 查收。
-- **R-211** Majiro、FVP 遊戲引擎辨識 ｜小｜一般｜無｜領域：detection — 等真正的樣本（目前資料夾是空的）。
 
 ## 發行前關卡
 
