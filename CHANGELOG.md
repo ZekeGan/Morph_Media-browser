@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Layout editor: the Content tab names the field or group directly with [Change], without the "Shows:" label in front.
 - Release checks (R-278): data saved by 0.40.0 is kept as a sample that every later version must open unchanged (part of `pnpm test`); `pnpm check:packaged` starts the packaged build with throw-away data and checks the home page and version.
 - Checks (R-279): `pnpm stale` also points at docs naming functions or components the code no longer has, a first-bundle size that no longer matches the last build, and known limitations whose areas changed after they were confirmed.
 - Checks (R-277): commits are refused when window text skips translation or the main process adds a message without a translation key; existing untranslated main-process messages (507) are listed so they can only shrink.

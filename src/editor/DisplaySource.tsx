@@ -83,9 +83,6 @@ export function DisplaySource({
   return (
     <Stack gap={6} className="display-source">
       <Group gap={6} wrap="nowrap" className="display-source-head">
-        <Text size="sm" fw={500}>
-          {tr('顯示：')}
-        </Text>
         {group ? (
           <span className="display-source-name">
             <span className="palette-row-icon is-group" aria-hidden>
