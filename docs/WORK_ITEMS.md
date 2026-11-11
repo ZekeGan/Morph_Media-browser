@@ -34,11 +34,8 @@
 - **R-299** 補遊戲引擎辨識規則（先用合成資料） ｜中｜一般｜無｜領域：detection｜依賴：無｜取代：R-211 — 使用者 2026-11-12 核定
   新增規則：SRPG Studio、HSP（Hot Soup Processor）、Flash（`.swf`＋Projector）、Pixel Game Maker MV、QLIE、Malie、Entis／Cotopha、Escude、ExHIBIT、Light.vn、Visual Novel Maker（目前被列為 NW.js 候選）、Java（`.jar`）、Majiro、FVP。辨識特徵先依公開資料整理，接入前逐一查證；每種引擎用合成資料夾做正例與反例測試（`tests/game-detection.test.ts`），在 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md#尚未涵蓋) 列為「只用合成資料夾驗證」，與既有候選同等級。使用者之後提供真實樣本時用 `pnpm detect` 對照，再轉為已驗證。特徵不夠可靠的引擎只列候選、不推定。
 
-- **R-303** 半批次補充資訊 ｜中｜資料寫入｜無｜領域：metadata、panel｜依賴：R-302 — 使用者 2026-11-12 核定
-  選好多個資料夾後，依序一個一個跳出網址欄：貼網址 → 預覽 → 確認或略過 → 下一個。每筆仍由使用者貼網址與確認，不自動比對；寫入沿用單筆的填空、覆寫與人工值保護規則。可中途停止，結束時列出完成、略過、失敗各幾筆。
-
-- **R-304** 右鍵選單加「從網址補充資訊」 ｜小｜一般｜無｜領域：metadata、browse｜依賴：R-303 — 使用者 2026-11-12 核定
-  資料夾右鍵直接打開補充資訊；選了多個資料夾時進入 R-303 的半批次流程。
+- **R-304** 右鍵選單加「從網址補充資訊」（單筆） ｜小｜一般｜無｜領域：metadata、browse｜依賴：無 — 使用者 2026-11-12 核定；同日縮成單筆、取消 R-303
+  資料夾右鍵改成小選單：「資料夾設定」（Alt+Enter 照舊直接開）與「從網址補充資訊」；後者打開該資料夾設定的「資料」分頁並捲到補充資訊區塊、游標在網址欄。只處理按右鍵的那個資料夾，不做多選批次。鍵盤選單鍵／Shift+F10 開同一個選單。
 
 遊戲操作（2026-11-12 討論；現有動作：EXE、資料夾、檔案、網址、`.lnk`，見 [GAME_VIEWER_DESIGN](GAME_VIEWER_DESIGN.md#操作編輯與目標)）：
 
