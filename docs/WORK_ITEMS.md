@@ -28,6 +28,9 @@
 - **R-295** 多選影片／音樂加入播放佇列 ｜中｜一般｜無｜領域：media、gallery｜依賴：無
   使用者希望能一次選多個影片或音樂加入佇列。規格已訂（[跨專案影音佇列](MEDIA_WORKSPACE.md#跨專案影音佇列與迷你播放器)）：Ctrl／Shift 點擊或 Shift＋方向鍵多選，右鍵「加入播放佇列」依列表順序追加、不打斷目前播放、允許重複。程式目前在大視窗的「目前資料夾」TAB 有多選，檔案列表只在挑選模式下能多選；先確認使用者遇到的是哪個畫面，補齊缺口。
 
+- **R-297** 修正：Hitomi.la 資料取不到 ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
+  使用者回報（2026-11-12）。根因已查明：程式向 `ltn.hitomi.la/galleries/{ID}.js` 取資料，但這個主機已經沒有 DNS 記錄（`hitomi.la` 的權威伺服器只回 SOA），請求在解析網域時就失敗。Hitomi 已改用 `ltn.gold-usergeneratedcontent.net`：2026-11-12 實測同一路徑回 200、`application/javascript`，內容仍是 `var galleryinfo = {...}`，現有的格式檢查可直接用（不存在的 ID 回 404）。修正：`electron/metadata-public.ts` 改用新主機；錯誤訊息把「無法連線／找不到作品」與「格式變更」分開；`tests/decided-media.test.ts` 補對新主機的固定回應。這個主機名稱看起來會再換，規格註明失敗時的提示。改動網路請求主機，提交前獨立審查。
+
 - **R-296** DLsite 補上社團名稱、作者與ジャンル ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
   使用者回報（2026-11-12）：DLsite 匯入沒有作者。原因：目前讀的 `/product/info/ajax` 只有銷售資料與社團代碼。改為另讀 `/{site}/api/=/product.json?workno={ID}`（2026-11-12 以 RJ01017217 查證：免登入、回傳一筆的陣列，robots.txt 未禁止，Crawl-delay 10）：社團 `maker_name`（另有 `maker_name_en`）；作者在 `creaters` 物件，依職位分組的 `{id, name}` 陣列（查證到 `created_by`、`voice_by`，其他職位鍵名待用其他類型作品確認），每個職位存成一個標籤欄位；ジャンル `genres[].name`；系列 `series_name`；作品類型名稱 `work_type_string`；封面 `image_main.url`（`img.dlsite.jp`）。新端點沒有下載數，兩個請求並用或捨棄下載數要在實作時決定；既有欄位 ID 不變。測試補固定回應（含沒有 `creaters` 的作品）。
   
