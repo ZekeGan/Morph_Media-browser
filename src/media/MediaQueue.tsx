@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Tooltip } from '@mantine/core'
 import type { MediaEntry } from '../../shared/explorer'
-import { Icon } from '../common/icons'
 import { t as tr } from '../i18n'
 import { ViewToggle } from '../browse/ViewToggle'
+import { MediaThumb } from './MediaThumb'
 
 export function MediaQueue({
   entries,
@@ -83,29 +83,7 @@ export function MediaQueue({
                 onClick={() => choose(entry)}
               >
                 <div className="media-queue-preview">
-                  <Icon
-                    name={
-                      entry.kind === 'audio'
-                        ? 'music'
-                        : entry.kind === 'image'
-                          ? 'image'
-                          : entry.kind === 'video'
-                            ? 'video'
-                            : 'file'
-                    }
-                    size={24}
-                  />
-                  {entry.thumb && entry.mime !== 'image/gif' && (
-                    <img
-                      key={entry.thumb}
-                      src={entry.thumb}
-                      alt=""
-                      loading="lazy"
-                      onError={(event) => {
-                        event.currentTarget.style.visibility = 'hidden'
-                      }}
-                    />
-                  )}
+                  <MediaThumb entry={entry} />
                 </div>
                 {!thumbnails && <span>{entry.name}</span>}
               </button>

@@ -3713,6 +3713,24 @@
     "es": "Reproducir automáticamente la siguiente pista",
     "zh-CN": "播完接下一首"
   },
+  "循環播放：關閉": {
+    "en": "Repeat: off",
+    "ja": "リピート：オフ",
+    "es": "Repetir: desactivado",
+    "zh-CN": "循环播放：关闭"
+  },
+  "循環播放：全部": {
+    "en": "Repeat: all",
+    "ja": "リピート：すべて",
+    "es": "Repetir: todo",
+    "zh-CN": "循环播放：全部"
+  },
+  "循環播放：單曲": {
+    "en": "Repeat: one track",
+    "ja": "リピート：1 曲",
+    "es": "Repetir: una pista",
+    "zh-CN": "循环播放：单曲"
+  },
   "顯示設定未保存，請重試": {
     "en": "Display settings were not saved. Retry",
     "ja": "表示設定を保存できませんでした。再試行",

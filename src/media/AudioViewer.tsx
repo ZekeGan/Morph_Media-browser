@@ -5,6 +5,7 @@ import type { MediaEntry } from '../../shared/explorer'
 import { useVideoAudio } from './useVideoAudio'
 import { Icon } from '../common/icons'
 import { t as tr } from '../i18n'
+import { nextLoop, setLoop, useAudioLoop } from './audioLoop'
 
 const clock = (seconds: number) =>
   Number.isFinite(seconds)
@@ -17,6 +18,7 @@ export function AudioViewer({
   covers = [],
   previous,
   next,
+  first,
   autoNext,
   changeAutoNext,
 }: {
@@ -26,9 +28,18 @@ export function AudioViewer({
   covers?: MediaEntry[]
   previous?: () => void
   next?: () => void
+  // Back to the first track of the list, for "loop all" at the end; omitted when this is the only track.
+  first?: () => void
   autoNext: boolean
   changeAutoNext: (value: boolean) => void
 }) {
+  const loop = useAudioLoop(),
+    loopLabel =
+      loop === 'all'
+        ? tr('循環播放：全部')
+        : loop === 'one'
+          ? tr('循環播放：單曲')
+          : tr('循環播放：關閉')
   const node = useRef<HTMLAudioElement | null>(null),
     allowed = useRef(false),
     intent = useRef(true),
@@ -204,6 +215,7 @@ export function AudioViewer({
           ref={bindRef.current}
           src={file.url}
           controls={false}
+          loop={loop === 'one'}
           preload="metadata"
           onLoadedMetadata={(event) => {
             if (event.currentTarget !== node.current) return
@@ -225,7 +237,11 @@ export function AudioViewer({
           onEnded={() => {
             intent.current = false
             setPaused(true)
-            if (autoNext) next?.()
+            if (loop === 'all') {
+              const after = next ?? first
+              if (after) after()
+              else toggle()
+            } else if (autoNext) next?.()
           }}
           onError={() => {
             intent.current = false
@@ -327,6 +343,17 @@ export function AudioViewer({
         <ActionIcon aria-label={tr('下一首')} variant="subtle" disabled={!next} onClick={next}>
           <Icon name="chevron-right" />
         </ActionIcon>
+        <Tooltip label={loopLabel}>
+          <ActionIcon
+            className="audio-loop"
+            aria-label={loopLabel}
+            aria-pressed={loop !== 'off'}
+            variant={loop === 'off' ? 'subtle' : 'light'}
+            onClick={() => setLoop(nextLoop(loop))}
+          >
+            <Icon name={loop === 'one' ? 'repeat-one' : 'repeat'} />
+          </ActionIcon>
+        </Tooltip>
       </div>
       <div className="audio-volume">
         <Tooltip label={tr('靜音')}>

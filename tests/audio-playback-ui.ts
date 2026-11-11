@@ -319,8 +319,33 @@ try {
         4,
         'single click plays without changing the queue'
       )
+      // R-257/R-258: list rows carry a preview (video frame, embedded music cover) beside the name.
+      const queueRows = page.locator('.playback-items:visible .playback-item')
+      await page.waitForFunction(
+        () =>
+          [...document.querySelectorAll('.playback-items .playback-item')].filter(
+            (row) => (row.querySelector('.media-thumb img') as HTMLImageElement | null)?.complete
+          ).length >= 2
+      )
+      assert.equal(
+        await queueRows
+          .filter({ hasText: 'embedded.mp3' })
+          .first()
+          .locator('.media-thumb img')
+          .evaluate(
+            (image: HTMLImageElement) => image.src.startsWith('blob:') && image.naturalWidth > 0
+          ),
+        true,
+        'a music row shows its embedded cover'
+      )
+      assert.equal(await queueRows.first().locator('.playback-item-text').isVisible(), true)
       await page.screenshot({ path: path.join(root, 'queue-list.png') })
       await page.getByRole('button', { name: '圖片模式', exact: true }).click()
+      assert.equal(
+        await queueRows.first().locator('.playback-item-text').isVisible(),
+        false,
+        'image view shows previews without names'
+      )
       await page.screenshot({ path: path.join(root, 'queue-images.png') })
       await page.getByRole('button', { name: '清單模式', exact: true }).click()
       await page.getByRole('button', { name: 'fixture.mp4', exact: true }).click()

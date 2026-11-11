@@ -116,6 +116,8 @@
         "src/media/Playback*",
         "src/media/FileMenu*",
         "src/media/useVideoAudio*",
+        "src/media/MediaThumb*",
+        "src/media/audioLoop*",
         "src/media/media-workspace.css",
         "shared/media*",
         "shared/explorer*",

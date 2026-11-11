@@ -356,6 +356,14 @@
     place-items: center;
 }
 
+.media-thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+}
+
 .media-queue-preview img {
     position: absolute;
     inset: 0;
@@ -662,8 +670,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px;
-    border-bottom: 1px solid var(--line);
+    padding: 2px 6px 2px 0;
+}
+
+.playback-items>div:hover {
+    background: var(--hover);
 }
 
 .playback-items>div>:first-child {
@@ -887,6 +898,11 @@
     padding: 6px 8px;
 }
 
+/* The row shows hover and the playing item; the button inside stays flat so they do not stack. */
+.playback-item .mantine-Button-root:hover {
+    background: transparent;
+}
+
 .playback-item .mantine-Button-inner {
     justify-content: flex-start;
     width: 100%;
@@ -906,11 +922,9 @@
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    width: 28px;
-    height: 28px;
+    width: 48px;
+    height: 48px;
     overflow: hidden;
-    border-radius: var(--radius);
-    background: color-mix(in srgb, var(--muted) 18%, var(--viewer-bg));
 }
 
 .playback-item-preview img {
@@ -918,7 +932,8 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: var(--panel);
 }
 
 .playback-item-text {
@@ -943,7 +958,8 @@
 }
 
 .playback-item.playing {
-    border-left: 3px solid var(--accent);
+    background: var(--selected);
+    box-shadow: inset 3px 0 var(--accent);
 }
 
 .playback-item.playing .playback-item-preview {
@@ -972,6 +988,10 @@
 .playback-items-images .playback-item-preview {
     width: 100%;
     height: 84px;
+}
+
+.playback-items-images .playback-item-text {
+    display: none;
 }
 
 .playback-items-images .playback-item>.mantine-ActionIcon-root {

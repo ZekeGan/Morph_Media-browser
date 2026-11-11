@@ -17,6 +17,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Media queue (R-257, R-258): the video and music queue looks like the image and manga queue: each row has a preview square (video frame, or the music file's embedded cover) with the file name; image view shows only the previews, with names on hover.
+- Music (R-259): a repeat button next to "Next track" switches between off, repeat all and repeat one track.
 - Fix (R-251): the image waterfall in the side panel could crash the window ("Something went wrong") when the panel or window width landed where the scrollbar kept appearing and disappearing; the scrollbar space is now kept while the waterfall is shown.
 - Tests (R-250): the file overview scroll check waits for files to appear instead of a fixed 100 ms.
 - Internal (R-249): the window's source files are grouped into one folder per feature (browse, panel, editor, media, video and so on) instead of one flat folder. No visible change.

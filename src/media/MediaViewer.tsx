@@ -217,6 +217,7 @@ export function MediaViewer({
                       ? () => setSelected(queue[index + 1].id)
                       : undefined
                   }
+                  first={index > 0 ? () => setSelected(queue[0].id) : undefined}
                 />
               ) : current && ['pdf', 'archive'].includes(current.kind) ? (
                 <DocumentViewer

@@ -17,6 +17,8 @@ import { AudioViewer } from './AudioViewer'
 import { VideoViewer } from '../video/VideoViewer'
 import { Icon } from '../common/icons'
 import { FileMenu } from './FileMenu'
+import { MediaThumb } from './MediaThumb'
+import { useAudioLoop } from './audioLoop'
 import { ViewToggle } from '../browse/ViewToggle'
 import { t as tr, useLocale } from '../i18n'
 import './media-workspace.css'
@@ -39,6 +41,7 @@ const clock = (value: number) =>
     : '0:00'
 export function PlaybackProvider({ children }: { children: ReactNode }) {
   useLocale()
+  const loop = useAudioLoop()
   const [items, setItems] = useState<Item[]>([]),
     [current, setCurrent] = useState<Item>(),
     [folder, setFolder] = useState<Source>(),
@@ -315,6 +318,8 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                   onPauseCapture={sync}
                   onEndedCapture={() => {
                     sync()
+                    // A looping music track moves on (or repeats) by itself.
+                    if (current.file.kind === 'audio' && loop !== 'off') return
                     if (auto && index >= 0) step(1)
                   }}
                 >
@@ -331,6 +336,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                       changeAutoNext={setAuto}
                       previous={index > 0 ? () => step(-1) : undefined}
                       next={index >= 0 && index < items.length - 1 ? () => step(1) : undefined}
+                      first={index > 0 ? () => void select(items[0]) : undefined}
                     />
                   ) : (
                     <VideoViewer
@@ -426,36 +432,24 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                               }}
                             >
                               <Button
-                                variant={item.id === current.id ? 'light' : 'subtle'}
+                                variant="subtle"
                                 disabled={pending}
                                 aria-label={item.file.name}
                                 aria-current={item.id === current.id ? 'true' : undefined}
                                 onClick={() => void select(item)}
-                                title={item.row.path}
+                                title={queueView === 'images' ? item.file.name : item.row.path}
                               >
                                 <span className="playback-item-preview">
-                                  <Icon
-                                    name={
+                                  <MediaThumb
+                                    entry={item.file}
+                                    icon={
                                       item.id === current.id
                                         ? state.paused
                                           ? 'pause'
                                           : 'play'
-                                        : item.file.kind === 'audio'
-                                          ? 'music'
-                                          : 'video'
+                                        : undefined
                                     }
-                                    size={queueView === 'images' ? 24 : 16}
                                   />
-                                  {queueView === 'images' && item.file.thumb && (
-                                    <img
-                                      src={item.file.thumb}
-                                      alt=""
-                                      loading="lazy"
-                                      onError={(event) => {
-                                        event.currentTarget.style.visibility = 'hidden'
-                                      }}
-                                    />
-                                  )}
                                 </span>
                                 <span className="playback-item-text">
                                   <small className="playback-item-order">{order + 1}</small>
@@ -512,20 +506,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                                 }
                               >
                                 <span className="playback-item-preview">
-                                  <Icon
-                                    name={file.kind === 'audio' ? 'music' : 'video'}
-                                    size={queueView === 'images' ? 24 : 16}
-                                  />
-                                  {queueView === 'images' && file.thumb && (
-                                    <img
-                                      src={file.thumb}
-                                      alt=""
-                                      loading="lazy"
-                                      onError={(event) => {
-                                        event.currentTarget.style.visibility = 'hidden'
-                                      }}
-                                    />
-                                  )}
+                                  <MediaThumb entry={file} />
                                 </span>
                                 <span className="playback-item-text">
                                   <strong>{file.name}</strong>
