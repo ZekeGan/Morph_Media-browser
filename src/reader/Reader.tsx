@@ -12,6 +12,8 @@ interface Frame {
   sizes: ImageSize[]
   loaded: Set<number>
   committed?: boolean
+  // R-270: the side a page turn slides this frame in from; none for loads, mode changes and jumps from the queue.
+  enter?: 'left' | 'right'
 }
 interface CachedImage {
   image: HTMLImageElement
@@ -102,6 +104,7 @@ export function Reader({
         }
       | undefined
     >(undefined)
+  const heading = useRef<'left' | 'right' | undefined>(undefined)
   const cache = useRef(new Map<string, CachedImage>()),
     sequence = useRef(0),
     activeRef = useRef(''),
@@ -241,7 +244,9 @@ export function Reader({
   }
   const groupKey = group.map((index) => images[index]?.url).join('|')
   useEffect(() => {
-    const token = ++sequence.current
+    const token = ++sequence.current,
+      enter = heading.current
+    heading.current = undefined
     let cancelled = false
     setLoading(true)
     setError('')
@@ -258,6 +263,7 @@ export function Reader({
           indices: [...group],
           sizes,
           loaded: new Set(),
+          enter,
         }
         setFrames((previous) => [
           ...previous.filter((item) => item.key === activeRef.current),
@@ -408,6 +414,10 @@ export function Reader({
     const target = groups[index]
     if (target) {
       setEnding(false)
+      if (index !== groupIndex) {
+        const forward = index > groupIndex
+        heading.current = forward !== rtl ? 'right' : 'left'
+      }
       setPage(target[0])
       setPageDropdown(false)
       focusStage()
@@ -511,7 +521,7 @@ export function Reader({
         )
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
         requestAnimationFrame(settle)
-      else setTimeout(settle, 180)
+      else setTimeout(settle, 220)
     })
   }
   const openedWith = useRef(selectedId)
@@ -674,13 +684,6 @@ export function Reader({
     },
     previewIndex = scrub ?? hovered,
     previewEntry = previewIndex === undefined ? undefined : images[groups[previewIndex]?.[0] ?? -1]
-  const [zoomFlash, setZoomFlash] = useState(false)
-  useEffect(() => {
-    if (!immersive) return
-    setZoomFlash(true)
-    const timer = setTimeout(() => setZoomFlash(false), 900)
-    return () => clearTimeout(timer)
-  }, [zoom])
   const edges = immersive && (
     <>
       <div className="reader-edge reader-edge-left" aria-hidden="true" />
@@ -710,19 +713,21 @@ export function Reader({
           }}
           onMouseLeave={() => setHovered(undefined)}
         >
+          {/* Right to left: the bar runs the other way (first page at the right end, the read part filled from the
+              right), so its position is the page counted from the end. */}
           <Slider
             aria-label={tr('閱讀進度')}
             min={0}
             max={last}
             step={1}
-            inverted={rtl}
             label={null}
+            inverted={rtl}
             disabled={groups.length < 2}
-            value={scrub ?? groupIndex}
-            onChange={setScrub}
+            value={rtl ? last - (scrub ?? groupIndex) : (scrub ?? groupIndex)}
+            onChange={(value) => setScrub(rtl ? last - value : value)}
             onChangeEnd={(value) => {
               setScrub(undefined)
-              goToGroup(value)
+              goToGroup(rtl ? last - value : value)
             }}
           />
           {previewEntry && previewIndex !== undefined && (
@@ -743,13 +748,28 @@ export function Reader({
           {tr('第 {0} / {1} 頁', pageLabel(groups[scrub ?? groupIndex] ?? []), images.length)}
         </span>
       </div>
-      {zoomFlash && (
-        <div className="reader-zoom-flash" aria-hidden="true">
-          {Math.round(zoom * 100)}%
-        </div>
-      )}
     </>
   )
+  // R-269: in immersive reading the pointer hides after two seconds at rest, except over the tool rail or progress
+  // bar; any movement brings it back.
+  const [idle, setIdle] = useState(false),
+    idleTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const rest = () => {
+    clearTimeout(idleTimer.current)
+    idleTimer.current = setTimeout(() => setIdle(true), 2000)
+  }
+  const wake = (event: React.PointerEvent) => {
+    if (!immersive) return
+    setIdle(false)
+    clearTimeout(idleTimer.current)
+    if (!(event.target as HTMLElement).closest('.reader-rail,.reader-progress')) rest()
+  }
+  useEffect(() => {
+    setIdle(false)
+    if (immersive) rest()
+    else clearTimeout(idleTimer.current)
+    return () => clearTimeout(idleTimer.current)
+  }, [immersive])
   const view = (
     <FocusTrap active={!embedded}>
       <div
@@ -758,11 +778,13 @@ export function Reader({
           (embedded ? '' : ' overlay-frame') +
           (embedded ? ' reader-embedded' : '') +
           (manga ? ' manga-reader' : '') +
-          (toolbar ? '' : ' reader-focused')
+          (toolbar ? '' : ' reader-focused') +
+          (idle ? ' cursor-idle' : '')
         }
         role="dialog"
         aria-modal="true"
         aria-label={manga ? tr('漫畫閱讀器') : tr('圖片檢視')}
+        onPointerMove={wake}
       >
         {toolbar && (
           <Tooltip zIndex={510} label={tr('退出 · ESC')}>
@@ -926,7 +948,11 @@ export function Reader({
                   key={frame.key}
                   className={
                     'reader-frame-layer ' +
-                    (isActive ? 'is-active' : isPrevious ? 'is-previous' : 'is-pending')
+                    (isActive ? 'is-active' : isPrevious ? 'is-previous' : 'is-pending') +
+                    (isActive && frame.enter ? ' enter-' + frame.enter : '') +
+                    (isPrevious && active?.enter
+                      ? ' leave-' + (active.enter === 'right' ? 'left' : 'right')
+                      : '')
                   }
                   aria-hidden={!isActive}
                   data-pages={pageLabel(frame.indices)}

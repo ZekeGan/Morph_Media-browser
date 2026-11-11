@@ -253,7 +253,7 @@ export function MediaViewer({
                 selected={selected}
                 choose={(entry) => setSelected(entry.id)}
                 loading={loading}
-                video={file.kind === 'video'}
+                tiles={file.kind === 'video' || file.kind === 'image'}
                 view={queueView}
                 changeView={setQueueView}
               />

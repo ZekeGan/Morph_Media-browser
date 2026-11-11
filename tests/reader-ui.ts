@@ -273,6 +273,25 @@ try {
   await page.waitForTimeout(200)
   assert.equal(await progress.locator('.reader-progress-preview img').count(), 1)
   await page.screenshot({ path: path.join(root, 'reader-progress.png') })
+  // Right to left, the bar starts at its right end: resting there previews the first pages.
+  const direction = async (name: string) => {
+    await page.mouse.move(4, viewportSize.height / 2)
+    await reader()
+      .getByRole('navigation', { name: '閱讀工具', exact: true })
+      .getByRole('button', { name, exact: true })
+      .click()
+  }
+  await direction('由左至右')
+  const trackBox = (await progress.locator('.reader-progress-track').boundingBox())!
+  await page.mouse.move(trackBox.x + trackBox.width / 2, viewportSize.height - 4)
+  await page.waitForTimeout(400)
+  await progress
+    .locator('.reader-progress-track')
+    .hover({ position: { x: trackBox.width - 2, y: 10 } })
+  await page.waitForTimeout(200)
+  assert.equal(await progress.locator('.reader-progress-preview span').textContent(), '1–2')
+  await page.screenshot({ path: path.join(root, 'reader-progress-rtl.png') })
+  await direction('由右至左')
   await page.mouse.move(viewportSize.width / 2, viewportSize.height / 2)
   await page.keyboard.press('Escape')
   await fullscreen(false)

@@ -10,7 +10,7 @@ export function MediaQueue({
   selected,
   choose,
   loading,
-  video,
+  tiles,
   view,
   changeView,
 }: {
@@ -18,13 +18,14 @@ export function MediaQueue({
   selected: string
   choose: (file: MediaEntry) => void
   loading: boolean
-  video: boolean
+  // Offers the list / thumbnails switch (videos, images and manga pages).
+  tiles: boolean
   view: 'list' | 'images'
   changeView: (view: 'list' | 'images') => void
 }) {
   const root = useRef<HTMLDivElement>(null),
     [viewport, setViewport] = useState({ top: 0, height: 600 })
-  const thumbnails = video && view === 'images',
+  const thumbnails = tiles && view === 'images',
     height = thumbnails ? 160 : 64
   useLayoutEffect(() => {
     const node = root.current
@@ -56,7 +57,7 @@ export function MediaQueue({
           {tr('目前資料夾')} · {entries.length}
           {loading ? '…' : ''}
         </strong>
-        {video && <ViewToggle view={view} change={changeView} />}
+        {tiles && <ViewToggle view={view} change={changeView} />}
       </header>
       <div
         ref={root}
