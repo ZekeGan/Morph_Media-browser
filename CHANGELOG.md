@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Games: engine detection for SRPG Studio, HSP, Flash, QLIE, Malie, Entis GLS／Cotopha, Escu:de, ExHIBIT, Light.vn, Majiro, FVP and Java; Pixel Game Maker MV is listed as a candidate (R-299).
 - Media: a music folder's page shows its album cover; the central Files view can Ctrl/Shift-click music and videos and add them to the play queue from the right-click menu, and its type filter has Music (R-294, R-295).
 - Website sources: E-Hentai covers show again (they are WebP now); DLsite imports the circle name, creators by role (author, scenario, illustration, voice, music), genres and series (R-311, R-296).
 - Website sources: Hitomi.la works again (its data moved to a new host), and a failed source now says why — can't connect, work not found, needs a key or sign-in, or the site changed its format — in all five languages (R-297, R-300).

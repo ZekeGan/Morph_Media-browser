@@ -15,6 +15,9 @@
 
 ## 待查收
 
+- **R-299** 補遊戲引擎辨識規則（先用合成資料） ｜中｜一般｜無｜領域：detection｜依賴：無｜取代：R-211
+  驗收：`pnpm detect <資料夾>` 對你手上的 SRPG Studio、HSP、Flash、QLIE、Malie、Entis、Escu:de、ExHIBIT、Light.vn、Majiro、FVP、Java 遊戲各試一個，應印出對應引擎；有誤判或漏判告訴我資料夾裡的檔名結構。Visual Novel Maker 找不到公開特徵，仍是 NW.js 候選。
+
 - **R-294** 修正：音樂資料夾在右側資料夾內容不顯示專輯封面 ｜小｜一般｜無｜領域：media、panel｜依賴：無
   驗收：點一個有音樂的資料夾，右側「資料夾詳情」下面出現專輯封面（先用資料夾設定的封面，再用第一首的內嵌封面，再用唯一一張 cover／folder／front／album 圖片）；沒有封面的資料夾不多出空白區。
 
@@ -44,9 +47,6 @@
 
 - **R-256** 條漫模式 ｜大｜一般｜設定｜領域：reader｜依賴：R-253（已完成）— 使用者 2026-11-12 核定
   第三種頁面模式（工具列 `[▯ | ▯▯ | ▥]`，快捷鍵 V；D 仍只切單／雙頁）。頁面上下連續捲動、無間隙；寬度滑桿 30%～100%（Ctrl＋滾輪也可調），取代寬高適應與縮放；隱藏上下頁、首張獨立、閱讀方向。頁碼依畫面中央的頁，方向鍵／空白鍵往下捲一個畫面高。前幾頁高度超過寬度約 2.5 倍時提示「這本看起來是條漫 [切換到條漫] [不用]」，只提示一次、不自動切換。頁面模式與寬度依每本記在 R-253 的本機閱讀紀錄，沒記過的沿用上次寬度。
-
-- **R-299** 補遊戲引擎辨識規則（先用合成資料） ｜中｜一般｜無｜領域：detection｜依賴：無｜取代：R-211 — 使用者 2026-11-12 核定
-  新增規則：SRPG Studio、HSP（Hot Soup Processor）、Flash（`.swf`＋Projector）、Pixel Game Maker MV、QLIE、Malie、Entis／Cotopha、Escude、ExHIBIT、Light.vn、Visual Novel Maker（目前被列為 NW.js 候選）、Java（`.jar`）、Majiro、FVP。辨識特徵先依公開資料整理，接入前逐一查證；每種引擎用合成資料夾做正例與反例測試（`tests/game-detection.test.ts`），在 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md#尚未涵蓋) 列為「只用合成資料夾驗證」，與既有候選同等級。使用者之後提供真實樣本時用 `pnpm detect` 對照，再轉為已驗證。特徵不夠可靠的引擎只列候選、不推定。
 
 遊戲操作（2026-11-12 討論；現有動作：EXE、資料夾、檔案、網址、`.lnk`，見 [GAME_VIEWER_DESIGN](GAME_VIEWER_DESIGN.md#操作編輯與目標)）：
 

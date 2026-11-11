@@ -1,6 +1,6 @@
 # 工作區現行規則
 
-> 最後確認：2026-11-11。外框、專案建立、三模式與右側面板的現行規則；檔案總覽與媒體頁在 [媒體工作區](MEDIA_WORKSPACE.md)。領域對應見 [areas.json](areas.json)（shell、browse、panel、project、backup），理由見 [決策索引](DECISIONS.md)（C-87 起）。
+> 最後確認：2026-11-12。外框、專案建立、三模式與右側面板的現行規則；檔案總覽與媒體頁在 [媒體工作區](MEDIA_WORKSPACE.md)。領域對應見 [areas.json](areas.json)（shell、browse、panel、project、backup），理由見 [決策索引](DECISIONS.md)（C-87 起）。
 
 ## 外框與專案區
 

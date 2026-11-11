@@ -304,6 +304,49 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
         'LucaSystem',
         'files/SCRIPT.PAK 與其他 .PAK 封包 + EXE（Prototype 引擎，Key 作品 Steam 版）'
       )
+    // R-299, verified with synthetic folders only. Where an extension is shared with other software, the first
+    // bytes of at most three such files are compared with the archive's published signature (GARbro's table);
+    // nothing else of the file is read.
+    const signed = async (pattern: RegExp, magic: string) => {
+      for (const entry of rootFiles.filter((e) => pattern.test(e.name)).slice(0, 3)) {
+        const target = path.join(dir, entry.name)
+        await safePath(dir, target)
+        let handle: Awaited<ReturnType<typeof fs.open>> | undefined
+        try {
+          handle = await fs.open(target, 'r')
+          const head = Buffer.alloc(magic.length)
+          const { bytesRead } = await handle.read(head, 0, magic.length, 0)
+          if (bytesRead === magic.length && head.toString('latin1') === magic) return true
+        } catch {
+          // A locked or unreadable file is simply not evidence.
+        } finally {
+          await handle?.close().catch(() => {})
+        }
+      }
+      return false
+    }
+    if (await file('data.dts')) add('SRPG Studio', 'data.dts + EXE')
+    if (
+      (await signed(/\.dpm$/i, 'DPMX')) ||
+      hasFile(/^(hspext|hspda|hspogg|hspinet|hspsock|hspdx|hgimg3|hgimg4|hspcmp)\.dll$/i)
+    )
+      add('HSP', 'DPMX 封包或 HSP 外掛 DLL + EXE（Hot Soup Processor）')
+    if (hasFile(/\.swf$/i)) add('Flash', '.swf + EXE（Flash Projector 候選）')
+    if ((await files('GameData', /\.pack$/i)).length) add('QLIE', 'GameData 內的 .pack 封包 + EXE')
+    if (hasExe(/^malie/i) || (await signed(/\.lib$/i, 'LIB')))
+      add('Malie', 'malie*.exe 或 LIB 封包 + EXE')
+    if (await signed(/\.noa$/i, 'Entis\x1a')) add('Entis GLS／Cotopha', 'Entis NOA 封包 + EXE')
+    if ((await signed(/\.bin$/i, 'ESC-ARC')) || (await signed(/\.bin$/i, 'ACPXPK01')))
+      add('Escu:de', 'ESC-ARC／ACPXPK01 封包 + EXE')
+    if (await file('resident.dll')) add('ExHIBIT', 'resident.dll + EXE（候選）')
+    if (hasFile(/\.vndat$/i)) add('Light.vn', '.vndat 封包 + EXE')
+    if (await signed(/\.arc$/i, 'MajiroArcV')) add('Majiro', 'MajiroArc 封包 + EXE')
+    if (hasFile(/\.hcb$/i)) add('FVP', '.hcb 腳本 + EXE（Favorite View Point）')
+    if (hasExe(/^player\.exe$/i) && (await folder('Resources')))
+      add(
+        undefined,
+        'Player.exe + Resources：Pixel Game Maker MV 候選；公開資料不足，引擎未推定，請確認 ROOT'
+      )
     if (packedApp && !tyranoPacked)
       add(
         undefined,
@@ -316,6 +359,15 @@ export async function detectGame(dir: string): Promise<GameDetection | undefined
     )
       add(undefined, 'EXE + steam_api*.dll：Steam 發行版候選；引擎未確認，請確認 ROOT／非遊戲')
   }
+  // A Java game is a .jar with a launcher: an EXE wrapper, a .bat/.cmd script or a bundled JRE.
+  if (
+    !result.evidence.length &&
+    [...root.values()].some((e) => e.kind === 'file' && /\.jar$/i.test(e.name)) &&
+    (exes.length ||
+      [...root.values()].some((e) => e.kind === 'file' && /\.(bat|cmd)$/i.test(e.name)) ||
+      (await folder('jre')))
+  )
+    add('Java', '.jar + EXE／.bat／jre 啟動方式（候選）')
   async function unreal(base: string) {
     if (!(await folder(base + 'Binaries/Win64')) || !(await folder(base + 'Content/Paks')))
       return false

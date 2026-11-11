@@ -57,6 +57,20 @@
 | RPG Developer Bakin | `data/bakinplayer.exe` 或 `data/data.rbpack`＋EXE | — |
 | SMILE GAME BUILDER | `data.sgbpack` 或 `sgb_rpgplayer.exe` | — |
 | LucaSystem | `files/SCRIPT.PAK`＋`files` 內至少另一個 `.PAK`＋EXE（Key 作品 Steam 版等） | — |
+| SRPG Studio | `data.dts`＋EXE | 只用合成資料夾驗證 |
+| HSP（Hot Soup Processor） | 檔頭 `DPMX` 的 `.dpm`，或 HSP 外掛 DLL（`hspext`／`hspda`／`hspogg`／`hspinet`／`hspsock`／`hspdx`／`hgimg3`／`hgimg4`／`hspcmp`）＋EXE | 只用合成資料夾驗證 |
+| Flash | 根層 `.swf`＋EXE（Projector） | 候選；只用合成資料夾驗證 |
+| QLIE | `GameData` 內的 `.pack`＋EXE | 只用合成資料夾驗證 |
+| Malie | `malie*.exe`，或檔頭 `LIB` 的 `.lib`＋EXE | 只用合成資料夾驗證 |
+| Entis GLS／Cotopha | 檔頭 `Entis\x1a` 的 `.noa`＋EXE | 只用合成資料夾驗證 |
+| Escu:de | 檔頭 `ESC-ARC`／`ACPXPK01` 的 `.bin`＋EXE | 只用合成資料夾驗證 |
+| ExHIBIT | `resident.dll`＋EXE | 候選；只用合成資料夾驗證 |
+| Light.vn | `.vndat`＋EXE | 只用合成資料夾驗證 |
+| Majiro | 檔頭 `MajiroArcV` 的 `.arc`＋EXE | 只用合成資料夾驗證 |
+| FVP | `.hcb` 腳本＋EXE | 只用合成資料夾驗證 |
+| Java | `.jar`＋EXE／`.bat`／`.cmd`／`jre` 資料夾，且沒有命中其他規則 | 候選；只用合成資料夾驗證 |
+
+副檔名常被其他軟體共用的封包（`.dpm`、`.lib`、`.noa`、`.bin`、`.arc`）只讀根層最多三個檔案的前幾個位元組，比對 GARbro 格式表公開的檔頭特徵碼；不讀其餘內容。
 
 ### 只列候選、不推定引擎
 
@@ -65,6 +79,7 @@
 - **NW.js**：EXE＋NW 資源檔（`nw.pak`／`nw_100_percent.pak`／`nw_200_percent.pak`）與執行環境（`nw.dll`、`nw_elf.dll`、`chrome_elf.dll`、`icudt.dll` 之一，或成對 `libEGL.dll`／`libGLESv2.dll`）。
 - **封裝應用**：EXE＋`resources/app.asar`，且 asar 最上層看不出 Tyrano。
 - **Steam 發行版**：其他規則都沒命中時，EXE＋`steam_api.dll`／`steam_api64.dll`。
+- **Pixel Game Maker MV**：`Player.exe`＋`Resources` 資料夾。找不到可信的公開部署說明，只列候選。
 
 ## 漏判、誤判與 ROOT 定位規則
 
@@ -89,8 +104,8 @@
 
 ## 尚未涵蓋
 
-- **沒有規則**：Majiro、FVP（缺可信的部署特徵，等真正的樣本）；KiriKiri 內嵌版、GameMaker YYC、Unreal 早期世代與其他容器、RPG Maker UNITE（與 Unity 重疊）等變體。
-- **只用合成資料夾驗證**：CRYENGINE、Adventure Game Studio、MonoGame／FNA／XNA、Source、Source 2、Adobe AIR、DOSBox、PC-98 模擬器。
+- **沒有規則**：Visual Novel Maker（找不到公開的部署結構，仍落在 NW.js 候選）；KiriKiri 內嵌版、GameMaker YYC、Unreal 早期世代與其他容器、RPG Maker UNITE（與 Unity 重疊）等變體。
+- **只用合成資料夾驗證**：CRYENGINE、Adventure Game Studio、MonoGame／FNA／XNA、Source、Source 2、Adobe AIR、DOSBox、PC-98 模擬器；R-299 新增的 SRPG Studio、HSP、Flash、QLIE、Malie、Entis GLS／Cotopha、Escu:de、ExHIBIT、Light.vn、Majiro、FVP、Java 與 Pixel Game Maker MV 候選。使用者提供真實樣本時用 `pnpm detect` 對照，再轉為已驗證。
 - **未驗證**：plist 解析與 macOS 原生啟動。
 
 這些情況一律以人工「確認 ROOT」兜底，介面不得把「未支援辨識」顯示成「已確認不是遊戲」。
@@ -105,4 +120,4 @@
 
 ## 依據
 
-引擎結構依官方文件與原始碼：[Unity](https://docs.unity3d.com/6000.0/Documentation/Manual/WindowsStandaloneBinaries.html)、[Unreal](https://dev.epicgames.com/documentation/en-us/unreal-engine/packaging-your-project)、[Godot](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_windows.html)、[RPG Maker MV](https://github.com/rpgtkoolmv/corescript)、[RPG Maker MZ](https://rpgmakerofficial.com/product/MZ_help-en/01_11_03.html)、[Ren’Py](https://www.renpy.org/doc/html/build.html)、[KiriKiri Z](https://github.com/krkrz/krkrz/blob/master/base/XP3Archive.cpp)、[TyranoScript](https://github.com/ShikemokuMK/tyranoscript)、[WOLF RPG Editor](https://silversecond.com/WolfRPGEditor/Help/01filelist.html)、[GameMaker](https://manual.gamemaker.io/monthly/en/Introduction/Compiling.htm)、[Cocos Creator](https://docs.cocos.com/creator/3.8/manual/en/editor/publish/windows/index.html)、[Construct](https://www.construct.net/en/make-games/manuals/construct-3/tips-and-guides/deprecated-features)、[Defold](https://defold.com/manuals/bundling/)、[LÖVE](https://love2d.org/wiki/Game_Distribution)、[LuckSystem](https://github.com/wetor/LuckSystem)（LucaSystem）、[Apple bundle](https://developer.apple.com/documentation/bundleresources/placing-content-in-a-bundle)。日系視覺小說引擎的規則另依使用者提供的樣本（唯讀檢查目錄結構）確認；所有規則仍屬候選，以人工確認為準。
+引擎結構依官方文件與原始碼：[Unity](https://docs.unity3d.com/6000.0/Documentation/Manual/WindowsStandaloneBinaries.html)、[Unreal](https://dev.epicgames.com/documentation/en-us/unreal-engine/packaging-your-project)、[Godot](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_windows.html)、[RPG Maker MV](https://github.com/rpgtkoolmv/corescript)、[RPG Maker MZ](https://rpgmakerofficial.com/product/MZ_help-en/01_11_03.html)、[Ren’Py](https://www.renpy.org/doc/html/build.html)、[KiriKiri Z](https://github.com/krkrz/krkrz/blob/master/base/XP3Archive.cpp)、[TyranoScript](https://github.com/ShikemokuMK/tyranoscript)、[WOLF RPG Editor](https://silversecond.com/WolfRPGEditor/Help/01filelist.html)、[GameMaker](https://manual.gamemaker.io/monthly/en/Introduction/Compiling.htm)、[Cocos Creator](https://docs.cocos.com/creator/3.8/manual/en/editor/publish/windows/index.html)、[Construct](https://www.construct.net/en/make-games/manuals/construct-3/tips-and-guides/deprecated-features)、[Defold](https://defold.com/manuals/bundling/)、[LÖVE](https://love2d.org/wiki/Game_Distribution)、[LuckSystem](https://github.com/wetor/LuckSystem)（LucaSystem）、[GARbro 格式表](https://morkt.github.io/GARbro/supported.html)（Majiro、Malie、Escu:de、Entis、QLIE、HSP 的封包特徵碼）、[SRPG-ToolBox](https://github.com/Sinflower/SRPG-ToolBox)（SRPG Studio 的 data.dts）、[Apple bundle](https://developer.apple.com/documentation/bundleresources/placing-content-in-a-bundle)。日系視覺小說引擎的規則另依使用者提供的樣本（唯讀檢查目錄結構）確認；所有規則仍屬候選，以人工確認為準。

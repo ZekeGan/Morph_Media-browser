@@ -1010,6 +1010,71 @@ test('Japanese visual-novel engines are recognised from their runtime and archiv
       assert.deepEqual(detected.engines, sample.engines, sample.name)
     }
   }
+  // R-299: more engines, synthetic folders only. Archives that share a common extension are told by signature.
+  const write = async (dir: string, entries: Record<string, string>) => {
+    for (const [name, body] of Object.entries(entries)) {
+      const target = path.join(dir, name)
+      await fs.mkdir(path.dirname(target), { recursive: true })
+      await fs.writeFile(target, body, 'latin1')
+    }
+  }
+  const more: { name: string; entries: Record<string, string>; engines?: string[] }[] = [
+    { name: 'Srpg', entries: { 'Game.exe': 'x', 'data.dts': 'x' }, engines: ['SRPG Studio'] },
+    { name: 'HspDpm', entries: { 'start.exe': 'x', 'data.dpm': 'DPMX....' }, engines: ['HSP'] },
+    { name: 'HspDll', entries: { 'game.exe': 'x', 'hspogg.dll': 'x' }, engines: ['HSP'] },
+    { name: 'DpmWrong', entries: { 'tool.exe': 'x', 'data.dpm': 'NOPE' } },
+    { name: 'FlashGame', entries: { 'Projector.exe': 'x', 'game.swf': 'x' }, engines: ['Flash'] },
+    {
+      name: 'QlieGame',
+      entries: { 'game.exe': 'x', 'GameData/data0.pack': 'x', 'GameData/data1.pack': 'x' },
+      engines: ['QLIE'],
+    },
+    { name: 'MalieExe', entries: { 'malie.exe': 'x', 'data.dat': 'x' }, engines: ['Malie'] },
+    { name: 'MalieLib', entries: { 'game.exe': 'x', 'data.lib': 'LIBP' }, engines: ['Malie'] },
+    { name: 'LibWrong', entries: { 'tool.exe': 'x', 'helper.lib': '!<arch>' } },
+    {
+      name: 'EntisGame',
+      entries: { 'game.exe': 'x', 'data.noa': 'Entis\x1a\x00\x00' },
+      engines: ['Entis GLS／Cotopha'],
+    },
+    {
+      name: 'EscudeGame',
+      entries: { 'game.exe': 'x', 'script.bin': 'ESC-ARC2', 'gfx.bin': 'ESC-ARC2' },
+      engines: ['Escu:de'],
+    },
+    { name: 'BinWrong', entries: { 'tool.exe': 'x', 'data.bin': 'ORIGINAL' } },
+    {
+      name: 'ExhibitGame',
+      entries: { 'game.exe': 'x', 'resident.dll': 'x' },
+      engines: ['ExHIBIT'],
+    },
+    { name: 'LightVn', entries: { 'Game.exe': 'x', 'data.vndat': 'x' }, engines: ['Light.vn'] },
+    {
+      name: 'MajiroGame',
+      entries: { 'game.exe': 'x', 'scenario.arc': 'MajiroArcV3.000' },
+      engines: ['Majiro'],
+    },
+    { name: 'ArcNotMajiro', entries: { 'viewer.exe': 'x', 'scenario.arc': 'PackFile    ' } },
+    { name: 'FvpGame', entries: { 'game.exe': 'x', 'game.hcb': 'x' }, engines: ['FVP'] },
+    { name: 'JavaExe', entries: { 'Game.exe': 'x', 'game.jar': 'x' }, engines: ['Java'] },
+    { name: 'JavaBat', entries: { 'start.bat': 'x', 'game.jar': 'x' }, engines: ['Java'] },
+    { name: 'LoneJar', entries: { 'library.jar': 'x', 'readme.txt': 'x' } },
+    {
+      name: 'PgmmvLike',
+      entries: { 'Player.exe': 'x', 'Resources/data/a.json': 'x' },
+      engines: [],
+    },
+  ]
+  for (const sample of more) {
+    const dir = path.join(media, sample.name)
+    await write(dir, sample.entries)
+    const detected = await detectGame(dir)
+    if (sample.engines === undefined) assert.equal(detected, undefined, sample.name)
+    else {
+      assert.ok(detected, sample.name)
+      assert.deepEqual(detected.engines, sample.engines, sample.name)
+    }
+  }
   const steam = await detectGame(path.join(media, 'SteamUnknown'))
   assert.match(steam!.evidence.join(' '), /Steam/)
   const specific = path.join(media, 'SteamSiglus')

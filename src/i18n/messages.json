@@ -7714,5 +7714,77 @@
     "en": "Voice actors",
     "ja": "声優",
     "es": "Actores de voz"
+  },
+  ".hcb 腳本 + EXE（Favorite View Point）": {
+    "zh-CN": ".hcb 脚本 + EXE（Favorite View Point）",
+    "en": ".hcb script + EXE (Favorite View Point)",
+    "ja": ".hcb スクリプト + EXE（Favorite View Point）",
+    "es": "Script .hcb + EXE (Favorite View Point)"
+  },
+  ".jar + EXE／.bat／jre 啟動方式（候選）": {
+    "zh-CN": ".jar + EXE／.bat／jre 启动方式（候选）",
+    "en": ".jar + EXE / .bat / jre launcher (candidate)",
+    "ja": ".jar + EXE／.bat／jre の起動方法（候補）",
+    "es": ".jar + lanzador EXE / .bat / jre (candidato)"
+  },
+  ".swf + EXE（Flash Projector 候選）": {
+    "zh-CN": ".swf + EXE（Flash Projector 候选）",
+    "en": ".swf + EXE (Flash Projector candidate)",
+    "ja": ".swf + EXE（Flash Projector の候補）",
+    "es": ".swf + EXE (candidato a Flash Projector)"
+  },
+  ".vndat 封包 + EXE": {
+    "zh-CN": ".vndat 封包 + EXE",
+    "en": ".vndat archive + EXE",
+    "ja": ".vndat アーカイブ + EXE",
+    "es": "Archivo .vndat + EXE"
+  },
+  "DPMX 封包或 HSP 外掛 DLL + EXE（Hot Soup Processor）": {
+    "zh-CN": "DPMX 封包或 HSP 插件 DLL + EXE（Hot Soup Processor）",
+    "en": "DPMX archive or HSP plug-in DLL + EXE (Hot Soup Processor)",
+    "ja": "DPMX アーカイブまたは HSP プラグイン DLL + EXE（Hot Soup Processor）",
+    "es": "Archivo DPMX o DLL de complemento HSP + EXE (Hot Soup Processor)"
+  },
+  "ESC-ARC／ACPXPK01 封包 + EXE": {
+    "zh-CN": "ESC-ARC／ACPXPK01 封包 + EXE",
+    "en": "ESC-ARC / ACPXPK01 archive + EXE",
+    "ja": "ESC-ARC／ACPXPK01 アーカイブ + EXE",
+    "es": "Archivo ESC-ARC / ACPXPK01 + EXE"
+  },
+  "Entis NOA 封包 + EXE": {
+    "zh-CN": "Entis NOA 封包 + EXE",
+    "en": "Entis NOA archive + EXE",
+    "ja": "Entis NOA アーカイブ + EXE",
+    "es": "Archivo NOA de Entis + EXE"
+  },
+  "GameData 內的 .pack 封包 + EXE": {
+    "zh-CN": "GameData 内的 .pack 封包 + EXE",
+    "en": ".pack archives in GameData + EXE",
+    "ja": "GameData 内の .pack アーカイブ + EXE",
+    "es": "Archivos .pack en GameData + EXE"
+  },
+  "MajiroArc 封包 + EXE": {
+    "zh-CN": "MajiroArc 封包 + EXE",
+    "en": "MajiroArc archive + EXE",
+    "ja": "MajiroArc アーカイブ + EXE",
+    "es": "Archivo MajiroArc + EXE"
+  },
+  "Player.exe + Resources：Pixel Game Maker MV 候選；公開資料不足，引擎未推定，請確認 ROOT": {
+    "zh-CN": "Player.exe + Resources：Pixel Game Maker MV 候选；公开资料不足，未推定引擎，请确认 ROOT",
+    "en": "Player.exe + Resources: possibly Pixel Game Maker MV. Not enough public information to name the engine; confirm the ROOT.",
+    "ja": "Player.exe + Resources：Pixel Game Maker MV の候補。公開情報が不足しているためエンジンは推定しません。ROOT を確認してください",
+    "es": "Player.exe + Resources: posible Pixel Game Maker MV. No hay información pública suficiente para nombrar el motor; confirma la ROOT."
+  },
+  "malie*.exe 或 LIB 封包 + EXE": {
+    "zh-CN": "malie*.exe 或 LIB 封包 + EXE",
+    "en": "malie*.exe or LIB archive + EXE",
+    "ja": "malie*.exe または LIB アーカイブ + EXE",
+    "es": "malie*.exe o archivo LIB + EXE"
+  },
+  "resident.dll + EXE（候選）": {
+    "zh-CN": "resident.dll + EXE（候选）",
+    "en": "resident.dll + EXE (candidate)",
+    "ja": "resident.dll + EXE（候補）",
+    "es": "resident.dll + EXE (candidato)"
   }
 }
