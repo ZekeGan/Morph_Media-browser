@@ -51,8 +51,8 @@ type Props = {
   switchDiscard: () => void
   switchStay: () => void
   // R-255: the folder after the shown one in the browse list, and the folder to open straight into reading.
-  nextBook?: { name: string; open: () => void }
-  readNext?: string
+  nextBook?: { name: string; open: (keepImmersive: boolean) => void }
+  readNext?: { id: string; immersive: boolean }
   readNextDone: () => void
 }
 
@@ -294,7 +294,13 @@ export function BrowsePanel(props: Props) {
                   sourceRows={all}
                   onSource={(id) => void open(id)}
                   nextBook={nextBook}
-                  autoRead={readNext === detail.rowId}
+                  autoRead={
+                    readNext?.id === detail.rowId
+                      ? readNext.immersive
+                        ? 'immersive'
+                        : 'normal'
+                      : undefined
+                  }
                   onAutoRead={readNextDone}
                   childNames={all
                     .filter(

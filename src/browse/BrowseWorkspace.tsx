@@ -92,7 +92,7 @@ export function BrowseWorkspace({
   const locale = useLocale()
 
   const [browse, setBrowse] = useState(initial),
-    [readNext, setReadNext] = useState<string>(),
+    [readNext, setReadNext] = useState<{ id: string; immersive: boolean }>(),
     [ready, setReady] = useState(false),
     [page, setPage] = useState(1)
   const [sort, setSort] = useState({ field: 'name', asc: true }),
@@ -926,10 +926,13 @@ export function BrowseWorkspace({
         nextBook={
           nextBook && {
             name: nextBook.name,
-            open: () => {
-              setReadNext(nextBook.rowId)
+            open: (immersive: boolean) => {
+              setReadNext({ id: nextBook.rowId, immersive })
               previewDetail(nextBook.rowId)
-              setTimeout(() => setReadNext((id) => (id === nextBook.rowId ? undefined : id)), 5000)
+              setTimeout(
+                () => setReadNext((value) => (value?.id === nextBook.rowId ? undefined : value)),
+                5000
+              )
             },
           }
         }

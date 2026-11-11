@@ -7636,5 +7636,35 @@
     "ja": "このまま",
     "es": "Quedarse aquí",
     "zh-CN": "留在这里"
+  },
+  "播完停止": {
+    "en": "stop",
+    "ja": "終わったら停止",
+    "es": "detener",
+    "zh-CN": "播完停止"
+  },
+  "接續下一首": {
+    "en": "play next",
+    "ja": "次へ続ける",
+    "es": "reproducir la siguiente",
+    "zh-CN": "接续下一首"
+  },
+  "全部循環": {
+    "en": "repeat all",
+    "ja": "全曲リピート",
+    "es": "repetir todo",
+    "zh-CN": "全部循环"
+  },
+  "單曲循環": {
+    "en": "repeat this one",
+    "ja": "1 曲リピート",
+    "es": "repetir esta",
+    "zh-CN": "单曲循环"
+  },
+  "{0}（按一下改為{1}）": {
+    "en": "{0} (click for: {1})",
+    "ja": "{0}（クリックで「{1}」）",
+    "es": "{0} (haz clic para: {1})",
+    "zh-CN": "{0}（点一下改为{1}）"
   }
 }

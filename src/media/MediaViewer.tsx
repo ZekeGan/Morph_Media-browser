@@ -33,6 +33,7 @@ export function MediaViewer({
   busy,
   manga: mangaHint,
   nextBook,
+  startImmersive,
 }: {
   row: FolderRow
   project: Project
@@ -46,7 +47,9 @@ export function MediaViewer({
   busy: boolean
   // The folder page already knows the folder's type (it looked at the files); without it only the record is used.
   manga?: boolean
-  nextBook?: { name: string; open: () => void }
+  nextBook?: { name: string; open: (keepImmersive: boolean) => void }
+  // Opened as the next book while reading immersively: continue in immersive mode.
+  startImmersive?: boolean
 }) {
   const [queueView, setQueueView] = useState<'list' | 'images'>('list')
   const [selected, setSelected] = useState(file.id),
@@ -167,6 +170,7 @@ export function MediaViewer({
                   }}
                   manga={manga}
                   nextBook={nextBook}
+                  startImmersive={startImmersive}
                   prefs={row.record?.details?.reading}
                   close={close}
                   save={(prefs) => {

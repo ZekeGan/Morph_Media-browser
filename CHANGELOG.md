@@ -17,6 +17,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fixes (R-273 to R-276): the play-order tooltip shows above the player and names what a click switches to; immersive edge panels close again after their buttons are clicked; moving on to the next book keeps immersive reading; a second press-and-drag on a page no longer drags a ghost copy (nothing in the reader or queues can be selected).
 - Fix (R-272): dragging a thumbnail a little while clicking it no longer leaves a ghost copy of the picture over the viewer that swallowed clicks and drags; pictures are never dragged out by the browser.
 - Reading place (R-253): opening a manga from its first page continues where you left it ("Continuing from page N", with Start over); a book left on its last pages opens from the start. The play order is remembered after restart (stored in local settings as `playOrder`).
 - Next book (R-255): pressing Next on the last page says "This is the last page" and names the next folder in the browse list; pressing again opens it and starts reading.

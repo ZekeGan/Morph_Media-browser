@@ -424,13 +424,13 @@
 }
 
 .media-viewer-layout>.media-queue-slot.queue-edge:hover,
-.media-viewer-layout>.media-queue-slot.queue-edge:focus-within {
+.media-viewer-layout>.media-queue-slot.queue-edge:has(:focus-visible) {
     transform: translateX(0);
     transition-delay: 80ms;
 }
 
 .media-viewer-layout>.media-queue-slot.queue-edge:hover>.media-queue,
-.media-viewer-layout>.media-queue-slot.queue-edge:focus-within>.media-queue {
+.media-viewer-layout>.media-queue-slot.queue-edge:has(:focus-visible)>.media-queue {
     opacity: 1;
 }
 

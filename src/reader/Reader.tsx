@@ -34,6 +34,7 @@ export function Reader({
   openFolder,
   onImmersive,
   nextBook,
+  startImmersive,
 }: {
   images: MediaEntry[]
   start: number
@@ -49,7 +50,9 @@ export function Reader({
   // Told when immersive reading starts or ends, so the media viewer can offer its queue on the right edge.
   onImmersive?: (value: boolean) => void
   // The folder after this one in the browse list; offered after the last page (R-255).
-  nextBook?: { name: string; open: () => void }
+  nextBook?: { name: string; open: (keepImmersive: boolean) => void }
+  // The window is already in fullscreen from the previous book: start in immersive mode (R-275).
+  startImmersive?: boolean
 }) {
   useLocale()
 
@@ -111,6 +114,7 @@ export function Reader({
     protectedUrls = useRef(new Set<string>()),
     returnFocus = useRef(document.activeElement as HTMLElement)
   const ownsFullscreen = useRef(false),
+    handover = useRef(false),
     mounted = useRef(false)
   useEffect(() => {
     mounted.current = true
@@ -125,11 +129,18 @@ export function Reader({
     return () => {
       mounted.current = false
       document.removeEventListener('fullscreenchange', changed)
-      if (ownsFullscreen.current && document.fullscreenElement) {
+      if (ownsFullscreen.current && document.fullscreenElement && !handover.current) {
         ownsFullscreen.current = false
         void document.exitFullscreen().catch(() => {})
       }
     }
+  }, [])
+  useEffect(() => {
+    if (!startImmersive || !document.fullscreenElement) return
+    ownsFullscreen.current = true
+    setImmersive(true)
+    setToolbar(false)
+    focusStage()
   }, [])
   const focusStage = () =>
     requestAnimationFrame(() => viewport.current?.focus({ preventScroll: true }))
@@ -428,7 +439,11 @@ export function Reader({
     if (manga && delta > 0 && groupIndex === groups.length - 1) {
       if (ending && nextBook) {
         setEnding(false)
-        nextBook.open()
+        // Hand the fullscreen window over to the next book instead of leaving it.
+        handover.current = immersive
+        nextBook.open(immersive)
+        // If the switch never happens (for example a draft blocks it), leaving later exits fullscreen as usual.
+        setTimeout(() => (handover.current = false), 5000)
       } else setEnding(true)
       return
     }

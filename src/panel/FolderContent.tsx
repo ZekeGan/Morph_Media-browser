@@ -92,14 +92,16 @@ export function FolderContent({
   selectedFileId?: string
   selectedEntry?: ContentResult['entries'][number]
   // R-255: the next folder in the browse list, and whether this folder was opened as that next book.
-  nextBook?: { name: string; open: () => void }
-  autoRead?: boolean
+  nextBook?: { name: string; open: (keepImmersive: boolean) => void }
+  // 'immersive' when the previous book was read in immersive mode, which carries over (R-275).
+  autoRead?: 'normal' | 'immersive'
   onAutoRead?: () => void
 }) {
   useLocale()
   const { visibility } = useFileVisibility()
   const contentRow = useRef(row.rowId)
-  const [galleryFile, setGalleryFile] = useState<ContentResult['entries'][number]>()
+  const [galleryFile, setGalleryFile] = useState<ContentResult['entries'][number]>(),
+    [galleryImmersive, setGalleryImmersive] = useState(false)
   // Width of the 欄位 and 來源 columns of the game table (content takes the rest); a per-viewer convenience.
   const [gameWidths, setGameWidths] = useState<[number, number]>(() => {
     try {
@@ -210,11 +212,16 @@ export function FolderContent({
   const readFirst = useRef(autoRead)
   useEffect(() => {
     if (!readFirst.current || !content) return
-    readFirst.current = false
     const first = content.entries.find(
       (entry) => entry.kind === 'image' && visibleFile(entry, visibility)
     )
-    if (first) setGalleryFile(first)
+    const immersive = readFirst.current === 'immersive'
+    readFirst.current = undefined
+    if (first) {
+      setGalleryImmersive(immersive)
+      setGalleryFile(first)
+    } else if (immersive && document.fullscreenElement)
+      void document.exitFullscreen().catch(() => {})
     onAutoRead?.()
   }, [content])
   if (error && !content)
@@ -597,8 +604,12 @@ export function FolderContent({
           act={act}
           busy={busy}
           manga={kind === 'book' || row.record?.details?.reading?.mode === 'manga'}
-          close={() => setGalleryFile(undefined)}
+          close={() => {
+            setGalleryFile(undefined)
+            setGalleryImmersive(false)
+          }}
           nextBook={nextBook}
+          startImmersive={galleryImmersive}
         />
       )}
       {documentFile && (

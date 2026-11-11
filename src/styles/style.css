@@ -3,6 +3,8 @@
 /* R-272: pictures are never dragged out by the browser; its drag ghost would swallow the clicks and drags of the
    viewers and lists underneath. Dragging rows (queue order, cards) uses their own draggable elements. */
 img { -webkit-user-drag: none; }
+/* R-276: a press-and-drag in a viewer or queue selects nothing, so a second drag cannot pick the selection up. */
+.reader-stage, .media-queue, .playback-items { user-select: none; -webkit-user-select: none; }
 * { scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; }
 *::-webkit-scrollbar { width: 9px; height: 9px; } *::-webkit-scrollbar-track { background: transparent; } *::-webkit-scrollbar-thumb { background: var(--scroll); border: 2px solid transparent; border-radius: 12px; background-clip: padding-box; } *::-webkit-scrollbar-thumb:hover { background-color: var(--scroll-hover); } *::-webkit-scrollbar-corner { background: transparent; }
 .mantine-ScrollArea-thumb { background: var(--scroll); border-radius: 12px; }.mantine-ScrollArea-thumb:hover { background: var(--scroll-hover); }
@@ -411,8 +413,8 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .reader-rail { position:absolute; z-index:10; left:8px; top:50%; display:flex; flex-direction:column; gap:2px; padding:6px; border:1px solid var(--line); border-radius:var(--radius); background:var(--overlay); backdrop-filter:blur(12px); transform:translate(calc(-100% - 12px), -50%); opacity:0; transition:transform 160ms ease-out, opacity 160ms ease-out; }
 .reader-rail-gap { height:1px; margin:4px 2px; background:var(--line); }
 .reader-progress { position:absolute; z-index:10; left:50%; bottom:10px; width:min(760px, calc(100% - 40px)); display:flex; align-items:center; gap:8px; padding:6px 12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--overlay); backdrop-filter:blur(12px); transform:translate(-50%, calc(100% + 16px)); opacity:0; transition:transform 160ms ease-out, opacity 160ms ease-out; }
-.reader-edge-left:hover + .reader-rail, .reader-rail:hover, .reader-rail:focus-within { transform:translate(0, -50%); opacity:1; transition-delay:80ms; }
-.reader-edge-bottom:hover + .reader-progress, .reader-progress:hover, .reader-progress:focus-within { transform:translate(-50%, 0); opacity:1; transition-delay:80ms; }
+.reader-edge-left:hover + .reader-rail, .reader-rail:hover, .reader-rail:has(:focus-visible) { transform:translate(0, -50%); opacity:1; transition-delay:80ms; }
+.reader-edge-bottom:hover + .reader-progress, .reader-progress:hover, .reader-progress:has(:focus-visible) { transform:translate(-50%, 0); opacity:1; transition-delay:80ms; }
 .reader-progress-track { position:relative; flex:1; min-width:0; padding:6px 0; }
 .reader-progress-pages { flex-shrink:0; font-size:12px; color:var(--muted); white-space:nowrap; }
 .reader-progress-preview { position:absolute; bottom:calc(100% + 8px); display:grid; justify-items:center; gap:4px; padding:4px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); transform:translateX(-50%); pointer-events:none; font-size:11px; color:var(--muted); }

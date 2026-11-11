@@ -111,6 +111,13 @@ try {
     await reader().getByRole('button', { name: '下一頁', exact: true }).click()
     await waitPages(String(i))
   }
+  // R-270: a page turn slides the new page in from the side it comes from (right to left by default: from the left).
+  assert.equal(await reader().locator('.reader-frame-layer.is-active.enter-left').count(), 1)
+  await reader().getByRole('button', { name: '上一頁', exact: true }).click()
+  await waitPages('11')
+  assert.equal(await reader().locator('.reader-frame-layer.is-active.enter-right').count(), 1)
+  await reader().getByRole('button', { name: '下一頁', exact: true }).click()
+  await waitPages('12')
   const input = reader().getByRole('textbox', { name: '頁碼', exact: true }),
     inputBox = (await input.boundingBox())!
   await page.mouse.click(inputBox.x + inputBox.width - 2, inputBox.y + inputBox.height / 2)
@@ -266,6 +273,24 @@ try {
     true
   )
   await page.screenshot({ path: path.join(root, 'reader-rail.png') })
+  // R-274: clicking a tool leaves no keyboard focus behind, so the rail still closes when the pointer leaves.
+  await reader()
+    .getByRole('navigation', { name: '閱讀工具', exact: true })
+    .getByRole('button', { name: '重設縮放', exact: true })
+    .click()
+  await page.mouse.move(viewportSize.width / 2, viewportSize.height / 2)
+  await page.waitForTimeout(500)
+  assert.equal(
+    await reader()
+      .locator('.reader-rail')
+      .evaluate((rail) => getComputedStyle(rail).opacity),
+    '0'
+  )
+  // R-269: the pointer hides after two seconds at rest and comes back on any movement.
+  await page.waitForTimeout(2300)
+  assert.equal(await reader().evaluate((node) => node.classList.contains('cursor-idle')), true)
+  await page.mouse.move(viewportSize.width / 2 + 20, viewportSize.height / 2)
+  assert.equal(await reader().evaluate((node) => node.classList.contains('cursor-idle')), false)
   await page.mouse.move(viewportSize.width / 2, viewportSize.height - 4)
   await page.waitForTimeout(400)
   const progress = reader().getByRole('group', { name: '閱讀進度', exact: true })
@@ -364,6 +389,35 @@ try {
   await page.waitForTimeout(300)
   await page.screenshot({ path: path.join(root, 'reader-after-drag.png') })
   assert.equal(await page.evaluate(() => (window as any).__drags), 0, 'no native drag on the page')
+  // R-276: the first drag selects nothing, so pressing again and dragging cannot pick a selection up.
+  assert.equal(await page.evaluate(() => getSelection()?.toString() ?? ''), '')
+  await page.mouse.move(dragBox.x + dragBox.width / 2 + 30, dragBox.y + dragBox.height / 2 + 160)
+  await page.mouse.down()
+  await page.mouse.move(dragBox.x + dragBox.width / 2 - 20, dragBox.y + dragBox.height / 2 + 300, {
+    steps: 8,
+  })
+  await page.mouse.up()
+  assert.equal(
+    await page.evaluate(() => (window as any).__drags),
+    0,
+    'no native drag on a second drag'
+  )
+  await waitPages('1–2')
+  // R-264: a sideways drag on a page that fits turns it (left to right here: dragging left goes forward).
+  const swipe = async (dx: number) => {
+    await page.mouse.move(dragBox.x + dragBox.width / 2, dragBox.y + dragBox.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(dragBox.x + dragBox.width / 2 + dx, dragBox.y + dragBox.height / 2 + 10, {
+      steps: 10,
+    })
+    await page.mouse.up()
+  }
+  await swipe(-dragBox.width * 0.3)
+  await waitPages('3–4')
+  await swipe(dragBox.width * 0.3)
+  await waitPages('1–2')
+  await swipe(-30)
+  await page.waitForTimeout(300)
   await waitPages('1–2')
   // R-255: past the last page the reader says so instead of doing nothing; Escape only closes the note.
   await page.keyboard.press('g')

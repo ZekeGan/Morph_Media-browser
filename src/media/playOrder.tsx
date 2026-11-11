@@ -63,20 +63,29 @@ export const playOrderLabel = (value: PlayOrder) =>
         ? tr('播放順序：單曲循環')
         : tr('播放順序：播完停止')
 
-// One button, one click per step: stop → next → loop all → loop one → stop.
-export function PlayOrderButton({ zIndex }: { zIndex?: number }) {
+const orderName = (value: PlayOrder) =>
+  value === 'next'
+    ? tr('接續下一首')
+    : value === 'all'
+      ? tr('全部循環')
+      : value === 'one'
+        ? tr('單曲循環')
+        : tr('播完停止')
+
+// One button, one click per step: stop → next → loop all → loop one → stop. The tooltip names the current order and
+// the one a click switches to; it sits above the player overlays (R-273).
+export function PlayOrderButton({ zIndex = 450 }: { zIndex?: number }) {
   const value = usePlayOrder(),
-    label = playOrderLabel(value)
+    label = playOrderLabel(value),
+    following = playOrders[(playOrders.indexOf(value) + 1) % playOrders.length]
   return (
-    <Tooltip label={label} zIndex={zIndex}>
+    <Tooltip label={tr('{0}（按一下改為{1}）', label, orderName(following))} zIndex={zIndex}>
       <ActionIcon
         className="play-order"
         aria-label={label}
         aria-pressed={value !== 'stop'}
         variant={value === 'stop' ? 'subtle' : 'light'}
-        onClick={() =>
-          setPlayOrder(playOrders[(playOrders.indexOf(value) + 1) % playOrders.length])
-        }
+        onClick={() => setPlayOrder(following)}
       >
         <Icon name={icons[value]} />
       </ActionIcon>
