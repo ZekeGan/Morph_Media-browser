@@ -432,3 +432,4 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .reader-notice { position:absolute; z-index:11; left:50%; bottom:76px; display:flex; align-items:center; gap:10px; max-width:calc(100% - 40px); padding:8px 12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--overlay); backdrop-filter:blur(12px); font-size:13px; transform:translateX(-50%); }
 .reader-notice>span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .reader.cursor-idle, .reader.cursor-idle * { cursor:none !important; }
+.file-overview-item.picked{outline:2px solid var(--accent);outline-offset:-2px}

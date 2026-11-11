@@ -819,6 +819,8 @@ export function BrowseWorkspace({
               }}
               chooseRoot={(id) => void open(id)}
               open={(entry) => void previewFile(entry)}
+              rows={all}
+              project={project}
             />
           ) : browse.mode === 'TREE' ? (
             <Suspense fallback={<p>{tr('載入樹狀圖…')}</p>}>

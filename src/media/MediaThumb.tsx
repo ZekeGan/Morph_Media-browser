@@ -5,7 +5,7 @@ import { Icon, type IconName } from '../common/icons'
 // Embedded audio covers are read once per file and kept for the session; a file without one is remembered too.
 const covers = new Map<string, Promise<string | undefined>>()
 const limit = 300
-function audioCover(url: string) {
+export function audioCover(url: string) {
   let cover = covers.get(url)
   if (!cover) {
     const source = new URL(url)

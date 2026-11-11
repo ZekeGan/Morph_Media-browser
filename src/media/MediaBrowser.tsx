@@ -12,6 +12,7 @@ import type { FolderRow, Project, Request, Response } from '../../shared/model'
 import { canPreviewMedia, matchesMedia, visibleFile, type MediaFilter } from '../../shared/media'
 import { Gallery } from '../gallery/Gallery'
 import { MediaViewer } from './MediaViewer'
+import { FolderAlbumCover } from './FolderAlbumCover'
 import { usePlayback } from './Playback'
 import { FolderHeader } from '../panel/FolderParts'
 import { useFileVisibility } from '../files/useFileVisibility'
@@ -195,6 +196,7 @@ export function MediaBrowser({
         busy={busy}
         onChild={onChild}
       />
+      <FolderAlbumCover row={row} files={entries.filter((entry) => entry.kind !== 'folder')} />
       <div className="mixed-media-toolbar">
         <Select
           className="media-scope-select"

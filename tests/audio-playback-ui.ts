@@ -151,6 +151,13 @@ try {
       .first()
       .click()
     await page.locator('.mixed-media-browser').waitFor()
+    // R-294: a music folder's page shows the album cover (here the first track's embedded one).
+    await page.waitForFunction(() => {
+      const image = document.querySelector<HTMLImageElement>('.folder-album-cover img')
+      return !!image && image.complete && image.naturalWidth > 0
+    })
+    if (name === 'Audio media')
+      await page.screenshot({ path: path.join(base, 'shot', 'r294-album-cover.png') })
     if (name === 'Audio legacy') {
       assert.equal(
         await page.locator('.folder-details').evaluate((node) => (node as HTMLDetailsElement).open),

@@ -1307,3 +1307,10 @@
 
 /* Where a dragged component will land: clear in every theme. */
 .canvas .react-grid-placeholder { background: color-mix(in srgb, var(--accent) 22%, transparent); border: 2px dashed var(--accent); border-radius: 6px; opacity: 1; z-index: 2; }
+
+/* R-294: the album cover at the top of a music folder's page, smaller than the player's. */
+.folder-album-cover {
+    width: min(100%, 200px);
+    margin: 0 auto 10px;
+}
+

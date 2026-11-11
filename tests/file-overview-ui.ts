@@ -202,6 +202,22 @@ try {
       await healthy()
     }
     await presentationChoice('平鋪縮圖')
+    if (category === 'video') {
+      // R-295: Ctrl+click marks videos (Shift+click a range); right-click adds them to the play queue in list order.
+      await page.locator('.file-overview-scroll').evaluate((element) => (element.scrollTop = 0))
+      const item = (name: string) =>
+        page.locator('.file-overview-item').filter({ hasText: name }).first()
+      await item('item-0000.mp4').click({ modifiers: ['Control'] })
+      await item('item-0002.mp4').click({ modifiers: ['Shift'] })
+      assert.equal(await page.locator('.file-overview-item.picked').count(), 3)
+      await item('item-0001.mp4').click({ button: 'right' })
+      await page.getByRole('menuitem', { name: '加入播放佇列（3 項）', exact: true }).click()
+      assert.equal(await page.locator('.file-overview-item.picked').count(), 0)
+      // The top bar's queue button carries the count; nothing started playing.
+      await page.getByRole('button', { name: '播放佇列 · 3', exact: true }).waitFor()
+      assert.equal(await page.locator('audio, video.playback-media').count(), 0)
+      console.log('PASS video: multi-select and right-click add to the play queue')
+    }
     for (const size of [
       { width: 800, height: 650 },
       { width: 1440, height: 900 },

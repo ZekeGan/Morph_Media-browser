@@ -12,11 +12,13 @@ import {
   Select,
   Text,
 } from '@mantine/core'
-import type { FolderRow } from '../../shared/model'
+import type { FolderRow, Project } from '../../shared/model'
 import type { OverviewEntry } from '../../shared/explorer'
 import { Icon } from '../common/icons'
 import { iconLabel } from '../common/IconLabel'
 import { useRefreshNonce } from '../browse/refresh'
+import { usePlayback } from '../media/Playback'
+import { FileMenu } from '../media/FileMenu'
 import { t as tr, useLocale } from '../i18n'
 
 type Presentation = 'tiles' | 'groups' | 'list'
@@ -35,6 +37,8 @@ export function FileOverview({
   change,
   open,
   chooseRoot,
+  rows,
+  project,
 }: {
   toolbarTarget: HTMLDivElement | null
   scopeTarget: HTMLDivElement | null
@@ -45,6 +49,9 @@ export function FileOverview({
   change: (scope: 'current' | 'descendants', presentation: Presentation) => void
   open: (entry: OverviewEntry) => void
   chooseRoot: (id: string) => void
+  // Folders the listed files come from, to add music and videos to the play queue (R-295).
+  rows: FolderRow[]
+  project: Project
 }) {
   const locale = useLocale()
   const { visibility } = useFileVisibility()
@@ -105,10 +112,60 @@ export function FileOverview({
         (entry) =>
           visibleFile(entry, visibility) &&
           (filter === 'all' ||
-            (filter === 'other' ? !['image', 'video'].includes(entry.kind) : entry.kind === filter))
+            (filter === 'other'
+              ? !['image', 'video', 'audio'].includes(entry.kind)
+              : entry.kind === filter))
       ),
     [entries, filter, visibility]
   )
+  // Ctrl/Shift+click marks music and videos; right-click adds the marked ones to the play queue in list order,
+  // without interrupting what is playing (R-295). Escape clears the marks.
+  const playback = usePlayback()
+  const fileKey = (entry: OverviewEntry) => entry.rowId + '/' + entry.id,
+    playable = (entry: OverviewEntry) => ['audio', 'video'].includes(entry.kind)
+  const [picked, setPicked] = useState<Set<string>>(new Set()),
+    pickAnchor = useRef<string | undefined>(undefined),
+    [menu, setMenu] = useState<{ x: number; y: number }>()
+  useEffect(() => setPicked(new Set()), [root.rowId, scope, filter])
+  const pick = (entry: OverviewEntry, range: boolean) => {
+    const id = fileKey(entry),
+      from = visibleEntries.findIndex((item) => fileKey(item) === pickAnchor.current),
+      to = visibleEntries.indexOf(entry)
+    if (range && from >= 0) {
+      setPicked(
+        new Set(
+          visibleEntries
+            .slice(Math.min(from, to), Math.max(from, to) + 1)
+            .filter(playable)
+            .map(fileKey)
+        )
+      )
+      return
+    }
+    pickAnchor.current = id
+    setPicked((previous) => {
+      const next = new Set(previous)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+  const pickedFiles = visibleEntries.filter(
+    (entry) => playable(entry) && picked.has(fileKey(entry))
+  )
+  const enqueue = () => {
+    if (!playback) return
+    for (const row of rows) {
+      const group = pickedFiles.filter((entry) => entry.rowId === row.rowId)
+      if (group.length)
+        playback.add(
+          { row, project, entries: entries.filter((entry) => entry.rowId === row.rowId) },
+          group
+        )
+    }
+    setPicked(new Set())
+    setMenu(undefined)
+  }
   const columns = presentation === 'list' ? 1 : Math.max(1, Math.floor((view.width - 20) / 160))
   const layout = useMemo(() => {
     const rows: {
@@ -176,6 +233,7 @@ export function FileOverview({
                 { value: 'all', label: tr('全部') },
                 { value: 'image', label: tr('圖片') },
                 { value: 'video', label: tr('影片') },
+                { value: 'audio', label: tr('音樂') },
                 { value: 'other', label: tr('其他') },
               ]}
             />
@@ -242,6 +300,9 @@ export function FileOverview({
         }}
         role="region"
         aria-label={tr('檔案總覽')}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape' && picked.size) setPicked(new Set())
+        }}
       >
         {!loading && !visibleEntries.length && !notices.length && (
           <p>{tr('此範圍沒有可顯示的檔案')}</p>
@@ -279,10 +340,28 @@ export function FileOverview({
                   <button
                     type="button"
                     key={entry.rowId + '/' + entry.id}
-                    className="file-overview-item"
+                    className={'file-overview-item' + (picked.has(fileKey(entry)) ? ' picked' : '')}
                     title={entry.sourcePath + '/' + entry.name}
                     disabled={busy}
-                    onClick={() => open(entry)}
+                    aria-pressed={
+                      playback && playable(entry) ? picked.has(fileKey(entry)) : undefined
+                    }
+                    onClick={(event) => {
+                      if (playback && playable(entry) && (event.ctrlKey || event.metaKey))
+                        pick(entry, false)
+                      else if (playback && playable(entry) && event.shiftKey) pick(entry, true)
+                      else open(entry)
+                    }}
+                    onContextMenu={(event) => {
+                      if (!playback || !playable(entry)) return
+                      event.preventDefault()
+                      if (!picked.has(fileKey(entry))) {
+                        pickAnchor.current = fileKey(entry)
+                        setPicked(new Set([fileKey(entry)]))
+                      }
+                      const box = event.currentTarget.getBoundingClientRect()
+                      setMenu({ x: event.clientX || box.left + 8, y: event.clientY || box.top + 8 })
+                    }}
                   >
                     <span className="file-overview-thumb">
                       {entry.thumb ? (
@@ -301,7 +380,9 @@ export function FileOverview({
                               ? 'play'
                               : entry.kind === 'image'
                                 ? 'image'
-                                : 'file'
+                                : entry.kind === 'audio'
+                                  ? 'music'
+                                  : 'file'
                           }
                           size={28}
                         />
@@ -316,6 +397,15 @@ export function FileOverview({
           ))}
         </div>
       </div>
+      {menu && (
+        <FileMenu
+          x={menu.x}
+          y={menu.y}
+          count={pickedFiles.length}
+          onClose={() => setMenu(undefined)}
+          onAdd={pickedFiles.length ? enqueue : undefined}
+        />
+      )}
     </div>
   )
 }
