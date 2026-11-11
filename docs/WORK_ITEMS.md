@@ -65,6 +65,7 @@
   - SteamGridDB（遊戲封面、橫幅、Logo）：API Key；只有圖片，可與 Steam App ID 搭配。
   - Last.fm（音樂）：API Key；封面品質不一。
   - Discogs（音樂）：個人權杖選填；不登入可讀資料，但圖片要帶權杖才拿得到。
+  - Bangumi（已接入，加選填權杖）：使用者在 Bangumi 產生個人存取權杖，以 `Authorization: Bearer` 送出，才能讀成人（NSFW）作品；未登入時這類作品可能直接回 404（2026-11-12 一般作品實測正常，成人作品未實測）。沒填權杖時，404 提示改為「找不到作品，或是需要權杖的成人作品」並連到設定。
 
 - **R-287** IGDB ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285
   使用者準備 Twitch Client ID＋Secret（Twitch 帳號須開兩步驟驗證）。程式要換存取權杖並在約 60 天過期時自動更新；查詢語法是 Apicalypse（POST）；每秒最多 4 次；網址是 slug，要先查出 ID；圖片在 `images.igdb.com`。
