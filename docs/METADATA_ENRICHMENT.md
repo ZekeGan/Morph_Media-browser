@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-> 最後確認：2026-11-11。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
+> 最後確認：2026-11-12。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
 
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
@@ -41,7 +41,13 @@
 | 書籍 | Open Library | [公開書目與作者](https://openlibrary.org/developers/api)，作者補讀最多三筆 |
 | 圖片／插畫 | Pixiv、Wikimedia Commons | Pixiv 公開作品回應；[Commons API](https://commons.wikimedia.org/wiki/Commons:API/MediaWiki) 保留作者及授權，不推論私人照片身分 |
 
-IGDB、TMDB 需要 API 憑證，不接入。沒有內建 key、登入／Cookie 收集或存取限制繞過。ExHentai、Hitomi、Pixiv、DLsite 可能因登入、站方限制或公開回應變更而失敗；失敗保留原資料並顯示原因。公開端點不等於官方提供長期相容承諾，Hitomi、Pixiv、DLsite 的內部端點尤其如此。
+接入規則（[C-134](DECISIONS.md#c-134網站來源改為可用使用者金鑰與有條件解析網頁2026-11-12)）：
+
+- **使用者自備金鑰**：需要 API 憑證的網站只在使用者於應用程式設定填入自己的金鑰後啟用；金鑰只存本機並加密、只有 main 讀取，不寫進可攜記錄或專案。不內建任何金鑰；沒填金鑰時就地提示並連到設定。
+- **網頁解析**：沒有 API 的網站可讀商品頁 HTML，只在使用者按下時請求一次；不執行遠端 JS、不開隱藏瀏覽器視窗；依序讀 JSON-LD、內嵌資料、OpenGraph，最後才用選擇器；依網頁宣告的編碼解碼。遵守 robots.txt 與網站條款，不繞過機器人防護。
+- **年齡確認**：只有使用者對該網站明確勾選「我已成年」後才帶年齡確認 Cookie；不收集或保存登入 Cookie。
+
+ExHentai、Hitomi、Pixiv、DLsite 可能因登入、站方限制或公開回應變更而失敗；失敗保留原資料並顯示原因。公開端點不等於官方提供長期相容承諾，Hitomi、Pixiv、DLsite 的內部端點尤其如此。
 
 ## 預覽、套用與追溯
 
@@ -60,16 +66,17 @@ IGDB、TMDB 需要 API 憑證，不接入。沒有內建 key、登入／Cookie �
 
 ## 未接入的來源
 
-日本同人收藏新增來源候選，先研究可行性再接入；不代表下列商店已有 adapter 或穩定公開 API：
+候選網站與各自需要的資料、特殊處理登記在 [需求清單](WORK_ITEMS.md#已登記未核定) R-283～R-293；接入前再驗證官方能力、條款與限流。以下網站不接入：
 
-| 優先順序 | 來源 | 適用範圍與研究重點 |
-| --- | --- | --- |
-| 1 | 既有 VNDB、Bangumi、AniList | 先確認現有來源適用性；VNDB 著重視覺小說，Bangumi／AniList 補動畫、漫畫等作品資訊，不宣稱涵蓋全部同人作品 |
-| 2 | [DLsite](https://www.dlsite.com/home/) | **已接入**：使用者貼上精確作品網址，main 讀取 DLsite 未文件化的公開 /product/info/ajax JSON（robots.txt 未禁止，每次僅一次使用者觸發的請求，不帶 Cookie、不繞過年齡確認）；取得標題、社團代碼、作品類型、發售日、年齡分級、價格、下載數與評分，封面限 img.dlsite.jp。端點無官方文件，欄位可能變動，失敗只顯示錯誤、不改原資料。**FANZA 已移除**（官方 API 需 API ID／affiliate ID，與免憑證限制衝突） |
-| 3 | [BOOTH](https://booth.pm/)、[Melonbooks](https://www.melonbooks.co.jp/)、[虎之穴](https://ec.toranoana.jp/tora_r/ec) | **不接入**：BOOTH 的 JSON 端點無法於此環境驗證（測試商品回 404），沒有真實商品網址前不接；Melonbooks 無 robots.txt 且需年齡確認 Cookie 才能取得商品頁，虎之穴只有 HTML，兩者皆無公開 API，不以程式送出年齡確認或解析 HTML，維持不接入直到條款與官方能力確認 |
+| 網站 | 原因 |
+| --- | --- |
+| IMDb | 沒有公開 API、條款禁止抓取；以 OMDb 的 tt 編號間接對應 |
+| Twitter／X | API 需付費 |
+| Fanbox、Fantia | 只能用登入 Cookie 取得 |
+| itch.io | API 只能查自己的作品 |
 
-沿用精確作品網址 → 預覽 → 確認套用；同人動畫可優先查原販售頁，一般動畫／漫畫搭配作品資料庫。保留來源命名空間，區分原版／漢化版、單行本／單話及本體／DLC；不依同名自動合併、覆寫人工資料或下載作品內容。進度只記於 [S16](WORK_ITEMS.md#已交付)。
+沿用精確作品網址 → 預覽 → 確認套用；同人動畫可優先查原販售頁，一般動畫／漫畫搭配作品資料庫。保留來源命名空間，區分原版／漢化版、單行本／單話及本體／DLC；不依同名自動合併、覆寫人工資料或下載作品內容。
 
-新增來源依上方分類清單；需要憑證的網站保留在未啟用範圍。首次發行日、平台／版本日期與購買日分開。批次／CSV 對照、名稱候選人工審核、galleryinfo.txt／本地線索擷取是候選，尚未自動納入現行流程。批次若選入需可暫停、分別報成功／模糊／失敗，不能繞過寫入安全。
+首次發行日、平台／版本日期與購買日分開。批次／CSV 對照、名稱候選人工審核、galleryinfo.txt／本地線索擷取是候選，尚未自動納入現行流程。批次若選入需可暫停、分別報成功／模糊／失敗，不能繞過寫入安全。
 
 原 Steam／IGDB／E-Hentai 研究、SourceRecord 提案與完整例子見 [原稿](history/agent-docs-before-cleanup.md#metadata-enrichment)，不是現行能力或每輪必讀。新增來源前再驗證官方能力與要求，不依賴歷史研究推斷現況。

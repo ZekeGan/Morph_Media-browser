@@ -25,6 +25,60 @@
 - **R-256** 條漫模式 ｜大｜一般｜設定｜領域：reader｜依賴：R-253
   第三種頁面模式（工具列 `[▯ | ▯▯ | ▥]`，快捷鍵 V；D 仍只切單／雙頁）。頁面上下連續捲動、無間隙；寬度滑桿 30%～100%（Ctrl＋滾輪也可調），取代寬高適應與縮放；隱藏上下頁、首張獨立、閱讀方向。頁碼依畫面中央的頁，方向鍵／空白鍵往下捲一個畫面高。前幾頁高度超過寬度約 2.5 倍時提示「這本看起來是條漫 [切換到條漫] [不用]」，只提示一次、不自動切換。頁面模式與寬度依每本記在 R-253 的本機閱讀紀錄，沒記過的沿用上次寬度。
 
+網站來源（[C-134](DECISIONS.md#c-134網站來源改為可用使用者金鑰與有條件解析網頁2026-11-12)）：下列網站需要的資料與特殊處理依 2026-11-12 討論時的認識，未上網查證；每站接入前先確認條款、限流與端點。標「？」的是較不確定的。
+
+- **R-283** 網頁解析基礎＋通用網頁來源 ｜中｜安全邊界｜無｜領域：metadata｜依賴：無
+  主程序加 HTML 解析器（不執行 JS）與編碼轉換（EUC-JP、Shift_JIS）；新增「任何網址」來源，只讀 JSON-LD 與 OpenGraph 的標題、簡介、封面（封面主機無法事先白名單，需另定限制：只限 HTTPS、大小、影像簽名）。順便把請求的 User-Agent 從舊的 `MediaViewer/0.9.0` 改成現行名稱與版號。
+
+- **R-284** 免金鑰 API 來源第一批 ｜大｜安全邊界｜無｜領域：metadata｜依賴：無
+  可每站一小段轉接器，依需要拆批：
+  - MangaDex（漫畫）：作品 ID 是 UUID；封面要另查 `cover_art` 再組網址；限流嚴。
+  - Kitsu（動畫、漫畫）：JSON:API 格式，資料在 `included` 要另外組合。
+  - MangaUpdates（漫畫、韓漫）：網址 ID 是 base36，API 要數字 ID，需轉換。
+  - 小説家になろう（小說）：官方 API 用 ncode 查；R18（ノクターン等）走另一網域。可配合 R-282。
+  - Pixiv 小說：沿用現有 Pixiv 做法，多一個 `/novel/` 路徑。
+  - Apple Music（iTunes Lookup）、Deezer（音樂）：公開查詢，直接用。
+  - Danbooru（插畫）：可選填帳號＋金鑰提高限額；有分級欄位；可能被 Cloudflare 擋。
+  - Google Books（書籍）：金鑰選填（不填額度較少）。
+
+- **R-285** 使用者自備金鑰＋TMDB ｜大｜安全邊界｜設定｜領域：metadata、appearance｜依賴：無
+  應用程式設定新增「網站金鑰」分頁：每站一列（名稱、用途、輸入框遮罩＋顯示切換、狀態「可用／無法驗證／未設定」、測試、清除、「怎麼申請」連到使用說明）；金鑰用 Electron 內建的 safeStorage 加密存本機，只有 main 讀取。資料夾設定貼了需要金鑰的網址時，就地提示並「前往設定」跳到該列；金鑰失效同樣提示。以 TMDB（API Key 或 Read Access Token）驗證整套流程：圖片在 `image.tmdb.org` 需指定尺寸，條款要求標示資料來自 TMDB，限非商業用途。使用說明補各站申請步驟。分頁名稱待定（網站金鑰／外部服務／連線）。
+
+- **R-286** 一般金鑰來源 ｜大｜安全邊界｜無｜領域：metadata｜依賴：R-285
+  - MyAnimeList（動畫、漫畫）：Client ID，放請求標頭 `X-MAL-CLIENT-ID`。
+  - OMDb（電影）：API Key（Email 啟用），免費每天 1000 次；可用 IMDb tt 編號查詢，間接支援 IMDb 網址。
+  - Trakt（影集、電影）：Client ID；沒有圖片，封面要再向 TMDB 取。
+  - RAWG（遊戲）：API Key；條款要求標示來源並附回連結。
+  - Giant Bomb（遊戲）、Comic Vine（美漫）：API Key；須帶自訂 User-Agent；限流以小時計。
+  - SteamGridDB（遊戲封面、橫幅、Logo）：API Key；只有圖片，可與 Steam App ID 搭配。
+  - Last.fm（音樂）：API Key；封面品質不一。
+  - Discogs（音樂）：個人權杖選填；不登入可讀資料，但圖片要帶權杖才拿得到。
+
+- **R-287** IGDB ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285
+  使用者準備 Twitch Client ID＋Secret（Twitch 帳號須開兩步驟驗證）。程式要換存取權杖並在約 60 天過期時自動更新；查詢語法是 Apicalypse（POST）；每秒最多 4 次；網址是 slug，要先查出 ID；圖片在 `images.igdb.com`。
+
+- **R-288** TheTVDB ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285
+  API Key（＋訂閱 PIN？）；先登入換權杖，約一個月過期。
+
+- **R-289** FANZA（DMM） ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285
+  使用者要先註冊 DMM 聯盟行銷取得 API ID＋Affiliate ID，門檻最高；條款要求顯示 Credit；FANZA／DMM 兩種站點與多個樓層，網址對應較複雜。
+
+- **R-290** AniDB ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285
+  要由開發者先登記用戶端名稱＋版本（不是使用者金鑰）；約 2 秒一次的嚴格限流，違反會封 IP；回應是 gzip 壓縮的 XML；規定要快取，不重複查同一部。
+
+- **R-291** 待查證的金鑰來源 ｜小｜一般｜無｜領域：metadata｜依賴：R-285
+  只做研究，結果決定是否另登記：Spotify（Client ID＋Secret、權杖每小時過期，新應用權限收緊、條款可能限制儲存？）、Gelbooru（可能改為必須帳號 ID＋金鑰？）、DeviantArt（OAuth 用戶端憑證）、MobyGames（API 可能改為付費？）。
+
+- **R-292** 網頁來源（不需年齡確認） ｜大｜安全邊界｜無｜領域：metadata｜依賴：R-283
+  - VGMdb（遊戲、同人音樂）：頁面結構穩定。
+  - 批評空間（galgame）：遊戲頁是純 HTML，結構多年未變。
+  - カクヨム（小說）：頁面內嵌作品資料 JSON。
+  - AO3（小說）：成人作品要帶 `view_adult=true`。
+  - BOOTH（同人商店）：商品頁有 OpenGraph，可能另有 JSON 端點（之前驗證回 404）。
+
+- **R-293** 網頁來源（需年齡確認） ｜中｜安全邊界｜設定｜領域：metadata、appearance｜依賴：R-283
+  每站在設定提供「我已成年」勾選，勾選後才帶年齡確認 Cookie。Getchu（EUC-JP 編碼）、Melonbooks、虎之穴（改版較頻繁）。
+
 ## 擱置
 
 - **R-282** 小說閱讀器 ｜大｜一般｜設定（若新增「小說」分類則為改結構）｜領域：reader、documents、detection、metadata｜依賴：R-253 — v1 之後再做（使用者 2026-11-12 預告）
