@@ -6,6 +6,8 @@ pnpm typecheck
 pnpm format:check
 # UI tests must not look for buttons or text the app no longer has (about 0.3 s).
 node scripts/check-ui-names.mjs
+# Interface text goes through translation; main-process messages without a key may not grow (R-277).
+node scripts/check-i18n.mjs
 # The renderer, shared logic and main process do not import across their layers (R-248).
 node scripts/check-layers.mjs
 # Every source file belongs to an area in docs/areas.json, and the tests it names exist.

@@ -18,6 +18,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Checks (R-277): commits are refused when window text skips translation or the main process adds a message without a translation key; existing untranslated main-process messages (507) are listed so they can only shrink.
+
 ## 0.40.0 — 2026-11-12
 
 - Fix (R-275): moving on to the next book while reading immersively also stays immersive when the app runs in development mode.

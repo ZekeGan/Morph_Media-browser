@@ -50,6 +50,7 @@ const ThemeContext = createContext<
 >(undefined)
 export function useAppTheme() {
   const value = useContext(ThemeContext)
+  // i18n-ignore: a programming error seen only by developers
   if (!value) throw new Error('缺少主題提供者')
   return value
 }
