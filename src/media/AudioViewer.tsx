@@ -1,11 +1,11 @@
 import { Audio, AudioPlayer } from '@videojs/react/audio'
-import { ActionIcon, Button, Checkbox, Menu, Slider, Tooltip } from '@mantine/core'
+import { ActionIcon, Button, Menu, Slider, Tooltip } from '@mantine/core'
 import { useEffect, useRef, useState } from 'react'
 import type { MediaEntry } from '../../shared/explorer'
 import { useVideoAudio } from './useVideoAudio'
 import { Icon } from '../common/icons'
 import { t as tr } from '../i18n'
-import { nextLoop, setLoop, useAudioLoop } from './audioLoop'
+import { PlayOrderButton, usePlayOrder } from './playOrder'
 
 const clock = (seconds: number) =>
   Number.isFinite(seconds)
@@ -19,8 +19,6 @@ export function AudioViewer({
   previous,
   next,
   first,
-  autoNext,
-  changeAutoNext,
 }: {
   background?: boolean
   file: MediaEntry
@@ -30,16 +28,8 @@ export function AudioViewer({
   next?: () => void
   // Back to the first track of the list, for "loop all" at the end; omitted when this is the only track.
   first?: () => void
-  autoNext: boolean
-  changeAutoNext: (value: boolean) => void
 }) {
-  const loop = useAudioLoop(),
-    loopLabel =
-      loop === 'all'
-        ? tr('循環播放：全部')
-        : loop === 'one'
-          ? tr('循環播放：單曲')
-          : tr('循環播放：關閉')
+  const order = usePlayOrder()
   const node = useRef<HTMLAudioElement | null>(null),
     allowed = useRef(false),
     intent = useRef(true),
@@ -215,7 +205,7 @@ export function AudioViewer({
           ref={bindRef.current}
           src={file.url}
           controls={false}
-          loop={loop === 'one'}
+          loop={order === 'one'}
           preload="metadata"
           onLoadedMetadata={(event) => {
             if (event.currentTarget !== node.current) return
@@ -237,11 +227,12 @@ export function AudioViewer({
           onEnded={() => {
             intent.current = false
             setPaused(true)
-            if (loop === 'all') {
+            if (order === 'next') next?.()
+            else if (order === 'all') {
               const after = next ?? first
               if (after) after()
               else toggle()
-            } else if (autoNext) next?.()
+            }
           }}
           onError={() => {
             intent.current = false
@@ -343,17 +334,7 @@ export function AudioViewer({
         <ActionIcon aria-label={tr('下一首')} variant="subtle" disabled={!next} onClick={next}>
           <Icon name="chevron-right" />
         </ActionIcon>
-        <Tooltip label={loopLabel}>
-          <ActionIcon
-            className="audio-loop"
-            aria-label={loopLabel}
-            aria-pressed={loop !== 'off'}
-            variant={loop === 'off' ? 'subtle' : 'light'}
-            onClick={() => setLoop(nextLoop(loop))}
-          >
-            <Icon name={loop === 'one' ? 'repeat-one' : 'repeat'} />
-          </ActionIcon>
-        </Tooltip>
+        <PlayOrderButton />
       </div>
       <div className="audio-volume">
         <Tooltip label={tr('靜音')}>
@@ -376,13 +357,6 @@ export function AudioViewer({
           onChange={(volume) => audio.change({ volume: volume / 100, muted: volume === 0 })}
         />
       </div>
-      {!background && (
-        <Checkbox
-          label={tr('播完接下一首')}
-          checked={autoNext}
-          onChange={(event) => changeAutoNext(event.currentTarget.checked)}
-        />
-      )}
       {(error || audio.error) && <p role="alert">{error || audio.error}</p>}
     </div>
   )

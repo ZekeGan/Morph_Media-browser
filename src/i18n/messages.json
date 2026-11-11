@@ -3707,29 +3707,29 @@
     "es": "Pista siguiente",
     "zh-CN": "下一首"
   },
-  "播完接下一首": {
-    "en": "Play the next track automatically",
-    "ja": "次の曲を続けて再生",
-    "es": "Reproducir automáticamente la siguiente pista",
-    "zh-CN": "播完接下一首"
+  "播放順序：播完停止": {
+    "en": "When it ends: stop",
+    "ja": "再生順序：終わったら停止",
+    "es": "Al terminar: detener",
+    "zh-CN": "播放顺序：播完停止"
   },
-  "循環播放：關閉": {
-    "en": "Repeat: off",
-    "ja": "リピート：オフ",
-    "es": "Repetir: desactivado",
-    "zh-CN": "循环播放：关闭"
+  "播放順序：接續下一首": {
+    "en": "When it ends: play next",
+    "ja": "再生順序：次へ続ける",
+    "es": "Al terminar: reproducir la siguiente",
+    "zh-CN": "播放顺序：接续下一首"
   },
-  "循環播放：全部": {
-    "en": "Repeat: all",
-    "ja": "リピート：すべて",
-    "es": "Repetir: todo",
-    "zh-CN": "循环播放：全部"
+  "播放順序：全部循環": {
+    "en": "When it ends: repeat all",
+    "ja": "再生順序：全曲リピート",
+    "es": "Al terminar: repetir todo",
+    "zh-CN": "播放顺序：全部循环"
   },
-  "循環播放：單曲": {
-    "en": "Repeat: one track",
-    "ja": "リピート：1 曲",
-    "es": "Repetir: una pista",
-    "zh-CN": "循环播放：单曲"
+  "播放順序：單曲循環": {
+    "en": "When it ends: repeat this one",
+    "ja": "再生順序：1 曲リピート",
+    "es": "Al terminar: repetir esta",
+    "zh-CN": "播放顺序：单曲循环"
   },
   "顯示設定未保存，請重試": {
     "en": "Display settings were not saved. Retry",
@@ -3868,12 +3868,6 @@
     "en": "Play queue",
     "ja": "再生キュー",
     "es": "Cola de reproducción"
-  },
-  "自動接續": {
-    "zh-CN": "自动接续",
-    "en": "Auto advance",
-    "ja": "自動で次へ",
-    "es": "Reproducción continua"
   },
   "返回播放佇列": {
     "zh-CN": "返回播放队列",

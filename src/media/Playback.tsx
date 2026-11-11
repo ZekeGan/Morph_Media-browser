@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react'
 import { createPortal } from 'react-dom'
-import { ActionIcon, Button, Slider, Tabs, Tooltip, FocusTrap } from '@mantine/core'
+import { ActionIcon, Button, Slider, Tabs, FocusTrap } from '@mantine/core'
 import type { FolderRow, Project } from '../../shared/model'
 import type { MediaEntry } from '../../shared/explorer'
 import { AudioViewer } from './AudioViewer'
@@ -18,7 +18,7 @@ import { VideoViewer } from '../video/VideoViewer'
 import { Icon } from '../common/icons'
 import { FileMenu } from './FileMenu'
 import { MediaThumb } from './MediaThumb'
-import { useAudioLoop } from './audioLoop'
+import { PlayOrderButton, usePlayOrder } from './playOrder'
 import { ViewToggle } from '../browse/ViewToggle'
 import { t as tr, useLocale } from '../i18n'
 import './media-workspace.css'
@@ -41,13 +41,12 @@ const clock = (value: number) =>
     : '0:00'
 export function PlaybackProvider({ children }: { children: ReactNode }) {
   useLocale()
-  const loop = useAudioLoop()
+  const order = usePlayOrder()
   const [items, setItems] = useState<Item[]>([]),
     [current, setCurrent] = useState<Item>(),
     [folder, setFolder] = useState<Source>(),
     [mini, setMini] = useState(false),
     [tab, setTab] = useState<string | null>('queue'),
-    [auto, setAuto] = useState(false),
     [showQueue, setShowQueue] = useState(false),
     [error, setError] = useState(''),
     [pending, setPending] = useState(false),
@@ -92,7 +91,20 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
   })
   const add = useCallback((value: Source, files: MediaEntry[]) => {
     const wanted = files.filter((file) => ['audio', 'video'].includes(file.kind))
-    if (wanted.length) setItems((list) => [...list, ...wanted.map((file) => make(value, file))])
+    if (!wanted.length) return
+    // Adding the file that is playing as a trial turns the trial into that queue entry (R-266).
+    const trial = currentRef.current,
+      adopt = trial && !itemsRef.current.some((item) => item.id === trial.id) ? trial : undefined
+    let adopted = false
+    const added = wanted.map((file) => {
+      const item = make(value, file)
+      if (adopt && !adopted && adopt.row.rowId === value.row.rowId && adopt.file.id === file.id) {
+        adopted = true
+        return { ...item, id: adopt.id }
+      }
+      return item
+    })
+    setItems((list) => [...list, ...added])
   }, [])
   const select = async (item: Item) => {
     const token = ++sequence.current
@@ -318,9 +330,21 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                   onPauseCapture={sync}
                   onEndedCapture={() => {
                     sync()
-                    // A looping music track moves on (or repeats) by itself.
-                    if (current.file.kind === 'audio' && loop !== 'off') return
-                    if (auto && index >= 0) step(1)
+                    // Music follows the play order inside AudioViewer; videos follow it here.
+                    if (current.file.kind === 'audio' || order === 'stop') return
+                    const replay = () => {
+                      const node = media()
+                      if (!node) return
+                      node.currentTime = 0
+                      void node.play()
+                    }
+                    const last = index < 0 || index === items.length - 1
+                    if (order === 'one') replay()
+                    else if (!last) step(1)
+                    else if (order === 'all') {
+                      if (index > 0) void select(items[0])
+                      else replay()
+                    }
                   }}
                 >
                   {current.file.kind === 'audio' ? (
@@ -332,8 +356,6 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                         cover ? `media://asset/${current.row.rowId}/${cover.assetId}` : undefined
                       }
                       covers={current.entries.filter((file) => file.kind === 'image')}
-                      autoNext={false}
-                      changeAutoNext={setAuto}
                       previous={index > 0 ? () => step(-1) : undefined}
                       next={index >= 0 && index < items.length - 1 ? () => step(1) : undefined}
                       first={index > 0 ? () => void select(items[0]) : undefined}
@@ -375,16 +397,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                         <div className="playback-queue-head">
                           <strong>{tr('共 {0} 項', String(items.length))}</strong>
                           <div className="playback-tools">
-                            <Tooltip zIndex={450} label={tr('自動接續')}>
-                              <ActionIcon
-                                variant={auto ? 'light' : 'subtle'}
-                                aria-label={tr('自動接續')}
-                                aria-pressed={auto}
-                                onClick={() => setAuto(!auto)}
-                              >
-                                <Icon name="auto-next" />
-                              </ActionIcon>
-                            </Tooltip>
+                            <PlayOrderButton zIndex={450} />
                             {views}
                           </div>
                         </div>
@@ -404,7 +417,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                             (queueView === 'images' ? ' playback-items-images' : '')
                           }
                         >
-                          {items.map((item, order) => (
+                          {items.map((item, position) => (
                             <div
                               key={item.id}
                               className={
@@ -452,7 +465,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                                   />
                                 </span>
                                 <span className="playback-item-text">
-                                  <small className="playback-item-order">{order + 1}</small>
+                                  <small className="playback-item-order">{position + 1}</small>
                                   <strong>{item.file.name}</strong>
                                   <small>
                                     {item.project.name} · {item.row.name}
@@ -464,7 +477,13 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
                                 disabled={pending}
                                 aria-label={tr('移除') + ' ' + item.file.name}
                                 onClick={() => {
-                                  if (current.id === item.id) stop()
+                                  // Removing the playing entry moves on to the next one; with none left it
+                                  // pauses and stays open as a trial (R-267).
+                                  if (current.id === item.id) {
+                                    const after = items[position + 1]
+                                    if (after) void select(after)
+                                    else media()?.pause()
+                                  }
                                   setItems((list) => list.filter((value) => value.id !== item.id))
                                 }}
                               >

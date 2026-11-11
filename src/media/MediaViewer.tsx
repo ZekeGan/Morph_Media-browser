@@ -46,7 +46,6 @@ export function MediaViewer({
   // The folder page already knows the folder's type (it looked at the files); without it only the record is used.
   manga?: boolean
 }) {
-  const [audioNext, setAudioNext] = useState(false)
   const [queueView, setQueueView] = useState<'list' | 'images'>('list')
   const [selected, setSelected] = useState(file.id),
     [showQueue, setShowQueue] = useState(false),
@@ -205,8 +204,6 @@ export function MediaViewer({
                 />
               ) : current?.kind === 'audio' ? (
                 <AudioViewer
-                  autoNext={audioNext}
-                  changeAutoNext={setAudioNext}
                   key={current.id}
                   file={current}
                   cover={cover ? `media://asset/${row.rowId}/${cover.assetId}` : undefined}

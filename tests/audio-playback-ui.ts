@@ -376,7 +376,14 @@ try {
       )
       await rows.nth(0).getByRole('button', { name: '移除 embedded.mp3', exact: true }).click()
       assert.equal(await rows.count(), 3)
-      const auto = page.getByRole('button', { name: '自動接續', exact: true })
+      // R-268: one play-order button cycles stop → next → loop all → loop one.
+      const auto = page.locator('.playback-queue-head:visible .play-order')
+      const playOrder = async (label: string) => {
+        for (let i = 0; i < 4 && (await auto.getAttribute('aria-label')) !== label; i++)
+          await auto.click()
+        assert.equal(await auto.getAttribute('aria-label'), label)
+      }
+      assert.equal(await auto.getAttribute('aria-label'), '播放順序：播完停止')
       assert.equal(await auto.getAttribute('aria-pressed'), 'false')
       await page.evaluate(() => {
         ;(window as any).beforeAutoAudio = document.querySelector('audio')
@@ -389,7 +396,7 @@ try {
         const a = document.querySelector('audio')
         return !!a && !a.paused && Number.isFinite(a.duration) && a.duration > 0
       })
-      await auto.click()
+      await playOrder('播放順序：接續下一首')
       assert.equal(await auto.getAttribute('aria-pressed'), 'true')
       await page.locator('audio').evaluate((node) => {
         const a = node as HTMLAudioElement
@@ -399,12 +406,22 @@ try {
         const v = document.querySelector('video')
         return !!v && !v.paused && v.currentTime > 0.1
       })
-      if ((await auto.getAttribute('aria-pressed')) === 'true') await auto.click()
+      await playOrder('播放順序：播完停止')
       await rows.last().getByRole('button', { name: 'embedded.mp3', exact: true }).click()
       await page.waitForFunction(() => {
         const a = document.querySelector('audio')
         return !!a && !a.paused && a.currentTime > 0.1
       })
+      await playOrder('播放順序：單曲循環')
+      assert.equal(
+        await page.locator('audio').evaluate((node: HTMLAudioElement) => node.loop),
+        true
+      )
+      await playOrder('播放順序：播完停止')
+      assert.equal(
+        await page.locator('audio').evaluate((node: HTMLAudioElement) => node.loop),
+        false
+      )
       await page.getByRole('button', { name: '縮小播放', exact: true }).click()
       const header = page.locator('.playback-mini>header'),
         bounds = await header.boundingBox()
