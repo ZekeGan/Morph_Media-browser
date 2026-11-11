@@ -13,6 +13,9 @@
 
 ## 待查收
 
+- **R-302** 網站轉接器拆檔 ｜中｜安全邊界｜無｜領域：metadata｜依賴：R-300
+  驗收：行為不變——`pnpm check:sources` 12 個來源都 OK；隨便挑一個來源（例如 Bangumi）在資料夾設定裡補充資訊，預覽與匯入跟以前一樣。程式上 `electron/sources/` 一站一檔，主機與 User-Agent 集中在 `config.ts`。
+
 - **R-301** 真實網站健康檢查 `pnpm check:sources` ｜小｜一般｜無｜領域：metadata｜依賴：R-300
   驗收：執行 `pnpm check:sources`，12 個來源各列一行 OK（附欄位數、有無封面、標題）；`pnpm check:sources bangumi=https://bgm.tv/subject/999999999` 列出 FAIL notFound。RELEASING 的發布關卡多了這一步。
 
@@ -30,9 +33,6 @@
 
 - **R-299** 補遊戲引擎辨識規則（先用合成資料） ｜中｜一般｜無｜領域：detection｜依賴：無｜取代：R-211 — 使用者 2026-11-12 核定
   新增規則：SRPG Studio、HSP（Hot Soup Processor）、Flash（`.swf`＋Projector）、Pixel Game Maker MV、QLIE、Malie、Entis／Cotopha、Escude、ExHIBIT、Light.vn、Visual Novel Maker（目前被列為 NW.js 候選）、Java（`.jar`）、Majiro、FVP。辨識特徵先依公開資料整理，接入前逐一查證；每種引擎用合成資料夾做正例與反例測試（`tests/game-detection.test.ts`），在 [GAME_ENGINE_DETECTION](GAME_ENGINE_DETECTION.md#尚未涵蓋) 列為「只用合成資料夾驗證」，與既有候選同等級。使用者之後提供真實樣本時用 `pnpm detect` 對照，再轉為已驗證。特徵不夠可靠的引擎只列候選、不推定。
-
-- **R-302** 網站轉接器拆檔 ｜中｜安全邊界｜無｜領域：metadata｜依賴：R-300 — 使用者 2026-11-12 核定
-  `electron/metadata-public.ts` 的 switch 拆成一站一個檔案，加一份共用的來源設定：允許的請求主機、封面主機白名單、額外標頭、User-Agent（同時把舊的 `MediaViewer/0.9.0` 改成現行名稱與版號）。行為不變，既有測試照過。排在 R-284 等新增網站之前。
 
 - **R-303** 半批次補充資訊 ｜中｜資料寫入｜無｜領域：metadata、panel｜依賴：R-302 — 使用者 2026-11-12 核定
   選好多個資料夾後，依序一個一個跳出網址欄：貼網址 → 預覽 → 確認或略過 → 下一個。每筆仍由使用者貼網址與確認，不自動比對；寫入沿用單筆的填空、覆寫與人工值保護規則。可中途停止，結束時列出完成、略過、失敗各幾筆。

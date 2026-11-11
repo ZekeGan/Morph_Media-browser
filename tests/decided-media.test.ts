@@ -204,6 +204,20 @@ test('public metadata adapters use no credentials, retain source identities and 
     ),
     /未執行/
   )
+  // R-302: every site sends the app's own User-Agent, and a cover from another site's image host is refused.
+  const agents: string[] = []
+  const crossCover = await metadata('https://bgm.tv/subject/12', (async (
+    input: RequestInfo | URL,
+    init?: RequestInit
+  ) => {
+    agents.push(new Headers(init?.headers).get('User-Agent') ?? '')
+    if (String(input).includes('pximg')) throw new Error('MUST NOT FETCH')
+    return new Response(
+      JSON.stringify({ id: 12, name: 'Title', images: { medium: 'https://i.pximg.net/a.jpg' } })
+    )
+  }) as typeof fetch)
+  assert.equal(crossCover.cover, undefined)
+  assert.match(agents[0], /^M:orph\/\d+\.\d+\.\d+ /)
   // R-297: Hitomi gallery data comes from its current data host, not the retired ltn.hitomi.la.
   const hitomiRequests: string[] = []
   await metadata('https://hitomi.la/reader/12.html', (async (input: RequestInfo | URL) => {

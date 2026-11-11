@@ -271,6 +271,7 @@
       "docs": ["METADATA_ENRICHMENT.md#分類來源", "METADATA_ENRICHMENT.md#預覽套用與追溯"],
       "code": [
         "electron/metadata*",
+        "electron/sources/*",
         "shared/sources*",
         "src/metadata/importSource*",
         "src/metadata/ImageUrlImport*",

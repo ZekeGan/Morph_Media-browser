@@ -68,7 +68,7 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | 遊戲辨識 | [game-detection](../electron/game-detection.ts) | 有限探測、證據與 ROOT 邊界 |
 | 搜尋索引 | [search-index](../electron/search-index.ts) `SearchIndex` | Node SQLite、Unicode 子字串 grams、分頁；可重建，非資料來源 |
 | 本機 UI 設定 | [workspace](../electron/workspace.ts) `WorkspaceStore` | 群組／排序／窗格／偏好，驗證、保存、尺寸正規化；settings-package／settings-file 處理允許清單、移轉預覽與備份復原 |
-| 外部來源 | [metadata](../electron/metadata.ts) | [sources](../shared/sources.ts) 分類註冊、metadata／metadata-public 固定端點、[metadata-common](../electron/metadata-common.ts) 大小限制、來源預覽與追溯 |
+| 外部來源 | [metadata](../electron/metadata.ts) | [sources](../shared/sources.ts) 分類註冊、metadata（E-Hentai、Steam）與 metadata-public（共用請求、主機檢查、封面）固定端點；[sources/](../electron/sources/config.ts) 一站一個轉接器加共用來源設定；[metadata-common](../electron/metadata-common.ts) 大小限制與錯誤分類、來源預覽與追溯 |
 | 契約與驗證 | [model](../shared/model.ts)、[explorer](../shared/explorer.ts)、[workspace](../shared/workspace.ts) | 型別及寫入前的 runtime 驗證（validateProject、validateDetails 等）；IPC 入口的形狀檢查在 ipc-requests。修改 IPC 時型別、ipc-requests 與呼叫端一起改 |
 | 操作通知契約 | [notifications](../shared/notifications.ts)、[Toasts](../src/notices/Toasts.tsx) | main／Explorer 以完成數與問題數建立通知等級；App 接收 notice，例外明確標為 error；Toasts 負責標題、角色及收起時機。專案匯出、清理等操作的顯示文字由 main 組合；均屬瞬時回應，不改可攜 schema |
 | 共用純邏輯 | [browse](../shared/browse.ts)、[layouts](../shared/layouts.ts)、[fieldGroups](../shared/fieldGroups.ts)、[images](../shared/images.ts)、[query](../shared/query.ts)、[subtitles](../shared/subtitles.ts)、[reader](../shared/reader.ts)、[gallery](../shared/gallery.ts) | 模式／樹分支、方案、欄位群組、格式、查詢、字幕解析、閱讀分頁及適應尺寸、圖庫尺寸與可見範圍模型 |
