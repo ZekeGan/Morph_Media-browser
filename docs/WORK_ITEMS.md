@@ -42,6 +42,27 @@
 
 ## 已核定（未做）
 
+- **R-321** 精簡金鑰來源 ｜中｜安全邊界｜設定｜領域：metadata、appearance｜依賴：R-285 — 使用者 2026-11-12 核定
+  移除有免金鑰替代的金鑰來源：MyAnimeList（→ AniList）、OMDb／Trakt／TheTVDB（→ TMDB）、Last.fm／Discogs（→ MusicBrainz）、AniDB（→ AniList／Bangumi）、IGDB／RAWG／Giant Bomb（→ Steam、VNDB、DLsite）、Comic Vine。保留 TMDB、FANZA、SteamGridDB，以及選填的 Bangumi 權杖、Danbooru、Google Books。已匯入的欄位保留在記錄裡；已存的金鑰在設定頁不再顯示並於下次保存時清掉。R-314（MobyGames，需金鑰）一併撤銷。
+
+- **R-315** 遊戲額外按鈕預設隱藏 ｜小｜一般｜設定｜領域：game｜依賴：無 — 使用者 2026-11-12 核定
+  「用 Steam 啟動」「開啟存檔資料夾」「開啟商店頁」預設不顯示，在遊戲設定「遊戲操作」用眼睛圖示打開；「啟動遊戲」與自己加入的附帶程式／說明書照舊顯示。
+
+- **R-316** 商店頁只在商店來源顯示 ｜小｜一般｜無｜領域：game、metadata｜依賴：R-315 — 使用者 2026-11-12 核定
+  只用 Steam、DLsite、FANZA、BOOTH 的商店網址；VNDB、Bangumi 等資料庫頁不再算商店頁。按鈕寫出站名（「在 Steam 開啟」）。
+
+- **R-317** 右側檔案清單顯示音樂內嵌封面 ｜小｜一般｜無｜領域：media、gallery｜依賴：無 — 使用者 2026-11-12 核定
+  右側清單現在只替圖片和影片做縮圖，音樂一律顯示音符；改用播放佇列已有的內嵌封面讀取，沒有封面時仍顯示音符。
+
+- **R-318** 右側檔案清單點整列開啟 ｜小｜一般｜無｜領域：gallery｜依賴：無 — 使用者 2026-11-12 核定
+  清單模式點整列與點縮圖一樣開啟；Ctrl／Shift 點擊照舊用來多選。
+
+- **R-319** Locale Emulator 選擇設定檔 ｜中｜安全邊界｜新增欄位（暫定）｜領域：game｜依賴：R-309 — 使用者 2026-11-12 核定
+  讀出 Locale Emulator 裡已建立的設定檔（日文、簡中等），每個 EXE 動作用下拉選擇，預設日文；啟動時用該設定檔。`localeEmulator` 從是／否改成設定檔（仍是暫定，不升格式）。
+
+- **R-320** 用外部播放器開 Flash 遊戲 ｜中｜安全邊界｜設定｜領域：game、detection｜依賴：無 — 使用者 2026-11-12 核定
+  應用程式設定指定 SWF 播放器（Flash Player projector 或 Ruffle 桌面版）；遊戲資料夾內的 `.swf` 可設為啟動動作，用該播放器開啟。M:orph 不附帶播放器、不內嵌執行。
+
 ## 已登記（未核定）
 
 - **R-312** Gelbooru（選填金鑰） ｜小｜安全邊界｜無｜領域：metadata｜依賴：R-285
@@ -49,9 +70,6 @@
 
 - **R-313** DeviantArt（oEmbed） ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
   以作品網址呼叫免金鑰的 oEmbed 取標題、作者、分級與縮圖；需要更多欄位時再評估 OAuth client credentials。
-
-- **R-314** MobyGames ｜小｜安全邊界｜設定｜領域：metadata｜依賴：R-285
-  非營利用途的免費金鑰（約每小時 720 次）；網址 `/game/<ID>/slug`。
 
 ## 擱置
 
