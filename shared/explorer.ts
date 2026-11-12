@@ -85,7 +85,7 @@ export interface FolderDetails {
   cellImages?: Record<string, string>
   // Game actions whose button is not shown in this folder's action row.
   hiddenActions?: string[]
-  // R-315 (provisional): the game page's own buttons are hidden until the eye in the game settings shows them.
+  // R-315: the game page's own buttons are hidden until the eye in the game settings shows them.
   shownExtras?: GameExtra[]
   schemaVersion: 1
   boundary?: GameBoundary
@@ -103,14 +103,14 @@ export interface FolderDetails {
       relative: boolean
       args: string[]
       application?: { path: string; relative: boolean }
-      // EXE actions only (R-309, R-319, provisional): start through Locale Emulator's LEProc.exe; true is its
+      // EXE actions only (R-309, R-319): start through Locale Emulator's LEProc.exe; true is its
       // default (Japanese) profile, a GUID one of the profiles made in Locale Emulator (Simplified Chinese…).
       localeEmulator?: true | string
     }
   >
-  // R-282, provisional: where each text book in the folder was left, by file name.
+  // R-282: where each text book in the folder was left, by file name.
   novels?: Record<string, NovelProgress>
-  // R-305, provisional: the save folder the user picked when it could not be worked out from the engine.
+  // R-305: the save folder the user picked when it could not be worked out from the engine.
   saveFolder?: { path: string; relative: boolean }
   subtitles?: { id: string; name: string; relativePath: string }[]
 }
