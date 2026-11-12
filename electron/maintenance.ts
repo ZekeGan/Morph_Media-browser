@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID, createHash } from 'node:crypto'
@@ -45,7 +46,7 @@ export async function managedTree(root: string) {
     const keepNewer = (error: unknown) => {
       if (!isNewerFormat(error)) return false
       files.length = start
-      skipped.push(`${meta}: 含較新版本的資料，整個保留`)
+      skipped.push(fmt('{0}: 含較新版本的資料，整個保留', meta))
       return true
     }
     for (const suffix of ['', '.bak']) {
@@ -63,11 +64,11 @@ export async function managedTree(root: string) {
       }
     }
     if (!records.length) {
-      skipped.push(`${meta}: 無有效身分記錄，保留`)
+      skipped.push(fmt('{0}: 無有效身分記錄，保留', meta))
       return
     }
     if (new Set(records.map((record) => record.folderId)).size !== 1)
-      throw new Error(`${meta}: 主記錄與備份身分不符`)
+      throw new Error(fmt('{0}: 主記錄與備份身分不符', meta))
     const projects = path.join(meta, 'projects')
     if (await exists(projects)) {
       await safePath(root, projects)
@@ -100,7 +101,7 @@ export async function managedTree(root: string) {
       for (const entry of await fs.readdir(folder, { withFileTypes: true })) {
         const file = path.join(folder, entry.name)
         if (entry.isDirectory() && !entry.isSymbolicLink()) await unknown(file)
-        else if (!known.has(keyPath(file))) skipped.push(`${file}: 未驗證歸屬，保留`)
+        else if (!known.has(keyPath(file))) skipped.push(fmt('{0}: 未驗證歸屬，保留', file))
       }
     }
     await unknown(meta)
@@ -120,7 +121,7 @@ export async function managedTree(root: string) {
     for (const entry of entries) {
       const file = path.join(dir, entry.name)
       if (entry.isSymbolicLink()) {
-        skipped.push(`${file}: 連結保留`)
+        skipped.push(fmt('{0}: 連結保留', file))
         continue
       }
       if (entry.isDirectory() && entry !== meta) pending.push(file)
@@ -235,7 +236,14 @@ export async function applyMaintenance(
         failed.push(message(restoreError))
       }
     throw new MaintenanceFailure(
-      `${message(error)}；${failed.length ? '部分復原未完成，保留停止掃描設定：' + failed.join('；') : '已復原本次寫入'}；復原位置：${recovery}`,
+      fmt(
+        '{0}；{1}；復原位置：{2}',
+        message(error),
+        failed.length
+          ? fmt('部分復原未完成，保留停止掃描設定：') + failed.join('；')
+          : fmt('已復原本次寫入'),
+        recovery
+      ),
       failed.length > 0
     )
   }

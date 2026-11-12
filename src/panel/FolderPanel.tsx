@@ -472,7 +472,7 @@ export function FolderPanel({
           </Badge>
         )}
       </div>
-      {row.error && <Alert color="orange">{row.error}</Alert>}
+      {row.error && <Alert color="orange">{tr(row.error)}</Alert>}
       {error && (
         <Alert color="orange" withCloseButton onClose={() => setError('')}>
           {error}

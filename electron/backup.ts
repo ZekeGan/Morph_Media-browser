@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 // Backup and restore: one folder with the settings package and an export of every linked project.
 // Restoring reuses the project import (preview, checksums, rollback) and the settings import (backup first).
 import fs from 'node:fs/promises'
@@ -43,7 +44,7 @@ export async function createBackup(
   // Inside a project's folder the copied records would be scanned as that project's folders.
   for (const linked of library.snapshot().projects)
     if (within(linked.root, parent))
-      throw new Error(`備份位置不能放在專案資料夾裡，請選擇其他位置：${linked.root}`)
+      throw new Error(fmt('備份位置不能放在專案資料夾裡，請選擇其他位置：{0}', linked.root))
   // Two backups in the same second get a counter instead of failing.
   let out = path.join(parent, `M-orph-backup-${stamp}`)
   for (let n = 2; ; n++)
@@ -64,7 +65,7 @@ export async function createBackup(
       await writeSettingsFile(path.join(out, 'settings.json'), state.settingsPackage!)
     } catch (error) {
       settings = undefined
-      skipped.push(`設定：${message(error)}`)
+      skipped.push(fmt('設定：{0}', message(error)))
     }
     const projectsDir = path.join(out, 'projects')
     await fs.mkdir(projectsDir)
@@ -235,7 +236,7 @@ export async function applyBackup(
     const entry = plan.projects.find((p) => p.projectId === projectId),
       preview = plan.imports.get(projectId)
     if (!entry || !preview || entry.state !== 'ready') {
-      failed.push(`${entry?.name ?? projectId}：找不到可還原的位置`)
+      failed.push(fmt('{0}：找不到可還原的位置', entry?.name ?? projectId))
       continue
     }
     try {
@@ -257,7 +258,7 @@ export async function applyBackup(
       )
       settingsUndo = state.backupId
     } catch (error) {
-      failed.push(`設定：${message(error)}`)
+      failed.push(fmt('設定：{0}', message(error)))
     }
   return { projects: restored, failed, settings: !!settingsUndo, settingsUndo }
 }
@@ -315,10 +316,10 @@ export async function exportBackup(library: Library, id: string, dest: string) {
   dest = await fs.realpath(dest)
   for (const linked of library.snapshot().projects)
     if (within(linked.root, dest))
-      throw new Error(`匯出位置不能放在專案資料夾裡，請選擇其他位置：${linked.root}`)
+      throw new Error(fmt('匯出位置不能放在專案資料夾裡，請選擇其他位置：{0}', linked.root))
   if (within(backupsDir(library), dest)) throw new Error('請選擇程式備份資料夾以外的位置')
   const target = path.join(dest, id)
-  if (await exists(target)) throw new Error(`這個位置已經有同名的備份：${target}`)
+  if (await exists(target)) throw new Error(fmt('這個位置已經有同名的備份：{0}', target))
   try {
     await fs.cp(source, target, { recursive: true, errorOnExist: true, force: false })
   } catch (error) {

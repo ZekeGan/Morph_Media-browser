@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import { dateOrText } from '../shared/fields'
 import { stabilizeQuery, type QueryField } from '../shared/query'
 import { projectImageCells } from '../shared/layouts'
@@ -177,7 +178,8 @@ export class Library {
   async create(root: string, input: ProjectInput) {
     root = await fs.realpath(root)
     const protectedBy = await this.protectedAncestor(root)
-    if (protectedBy) throw new Error(`此位置受遊戲／App 邊界保護，請選擇外層資料夾：${protectedBy}`)
+    if (protectedBy)
+      throw new Error(fmt('此位置受遊戲／App 邊界保護，請選擇外層資料夾：{0}', protectedBy))
     const p: Project = {
       kind: 'media-viewer.project',
       schemaVersion: 1,
@@ -250,7 +252,7 @@ export class Library {
           throw new Error(
             '此位置沒有可重新連結的根記錄或備份；若專案已移除或清理，請重新新增專案，封存設定不會自動還原'
           )
-        throw new Error(`根記錄無法讀取且沒有復原備份；原檔保留：${message(error)}`)
+        throw new Error(fmt('根記錄無法讀取且沒有復原備份；原檔保留：{0}', message(error)))
       }
       const backup = await readJson(`${folderFile(root)}.bak`)
       validateFolder(backup)

@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -303,7 +304,7 @@ export class WorkspaceStore {
       // Settings a newer version wrote stay untouched: they are shown, but nothing is saved over them.
       if (isNewerFormat(error)) this.error = (error as Error).message
       else if (!missing(error))
-        this.error = `側欄設定無法讀取，原檔保留；暫用預設且停止保存。${String(error)}`
+        this.error = fmt('側欄設定無法讀取，原檔保留；暫用預設且停止保存。{0}', String(error))
     }
     if (!this.error && !this.prefs.locale && this.languages)
       await this.commit({ ...this.prefs, locale: systemLocale(this.languages) })

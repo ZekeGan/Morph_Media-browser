@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
@@ -117,8 +118,8 @@ export async function scan(ex: Library) {
           // A folder a newer version manages is left as it is, children included, until the app is updated.
           problems.push(
             isNewerFormat(e)
-              ? `${dir}: 含較新版本的資料，唯讀且不深入`
-              : `${dir}: 無法確認邊界，停止此分支：${probeError}`
+              ? fmt('{0}: 含較新版本的資料，唯讀且不深入', dir)
+              : fmt('{0}: 無法確認邊界，停止此分支：{1}', dir, probeError)
           )
           progress.errors++
           progress.visited++
@@ -169,12 +170,18 @@ export async function scan(ex: Library) {
       if (!row.structural) rows.push(row)
       if (probeError) return []
       if (insideAppBundle(dir)) {
-        problems.push(`${dir}: 受 App 邊界保護，唯讀且不深入`)
+        problems.push(fmt('{0}: 受 App 邊界保護，唯讀且不深入', dir))
         return []
       }
       if (boundary) {
         problems.push(
-          `${dir}: ${boundary.engines.join('/')} ${boundary.state === 'root' ? '遊戲根' : '疑似遊戲'}，內部不寫入${row.structural ? '；未達顯示深度' : ''}`
+          fmt(
+            '{0}: {1} {2}，內部不寫入{3}',
+            dir,
+            boundary.engines.join('/'),
+            boundary.state === 'root' ? fmt('遊戲根') : fmt('疑似遊戲'),
+            row.structural ? fmt('；未達顯示深度') : ''
+          )
         )
         if (!result?.record || !p.traversal?.[result.record.folderId]) return []
       }
@@ -184,7 +191,7 @@ export async function scan(ex: Library) {
         for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
           if (entry.name.toLowerCase() === DATA_DIR) continue
           if (entry.isSymbolicLink()) {
-            problems.push(`${path.join(dir, entry.name)}: 略過連結`)
+            problems.push(fmt('{0}: 略過連結', path.join(dir, entry.name)))
             continue
           }
           if (entry.isDirectory())
@@ -213,7 +220,7 @@ export async function scan(ex: Library) {
       failed = new Set(failures.map((f) => keyPath(f.dir)))
     for (const dir of dirs) if (!failed.has(keyPath(dir))) ex.hiddenKnown.add(dir)
     for (const failure of failures) {
-      problems.push(`${failure.dir}: 設定隱藏屬性失敗，下次掃描重試：${failure.error}`)
+      problems.push(fmt('{0}: 設定隱藏屬性失敗，下次掃描重試：{1}', failure.dir, failure.error))
       progress.errors++
     }
   }

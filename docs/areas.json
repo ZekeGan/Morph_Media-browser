@@ -314,10 +314,11 @@
         "src/common/HelpTip*",
         "shared/themes*",
         "shared/locales*",
-        "shared/native-messages*"
+        "shared/native-messages*",
+        "shared/message*"
       ],
       "ui": ["appearance-ui"],
-      "tests": ["appearance.test.ts", "theme-contrast.test.ts"]
+      "tests": ["appearance.test.ts", "theme-contrast.test.ts", "message.test.ts"]
     },
     {
       "id": "notices",

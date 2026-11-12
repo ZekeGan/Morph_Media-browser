@@ -26,7 +26,7 @@ const walk = (dir) =>
     return entry.isDirectory() ? walk(full) : /\.tsx?$/.test(entry.name) ? [full] : []
   })
 // Translation data itself, and lines a developer marks on purpose (`// i18n-ignore: why`).
-const skippedFiles = /^src\/i18n\//
+const skippedFiles = /^(src\/i18n\/|shared\/native-messages\.ts$)/
 const ignored = (sf, node) => {
   const line = sf.getLineAndCharacterOfPosition(node.getStart()).line,
     lines = sf.text.split('\n')

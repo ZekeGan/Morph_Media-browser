@@ -8890,5 +8890,2669 @@
     "en": "Film & TV",
     "ja": "映像",
     "es": "Cine y TV"
+  },
+  "壓縮檔已截斷或變更": {
+    "zh-CN": "压缩包已截断或变更",
+    "en": "The archive is cut short or has changed",
+    "ja": "アーカイブが途中で切れているか変更されています",
+    "es": "El archivo comprimido está truncado o cambió"
+  },
+  "不是有效的 ZIP／CBZ": {
+    "zh-CN": "不是有效的 ZIP／CBZ",
+    "en": "Not a valid ZIP / CBZ",
+    "ja": "有効な ZIP／CBZ ではありません",
+    "es": "No es un ZIP / CBZ válido"
+  },
+  "找不到 ZIP 目錄": {
+    "zh-CN": "找不到 ZIP 目录",
+    "en": "The ZIP directory is missing",
+    "ja": "ZIP のディレクトリが見つかりません",
+    "es": "No se encuentra el directorio del ZIP"
+  },
+  "暫不支援分卷或 ZIP64": {
+    "zh-CN": "暂不支持分卷或 ZIP64",
+    "en": "Split archives and ZIP64 are not supported yet",
+    "ja": "分割アーカイブと ZIP64 にはまだ対応していません",
+    "es": "Los archivos divididos y ZIP64 aún no se admiten"
+  },
+  "壓縮檔目錄超出限制": {
+    "zh-CN": "压缩包目录超出限制",
+    "en": "The archive directory is over the limit",
+    "ja": "アーカイブのディレクトリが上限を超えています",
+    "es": "El directorio del archivo supera el límite"
+  },
+  "ZIP 目錄損壞": {
+    "zh-CN": "ZIP 目录损坏",
+    "en": "The ZIP directory is damaged",
+    "ja": "ZIP のディレクトリが壊れています",
+    "es": "El directorio del ZIP está dañado"
+  },
+  "ZIP 項目損壞或不支援": {
+    "zh-CN": "ZIP 项目损坏或不支持",
+    "en": "A ZIP entry is damaged or not supported",
+    "ja": "ZIP の項目が壊れているか未対応です",
+    "es": "Una entrada del ZIP está dañada o no se admite"
+  },
+  "壓縮檔包含不安全路徑": {
+    "zh-CN": "压缩包包含不安全路径",
+    "en": "The archive contains unsafe paths",
+    "ja": "アーカイブに安全でないパスが含まれています",
+    "es": "El archivo contiene rutas inseguras"
+  },
+  "壓縮檔包含重複路徑": {
+    "zh-CN": "压缩包包含重复路径",
+    "en": "The archive contains duplicate paths",
+    "ja": "アーカイブに重複したパスが含まれています",
+    "es": "El archivo contiene rutas duplicadas"
+  },
+  "壓縮檔包含符號連結": {
+    "zh-CN": "压缩包包含符号链接",
+    "en": "The archive contains symbolic links",
+    "ja": "アーカイブにシンボリックリンクが含まれています",
+    "es": "El archivo contiene enlaces simbólicos"
+  },
+  "ZIP 項目超出範圍": {
+    "zh-CN": "ZIP 项目超出范围",
+    "en": "A ZIP entry is out of range",
+    "ja": "ZIP の項目が範囲外です",
+    "es": "Una entrada del ZIP está fuera de rango"
+  },
+  "圖片使用加密或不支援的壓縮方式": {
+    "zh-CN": "图片使用加密或不支持的压缩方式",
+    "en": "An image is encrypted or uses unsupported compression",
+    "ja": "画像が暗号化されているか未対応の圧縮方式です",
+    "es": "Una imagen está cifrada o usa una compresión no admitida"
+  },
+  "壓縮圖片大小或壓縮比例超出限制": {
+    "zh-CN": "压缩图片大小或压缩比例超出限制",
+    "en": "An image is too large or too highly compressed",
+    "ja": "画像のサイズまたは圧縮率が上限を超えています",
+    "es": "Una imagen es demasiado grande o está demasiado comprimida"
+  },
+  "ZIP 目錄長度不符": {
+    "zh-CN": "ZIP 目录长度不符",
+    "en": "The ZIP directory length does not match",
+    "ja": "ZIP のディレクトリ長が一致しません",
+    "es": "La longitud del directorio del ZIP no coincide"
+  },
+  "壓縮檔已變更，請重新開啟": {
+    "zh-CN": "压缩包已变更，请重新打开",
+    "en": "The archive has changed; open it again",
+    "ja": "アーカイブが変更されました。開き直してください",
+    "es": "El archivo cambió; ábrelo de nuevo"
+  },
+  "ZIP 圖片標頭不符": {
+    "zh-CN": "ZIP 图片头部不符",
+    "en": "A ZIP image header does not match",
+    "ja": "ZIP 内の画像ヘッダーが一致しません",
+    "es": "El encabezado de una imagen del ZIP no coincide"
+  },
+  "ZIP 圖片位置不符": {
+    "zh-CN": "ZIP 图片位置不符",
+    "en": "A ZIP image position does not match",
+    "ja": "ZIP 内の画像の位置が一致しません",
+    "es": "La posición de una imagen del ZIP no coincide"
+  },
+  "ZIP 圖片內容或校驗不符": {
+    "zh-CN": "ZIP 图片内容或校验不符",
+    "en": "A ZIP image's content or checksum does not match",
+    "ja": "ZIP 内の画像の内容またはチェックサムが一致しません",
+    "es": "El contenido o la suma de una imagen del ZIP no coincide"
+  },
+  "備份位置不能放在專案資料夾裡，請選擇其他位置：{0}": {
+    "zh-CN": "备份位置不能放在项目文件夹里，请选择其他位置：{0}",
+    "en": "The backup can't go inside a project folder; choose another place: {0}",
+    "ja": "バックアップはプロジェクトフォルダー内に置けません。別の場所を選んでください：{0}",
+    "es": "La copia no puede ir dentro de una carpeta de proyecto; elige otro lugar: {0}"
+  },
+  "設定：{0}": {
+    "zh-CN": "设置：{0}",
+    "en": "Settings: {0}",
+    "ja": "設定：{0}",
+    "es": "Ajustes: {0}"
+  },
+  "這個資料夾不是 M:orph 備份（找不到 backup.json）": {
+    "zh-CN": "这个文件夹不是 M:orph 备份（找不到 backup.json）",
+    "en": "This folder is not an M:orph backup (no backup.json)",
+    "ja": "このフォルダーは M:orph のバックアップではありません（backup.json がありません）",
+    "es": "Esta carpeta no es una copia de M:orph (no hay backup.json)"
+  },
+  "備份清單過大": {
+    "zh-CN": "备份清单过大",
+    "en": "The backup list is too large",
+    "ja": "バックアップの一覧が大きすぎます",
+    "es": "La lista de la copia es demasiado grande"
+  },
+  "備份裡的設定檔不完整": {
+    "zh-CN": "备份里的设置文件不完整",
+    "en": "The settings file in the backup is incomplete",
+    "ja": "バックアップ内の設定ファイルが不完全です",
+    "es": "El archivo de ajustes de la copia está incompleto"
+  },
+  "還原預覽已失效，請重新選擇備份": {
+    "zh-CN": "还原预览已失效，请重新选择备份",
+    "en": "The restore preview has expired; choose the backup again",
+    "ja": "復元のプレビューが期限切れです。バックアップを選び直してください",
+    "es": "La vista previa de la restauración caducó; vuelve a elegir la copia"
+  },
+  "備份裡沒有這個專案": {
+    "zh-CN": "备份里没有这个项目",
+    "en": "This project is not in the backup",
+    "ja": "このプロジェクトはバックアップにありません",
+    "es": "Este proyecto no está en la copia"
+  },
+  "{0}：找不到可還原的位置": {
+    "zh-CN": "{0}：找不到可还原的位置",
+    "en": "{0}: no place to restore to",
+    "ja": "{0}：復元先が見つかりません",
+    "es": "{0}: no hay dónde restaurarlo"
+  },
+  "備份不存在": {
+    "zh-CN": "备份不存在",
+    "en": "The backup does not exist",
+    "ja": "バックアップがありません",
+    "es": "La copia no existe"
+  },
+  "匯出位置不能放在專案資料夾裡，請選擇其他位置：{0}": {
+    "zh-CN": "导出位置不能放在项目文件夹里，请选择其他位置：{0}",
+    "en": "The export can't go inside a project folder; choose another place: {0}",
+    "ja": "書き出し先はプロジェクトフォルダー内にできません。別の場所を選んでください：{0}",
+    "es": "La exportación no puede ir dentro de una carpeta de proyecto; elige otro lugar: {0}"
+  },
+  "請選擇程式備份資料夾以外的位置": {
+    "zh-CN": "请选择程序备份文件夹以外的位置",
+    "en": "Choose a place outside the app's backup folder",
+    "ja": "アプリのバックアップフォルダー以外の場所を選んでください",
+    "es": "Elige un lugar fuera de la carpeta de copias de la aplicación"
+  },
+  "這個位置已經有同名的備份：{0}": {
+    "zh-CN": "这个位置已经有同名的备份：{0}",
+    "en": "There is already a backup with this name here: {0}",
+    "ja": "この場所には同じ名前のバックアップがあります：{0}",
+    "es": "Ya hay una copia con este nombre aquí: {0}"
+  },
+  "內容分批設定不合法": {
+    "zh-CN": "内容分批设置不合法",
+    "en": "The content paging settings are invalid",
+    "ja": "内容の分割設定が正しくありません",
+    "es": "Los ajustes de paginación del contenido no son válidos"
+  },
+  "資料夾內容批次已失效，請重新開啟資料夾": {
+    "zh-CN": "文件夹内容批次已失效，请重新打开文件夹",
+    "en": "The folder's content page has expired; open the folder again",
+    "ja": "フォルダー内容のページが期限切れです。フォルダーを開き直してください",
+    "es": "La página del contenido caducó; abre la carpeta de nuevo"
+  },
+  "無法確認隱藏屬性：{0}": {
+    "zh-CN": "无法确认隐藏属性：{0}",
+    "en": "Couldn't check the hidden attribute: {0}",
+    "ja": "隠し属性を確認できません：{0}",
+    "es": "No se pudo comprobar el atributo oculto: {0}"
+  },
+  "媒體超出直接內容範圍": {
+    "zh-CN": "媒体超出直接内容范围",
+    "en": "The media file is outside the folder's own content",
+    "ja": "メディアがこのフォルダー直下の範囲外です",
+    "es": "El archivo multimedia está fuera del contenido de la carpeta"
+  },
+  "字幕不屬於此記錄": {
+    "zh-CN": "字幕不属于此记录",
+    "en": "The subtitle does not belong to this record",
+    "ja": "字幕がこの記録に属していません",
+    "es": "El subtítulo no pertenece a este registro"
+  },
+  "不是檔案": {
+    "zh-CN": "不是文件",
+    "en": "Not a file",
+    "ja": "ファイルではありません",
+    "es": "No es un archivo"
+  },
+  "檔案總覽範圍不合法": {
+    "zh-CN": "文件总览范围不合法",
+    "en": "The file overview range is invalid",
+    "ja": "ファイル一覧の範囲が正しくありません",
+    "es": "El alcance del resumen de archivos no es válido"
+  },
+  "檔案總覽批次已失效，請重新整理": {
+    "zh-CN": "文件总览批次已失效，请刷新",
+    "en": "The file overview page has expired; refresh",
+    "ja": "ファイル一覧のページが期限切れです。更新してください",
+    "es": "La página del resumen caducó; actualiza"
+  },
+  "只列出目前已納入且允許瀏覽的範圍；缺失記錄或保護區域未列入": {
+    "zh-CN": "只列出目前已纳入且允许浏览的范围；缺失记录或保护区域未列入",
+    "en": "Only folders that are included and may be browsed are listed; missing records and protected areas are left out",
+    "ja": "取り込み済みで閲覧可能な範囲だけを表示します。記録のない場所や保護領域は含みません",
+    "es": "Solo se listan las carpetas incluidas que se pueden explorar; faltan los registros ausentes y las zonas protegidas"
+  },
+  "資料夾已離開允許範圍": {
+    "zh-CN": "文件夹已离开允许范围",
+    "en": "The folder is no longer in the allowed range",
+    "ja": "フォルダーが許可された範囲外になりました",
+    "es": "La carpeta ya no está en el alcance permitido"
+  },
+  "圖片預覽已過期，請重新取得": {
+    "zh-CN": "图片预览已过期，请重新获取",
+    "en": "The image preview has expired; fetch it again",
+    "ja": "画像のプレビューが期限切れです。取得し直してください",
+    "es": "La vista previa de la imagen caducó; vuelve a obtenerla"
+  },
+  "候選已過期，請重新取得": {
+    "zh-CN": "候选已过期，请重新获取",
+    "en": "The preview has expired; fetch it again",
+    "ja": "候補が期限切れです。取得し直してください",
+    "es": "La vista previa caducó; vuelve a obtenerla"
+  },
+  "匯入欄位不合法": {
+    "zh-CN": "导入栏位不合法",
+    "en": "The imported fields are invalid",
+    "ja": "取り込む項目が正しくありません",
+    "es": "Los campos importados no son válidos"
+  },
+  "來源匯入模式不合法": {
+    "zh-CN": "来源导入模式不合法",
+    "en": "The import mode is invalid",
+    "ja": "取り込みモードが正しくありません",
+    "es": "El modo de importación no es válido"
+  },
+  "既有欄位來源衝突": {
+    "zh-CN": "既有栏位来源冲突",
+    "en": "An existing field comes from another source",
+    "ja": "既存の項目の取得元が衝突しています",
+    "es": "Un campo existente viene de otro origen"
+  },
+  "壓縮頁面已失效": {
+    "zh-CN": "压缩页面已失效",
+    "en": "The archive page has expired",
+    "ja": "アーカイブのページが期限切れです",
+    "es": "La página del archivo caducó"
+  },
+  "壓縮頁面不存在": {
+    "zh-CN": "压缩页面不存在",
+    "en": "The archive page does not exist",
+    "ja": "アーカイブのページがありません",
+    "es": "La página del archivo no existe"
+  },
+  "縮圖已取消": {
+    "zh-CN": "缩略图已取消",
+    "en": "Thumbnail cancelled",
+    "ja": "サムネイルを取り消しました",
+    "es": "Miniatura cancelada"
+  },
+  "圖片過大，請直接檢視原圖": {
+    "zh-CN": "图片过大，请直接查看原图",
+    "en": "The image is too large; view the original",
+    "ja": "画像が大きすぎます。元画像を表示してください",
+    "es": "La imagen es demasiado grande; mira el original"
+  },
+  "縮圖解碼失敗": {
+    "zh-CN": "缩略图解码失败",
+    "en": "The thumbnail couldn't be decoded",
+    "ja": "サムネイルをデコードできません",
+    "es": "No se pudo decodificar la miniatura"
+  },
+  "版本衝突；草稿保留，重新載入後比較": {
+    "zh-CN": "版本冲突；草稿保留，重新加载后比较",
+    "en": "Version conflict; your draft is kept, reload to compare",
+    "ja": "バージョンが衝突しました。下書きは残っています。再読み込みして比較してください",
+    "es": "Conflicto de versiones; tu borrador se conserva, recarga para comparar"
+  },
+  "目標路徑不合法": {
+    "zh-CN": "目标路径不合法",
+    "en": "The target path is invalid",
+    "ja": "対象のパスが正しくありません",
+    "es": "La ruta de destino no es válida"
+  },
+  "目標類型不符": {
+    "zh-CN": "目标类型不符",
+    "en": "The target is the wrong kind",
+    "ja": "対象の種類が一致しません",
+    "es": "El destino no es del tipo correcto"
+  },
+  "欄位身分不合法": {
+    "zh-CN": "栏位身份不合法",
+    "en": "The field identity is invalid",
+    "ja": "項目の ID が正しくありません",
+    "es": "La identidad del campo no es válida"
+  },
+  "欄位 {0} 的值與型別 {1} 不符": {
+    "zh-CN": "栏位 {0} 的值与类型 {1} 不符",
+    "en": "The value of field {0} does not match its type {1}",
+    "ja": "項目 {0} の値が型 {1} と一致しません",
+    "es": "El valor del campo {0} no coincide con su tipo {1}"
+  },
+  "不能改變既有欄位型別": {
+    "zh-CN": "不能改变既有栏位类型",
+    "en": "An existing field's type can't be changed",
+    "ja": "既存の項目の型は変更できません",
+    "es": "No se puede cambiar el tipo de un campo existente"
+  },
+  "欄位更新不合法": {
+    "zh-CN": "栏位更新不合法",
+    "en": "The field update is invalid",
+    "ja": "項目の更新が正しくありません",
+    "es": "La actualización del campo no es válida"
+  },
+  "欄位未配置或型別不符": {
+    "zh-CN": "栏位未配置或类型不符",
+    "en": "The field is not set up or has the wrong type",
+    "ja": "項目が未設定か型が一致しません",
+    "es": "El campo no está configurado o su tipo no coincide"
+  },
+  "單選值不在選項內": {
+    "zh-CN": "单选值不在选项内",
+    "en": "The choice is not one of the options",
+    "ja": "選択値が選択肢にありません",
+    "es": "La opción no está en la lista"
+  },
+  "覆寫型別不符": {
+    "zh-CN": "覆写类型不符",
+    "en": "The override has the wrong type",
+    "ja": "上書きの型が一致しません",
+    "es": "La sustitución tiene un tipo incorrecto"
+  },
+  "僅支援 SRT／VTT": {
+    "zh-CN": "仅支持 SRT／VTT",
+    "en": "Only SRT / VTT are supported",
+    "ja": "SRT／VTT のみ対応しています",
+    "es": "Solo se admiten SRT / VTT"
+  },
+  "字幕需為 5MB 以內的文字檔": {
+    "zh-CN": "字幕需为 5MB 以内的文本文件",
+    "en": "Subtitles must be text files up to 5 MB",
+    "ja": "字幕は 5MB 以下のテキストファイルにしてください",
+    "es": "Los subtítulos deben ser archivos de texto de hasta 5 MB"
+  },
+  "無效的操作": {
+    "zh-CN": "无效的操作",
+    "en": "Invalid operation",
+    "ja": "無効な操作です",
+    "es": "Operación no válida"
+  },
+  "不是 ZIP／CBZ": {
+    "zh-CN": "不是 ZIP／CBZ",
+    "en": "Not a ZIP / CBZ",
+    "ja": "ZIP／CBZ ではありません",
+    "es": "No es un ZIP / CBZ"
+  },
+  "只能用系統預設程式開啟影音檔案": {
+    "zh-CN": "只能用系统默认程序打开影音文件",
+    "en": "Only video and audio files open with the system's default app",
+    "ja": "既定のアプリで開けるのは映像・音声ファイルだけです",
+    "es": "Solo los archivos de vídeo y audio se abren con la aplicación predeterminada"
+  },
+  "目前環境無法顯示檔案位置": {
+    "zh-CN": "目前环境无法显示文件位置",
+    "en": "The file's location can't be shown here",
+    "ja": "この環境ではファイルの場所を表示できません",
+    "es": "Aquí no se puede mostrar la ubicación del archivo"
+  },
+  "網址無法開啟": {
+    "zh-CN": "网址无法打开",
+    "en": "The address can't be opened",
+    "ja": "URL を開けません",
+    "es": "No se puede abrir la dirección"
+  },
+  "索引已由可攜資料重建": {
+    "zh-CN": "索引已由可携数据重建",
+    "en": "The index was rebuilt from the portable records",
+    "ja": "可搬記録からインデックスを再構築しました",
+    "es": "El índice se reconstruyó a partir de los registros portátiles"
+  },
+  "批次範圍不合法": {
+    "zh-CN": "批次范围不合法",
+    "en": "The batch range is invalid",
+    "ja": "一括処理の範囲が正しくありません",
+    "es": "El alcance del lote no es válido"
+  },
+  "專案未配置欄位": {
+    "zh-CN": "项目未配置栏位",
+    "en": "The project has no such field",
+    "ja": "プロジェクトにこの項目がありません",
+    "es": "El proyecto no tiene ese campo"
+  },
+  "標籤應為清單": {
+    "zh-CN": "标签应为列表",
+    "en": "Tags must be a list",
+    "ja": "タグはリストにしてください",
+    "es": "Las etiquetas deben ser una lista"
+  },
+  "型別衝突": {
+    "zh-CN": "类型冲突",
+    "en": "Type conflict",
+    "ja": "型が衝突しています",
+    "es": "Conflicto de tipos"
+  },
+  "只有標籤支援新增／移除": {
+    "zh-CN": "只有标签支持新增／移除",
+    "en": "Only tags can be added or removed",
+    "ja": "追加／削除できるのはタグだけです",
+    "es": "Solo las etiquetas admiten añadir o quitar"
+  },
+  "批次保存 {0} 筆{1}": {
+    "zh-CN": "批量保存 {0} 笔{1}",
+    "en": "Saved {0} in a batch{1}",
+    "ja": "{0} 件を一括保存しました{1}",
+    "es": "Se guardaron {0} en lote{1}"
+  },
+  "失敗（已成功項目保留）：": {
+    "zh-CN": "失败（已成功项目保留）：",
+    "en": "Failed (the ones that worked are kept):",
+    "ja": "失敗（成功した項目は保持）：",
+    "es": "Fallaron (las que funcionaron se conservan):"
+  },
+  "資料夾類型不合法": {
+    "zh-CN": "文件夹类型不合法",
+    "en": "The folder type is invalid",
+    "ja": "フォルダーの種類が正しくありません",
+    "es": "El tipo de carpeta no es válido"
+  },
+  "已指定 {0} 個資料夾的類型{1}": {
+    "zh-CN": "已指定 {0} 个文件夹的类型{1}",
+    "en": "Set the type of {0} folders{1}",
+    "ja": "{0} 個のフォルダーの種類を設定しました{1}",
+    "es": "Se fijó el tipo de {0} carpetas{1}"
+  },
+  "不是影片": {
+    "zh-CN": "不是视频",
+    "en": "Not a video",
+    "ja": "動画ではありません",
+    "es": "No es un vídeo"
+  },
+  "字幕來源未指定": {
+    "zh-CN": "字幕来源未指定",
+    "en": "No subtitle source given",
+    "ja": "字幕の取得元が指定されていません",
+    "es": "No se indicó el origen del subtítulo"
+  },
+  "邊界設定不合法": {
+    "zh-CN": "边界设置不合法",
+    "en": "The boundary setting is invalid",
+    "ja": "境界の設定が正しくありません",
+    "es": "El ajuste de límite no es válido"
+  },
+  "使用者指定": {
+    "zh-CN": "用户指定",
+    "en": "Set by you",
+    "ja": "ユーザー指定",
+    "es": "Indicado por ti"
+  },
+  "圖片不屬於此資料夾": {
+    "zh-CN": "图片不属于此文件夹",
+    "en": "The image does not belong to this folder",
+    "ja": "画像がこのフォルダーに属していません",
+    "es": "La imagen no pertenece a esta carpeta"
+  },
+  "任務版型不存在": {
+    "zh-CN": "任务模板不存在",
+    "en": "The action does not exist",
+    "ja": "操作が存在しません",
+    "es": "La acción no existe"
+  },
+  "參數不合法": {
+    "zh-CN": "参数不合法",
+    "en": "Invalid arguments",
+    "ja": "引数が正しくありません",
+    "es": "Argumentos no válidos"
+  },
+  "請選擇資料夾內的捷徑（.lnk／.url）": {
+    "zh-CN": "请选择文件夹内的快捷方式（.lnk／.url）",
+    "en": "Choose a shortcut (.lnk / .url) in the folder",
+    "ja": "フォルダー内のショートカット（.lnk／.url）を選んでください",
+    "es": "Elige un acceso directo (.lnk / .url) de la carpeta"
+  },
+  "任務尚未綁定；請重新指定": {
+    "zh-CN": "任务尚未绑定；请重新指定",
+    "en": "The action has no target yet; set one",
+    "ja": "操作の対象が未設定です。指定し直してください",
+    "es": "La acción aún no tiene destino; elige uno"
+  },
+  "捷徑類型不符": {
+    "zh-CN": "快捷方式类型不符",
+    "en": "Not a shortcut",
+    "ja": "ショートカットの種類が一致しません",
+    "es": "No es un acceso directo"
+  },
+  "應用程式尚未綁定": {
+    "zh-CN": "应用程序尚未绑定",
+    "en": "No application is set yet",
+    "ja": "アプリが未設定です",
+    "es": "Aún no hay aplicación"
+  },
+  "已開啟指定目標": {
+    "zh-CN": "已打开指定目标",
+    "en": "Opened the target",
+    "ja": "対象を開きました",
+    "es": "Se abrió el destino"
+  },
+  "字幕格式未支援": {
+    "zh-CN": "字幕格式不支持",
+    "en": "Subtitle format not supported",
+    "ja": "字幕の形式に対応していません",
+    "es": "Formato de subtítulo no admitido"
+  },
+  "外部字幕未授權": {
+    "zh-CN": "外部字幕未授权",
+    "en": "The external subtitle is not allowed",
+    "ja": "外部字幕が許可されていません",
+    "es": "El subtítulo externo no está permitido"
+  },
+  "字幕過大": {
+    "zh-CN": "字幕过大",
+    "en": "The subtitle is too large",
+    "ja": "字幕が大きすぎます",
+    "es": "El subtítulo es demasiado grande"
+  },
+  "圖片組件或圖片不存在": {
+    "zh-CN": "图片组件或图片不存在",
+    "en": "The image component or the image does not exist",
+    "ja": "画像コンポーネントまたは画像がありません",
+    "es": "El componente de imagen o la imagen no existe"
+  },
+  "圖片不存在": {
+    "zh-CN": "图片不存在",
+    "en": "The image does not exist",
+    "ja": "画像がありません",
+    "es": "La imagen no existe"
+  },
+  "不支援的操作": {
+    "zh-CN": "不支持的操作",
+    "en": "Unsupported operation",
+    "ja": "対応していない操作です",
+    "es": "Operación no admitida"
+  },
+  "路徑超出受管範圍": {
+    "zh-CN": "路径超出受管范围",
+    "en": "The path is outside the managed area",
+    "ja": "パスが管理範囲外です",
+    "es": "La ruta está fuera del área gestionada"
+  },
+  "不跟隨符號連結或 junction": {
+    "zh-CN": "不跟随符号链接或 junction",
+    "en": "Symbolic links and junctions are not followed",
+    "ja": "シンボリックリンクやジャンクションはたどりません",
+    "es": "No se siguen enlaces simbólicos ni junctions"
+  },
+  "版本衝突：磁碟資料已改變，草稿保留，請重新載入後比較": {
+    "zh-CN": "版本冲突：磁盘数据已改变，草稿保留，请重新加载后比较",
+    "en": "Version conflict: the data on disk changed; your draft is kept, reload to compare",
+    "ja": "バージョンが衝突しました：ディスク上のデータが変わりました。下書きは残っています。再読み込みして比較してください",
+    "es": "Conflicto de versiones: los datos del disco cambiaron; tu borrador se conserva, recarga para comparar"
+  },
+  "版本衝突：寫入期間檔案已改變": {
+    "zh-CN": "版本冲突：写入期间文件已改变",
+    "en": "Version conflict: the file changed while being written",
+    "ja": "バージョンが衝突しました：書き込み中にファイルが変わりました",
+    "es": "Conflicto de versiones: el archivo cambió durante la escritura"
+  },
+  "備份路徑不能是符號連結": {
+    "zh-CN": "备份路径不能是符号链接",
+    "en": "The backup path can't be a symbolic link",
+    "ja": "バックアップのパスにシンボリックリンクは使えません",
+    "es": "La ruta de la copia no puede ser un enlace simbólico"
+  },
+  "資料夾記錄遺失，但復原備份仍存在；請重新連結並從備份復原，未建立新身分": {
+    "zh-CN": "文件夹记录遗失，但恢复备份仍存在；请重新连接并从备份恢复，未建立新身份",
+    "en": "The folder record is missing but its recovery backup exists; relink and restore from the backup. No new identity was created",
+    "ja": "フォルダー記録がありませんが、復元用バックアップは残っています。再リンクしてバックアップから復元してください。新しい ID は作成していません",
+    "es": "Falta el registro de la carpeta pero existe su copia de recuperación; vuelve a vincular y restaura desde la copia. No se creó una identidad nueva"
+  },
+  "資料夾記錄遺失，但仍有專案、資產或未知資料；原檔保留，請復原原記錄後再試": {
+    "zh-CN": "文件夹记录遗失，但仍有项目、资产或未知数据；原文件保留，请恢复原记录后再试",
+    "en": "The folder record is missing but projects, assets or unknown data remain; the files are kept, restore the record and try again",
+    "ja": "フォルダー記録がありませんが、プロジェクト・アセット・不明なデータが残っています。元のファイルは保持しました。記録を復元してから再試行してください",
+    "es": "Falta el registro de la carpeta pero quedan proyectos, recursos o datos desconocidos; los archivos se conservan, restaura el registro y vuelve a intentarlo"
+  },
+  "建立可攜記錄失敗：{0}": {
+    "zh-CN": "建立可携记录失败：{0}",
+    "en": "Couldn't create the portable record: {0}",
+    "ja": "可搬記録を作成できません：{0}",
+    "es": "No se pudo crear el registro portátil: {0}"
+  },
+  "備份身分與目前專案不符，未復原": {
+    "zh-CN": "备份身份与当前项目不符，未恢复",
+    "en": "The backup does not belong to this project; nothing was restored",
+    "ja": "バックアップがこのプロジェクトのものではありません。復元していません",
+    "es": "La copia no pertenece a este proyecto; no se restauró nada"
+  },
+  "復原期間資料已變更，請重新檢查": {
+    "zh-CN": "恢复期间数据已变更，请重新检查",
+    "en": "The data changed during the restore; check again",
+    "ja": "復元中にデータが変わりました。確認し直してください",
+    "es": "Los datos cambiaron durante la restauración; vuelve a comprobar"
+  },
+  "資料夾身分或版本已改變，請重新掃描": {
+    "zh-CN": "文件夹身份或版本已改变，请重新扫描",
+    "en": "The folder's identity or version changed; scan again",
+    "ja": "フォルダーの ID またはバージョンが変わりました。再スキャンしてください",
+    "es": "La identidad o versión de la carpeta cambió; vuelve a escanear"
+  },
+  "遊戲邊界探測超限，請人工確認 ROOT": {
+    "zh-CN": "游戏边界探测超限，请人工确认 ROOT",
+    "en": "The game boundary check went over its limit; confirm the ROOT by hand",
+    "ja": "ゲーム境界の調査が上限を超えました。ROOT を手動で確認してください",
+    "es": "La comprobación del límite del juego superó su límite; confirma la ROOT a mano"
+  },
+  "遊戲特徵包含連結，停止此分支並請人工確認": {
+    "zh-CN": "游戏特征包含链接，停止此分支并请人工确认",
+    "en": "The game files include a link; this branch stops, confirm by hand",
+    "ja": "ゲームの特徴にリンクが含まれます。この分岐を止めます。手動で確認してください",
+    "es": "Los archivos del juego incluyen un enlace; esta rama se detiene, confirma a mano"
+  },
+  "Mac App：主執行檔 + UnityPlayer.dylib + Resources/Data": {
+    "zh-CN": "Mac App：主执行文件 + UnityPlayer.dylib + Resources/Data",
+    "en": "Mac app: main executable + UnityPlayer.dylib + Resources/Data",
+    "ja": "Mac アプリ：メイン実行ファイル + UnityPlayer.dylib + Resources/Data",
+    "es": "App de Mac: ejecutable principal + UnityPlayer.dylib + Resources/Data"
+  },
+  "受保護的 Mac App bundle；引擎未確認，記錄須放外層資料夾": {
+    "zh-CN": "受保护的 Mac App bundle；引擎未确认，记录须放外层文件夹",
+    "en": "Protected Mac app bundle; engine unknown, the record goes in the outer folder",
+    "ja": "保護された Mac アプリバンドル。エンジン未確認。記録は外側のフォルダーに置きます",
+    "es": "Paquete de app de Mac protegido; motor desconocido, el registro va en la carpeta exterior"
+  },
+  "EXE + NW.js 資源／執行環境組合：可能為內嵌或封裝應用；引擎未知，暫停深入，請確認 ROOT／非遊戲": {
+    "zh-CN": "EXE + NW.js 资源／运行环境组合：可能为内嵌或封装应用；引擎未知，暂停深入，请确认 ROOT／非游戏",
+    "en": "EXE + NW.js resources and runtime: possibly an embedded or packaged app; engine unknown, stopping here — confirm the ROOT or mark not a game",
+    "ja": "EXE + NW.js のリソース／実行環境：埋め込みまたはパッケージ化されたアプリの可能性。エンジン不明のためここで止めます。ROOT を確認するか、ゲームではないと指定してください",
+    "es": "EXE + recursos y entorno de NW.js: quizá una app integrada o empaquetada; motor desconocido, se detiene aquí: confirma la ROOT o márcalo como no juego"
+  },
+  "同名 EXE／*_Data + UnityPlayer.dll": {
+    "zh-CN": "同名 EXE／*_Data + UnityPlayer.dll",
+    "en": "EXE / *_Data with the same name + UnityPlayer.dll",
+    "ja": "同名の EXE／*_Data + UnityPlayer.dll",
+    "es": "EXE / *_Data con el mismo nombre + UnityPlayer.dll"
+  },
+  "Unity 部署線索不完整或名稱不相符；先停止，請確認 ROOT／非遊戲": {
+    "zh-CN": "Unity 部署线索不完整或名称不相符；先停止，请确认 ROOT／非游戏",
+    "en": "Incomplete or mismatched Unity layout; stopping here — confirm the ROOT or mark not a game",
+    "ja": "Unity の配置の手がかりが不完全か名前が一致しません。ここで止めます。ROOT を確認するか、ゲームではないと指定してください",
+    "es": "Estructura de Unity incompleta o con nombres distintos; se detiene aquí: confirma la ROOT o márcalo como no juego"
+  },
+  "同名 EXE／PCK（內嵌版本需人工確認）": {
+    "zh-CN": "同名 EXE／PCK（内嵌版本需人工确认）",
+    "en": "EXE / PCK with the same name (embedded builds need checking by hand)",
+    "ja": "同名の EXE／PCK（埋め込み版は手動で確認）",
+    "es": "EXE / PCK con el mismo nombre (las versiones integradas se comprueban a mano)"
+  },
+  "同名 EXE + .console.exe（Godot 的主控台版本；PCK 內嵌，需人工確認）": {
+    "zh-CN": "同名 EXE + .console.exe（Godot 的控制台版本；PCK 内嵌，需人工确认）",
+    "en": "EXE + .console.exe with the same name (Godot's console build; PCK embedded, check by hand)",
+    "ja": "同名の EXE + .console.exe（Godot のコンソール版。PCK 埋め込み、手動で確認）",
+    "es": "EXE + .console.exe con el mismo nombre (versión de consola de Godot; PCK integrado, comprueba a mano)"
+  },
+  "RGSS 封包 + EXE；版本需確認": {
+    "zh-CN": "RGSS 封包 + EXE；版本需确认",
+    "en": "RGSS archive + EXE; version to be checked",
+    "ja": "RGSS アーカイブ + EXE。バージョン要確認",
+    "es": "Archivo RGSS + EXE; versión por comprobar"
+  },
+  "Tyrano 入口／核心 + tyrano + data + EXE": {
+    "zh-CN": "Tyrano 入口／核心 + tyrano + data + EXE",
+    "en": "Tyrano entry / core + tyrano + data + EXE",
+    "ja": "Tyrano のエントリ／コア + tyrano + data + EXE",
+    "es": "Entrada / núcleo de Tyrano + tyrano + data + EXE"
+  },
+  "resources/app.asar 的檔案目錄含 tyrano + data + EXE（不解包）": {
+    "zh-CN": "resources/app.asar 的文件目录含 tyrano + data + EXE（不解包）",
+    "en": "resources/app.asar lists tyrano + data + EXE (not unpacked)",
+    "ja": "resources/app.asar のファイル一覧に tyrano + data + EXE（展開しません）",
+    "es": "resources/app.asar contiene tyrano + data + EXE (sin desempaquetar)"
+  },
+  "外層 EXE +": {
+    "zh-CN": "外层 EXE +",
+    "en": "Outer EXE +",
+    "ja": "外側の EXE +",
+    "es": "EXE exterior +"
+  },
+  "：package.json／index.html + Tyrano／KAG 核心 + Config.tjs + 劇本；ROOT 停在外層": {
+    "zh-CN": "：package.json／index.html + Tyrano／KAG 核心 + Config.tjs + 剧本；ROOT 停在外层",
+    "en": ": package.json / index.html + Tyrano / KAG core + Config.tjs + scenario; the ROOT stays at the outer folder",
+    "ja": "：package.json／index.html + Tyrano／KAG コア + Config.tjs + シナリオ。ROOT は外側に置きます",
+    "es": ": package.json / index.html + núcleo Tyrano / KAG + Config.tjs + guion; la ROOT queda en la carpeta exterior"
+  },
+  "解包應用候選；遊戲結構未完整確認，暫停深入": {
+    "zh-CN": "解包应用候选；游戏结构未完整确认，暂停深入",
+    "en": "unpacked app candidate; game layout not fully confirmed, stopping here",
+    "ja": "展開済みアプリの候補。ゲーム構造を確認しきれないため、ここで止めます",
+    "es": "posible app desempaquetada; estructura del juego sin confirmar, se detiene aquí"
+  },
+  "renpy + game 腳本／封包 + EXE": {
+    "zh-CN": "renpy + game 脚本／封包 + EXE",
+    "en": "renpy + game scripts / archives + EXE",
+    "ja": "renpy + game のスクリプト／アーカイブ + EXE",
+    "es": "renpy + scripts / archivos de game + EXE"
+  },
+  "Data.wolf + EXE（候選）": {
+    "zh-CN": "Data.wolf + EXE（候选）",
+    "en": "Data.wolf + EXE (candidate)",
+    "ja": "Data.wolf + EXE（候補）",
+    "es": "Data.wolf + EXE (candidato)"
+  },
+  "EXE + 同一 Data/BasicData 的 Game.dat／DataBase.dat（未封包或混合封包候選）": {
+    "zh-CN": "EXE + 同一 Data/BasicData 的 Game.dat／DataBase.dat（未封包或混合封包候选）",
+    "en": "EXE + Game.dat / DataBase.dat in the same Data/BasicData (unpacked or mixed candidate)",
+    "ja": "EXE + 同じ Data/BasicData の Game.dat／DataBase.dat（未アーカイブまたは混在の候補）",
+    "es": "EXE + Game.dat / DataBase.dat en el mismo Data/BasicData (candidato sin empaquetar o mixto)"
+  },
+  "data.win + EXE（候選；YYC 需人工確認）": {
+    "zh-CN": "data.win + EXE（候选；YYC 需人工确认）",
+    "en": "data.win + EXE (candidate; YYC builds need checking by hand)",
+    "ja": "data.win + EXE（候補。YYC 版は手動で確認）",
+    "es": "data.win + EXE (candidato; las versiones YYC se comprueban a mano)"
+  },
+  "成對 game.arcd／game.arci + EXE": {
+    "zh-CN": "成对 game.arcd／game.arci + EXE",
+    "en": "Paired game.arcd / game.arci + EXE",
+    "ja": "対になった game.arcd／game.arci + EXE",
+    "es": "Par game.arcd / game.arci + EXE"
+  },
+  "love.dll + lua51.dll + EXE（合併成單一 EXE 的發行版）": {
+    "zh-CN": "love.dll + lua51.dll + EXE（合并成单一 EXE 的发行版）",
+    "en": "love.dll + lua51.dll + EXE (release fused into one EXE)",
+    "ja": "love.dll + lua51.dll + EXE（1 つの EXE に統合した配布版）",
+    "es": "love.dll + lua51.dll + EXE (versión fusionada en un solo EXE)"
+  },
+  "MonoGame／FNA／XNA 框架 DLL + EXE": {
+    "zh-CN": "MonoGame／FNA／XNA 框架 DLL + EXE",
+    "en": "MonoGame / FNA / XNA framework DLL + EXE",
+    "ja": "MonoGame／FNA／XNA フレームワーク DLL + EXE",
+    "es": "DLL del framework MonoGame / FNA / XNA + EXE"
+  },
+  "hl2.exe 或 bin/engine.dll + tier0.dll": {
+    "zh-CN": "hl2.exe 或 bin/engine.dll + tier0.dll",
+    "en": "hl2.exe or bin/engine.dll + tier0.dll",
+    "ja": "hl2.exe または bin/engine.dll + tier0.dll",
+    "es": "hl2.exe o bin/engine.dll + tier0.dll"
+  },
+  "DOSBox 套件": {
+    "zh-CN": "DOSBox 套件",
+    "en": "DOSBox package",
+    "ja": "DOSBox パッケージ",
+    "es": "Paquete DOSBox"
+  },
+  "dosbox.exe 或 dosbox*.conf（DOS 遊戲包裝，內容需人工確認）": {
+    "zh-CN": "dosbox.exe 或 dosbox*.conf（DOS 游戏包装，内容需人工确认）",
+    "en": "dosbox.exe or dosbox*.conf (a DOS game wrapper; check the contents by hand)",
+    "ja": "dosbox.exe または dosbox*.conf（DOS ゲームのラッパー。内容は手動で確認）",
+    "es": "dosbox.exe o dosbox*.conf (envoltorio de juego DOS; comprueba el contenido a mano)"
+  },
+  "PC-98 模擬器": {
+    "zh-CN": "PC-98 模拟器",
+    "en": "PC-98 emulator",
+    "ja": "PC-98 エミュレーター",
+    "es": "Emulador de PC-98"
+  },
+  "Neko Project II 類執行檔 + 磁碟映像（PC-98 遊戲收藏）": {
+    "zh-CN": "Neko Project II 类执行文件 + 磁盘映像（PC-98 游戏收藏）",
+    "en": "Neko Project II-type executable + disk images (a PC-98 game collection)",
+    "ja": "Neko Project II 系の実行ファイル + ディスクイメージ（PC-98 ゲームのコレクション）",
+    "es": "Ejecutable tipo Neko Project II + imágenes de disco (colección de juegos de PC-98)"
+  },
+  "c2runtime.js + EXE（候選）": {
+    "zh-CN": "c2runtime.js + EXE（候选）",
+    "en": "c2runtime.js + EXE (candidate)",
+    "ja": "c2runtime.js + EXE（候補）",
+    "es": "c2runtime.js + EXE (candidato)"
+  },
+  "XP3 + EXE（可能為補丁／工具，需確認）": {
+    "zh-CN": "XP3 + EXE（可能为补丁／工具，需确认）",
+    "en": "XP3 + EXE (may be a patch or tool; check)",
+    "ja": "XP3 + EXE（パッチ／ツールの可能性。要確認）",
+    "es": "XP3 + EXE (puede ser un parche o herramienta; comprueba)"
+  },
+  "EXE + .pfs 封包（Artemis；補丁／工具需確認）": {
+    "zh-CN": "EXE + .pfs 封包（Artemis；补丁／工具需确认）",
+    "en": "EXE + .pfs archives (Artemis; patches or tools need checking)",
+    "ja": "EXE + .pfs アーカイブ（Artemis。パッチ／ツールは要確認）",
+    "es": "EXE + archivos .pfs (Artemis; parches o herramientas por comprobar)"
+  },
+  "AI6WIN*.EXE（Silky’s／Elf 引擎；封包可能被移到子資料夾）": {
+    "zh-CN": "AI6WIN*.EXE（Silky’s／Elf 引擎；封包可能被移到子文件夹）",
+    "en": "AI6WIN*.EXE (Silky's / Elf engine; archives may be in a subfolder)",
+    "ja": "AI6WIN*.EXE（Silky’s／Elf のエンジン。アーカイブがサブフォルダーにある場合あり）",
+    "es": "AI6WIN*.EXE (motor de Silky's / Elf; los archivos pueden estar en una subcarpeta)"
+  },
+  "BGI*.EXE + .arc 封包": {
+    "zh-CN": "BGI*.EXE + .arc 封包",
+    "en": "BGI*.EXE + .arc archives",
+    "ja": "BGI*.EXE + .arc アーカイブ",
+    "es": "BGI*.EXE + archivos .arc"
+  },
+  "ONScripter 執行檔，或 nscript／ons.cfg + nsa／sar 封包": {
+    "zh-CN": "ONScripter 执行文件，或 nscript／ons.cfg + nsa／sar 封包",
+    "en": "ONScripter executable, or nscript / ons.cfg + nsa / sar archives",
+    "ja": "ONScripter の実行ファイル、または nscript／ons.cfg + nsa／sar アーカイブ",
+    "es": "Ejecutable de ONScripter, o nscript / ons.cfg + archivos nsa / sar"
+  },
+  "GAMEEXE.INI + SEEN.TXT／PDT／AVG32 執行檔": {
+    "zh-CN": "GAMEEXE.INI + SEEN.TXT／PDT／AVG32 执行文件",
+    "en": "GAMEEXE.INI + SEEN.TXT / PDT / AVG32 executable",
+    "ja": "GAMEEXE.INI + SEEN.TXT／PDT／AVG32 の実行ファイル",
+    "es": "GAMEEXE.INI + SEEN.TXT / PDT / ejecutable de AVG32"
+  },
+  "YPF 封包 + EXE（可能為補丁／工具，需確認）": {
+    "zh-CN": "YPF 封包 + EXE（可能为补丁／工具，需确认）",
+    "en": "YPF archive + EXE (may be a patch or tool; check)",
+    "ja": "YPF アーカイブ + EXE（パッチ／ツールの可能性。要確認）",
+    "es": "Archivo YPF + EXE (puede ser un parche o herramienta; comprueba)"
+  },
+  "多個 .npa 封包 + EXE": {
+    "zh-CN": "多个 .npa 封包 + EXE",
+    "en": "Several .npa archives + EXE",
+    "ja": "複数の .npa アーカイブ + EXE",
+    "es": "Varios archivos .npa + EXE"
+  },
+  "多個 .int 封包 + cs2conf.dll／config/startup.xml + EXE": {
+    "zh-CN": "多个 .int 封包 + cs2conf.dll／config/startup.xml + EXE",
+    "en": "Several .int archives + cs2conf.dll / config/startup.xml + EXE",
+    "ja": "複数の .int アーカイブ + cs2conf.dll／config/startup.xml + EXE",
+    "es": "Varios archivos .int + cs2conf.dll / config/startup.xml + EXE"
+  },
+  "多個 .pac 封包 + Pal.dll + EXE": {
+    "zh-CN": "多个 .pac 封包 + Pal.dll + EXE",
+    "en": "Several .pac archives + Pal.dll + EXE",
+    "ja": "複数の .pac アーカイブ + Pal.dll + EXE",
+    "es": "Varios archivos .pac + Pal.dll + EXE"
+  },
+  "AdvData 內的 CRX 圖片或 MES 腳本 + EXE": {
+    "zh-CN": "AdvData 内的 CRX 图片或 MES 脚本 + EXE",
+    "en": "CRX images or MES scripts in AdvData + EXE",
+    "ja": "AdvData 内の CRX 画像または MES スクリプト + EXE",
+    "es": "Imágenes CRX o scripts MES en AdvData + EXE"
+  },
+  "live.dll + EXE（遊戲資料包在 EXE 內）": {
+    "zh-CN": "live.dll + EXE（游戏数据包在 EXE 内）",
+    "en": "live.dll + EXE (game data inside the EXE)",
+    "ja": "live.dll + EXE（ゲームデータは EXE 内）",
+    "es": "live.dll + EXE (datos del juego dentro del EXE)"
+  },
+  "data/bakinplayer.exe 或 data/data.rbpack + EXE": {
+    "zh-CN": "data/bakinplayer.exe 或 data/data.rbpack + EXE",
+    "en": "data/bakinplayer.exe or data/data.rbpack + EXE",
+    "ja": "data/bakinplayer.exe または data/data.rbpack + EXE",
+    "es": "data/bakinplayer.exe o data/data.rbpack + EXE"
+  },
+  "data.sgbpack 或 sgb_rpgplayer.exe": {
+    "zh-CN": "data.sgbpack 或 sgb_rpgplayer.exe",
+    "en": "data.sgbpack or sgb_rpgplayer.exe",
+    "ja": "data.sgbpack または sgb_rpgplayer.exe",
+    "es": "data.sgbpack o sgb_rpgplayer.exe"
+  },
+  "EXE + 多個 .npk 封包（Nitroplus／Nitro Origin 的封包格式）": {
+    "zh-CN": "EXE + 多个 .npk 封包（Nitroplus／Nitro Origin 的封包格式）",
+    "en": "EXE + several .npk archives (Nitroplus / Nitro Origin format)",
+    "ja": "EXE + 複数の .npk アーカイブ（Nitroplus／Nitro Origin の形式）",
+    "es": "EXE + varios archivos .npk (formato de Nitroplus / Nitro Origin)"
+  },
+  "files/SCRIPT.PAK 與其他 .PAK 封包 + EXE（Prototype 引擎，Key 作品 Steam 版）": {
+    "zh-CN": "files/SCRIPT.PAK 与其他 .PAK 封包 + EXE（Prototype 引擎，Key 作品 Steam 版）",
+    "en": "files/SCRIPT.PAK and other .PAK archives + EXE (Prototype engine; Steam releases of Key titles)",
+    "ja": "files/SCRIPT.PAK と他の .PAK アーカイブ + EXE（Prototype のエンジン。Key 作品の Steam 版）",
+    "es": "files/SCRIPT.PAK y otros archivos .PAK + EXE (motor de Prototype; versiones de Steam de títulos de Key)"
+  },
+  "EXE + resources/app.asar：封裝應用候選，不解包或推定引擎；請確認遊戲 ROOT 或標記非遊戲": {
+    "zh-CN": "EXE + resources/app.asar：封装应用候选，不解包或推定引擎；请确认游戏 ROOT 或标记非游戏",
+    "en": "EXE + resources/app.asar: possibly a packaged app, not unpacked and no engine assumed; confirm the game ROOT or mark not a game",
+    "ja": "EXE + resources/app.asar：パッケージ化アプリの候補。展開もエンジンの推定もしません。ゲームの ROOT を確認するか、ゲームではないと指定してください",
+    "es": "EXE + resources/app.asar: posible app empaquetada, sin desempaquetar ni suponer motor; confirma la ROOT del juego o márcalo como no juego"
+  },
+  "EXE + steam_api*.dll：Steam 發行版候選；引擎未確認，請確認 ROOT／非遊戲": {
+    "zh-CN": "EXE + steam_api*.dll：Steam 发行版候选；引擎未确认，请确认 ROOT／非游戏",
+    "en": "EXE + steam_api*.dll: possibly a Steam release; engine unknown, confirm the ROOT or mark not a game",
+    "ja": "EXE + steam_api*.dll：Steam 版の候補。エンジン未確認。ROOT を確認するか、ゲームではないと指定してください",
+    "es": "EXE + steam_api*.dll: posible versión de Steam; motor desconocido, confirma la ROOT o márcalo como no juego"
+  },
+  "Binaries/Win64 執行檔 + Content/Paks（PAK／IoStore）；不依賴版本資訊": {
+    "zh-CN": "Binaries/Win64 执行文件 + Content/Paks（PAK／IoStore）；不依赖版本信息",
+    "en": "Binaries/Win64 executable + Content/Paks (PAK / IoStore); no version information needed",
+    "ja": "Binaries/Win64 の実行ファイル + Content/Paks（PAK／IoStore）。バージョン情報に依存しません",
+    "es": "Ejecutable en Binaries/Win64 + Content/Paks (PAK / IoStore); no depende de la versión"
+  },
+  "同名外層啟動器／產品資料夾 +": {
+    "zh-CN": "同名外层启动器／产品文件夹 +",
+    "en": "Outer launcher / product folder with the same name +",
+    "ja": "同名の外側ランチャー／製品フォルダー +",
+    "es": "Lanzador exterior / carpeta del producto con el mismo nombre +"
+  },
+  "跨層 Unreal 部署與啟動器名稱不相符，可能為改名遊戲或集合：": {
+    "zh-CN": "跨层 Unreal 部署与启动器名称不相符，可能为改名游戏或合集：",
+    "en": "An Unreal build one level down does not match the launcher's name; possibly a renamed game or a collection:",
+    "ja": "下の階層の Unreal 配置とランチャー名が一致しません。名前を変えたゲームかコレクションの可能性：",
+    "es": "Una compilación de Unreal un nivel abajo no coincide con el nombre del lanzador; quizá un juego renombrado o una colección:"
+  },
+  "；需人工確認 ROOT": {
+    "zh-CN": "；需人工确认 ROOT",
+    "en": "; confirm the ROOT by hand",
+    "ja": "。ROOT を手動で確認してください",
+    "es": "; confirma la ROOT a mano"
+  },
+  "隱藏屬性清單過大": {
+    "zh-CN": "隐藏属性清单过大",
+    "en": "The hidden-attribute list is too large",
+    "ja": "隠し属性の一覧が大きすぎます",
+    "es": "La lista de atributos ocultos es demasiado grande"
+  },
+  "無法讀取隱藏屬性": {
+    "zh-CN": "无法读取隐藏属性",
+    "en": "Couldn't read the hidden attribute",
+    "ja": "隠し属性を読み取れません",
+    "es": "No se pudo leer el atributo oculto"
+  },
+  "讀取隱藏屬性逾時": {
+    "zh-CN": "读取隐藏属性超时",
+    "en": "Reading the hidden attribute timed out",
+    "ja": "隠し属性の読み取りがタイムアウトしました",
+    "es": "Se agotó el tiempo al leer el atributo oculto"
+  },
+  "隱藏屬性結果不合法": {
+    "zh-CN": "隐藏属性结果不合法",
+    "en": "The hidden-attribute result is invalid",
+    "ja": "隠し属性の結果が正しくありません",
+    "es": "El resultado del atributo oculto no es válido"
+  },
+  "設定隱藏屬性逾時": {
+    "zh-CN": "设置隐藏属性超时",
+    "en": "Setting the hidden attribute timed out",
+    "ja": "隠し属性の設定がタイムアウトしました",
+    "es": "Se agotó el tiempo al fijar el atributo oculto"
+  },
+  "隱藏屬性程序退出：{0}": {
+    "zh-CN": "隐藏属性程序退出：{0}",
+    "en": "The hidden-attribute helper exited: {0}",
+    "ja": "隠し属性の処理が終了しました：{0}",
+    "es": "El proceso del atributo oculto terminó: {0}"
+  },
+  "圖片網址不合法": {
+    "zh-CN": "图片网址不合法",
+    "en": "The image address is invalid",
+    "ja": "画像の URL が正しくありません",
+    "es": "La dirección de la imagen no es válida"
+  },
+  "只接受不含帳號密碼的 HTTP(S) 圖片網址": {
+    "zh-CN": "只接受不含账号密码的 HTTP(S) 图片网址",
+    "en": "Only HTTP(S) image addresses without a user name or password are accepted",
+    "ja": "ユーザー名やパスワードを含まない HTTP(S) の画像 URL のみ使えます",
+    "es": "Solo se aceptan direcciones de imagen HTTP(S) sin usuario ni contraseña"
+  },
+  "無法解析圖片網址的主機": {
+    "zh-CN": "无法解析图片网址的主机",
+    "en": "The image address's host can't be resolved",
+    "ja": "画像 URL のホストを解決できません",
+    "es": "No se puede resolver el servidor de la imagen"
+  },
+  "圖片網址重新導向過多或無效": {
+    "zh-CN": "图片网址重定向过多或无效",
+    "en": "The image address redirects too often or badly",
+    "ja": "画像 URL のリダイレクトが多すぎるか無効です",
+    "es": "La dirección de la imagen redirige demasiado o mal"
+  },
+  "網址內容不是支援的圖片（PNG、JPEG、GIF、WebP、BMP、AVIF、ICO）": {
+    "zh-CN": "网址内容不是支持的图片（PNG、JPEG、GIF、WebP、BMP、AVIF、ICO）",
+    "en": "The address is not a supported image (PNG, JPEG, GIF, WebP, BMP, AVIF, ICO)",
+    "ja": "URL の内容は対応する画像（PNG・JPEG・GIF・WebP・BMP・AVIF・ICO）ではありません",
+    "es": "La dirección no es una imagen admitida (PNG, JPEG, GIF, WebP, BMP, AVIF, ICO)"
+  },
+  "此資料夾在遊戲邊界保護內，只能整筆刪除記錄，不能只清私有覆寫": {
+    "zh-CN": "此文件夹在游戏边界保护内，只能整笔删除记录，不能只清私有覆写",
+    "en": "This folder is inside a game boundary: only the whole record can be removed, not just private overrides",
+    "ja": "このフォルダーはゲーム境界の保護内です。記録全体を削除できるだけで、非公開の上書きだけは消せません",
+    "es": "Esta carpeta está dentro de un límite de juego: solo se puede quitar el registro entero, no solo las sustituciones privadas"
+  },
+  "{0}: 未驗證歸屬，保留": {
+    "zh-CN": "{0}: 未验证归属，保留",
+    "en": "{0}: ownership not verified, kept",
+    "ja": "{0}: 所属を確認できないため保持",
+    "es": "{0}: propiedad sin verificar, se conserva"
+  },
+  "沒有此專案私有覆寫可清理": {
+    "zh-CN": "没有此项目私有覆写可清理",
+    "en": "This project has no private overrides to clear",
+    "ja": "このプロジェクトに消去できる非公開の上書きはありません",
+    "es": "Este proyecto no tiene sustituciones privadas que borrar"
+  },
+  "清理預覽已失效，請重新預覽": {
+    "zh-CN": "清理预览已失效，请重新预览",
+    "en": "The cleanup preview has expired; preview again",
+    "ja": "整理のプレビューが期限切れです。プレビューし直してください",
+    "es": "La vista previa de la limpieza caducó; vuelve a previsualizar"
+  },
+  "預覽後資料已變更，清理未執行，請重新預覽": {
+    "zh-CN": "预览后数据已变更，清理未执行，请重新预览",
+    "en": "The data changed after the preview; nothing was cleaned, preview again",
+    "ja": "プレビュー後にデータが変わったため整理していません。プレビューし直してください",
+    "es": "Los datos cambiaron tras la vista previa; no se limpió nada, vuelve a previsualizar"
+  },
+  "清理期間檔案已變更，停止此筆清理": {
+    "zh-CN": "清理期间文件已变更，停止此笔清理",
+    "en": "A file changed during the cleanup; this item stopped",
+    "ja": "整理中にファイルが変わったため、この項目は中止しました",
+    "es": "Un archivo cambió durante la limpieza; este elemento se detuvo"
+  },
+  "此資料夾受遊戲／App 邊界保護": {
+    "zh-CN": "此文件夹受游戏／App 边界保护",
+    "en": "This folder is protected by a game / app boundary",
+    "ja": "このフォルダーはゲーム／アプリの境界で保護されています",
+    "es": "Esta carpeta está protegida por un límite de juego / app"
+  },
+  "此專案未連結": {
+    "zh-CN": "此项目未连接",
+    "en": "This project is not linked",
+    "ja": "このプロジェクトはリンクされていません",
+    "es": "Este proyecto no está vinculado"
+  },
+  "專案位於遊戲／App 保護邊界內，無法復原寫入": {
+    "zh-CN": "项目位于游戏／App 保护边界内，无法恢复写入",
+    "en": "The project is inside a game / app boundary; writes can't be restored",
+    "ja": "プロジェクトがゲーム／アプリの保護境界内にあるため、書き込みを復元できません",
+    "es": "El proyecto está dentro de un límite de juego / app; no se pueden restaurar escrituras"
+  },
+  "專案備份 ID 不符": {
+    "zh-CN": "项目备份 ID 不符",
+    "en": "The project backup ID does not match",
+    "ja": "プロジェクトのバックアップ ID が一致しません",
+    "es": "El ID de la copia del proyecto no coincide"
+  },
+  "根資料夾與專案備份身分不符，未復原": {
+    "zh-CN": "根文件夹与项目备份身份不符，未恢复",
+    "en": "The root folder does not match the project backup; nothing was restored",
+    "ja": "ルートフォルダーとプロジェクトのバックアップが一致しないため復元していません",
+    "es": "La carpeta raíz no coincide con la copia del proyecto; no se restauró nada"
+  },
+  "資料夾選擇已失效，請重新選擇": {
+    "zh-CN": "文件夹选择已失效，请重新选择",
+    "en": "The folder choice has expired; choose again",
+    "ja": "フォルダーの選択が期限切れです。選び直してください",
+    "es": "La elección de carpeta caducó; vuelve a elegir"
+  },
+  "欄位不存在，無法複製": {
+    "zh-CN": "栏位不存在，无法复制",
+    "en": "The field does not exist and can't be copied",
+    "ja": "項目がないためコピーできません",
+    "es": "El campo no existe y no se puede copiar"
+  },
+  "此欄位沒有可複製的值": {
+    "zh-CN": "此栏位没有可复制的值",
+    "en": "This field has no value to copy",
+    "ja": "この項目にコピーできる値はありません",
+    "es": "Este campo no tiene valor que copiar"
+  },
+  "已建立備份": {
+    "zh-CN": "已建立备份",
+    "en": "Backup created",
+    "ja": "バックアップを作成しました",
+    "es": "Copia creada"
+  },
+  "未備份：{0}": {
+    "zh-CN": "未备份：{0}",
+    "en": "Not backed up: {0}",
+    "ja": "バックアップしていません：{0}",
+    "es": "Sin copia: {0}"
+  },
+  "選擇備份位置": {
+    "zh-CN": "选择备份位置",
+    "en": "Choose a backup location",
+    "ja": "バックアップの場所を選択",
+    "es": "Elige dónde guardar la copia"
+  },
+  "已匯出備份：{0}": {
+    "zh-CN": "已导出备份：{0}",
+    "en": "Backup exported: {0}",
+    "ja": "バックアップを書き出しました：{0}",
+    "es": "Copia exportada: {0}"
+  },
+  "選擇備份資料夾": {
+    "zh-CN": "选择备份文件夹",
+    "en": "Choose a backup folder",
+    "ja": "バックアップフォルダーを選択",
+    "es": "Elige una carpeta de copia"
+  },
+  "已還原：{0}": {
+    "zh-CN": "已还原：{0}",
+    "en": "Restored: {0}",
+    "ja": "復元しました：{0}",
+    "es": "Restaurado: {0}"
+  },
+  "未還原：{0}": {
+    "zh-CN": "未还原：{0}",
+    "en": "Not restored: {0}",
+    "ja": "復元していません：{0}",
+    "es": "No restaurado: {0}"
+  },
+  "找不到要匯出的專案": {
+    "zh-CN": "找不到要导出的项目",
+    "en": "The project to export was not found",
+    "ja": "書き出すプロジェクトが見つかりません",
+    "es": "No se encontró el proyecto que exportar"
+  },
+  "匯出位置不能在專案資料夾內，請選擇其他位置": {
+    "zh-CN": "导出位置不能在项目文件夹内，请选择其他位置",
+    "en": "The export location can't be inside the project folder; choose another",
+    "ja": "書き出し先をプロジェクトフォルダー内にはできません。別の場所を選んでください",
+    "es": "La exportación no puede estar dentro de la carpeta del proyecto; elige otro lugar"
+  },
+  "專案定義檔不存在或無法驗證，未匯出": {
+    "zh-CN": "项目定义文件不存在或无法验证，未导出",
+    "en": "The project definition is missing or can't be verified; nothing was exported",
+    "ja": "プロジェクト定義がないか検証できないため、書き出していません",
+    "es": "La definición del proyecto falta o no se puede verificar; no se exportó nada"
+  },
+  "匯出期間檔案已改變，請重試：{0}": {
+    "zh-CN": "导出期间文件已改变，请重试：{0}",
+    "en": "A file changed during the export; try again: {0}",
+    "ja": "書き出し中にファイルが変わりました。再試行してください：{0}",
+    "es": "Un archivo cambió durante la exportación; vuelve a intentarlo: {0}"
+  },
+  "匯出資料夾與目標資料夾不能互相包含": {
+    "zh-CN": "导出文件夹与目标文件夹不能互相包含",
+    "en": "The export folder and target folder can't contain each other",
+    "ja": "書き出しフォルダーと対象フォルダーを互いに含めることはできません",
+    "es": "La carpeta de exportación y la de destino no pueden contenerse entre sí"
+  },
+  "匯出清單過大": {
+    "zh-CN": "导出清单过大",
+    "en": "The export list is too large",
+    "ja": "書き出しの一覧が大きすぎます",
+    "es": "La lista de exportación es demasiado grande"
+  },
+  "目標位置受遊戲／App 邊界保護，請選擇外層資料夾：{0}": {
+    "zh-CN": "目标位置受游戏／App 边界保护，请选择外层文件夹：{0}",
+    "en": "The target is protected by a game / app boundary; choose an outer folder: {0}",
+    "ja": "対象はゲーム／アプリの境界で保護されています。外側のフォルダーを選んでください：{0}",
+    "es": "El destino está protegido por un límite de juego / app; elige una carpeta exterior: {0}"
+  },
+  "同一專案仍連結在另一個位置：{0}。若要搬移，請先取消那個連結": {
+    "zh-CN": "同一项目仍连接在另一个位置：{0}。若要搬移，请先取消那个连接",
+    "en": "The same project is still linked elsewhere: {0}. To move it, unlink that one first",
+    "ja": "同じプロジェクトが別の場所にリンクされています：{0}。移動するには先にそのリンクを解除してください",
+    "es": "El mismo proyecto sigue vinculado en otro lugar: {0}. Para moverlo, desvincula ese primero"
+  },
+  "匯出資料不完整：{0}": {
+    "zh-CN": "导出数据不完整：{0}",
+    "en": "The export is incomplete: {0}",
+    "ja": "書き出しデータが不完全です：{0}",
+    "es": "La exportación está incompleta: {0}"
+  },
+  "匯出資料已損壞：{0}": {
+    "zh-CN": "导出数据已损坏：{0}",
+    "en": "The export is damaged: {0}",
+    "ja": "書き出しデータが壊れています：{0}",
+    "es": "La exportación está dañada: {0}"
+  },
+  "這個位置沒有可放入專案定義的資料夾，無法匯入": {
+    "zh-CN": "这个位置没有可放入项目定义的文件夹，无法导入",
+    "en": "This location has no folder that can take the project definition; can't import",
+    "ja": "この場所にプロジェクト定義を置けるフォルダーがないため、読み込めません",
+    "es": "Este lugar no tiene una carpeta para la definición del proyecto; no se puede importar"
+  },
+  "部分檔案在目標位置已有不同內容；預設保留現有內容。勾選覆寫會先備份，但已有記錄的資料夾一律保留現有記錄": {
+    "zh-CN": "部分文件在目标位置已有不同内容；默认保留现有内容。勾选覆写会先备份，但已有记录的文件夹一律保留现有记录",
+    "en": "Some files at the target already differ; existing content is kept by default. Overwriting backs up first, but folders that already have a record always keep it",
+    "ja": "対象の一部のファイルは内容が異なります。既定では既存の内容を残します。上書きを選ぶと先にバックアップしますが、記録のあるフォルダーは常に既存の記録を残します",
+    "es": "Algunos archivos del destino ya son distintos; por defecto se conserva lo existente. Sobrescribir hace antes una copia, pero las carpetas con registro siempre lo conservan"
+  },
+  "匯出資料中的部分資料夾在目標位置不存在，已略過": {
+    "zh-CN": "导出数据中的部分文件夹在目标位置不存在，已略过",
+    "en": "Some folders in the export don't exist at the target and were skipped",
+    "ja": "書き出しデータの一部のフォルダーは対象に存在しないため、スキップしました",
+    "es": "Algunas carpetas de la exportación no existen en el destino y se omitieron"
+  },
+  "部分資料夾位於遊戲邊界內，為保護內部檔案已略過": {
+    "zh-CN": "部分文件夹位于游戏边界内，为保护内部文件已略过",
+    "en": "Some folders are inside a game boundary and were skipped to protect its files",
+    "ja": "一部のフォルダーはゲーム境界内にあるため、内部ファイル保護のためスキップしました",
+    "es": "Algunas carpetas están dentro de un límite de juego y se omitieron para proteger sus archivos"
+  },
+  "匯入預覽已失效，請重新選擇": {
+    "zh-CN": "导入预览已失效，请重新选择",
+    "en": "The import preview has expired; choose again",
+    "ja": "読み込みのプレビューが期限切れです。選び直してください",
+    "es": "La vista previa de importación caducó; vuelve a elegir"
+  },
+  "沒有可匯入的專案定義": {
+    "zh-CN": "没有可导入的项目定义",
+    "en": "There is no project definition to import",
+    "ja": "読み込めるプロジェクト定義がありません",
+    "es": "No hay definición de proyecto que importar"
+  },
+  "匯出資料已改變：{0}": {
+    "zh-CN": "导出数据已改变：{0}",
+    "en": "The export changed: {0}",
+    "ja": "書き出しデータが変わりました：{0}",
+    "es": "La exportación cambió: {0}"
+  },
+  "目標檔案在預覽後已改變，請重新預覽：{0}": {
+    "zh-CN": "目标文件在预览后已改变，请重新预览：{0}",
+    "en": "A target file changed after the preview; preview again: {0}",
+    "ja": "プレビュー後に対象ファイルが変わりました。プレビューし直してください：{0}",
+    "es": "Un archivo de destino cambió tras la vista previa; vuelve a previsualizar: {0}"
+  },
+  "目標根資料夾沒有記錄，無法連結專案": {
+    "zh-CN": "目标根文件夹没有记录，无法连接项目",
+    "en": "The target root folder has no record; the project can't be linked",
+    "ja": "対象のルートフォルダーに記録がないため、プロジェクトをリンクできません",
+    "es": "La carpeta raíz de destino no tiene registro; no se puede vincular el proyecto"
+  },
+  "匯入失敗：{0}{1}{2}": {
+    "zh-CN": "导入失败：{0}{1}{2}",
+    "en": "Import failed: {0}{1}{2}",
+    "ja": "読み込みに失敗しました：{0}{1}{2}",
+    "es": "Error al importar: {0}{1}{2}"
+  },
+  "；部分變更無法自動還原": {
+    "zh-CN": "；部分变更无法自动还原",
+    "en": "; some changes couldn't be undone automatically",
+    "ja": "。一部の変更は自動で元に戻せませんでした",
+    "es": "; algunos cambios no se pudieron deshacer automáticamente"
+  },
+  "；已還原變更": {
+    "zh-CN": "；已还原变更",
+    "en": "; the changes were undone",
+    "ja": "。変更を元に戻しました",
+    "es": "; se deshicieron los cambios"
+  },
+  "（備份：{0}）": {
+    "zh-CN": "（备份：{0}）",
+    "en": " (backup: {0})",
+    "ja": "（バックアップ：{0}）",
+    "es": " (copia: {0})"
+  },
+  "找不到自訂欄位，請重新載入": {
+    "zh-CN": "找不到自定义栏位，请重新加载",
+    "en": "The custom field was not found; reload",
+    "ja": "カスタム項目が見つかりません。再読み込みしてください",
+    "es": "No se encontró el campo personalizado; recarga"
+  },
+  "只處理已連結且已納入的可存取記錄；離線、未索引及外部副本不在範圍。": {
+    "zh-CN": "只处理已连接且已纳入的可访问记录；离线、未索引及外部副本不在范围。",
+    "en": "Only linked, included and reachable records are handled; offline, unindexed and outside copies are not.",
+    "ja": "リンク済みで取り込まれた、アクセスできる記録のみ処理します。オフライン・未インデックス・外部のコピーは対象外です。",
+    "es": "Solo se procesan registros vinculados, incluidos y accesibles; los sin conexión, sin indexar o copias externas no."
+  },
+  "常用搜尋「{0}」的欄位身分不明，請先修正：{1}": {
+    "zh-CN": "常用搜索「{0}」的栏位身份不明，请先修正：{1}",
+    "en": "The saved search \"{0}\" uses an unknown field; fix it first: {1}",
+    "ja": "保存した検索「{0}」の項目が不明です。先に修正してください：{1}",
+    "es": "La búsqueda guardada «{0}» usa un campo desconocido; corrígela primero: {1}"
+  },
+  "常用搜尋「{0}」無法解析，原樣保留；未宣稱其引用已清除": {
+    "zh-CN": "常用搜索「{0}」无法解析，原样保留；未声称其引用已清除",
+    "en": "The saved search \"{0}\" can't be parsed and was kept as is; its references are not claimed cleared",
+    "ja": "保存した検索「{0}」を解析できないため、そのまま残しました。参照が消えたとは見なしません",
+    "es": "La búsqueda guardada «{0}» no se puede analizar y se dejó igual; no se dan por borradas sus referencias"
+  },
+  "{0}: 專案不可用，保留": {
+    "zh-CN": "{0}: 项目不可用，保留",
+    "en": "{0}: project unavailable, kept",
+    "ja": "{0}: プロジェクトが使えないため保持",
+    "es": "{0}: proyecto no disponible, se conserva"
+  },
+  "專案備份身分不符": {
+    "zh-CN": "项目备份身份不符",
+    "en": "The project backup does not match",
+    "ja": "プロジェクトのバックアップが一致しません",
+    "es": "La copia del proyecto no coincide"
+  },
+  "受影響專案位於保護邊界內，無法安全刪除欄位": {
+    "zh-CN": "受影响项目位于保护边界内，无法安全删除栏位",
+    "en": "An affected project is inside a protected boundary; the field can't be removed safely",
+    "ja": "影響するプロジェクトが保護境界内にあるため、項目を安全に削除できません",
+    "es": "Un proyecto afectado está dentro de un límite protegido; no se puede quitar el campo con seguridad"
+  },
+  "{0}: 未連結專案 {1} 的私有值保留，未納入刪除": {
+    "zh-CN": "{0}: 未连接项目 {1} 的私有值保留，未纳入删除",
+    "en": "{0}: private values of the unlinked project {1} are kept and not removed",
+    "ja": "{0}: リンクされていないプロジェクト {1} の非公開の値は残し、削除対象外です",
+    "es": "{0}: los valores privados del proyecto no vinculado {1} se conservan y no se quitan"
+  },
+  "資料夾備份身分不符": {
+    "zh-CN": "文件夹备份身份不符",
+    "en": "The folder backup does not match",
+    "ja": "フォルダーのバックアップが一致しません",
+    "es": "La copia de la carpeta no coincide"
+  },
+  "受影響記錄位於保護邊界內，無法安全刪除欄位": {
+    "zh-CN": "受影响记录位于保护边界内，无法安全删除栏位",
+    "en": "An affected record is inside a protected boundary; the field can't be removed safely",
+    "ja": "影響する記録が保護境界内にあるため、項目を安全に削除できません",
+    "es": "Un registro afectado está dentro de un límite protegido; no se puede quitar el campo con seguridad"
+  },
+  "欄位刪除預覽已失效，請重新預覽": {
+    "zh-CN": "栏位删除预览已失效，请重新预览",
+    "en": "The field removal preview has expired; preview again",
+    "ja": "項目削除のプレビューが期限切れです。プレビューし直してください",
+    "es": "La vista previa de quitar el campo caducó; vuelve a previsualizar"
+  },
+  "預覽後備份已變更，刪除未執行": {
+    "zh-CN": "预览后备份已变更，删除未执行",
+    "en": "The backup changed after the preview; nothing was removed",
+    "ja": "プレビュー後にバックアップが変わったため、削除していません",
+    "es": "La copia cambió tras la vista previa; no se quitó nada"
+  },
+  "預覽後資料已變更，刪除未執行": {
+    "zh-CN": "预览后数据已变更，删除未执行",
+    "en": "The data changed after the preview; nothing was removed",
+    "ja": "プレビュー後にデータが変わったため、削除していません",
+    "es": "Los datos cambiaron tras la vista previa; no se quitó nada"
+  },
+  "保護邊界已變更，刪除未執行": {
+    "zh-CN": "保护边界已变更，删除未执行",
+    "en": "A protected boundary changed; nothing was removed",
+    "ja": "保護境界が変わったため、削除していません",
+    "es": "Un límite protegido cambió; no se quitó nada"
+  },
+  "此專案位於保護邊界內，只能取消連結": {
+    "zh-CN": "此项目位于保护边界内，只能取消连接",
+    "en": "This project is inside a protected boundary and can only be unlinked",
+    "ja": "このプロジェクトは保護境界内にあるため、リンク解除のみできます",
+    "es": "Este proyecto está dentro de un límite protegido y solo se puede desvincular"
+  },
+  "祖先專案備份身分不符": {
+    "zh-CN": "上层项目备份身份不符",
+    "en": "The parent project backup does not match",
+    "ja": "上位プロジェクトのバックアップが一致しません",
+    "es": "La copia del proyecto superior no coincide"
+  },
+  "只檢查目前可存取的清理樹與已連結專案；離線、未連結副本無法判斷。": {
+    "zh-CN": "只检查当前可访问的清理树与已连接项目；离线、未连接副本无法判断。",
+    "en": "Only the reachable cleanup tree and linked projects are checked; offline and unlinked copies can't be judged.",
+    "ja": "現在アクセスできる整理対象と、リンク済みのプロジェクトだけを確認します。オフラインやリンクされていないコピーは判断できません。",
+    "es": "Solo se revisan el árbol accesible y los proyectos vinculados; las copias sin conexión o sin vincular no se pueden evaluar."
+  },
+  "完全移除預覽已失效，請重新預覽": {
+    "zh-CN": "完全移除预览已失效，请重新预览",
+    "en": "The full removal preview has expired; preview again",
+    "ja": "完全削除のプレビューが期限切れです。プレビューし直してください",
+    "es": "La vista previa de eliminación completa caducó; vuelve a previsualizar"
+  },
+  "遊戲保護邊界已變更，移除未執行": {
+    "zh-CN": "游戏保护边界已变更，移除未执行",
+    "en": "A game boundary changed; nothing was removed",
+    "ja": "ゲームの保護境界が変わったため、削除していません",
+    "es": "Un límite de juego cambió; no se quitó nada"
+  },
+  "預覽後資料已變更，移除未執行": {
+    "zh-CN": "预览后数据已变更，移除未执行",
+    "en": "The data changed after the preview; nothing was removed",
+    "ja": "プレビュー後にデータが変わったため、削除していません",
+    "es": "Los datos cambiaron tras la vista previa; no se quitó nada"
+  },
+  "預覽後專案已變更，移除未執行": {
+    "zh-CN": "预览后项目已变更，移除未执行",
+    "en": "The project changed after the preview; nothing was removed",
+    "ja": "プレビュー後にプロジェクトが変わったため、削除していません",
+    "es": "El proyecto cambió tras la vista previa; no se quitó nada"
+  },
+  "備份期間資料已變更，移除未執行": {
+    "zh-CN": "备份期间数据已变更，移除未执行",
+    "en": "The data changed during the backup; nothing was removed",
+    "ja": "バックアップ中にデータが変わったため、削除していません",
+    "es": "Los datos cambiaron durante la copia; no se quitó nada"
+  },
+  "預覽後備份已變更，移除未執行": {
+    "zh-CN": "预览后备份已变更，移除未执行",
+    "en": "The backup changed after the preview; nothing was removed",
+    "ja": "プレビュー後にバックアップが変わったため、削除していません",
+    "es": "La copia cambió tras la vista previa; no se quitó nada"
+  },
+  "備份期間專案已變更，移除未執行": {
+    "zh-CN": "备份期间项目已变更，移除未执行",
+    "en": "The project changed during the backup; nothing was removed",
+    "ja": "バックアップ中にプロジェクトが変わったため、削除していません",
+    "es": "El proyecto cambió durante la copia; no se quitó nada"
+  },
+  "{0}: 尚有未驗證資料，目錄保留": {
+    "zh-CN": "{0}: 尚有未验证数据，目录保留",
+    "en": "{0}: unverified data remains, the folder is kept",
+    "ja": "{0}: 未確認のデータがあるため、フォルダーを保持",
+    "es": "{0}: quedan datos sin verificar, se conserva la carpeta"
+  },
+  "此專案位於遊戲／App 保護邊界內，只能取消連結": {
+    "zh-CN": "此项目位于游戏／App 保护边界内，只能取消连接",
+    "en": "This project is inside a game / app boundary and can only be unlinked",
+    "ja": "このプロジェクトはゲーム／アプリの保護境界内にあるため、リンク解除のみできます",
+    "es": "Este proyecto está dentro de un límite de juego / app y solo se puede desvincular"
+  },
+  "專案設定身分不符，無法移除": {
+    "zh-CN": "项目设置身份不符，无法移除",
+    "en": "The project settings don't match; can't remove",
+    "ja": "プロジェクト設定が一致しないため削除できません",
+    "es": "La configuración del proyecto no coincide; no se puede quitar"
+  },
+  "{0}: App 內資料保留": {
+    "zh-CN": "{0}: App 内数据保留",
+    "en": "{0}: data inside the app is kept",
+    "ja": "{0}: アプリ内のデータを保持",
+    "es": "{0}: se conservan los datos dentro de la app"
+  },
+  "{0}: 遊戲內部記錄保留": {
+    "zh-CN": "{0}: 游戏内部记录保留",
+    "en": "{0}: records inside the game are kept",
+    "ja": "{0}: ゲーム内部の記録を保持",
+    "es": "{0}: se conservan los registros dentro del juego"
+  },
+  "{0}: 根記錄仍有共用資料、其他專案或未驗證檔案，保留根身分": {
+    "zh-CN": "{0}: 根记录仍有共用数据、其他项目或未验证文件，保留根身份",
+    "en": "{0}: the root record still has shared data, other projects or unverified files; the root identity is kept",
+    "ja": "{0}: ルート記録に共有データ・他のプロジェクト・未確認のファイルが残るため、ルートの ID を保持",
+    "es": "{0}: el registro raíz aún tiene datos compartidos, otros proyectos o archivos sin verificar; se conserva la identidad raíz"
+  },
+  "專案移除預覽已失效，請重新預覽": {
+    "zh-CN": "项目移除预览已失效，请重新预览",
+    "en": "The project removal preview has expired; preview again",
+    "ja": "プロジェクト削除のプレビューが期限切れです。プレビューし直してください",
+    "es": "La vista previa de quitar el proyecto caducó; vuelve a previsualizar"
+  },
+  "遊戲邊界已變更，移除未執行": {
+    "zh-CN": "游戏边界已变更，移除未执行",
+    "en": "A game boundary changed; nothing was removed",
+    "ja": "ゲーム境界が変わったため、削除していません",
+    "es": "Un límite de juego cambió; no se quitó nada"
+  },
+  "預覽後資料已變更，移除未執行，請重新預覽": {
+    "zh-CN": "预览后数据已变更，移除未执行，请重新预览",
+    "en": "The data changed after the preview; nothing was removed, preview again",
+    "ja": "プレビュー後にデータが変わったため、削除していません。プレビューし直してください",
+    "es": "Los datos cambiaron tras la vista previa; no se quitó nada, vuelve a previsualizar"
+  },
+  "預覽後根資料夾內容或歸屬已變更，移除未執行": {
+    "zh-CN": "预览后根文件夹内容或归属已变更，移除未执行",
+    "en": "The root folder's contents or ownership changed after the preview; nothing was removed",
+    "ja": "プレビュー後にルートフォルダーの内容か所属が変わったため、削除していません",
+    "es": "El contenido o la pertenencia de la carpeta raíz cambió tras la vista previa; no se quitó nada"
+  },
+  "此位置新增遊戲保護邊界，私有資料保留": {
+    "zh-CN": "此位置新增游戏保护边界，私有数据保留",
+    "en": "A new game boundary appeared here; private data is kept",
+    "ja": "この場所に新しいゲーム境界ができたため、非公開データを保持",
+    "es": "Aquí apareció un nuevo límite de juego; se conservan los datos privados"
+  },
+  "移除期間設定已變更，保留原檔": {
+    "zh-CN": "移除期间设置已变更，保留原文件",
+    "en": "The settings changed during removal; the original file is kept",
+    "ja": "削除中に設定が変わったため、元のファイルを保持",
+    "es": "La configuración cambió durante la eliminación; se conserva el archivo original"
+  },
+  "根資料夾內容已變更，根記錄保留": {
+    "zh-CN": "根文件夹内容已变更，根记录保留",
+    "en": "The root folder's contents changed; the root record is kept",
+    "ja": "ルートフォルダーの内容が変わったため、ルート記録を保持",
+    "es": "El contenido de la carpeta raíz cambió; se conserva el registro raíz"
+  },
+  "復原副本驗證失敗，根記錄保留": {
+    "zh-CN": "恢复副本验证失败，根记录保留",
+    "en": "The recovery copy failed verification; the root record is kept",
+    "ja": "復元用コピーの検証に失敗したため、ルート記録を保持",
+    "es": "La copia de recuperación no se pudo verificar; se conserva el registro raíz"
+  },
+  "備份期間根內容或歸屬已變更，根記錄保留": {
+    "zh-CN": "备份期间根内容或归属已变更，根记录保留",
+    "en": "The root's contents or ownership changed during the backup; the root record is kept",
+    "ja": "バックアップ中にルートの内容か所属が変わったため、ルート記録を保持",
+    "es": "El contenido o la pertenencia de la raíz cambió durante la copia; se conserva el registro raíz"
+  },
+  "備份期間資料已變更，根記錄保留": {
+    "zh-CN": "备份期间数据已变更，根记录保留",
+    "en": "The data changed during the backup; the root record is kept",
+    "ja": "バックアップ中にデータが変わったため、ルート記録を保持",
+    "es": "Los datos cambiaron durante la copia; se conserva el registro raíz"
+  },
+  "清理期間資料已變更，停止此筆清理": {
+    "zh-CN": "清理期间数据已变更，停止此笔清理",
+    "en": "The data changed during the cleanup; this item stopped",
+    "ja": "整理中にデータが変わったため、この項目は中止しました",
+    "es": "Los datos cambiaron durante la limpieza; este elemento se detuvo"
+  },
+  "復原副本已變更": {
+    "zh-CN": "恢复副本已变更",
+    "en": "The recovery copy changed",
+    "ja": "復元用コピーが変わりました",
+    "es": "La copia de recuperación cambió"
+  },
+  "根記錄復原未完成：{0}": {
+    "zh-CN": "根记录恢复未完成：{0}",
+    "en": "The root record restore did not finish: {0}",
+    "ja": "ルート記録の復元が完了していません：{0}",
+    "es": "La restauración del registro raíz no terminó: {0}"
+  },
+  "{0}: {1}；復原位置：{2}": {
+    "zh-CN": "{0}: {1}；恢复位置：{2}",
+    "en": "{0}: {1}; recovery location: {2}",
+    "ja": "{0}: {1}。復元先：{2}",
+    "es": "{0}: {1}; ubicación de recuperación: {2}"
+  },
+  "專案位於遊戲／App 保護邊界內；資料保留，請改用外層專案": {
+    "zh-CN": "项目位于游戏／App 保护边界内；数据保留，请改用外层项目",
+    "en": "The project is inside a game / app boundary; data is kept, use an outer project instead",
+    "ja": "プロジェクトがゲーム／アプリの保護境界内にあります。データは保持しました。外側のプロジェクトを使ってください",
+    "es": "El proyecto está dentro de un límite de juego / app; los datos se conservan, usa un proyecto exterior"
+  },
+  "根資料夾身分已改變，請重新連結": {
+    "zh-CN": "根文件夹身份已改变，请重新连接",
+    "en": "The root folder's identity changed; relink it",
+    "ja": "ルートフォルダーの ID が変わりました。再リンクしてください",
+    "es": "La identidad de la carpeta raíz cambió; vuelve a vincularla"
+  },
+  "{0}: 含較新版本的資料，唯讀且不深入": {
+    "zh-CN": "{0}: 含较新版本的数据，只读且不深入",
+    "en": "{0}: holds data from a newer version; read-only, not entered",
+    "ja": "{0}: 新しいバージョンのデータを含むため、読み取り専用で中には入りません",
+    "es": "{0}: contiene datos de una versión más nueva; solo lectura, sin entrar"
+  },
+  "{0}: 無法確認邊界，停止此分支：{1}": {
+    "zh-CN": "{0}: 无法确认边界，停止此分支：{1}",
+    "en": "{0}: the boundary can't be confirmed, this branch stops: {1}",
+    "ja": "{0}: 境界を確認できないため、この分岐を止めます：{1}",
+    "es": "{0}: no se puede confirmar el límite, esta rama se detiene: {1}"
+  },
+  "{0}: 受 App 邊界保護，唯讀且不深入": {
+    "zh-CN": "{0}: 受 App 边界保护，只读且不深入",
+    "en": "{0}: protected by an app boundary; read-only, not entered",
+    "ja": "{0}: アプリ境界で保護されているため、読み取り専用で中には入りません",
+    "es": "{0}: protegido por un límite de app; solo lectura, sin entrar"
+  },
+  "{0}: {1} {2}，內部不寫入{3}": {
+    "zh-CN": "{0}: {1} {2}，内部不写入{3}",
+    "en": "{0}: {1} {2}, nothing written inside{3}",
+    "ja": "{0}: {1} {2}。内部には書き込みません{3}",
+    "es": "{0}: {1} {2}, no se escribe dentro{3}"
+  },
+  "遊戲根": {
+    "zh-CN": "游戏根",
+    "en": "game root",
+    "ja": "ゲームのルート",
+    "es": "raíz del juego"
+  },
+  "疑似遊戲": {
+    "zh-CN": "疑似游戏",
+    "en": "possible game",
+    "ja": "ゲームの可能性",
+    "es": "posible juego"
+  },
+  "；未達顯示深度": {
+    "zh-CN": "；未达显示深度",
+    "en": "; not at display depth",
+    "ja": "。表示する深さに達していません",
+    "es": "; no alcanza la profundidad de visualización"
+  },
+  "{0}: 略過連結": {
+    "zh-CN": "{0}: 略过链接",
+    "en": "{0}: link skipped",
+    "ja": "{0}: リンクをスキップ",
+    "es": "{0}: enlace omitido"
+  },
+  "{0}: 設定隱藏屬性失敗，下次掃描重試：{1}": {
+    "zh-CN": "{0}: 设置隐藏属性失败，下次扫描重试：{1}",
+    "en": "{0}: couldn't set the hidden attribute, retrying next scan: {1}",
+    "ja": "{0}: 隠し属性を設定できません。次のスキャンで再試行します：{1}",
+    "es": "{0}: no se pudo fijar el atributo oculto, se reintenta en el próximo escaneo: {1}"
+  },
+  "重複 ID：暫停寫入，確認搬移或將副本分配新 ID": {
+    "zh-CN": "重复 ID：暂停写入，确认搬移或为副本分配新 ID",
+    "en": "Duplicate ID: writing is paused; confirm a move or give the copy a new ID",
+    "ja": "ID が重複しています：書き込みを停止しました。移動を確認するか、コピーに新しい ID を割り当ててください",
+    "es": "ID duplicado: la escritura está en pausa; confirma un traslado o da un ID nuevo a la copia"
+  },
+  "此資料夾尚未建立資料或已停止記錄": {
+    "zh-CN": "此文件夹尚未建立数据或已停止记录",
+    "en": "This folder has no data yet or recording has stopped",
+    "ja": "このフォルダーにはまだデータがないか、記録を停止しています",
+    "es": "Esta carpeta aún no tiene datos o se dejó de registrar"
+  },
+  "此資料夾尚未建立資料，請先明確重新掃描或建立記錄": {
+    "zh-CN": "此文件夹尚未建立数据，请先明确重新扫描或建立记录",
+    "en": "This folder has no data yet; rescan or create a record first",
+    "ja": "このフォルダーにはまだデータがありません。先に再スキャンするか記録を作成してください",
+    "es": "Esta carpeta aún no tiene datos; vuelve a escanear o crea un registro primero"
+  },
+  "目前位置已是另一資料夾，請重新掃描": {
+    "zh-CN": "当前位置已是另一文件夹，请重新扫描",
+    "en": "This location is now a different folder; scan again",
+    "ja": "この場所は別のフォルダーになっています。再スキャンしてください",
+    "es": "Esta ubicación es ahora otra carpeta; vuelve a escanear"
+  },
+  "記錄需要復原": {
+    "zh-CN": "记录需要恢复",
+    "en": "The record needs restoring",
+    "ja": "記録の復元が必要です",
+    "es": "El registro necesita restaurarse"
+  },
+  "重複 ID：請先處理副本": {
+    "zh-CN": "重复 ID：请先处理副本",
+    "en": "Duplicate ID: handle the copy first",
+    "ja": "ID が重複しています：先にコピーを処理してください",
+    "es": "ID duplicado: resuelve primero la copia"
+  },
+  "本機專案清單損壞；原檔保留，可從專案根重新連結": {
+    "zh-CN": "本机项目清单损坏；原文件保留，可从项目根重新连接",
+    "en": "The local project list is damaged; the file is kept, relink from the project root",
+    "ja": "ローカルのプロジェクト一覧が壊れています。元のファイルは保持しました。プロジェクトのルートから再リンクできます",
+    "es": "La lista local de proyectos está dañada; el archivo se conserva, vuelve a vincular desde la raíz del proyecto"
+  },
+  "專案不可用，請重新連結或重新掃描": {
+    "zh-CN": "项目不可用，请重新连接或重新扫描",
+    "en": "The project is unavailable; relink or scan again",
+    "ja": "プロジェクトが使えません。再リンクか再スキャンしてください",
+    "es": "El proyecto no está disponible; vuelve a vincular o a escanear"
+  },
+  "專案 ID 不符": {
+    "zh-CN": "项目 ID 不符",
+    "en": "The project ID does not match",
+    "ja": "プロジェクト ID が一致しません",
+    "es": "El ID del proyecto no coincide"
+  },
+  "此位置受遊戲／App 邊界保護，請選擇外層資料夾：{0}": {
+    "zh-CN": "此位置受游戏／App 边界保护，请选择外层文件夹：{0}",
+    "en": "This location is protected by a game / app boundary; choose an outer folder: {0}",
+    "ja": "この場所はゲーム／アプリの境界で保護されています。外側のフォルダーを選んでください：{0}",
+    "es": "Este lugar está protegido por un límite de juego / app; elige una carpeta exterior: {0}"
+  },
+  "此位置沒有可重新連結的根記錄或備份；若專案已移除或清理，請重新新增專案，封存設定不會自動還原": {
+    "zh-CN": "此位置没有可重新连接的根记录或备份；若项目已移除或清理，请重新新增项目，归档设置不会自动还原",
+    "en": "There's no root record or backup to relink here; if the project was removed or cleaned, add it again — archived settings are not restored automatically",
+    "ja": "ここには再リンクできるルート記録もバックアップもありません。プロジェクトを削除・整理した場合は追加し直してください。アーカイブした設定は自動では戻りません",
+    "es": "Aquí no hay registro raíz ni copia que vincular; si el proyecto se quitó o limpió, añádelo de nuevo: la configuración archivada no se restaura sola"
+  },
+  "根記錄無法讀取且沒有復原備份；原檔保留：{0}": {
+    "zh-CN": "根记录无法读取且没有恢复备份；原文件保留：{0}",
+    "en": "The root record can't be read and has no recovery backup; the file is kept: {0}",
+    "ja": "ルート記録を読めず、復元用バックアップもありません。元のファイルは保持しました：{0}",
+    "es": "El registro raíz no se puede leer y no tiene copia de recuperación; el archivo se conserva: {0}"
+  },
+  "專案與根資料夾身分不符": {
+    "zh-CN": "项目与根文件夹身份不符",
+    "en": "The project and root folder don't match",
+    "ja": "プロジェクトとルートフォルダーが一致しません",
+    "es": "El proyecto y la carpeta raíz no coinciden"
+  },
+  "同一專案的原根仍存在；若是搬移，先取消舊連結後再連結新位置": {
+    "zh-CN": "同一项目的原根仍存在；若是搬移，先取消旧连接后再连接新位置",
+    "en": "The project's original root still exists; if you moved it, unlink the old one before linking the new location",
+    "ja": "同じプロジェクトの元のルートが残っています。移動した場合は古いリンクを解除してから新しい場所をリンクしてください",
+    "es": "La raíz original del proyecto sigue existiendo; si lo moviste, desvincula la antigua antes de vincular la nueva"
+  },
+  "此根沒有可攜專案設定；可新增專案讀取子資料夾原值": {
+    "zh-CN": "此根没有可携项目设置；可新增项目读取子文件夹原值",
+    "en": "This root has no portable project settings; add a project to read the subfolders' values",
+    "ja": "このルートには可搬なプロジェクト設定がありません。プロジェクトを追加すればサブフォルダーの値を読めます",
+    "es": "Esta raíz no tiene configuración portátil; añade un proyecto para leer los valores de las subcarpetas"
+  },
+  "本機復原區位於修改範圍內，操作未執行": {
+    "zh-CN": "本机恢复区位于修改范围内，操作未执行",
+    "en": "The local recovery area is inside the changed area; nothing was done",
+    "ja": "ローカルの復元領域が変更範囲内にあるため、実行していません",
+    "es": "El área local de recuperación está dentro de la zona modificada; no se hizo nada"
+  },
+  "專案位於遊戲／App 邊界內，無法修改設定": {
+    "zh-CN": "项目位于游戏／App 边界内，无法修改设置",
+    "en": "The project is inside a game / app boundary; its settings can't be changed",
+    "ja": "プロジェクトがゲーム／アプリの境界内にあるため、設定を変更できません",
+    "es": "El proyecto está dentro de un límite de juego / app; no se puede cambiar su configuración"
+  },
+  "根身分與清理排除須由受控操作修改": {
+    "zh-CN": "根身份与清理排除须由受控操作修改",
+    "en": "The root identity and cleanup exclusions can only change through their own actions",
+    "ja": "ルートの ID と整理の除外は専用の操作でのみ変更できます",
+    "es": "La identidad raíz y las exclusiones de limpieza solo cambian con sus propias acciones"
+  },
+  "資料已更新，請重新選取": {
+    "zh-CN": "数据已更新，请重新选择",
+    "en": "The data was updated; select again",
+    "ja": "データが更新されました。選び直してください",
+    "es": "Los datos se actualizaron; vuelve a seleccionar"
+  },
+  "此項目前不可寫入，請先處理問題或重新啟用": {
+    "zh-CN": "此项当前不可写入，请先处理问题或重新启用",
+    "en": "This item can't be written right now; fix the problem or re-enable it first",
+    "ja": "この項目は現在書き込めません。先に問題を解決するか再度有効にしてください",
+    "es": "Este elemento no se puede escribir ahora; resuelve el problema o vuelve a activarlo"
+  },
+  "此位置受遊戲／App 邊界保護，無法寫入": {
+    "zh-CN": "此位置受游戏／App 边界保护，无法写入",
+    "en": "This location is protected by a game / app boundary and can't be written",
+    "ja": "この場所はゲーム／アプリの境界で保護されているため書き込めません",
+    "es": "Este lugar está protegido por un límite de juego / app y no se puede escribir"
+  },
+  "此資料夾尚未建立有效記錄或受遊戲邊界保護": {
+    "zh-CN": "此文件夹尚未建立有效记录或受游戏边界保护",
+    "en": "This folder has no valid record yet or is protected by a game boundary",
+    "ja": "このフォルダーには有効な記録がないか、ゲーム境界で保護されています",
+    "es": "Esta carpeta aún no tiene un registro válido o está protegida por un límite de juego"
+  },
+  "欄位型別不符，不自動轉換": {
+    "zh-CN": "栏位类型不符，不自动转换",
+    "en": "The field type doesn't match and is not converted automatically",
+    "ja": "項目の型が一致しないため、自動変換しません",
+    "es": "El tipo de campo no coincide y no se convierte automáticamente"
+  },
+  "文字欄位不合法或超過 10,000 字": {
+    "zh-CN": "文字栏位不合法或超过 10,000 字",
+    "en": "The text field is invalid or longer than 10,000 characters",
+    "ja": "テキスト項目が正しくないか、10,000 文字を超えています",
+    "es": "El campo de texto no es válido o supera los 10.000 caracteres"
+  },
+  "圖片組件不存在，請先保存版面": {
+    "zh-CN": "图片组件不存在，请先保存版面",
+    "en": "The image component doesn't exist; save the layout first",
+    "ja": "画像コンポーネントがありません。先にレイアウトを保存してください",
+    "es": "El componente de imagen no existe; guarda primero el diseño"
+  },
+  "圖片格式未支援，請使用 PNG、JPEG、GIF、WebP、BMP、AVIF 或 ICO": {
+    "zh-CN": "图片格式未支持，请使用 PNG、JPEG、GIF、WebP、BMP、AVIF 或 ICO",
+    "en": "Unsupported image format; use PNG, JPEG, GIF, WebP, BMP, AVIF or ICO",
+    "ja": "対応していない画像形式です。PNG・JPEG・GIF・WebP・BMP・AVIF・ICO を使ってください",
+    "es": "Formato de imagen no admitido; usa PNG, JPEG, GIF, WebP, BMP, AVIF o ICO"
+  },
+  "版本衝突，請重新載入後再選圖": {
+    "zh-CN": "版本冲突，请重新加载后再选图",
+    "en": "Version conflict; reload and choose the image again",
+    "ja": "バージョンが衝突しました。再読み込みしてから画像を選び直してください",
+    "es": "Conflicto de versiones; recarga y vuelve a elegir la imagen"
+  },
+  "此項不是重複 ID": {
+    "zh-CN": "此项不是重复 ID",
+    "en": "This item is not a duplicate ID",
+    "ja": "この項目は重複 ID ではありません",
+    "es": "Este elemento no es un ID duplicado"
+  },
+  "副本本身是專案根；先取消此根專案連結，再於父專案處理副本": {
+    "zh-CN": "副本本身是项目根；先取消此根项目连接，再于父项目处理副本",
+    "en": "The copy is itself a project root; unlink that project first, then handle the copy in the parent project",
+    "ja": "コピー自体がプロジェクトのルートです。先にそのプロジェクトのリンクを解除し、親プロジェクトでコピーを処理してください",
+    "es": "La copia es en sí una raíz de proyecto; desvincula ese proyecto y luego resuelve la copia en el proyecto superior"
+  },
+  "拒絕未授權的操作": {
+    "zh-CN": "拒绝未授权的操作",
+    "en": "Unauthorized operation refused",
+    "ja": "許可されていない操作を拒否しました",
+    "es": "Operación no autorizada rechazada"
+  },
+  "程式": {
+    "zh-CN": "程序",
+    "en": "Program",
+    "ja": "プログラム",
+    "es": "Programa"
+  },
+  "無影片縮圖": {
+    "zh-CN": "无视频缩略图",
+    "en": "No video thumbnail",
+    "ja": "動画のサムネイルがありません",
+    "es": "Sin miniatura de vídeo"
+  },
+  "圖片解碼器尚未就緒": {
+    "zh-CN": "图片解码器尚未就绪",
+    "en": "The image decoder isn't ready yet",
+    "ja": "画像デコーダーの準備ができていません",
+    "es": "El decodificador de imágenes aún no está listo"
+  },
+  "不支援的視窗操作": {
+    "zh-CN": "不支持的窗口操作",
+    "en": "Unsupported window operation",
+    "ja": "対応していないウィンドウ操作です",
+    "es": "Operación de ventana no admitida"
+  },
+  "操作仍在進行": {
+    "zh-CN": "操作仍在进行",
+    "en": "An operation is still running",
+    "ja": "操作がまだ実行中です",
+    "es": "Todavía hay una operación en curso"
+  },
+  "請等候保存完成；掃描可先按「取消掃描」，再關閉程式。": {
+    "zh-CN": "请等候保存完成；扫描可先按「取消扫描」，再关闭程序。",
+    "en": "Wait for saving to finish; for a scan, press \"Cancel scan\" before closing.",
+    "ja": "保存が終わるまでお待ちください。スキャン中は「スキャンを取消」を押してから閉じてください。",
+    "es": "Espera a que termine el guardado; si hay un escaneo, pulsa «Cancelar escaneo» antes de cerrar."
+  },
+  "繼續等待": {
+    "zh-CN": "继续等待",
+    "en": "Keep waiting",
+    "ja": "待ち続ける",
+    "es": "Seguir esperando"
+  },
+  "要放棄尚未保存的變更嗎？": {
+    "zh-CN": "要放弃尚未保存的变更吗？",
+    "en": "Discard unsaved changes?",
+    "ja": "保存していない変更を破棄しますか？",
+    "es": "¿Descartar los cambios sin guardar?"
+  },
+  "返回可繼續編輯；放棄後會關閉或重新載入畫面。": {
+    "zh-CN": "返回可继续编辑；放弃后会关闭或重新加载画面。",
+    "en": "Go back to keep editing; discarding closes or reloads the window.",
+    "ja": "戻ると編集を続けられます。破棄するとウィンドウを閉じるか再読み込みします。",
+    "es": "Vuelve para seguir editando; al descartar se cierra o recarga la ventana."
+  },
+  "返回編輯": {
+    "zh-CN": "返回编辑",
+    "en": "Back to editing",
+    "ja": "編集に戻る",
+    "es": "Volver a editar"
+  },
+  "啟動失敗": {
+    "zh-CN": "启动失败",
+    "en": "Startup failed",
+    "ja": "起動に失敗しました",
+    "es": "Error al iniciar"
+  },
+  "{0}: 含較新版本的資料，整個保留": {
+    "zh-CN": "{0}: 含较新版本的数据，整个保留",
+    "en": "{0}: holds data from a newer version, kept whole",
+    "ja": "{0}: 新しいバージョンのデータを含むため、すべて保持",
+    "es": "{0}: contiene datos de una versión más nueva, se conserva entero"
+  },
+  "{0}: 無有效身分記錄，保留": {
+    "zh-CN": "{0}: 无有效身份记录，保留",
+    "en": "{0}: no valid identity record, kept",
+    "ja": "{0}: 有効な ID 記録がないため保持",
+    "es": "{0}: sin registro de identidad válido, se conserva"
+  },
+  "{0}: 主記錄與備份身分不符": {
+    "zh-CN": "{0}: 主记录与备份身份不符",
+    "en": "{0}: the main record and backup don't match",
+    "ja": "{0}: メインの記録とバックアップが一致しません",
+    "es": "{0}: el registro principal y la copia no coinciden"
+  },
+  "專案身分不符": {
+    "zh-CN": "项目身份不符",
+    "en": "The project does not match",
+    "ja": "プロジェクトが一致しません",
+    "es": "El proyecto no coincide"
+  },
+  "{0}: 連結保留": {
+    "zh-CN": "{0}: 链接保留",
+    "en": "{0}: link kept",
+    "ja": "{0}: リンクを保持",
+    "es": "{0}: enlace conservado"
+  },
+  "復原副本必須位於所有修改範圍外": {
+    "zh-CN": "恢复副本必须位于所有修改范围外",
+    "en": "The recovery copy must be outside every changed area",
+    "ja": "復元用コピーはすべての変更範囲の外に置く必要があります",
+    "es": "La copia de recuperación debe estar fuera de todas las zonas modificadas"
+  },
+  "預覽後資料已變更，請重新預覽": {
+    "zh-CN": "预览后数据已变更，请重新预览",
+    "en": "The data changed after the preview; preview again",
+    "ja": "プレビュー後にデータが変わりました。プレビューし直してください",
+    "es": "Los datos cambiaron tras la vista previa; vuelve a previsualizar"
+  },
+  "備份驗證失敗，未修改資料": {
+    "zh-CN": "备份验证失败，未修改数据",
+    "en": "The backup failed verification; no data was changed",
+    "ja": "バックアップの検証に失敗したため、データを変更していません",
+    "es": "La copia no se pudo verificar; no se cambiaron datos"
+  },
+  "寫入期間檔案已變更，請檢查復原副本": {
+    "zh-CN": "写入期间文件已变更，请检查恢复副本",
+    "en": "A file changed while writing; check the recovery copy",
+    "ja": "書き込み中にファイルが変わりました。復元用コピーを確認してください",
+    "es": "Un archivo cambió durante la escritura; revisa la copia de recuperación"
+  },
+  "復原期間檔案已變更，保留外部修改": {
+    "zh-CN": "恢复期间文件已变更，保留外部修改",
+    "en": "A file changed during the restore; the outside change is kept",
+    "ja": "復元中にファイルが変わったため、外部の変更を残しました",
+    "es": "Un archivo cambió durante la restauración; se conserva el cambio externo"
+  },
+  "{0}；{1}；復原位置：{2}": {
+    "zh-CN": "{0}；{1}；恢复位置：{2}",
+    "en": "{0}; {1}; recovery location: {2}",
+    "ja": "{0}。{1}。復元先：{2}",
+    "es": "{0}; {1}; ubicación de recuperación: {2}"
+  },
+  "部分復原未完成，保留停止掃描設定：": {
+    "zh-CN": "部分恢复未完成，保留停止扫描设置：",
+    "en": "Some restores didn't finish; scanning stays stopped: ",
+    "ja": "一部の復元が完了していないため、スキャン停止の設定を残します：",
+    "es": "Algunas restauraciones no terminaron; el escaneo sigue detenido: "
+  },
+  "已復原本次寫入": {
+    "zh-CN": "已恢复本次写入",
+    "en": "This write was undone",
+    "ja": "今回の書き込みを元に戻しました",
+    "es": "Se deshizo esta escritura"
+  },
+  "來源無法取得（HTTP {0}）": {
+    "zh-CN": "来源无法获取（HTTP {0}）",
+    "en": "The source can't be reached (HTTP {0})",
+    "ja": "取得元に接続できません（HTTP {0}）",
+    "es": "No se puede obtener la fuente (HTTP {0})"
+  },
+  "來源沒有內容": {
+    "zh-CN": "来源没有内容",
+    "en": "The source returned nothing",
+    "ja": "取得元に内容がありません",
+    "es": "La fuente no devolvió nada"
+  },
+  "封面來源未允許": {
+    "zh-CN": "封面来源未允许",
+    "en": "The cover source is not allowed",
+    "ja": "表紙の取得元が許可されていません",
+    "es": "La fuente de la portada no está permitida"
+  },
+  "封面格式未支援": {
+    "zh-CN": "封面格式未支持",
+    "en": "Unsupported cover format",
+    "ja": "対応していない表紙の形式です",
+    "es": "Formato de portada no admitido"
+  },
+  "圖庫網址不合法": {
+    "zh-CN": "图库网址不合法",
+    "en": "The gallery address is invalid",
+    "ja": "ギャラリーの URL が正しくありません",
+    "es": "La dirección de la galería no es válida"
+  },
+  "請貼上完整的 E-Hentai／ExHentai 圖庫網址": {
+    "zh-CN": "请粘贴完整的 E-Hentai／ExHentai 图库网址",
+    "en": "Paste a full E-Hentai / ExHentai gallery address",
+    "ja": "E-Hentai／ExHentai のギャラリー URL を完全な形で貼り付けてください",
+    "es": "Pega una dirección completa de galería de E-Hentai / ExHentai"
+  },
+  "只接受 E-Hentai／ExHentai 的完整公開圖庫網址（/g/ID/token/）；其他頁面連結未支援": {
+    "zh-CN": "只接受 E-Hentai／ExHentai 的完整公开图库网址（/g/ID/token/）；其他页面链接未支持",
+    "en": "Only full public E-Hentai / ExHentai gallery addresses (/g/ID/token/) are accepted; other pages aren't supported",
+    "ja": "E-Hentai／ExHentai の公開ギャラリー URL（/g/ID/token/）のみ使えます。他のページのリンクには対応していません",
+    "es": "Solo se aceptan direcciones públicas completas de galerías de E-Hentai / ExHentai (/g/ID/token/); otras páginas no"
+  },
+  "封面縮圖無法取得；可略過或手動匯入": {
+    "zh-CN": "封面缩略图无法获取；可略过或手动导入",
+    "en": "The cover thumbnail can't be fetched; skip it or import by hand",
+    "ja": "表紙のサムネイルを取得できません。スキップするか手動で取り込んでください",
+    "es": "No se puede obtener la miniatura de portada; omítela o impórtala a mano"
+  },
+  "Steam 網址或 App ID 不合法": {
+    "zh-CN": "Steam 网址或 App ID 不合法",
+    "en": "The Steam address or App ID is invalid",
+    "ja": "Steam の URL または App ID が正しくありません",
+    "es": "La dirección o el App ID de Steam no es válido"
+  },
+  "只接受 Steam 官方 /app/ 商店網址或 App ID": {
+    "zh-CN": "只接受 Steam 官方 /app/ 商店网址或 App ID",
+    "en": "Only official Steam /app/ store addresses or App IDs are accepted",
+    "ja": "Steam 公式の /app/ ストア URL か App ID のみ使えます",
+    "es": "Solo se aceptan direcciones oficiales /app/ de la tienda de Steam o App IDs"
+  },
+  "Steam App ID 超出範圍": {
+    "zh-CN": "Steam App ID 超出范围",
+    "en": "The Steam App ID is out of range",
+    "ja": "Steam App ID が範囲外です",
+    "es": "El App ID de Steam está fuera de rango"
+  },
+  "無法取得 Steam 商店資料：遊戲可能尚未公開、已下架或此地區無法查看": {
+    "zh-CN": "无法获取 Steam 商店数据：游戏可能尚未公开、已下架或此地区无法查看",
+    "en": "Couldn't get the Steam store data: the game may be unreleased, removed or unavailable in this region",
+    "ja": "Steam ストアの情報を取得できません：未公開・販売終了・この地域で表示不可の可能性があります",
+    "es": "No se pudieron obtener los datos de la tienda de Steam: el juego puede no estar publicado, retirado o no disponible en esta región"
+  },
+  "尚未發售": {
+    "zh-CN": "尚未发售",
+    "en": "Not yet released",
+    "ja": "未発売",
+    "es": "Aún no publicado"
+  },
+  "Steam 封面來源未允許": {
+    "zh-CN": "Steam 封面来源未允许",
+    "en": "The Steam cover source is not allowed",
+    "ja": "Steam の表紙の取得元が許可されていません",
+    "es": "La fuente de portada de Steam no está permitida"
+  },
+  "來源網址不合法": {
+    "zh-CN": "来源网址不合法",
+    "en": "The source address is invalid",
+    "ja": "取得元の URL が正しくありません",
+    "es": "La dirección de la fuente no es válida"
+  },
+  "來源網址與選定來源不符或未支援": {
+    "zh-CN": "来源网址与选定来源不符或未支持",
+    "en": "The address doesn't match the chosen source or isn't supported",
+    "ja": "URL が選んだ取得元と一致しないか、対応していません",
+    "es": "La dirección no coincide con la fuente elegida o no se admite"
+  },
+  "需由檔案總管拖入實際字幕檔": {
+    "zh-CN": "需由文件资源管理器拖入实际字幕文件",
+    "en": "Drag an actual subtitle file in from File Explorer",
+    "ja": "エクスプローラーから実際の字幕ファイルをドラッグしてください",
+    "es": "Arrastra un archivo de subtítulos real desde el Explorador de archivos"
+  },
+  "查詢分頁不合法": {
+    "zh-CN": "查询分页不合法",
+    "en": "Invalid query page",
+    "ja": "検索のページ指定が正しくありません",
+    "es": "Página de consulta no válida"
+  },
+  "搜尋專案未連結": {
+    "zh-CN": "搜索项目未连接",
+    "en": "The searched project is not linked",
+    "ja": "検索するプロジェクトがリンクされていません",
+    "es": "El proyecto buscado no está vinculado"
+  },
+  "數值比較條件不合法": {
+    "zh-CN": "数值比较条件不合法",
+    "en": "Invalid number comparison",
+    "ja": "数値の比較条件が正しくありません",
+    "es": "Comparación numérica no válida"
+  },
+  "日期比較條件不合法": {
+    "zh-CN": "日期比较条件不合法",
+    "en": "Invalid date comparison",
+    "ja": "日付の比較条件が正しくありません",
+    "es": "Comparación de fechas no válida"
+  },
+  "SQLite · 三字索引／短字範圍掃描": {
+    "zh-CN": "SQLite · 三字索引／短字范围扫描",
+    "en": "SQLite · trigram index / short-term range scan",
+    "ja": "SQLite · トライグラム索引／短語の範囲スキャン",
+    "es": "SQLite · índice de trigramas / escaneo de rango para términos cortos"
+  },
+  "請選擇獨立的 JSON 設定包檔案": {
+    "zh-CN": "请选择独立的 JSON 设置包文件",
+    "en": "Choose a standalone JSON settings pack file",
+    "ja": "単独の JSON 設定パックファイルを選んでください",
+    "es": "Elige un archivo de paquete de configuración JSON independiente"
+  },
+  "既有檔案不是設定包，未覆寫": {
+    "zh-CN": "既有文件不是设置包，未覆写",
+    "en": "The existing file isn't a settings pack; not overwritten",
+    "ja": "既存のファイルは設定パックではないため、上書きしていません",
+    "es": "El archivo existente no es un paquete de configuración; no se sobrescribió"
+  },
+  "設定包在匯出期間已改變，未覆寫": {
+    "zh-CN": "设置包在导出期间已改变，未覆写",
+    "en": "The settings pack changed during export; not overwritten",
+    "ja": "書き出し中に設定パックが変わったため、上書きしていません",
+    "es": "El paquete de configuración cambió durante la exportación; no se sobrescribió"
+  },
+  "設定包格式不合法": {
+    "zh-CN": "设置包格式不合法",
+    "en": "Invalid settings pack format",
+    "ja": "設定パックの形式が正しくありません",
+    "es": "Formato de paquete de configuración no válido"
+  },
+  "設定包版本或格式不支援": {
+    "zh-CN": "设置包版本或格式不支持",
+    "en": "Unsupported settings pack version or format",
+    "ja": "設定パックのバージョンか形式に対応していません",
+    "es": "Versión o formato de paquete de configuración no admitido"
+  },
+  "設定包過大": {
+    "zh-CN": "设置包过大",
+    "en": "The settings pack is too large",
+    "ja": "設定パックが大きすぎます",
+    "es": "El paquete de configuración es demasiado grande"
+  },
+  "設定包含不可匯入的欄位": {
+    "zh-CN": "设置包含不可导入的栏位",
+    "en": "The settings pack has fields that can't be imported",
+    "ja": "設定パックに読み込めない項目があります",
+    "es": "El paquete de configuración tiene campos que no se pueden importar"
+  },
+  "設定包專案偏好不合法": {
+    "zh-CN": "设置包项目偏好不合法",
+    "en": "Invalid project preferences in the settings pack",
+    "ja": "設定パックのプロジェクト設定が正しくありません",
+    "es": "Preferencias de proyecto no válidas en el paquete"
+  },
+  "設定包順序不合法": {
+    "zh-CN": "设置包顺序不合法",
+    "en": "Invalid order in the settings pack",
+    "ja": "設定パックの順序が正しくありません",
+    "es": "Orden no válido en el paquete de configuración"
+  },
+  "來源檔名過長": {
+    "zh-CN": "来源文件名过长",
+    "en": "The source file name is too long",
+    "ja": "元のファイル名が長すぎます",
+    "es": "El nombre del archivo de origen es demasiado largo"
+  },
+  "群組名稱需為 1～60 個字，不能含控制字元": {
+    "zh-CN": "群组名称需为 1～60 个字，不能含控制字符",
+    "en": "Group names must be 1–60 characters with no control characters",
+    "ja": "グループ名は 1～60 文字で、制御文字は使えません",
+    "es": "Los nombres de grupo deben tener de 1 a 60 caracteres sin caracteres de control"
+  },
+  "側欄設定格式不合法": {
+    "zh-CN": "侧栏设置格式不合法",
+    "en": "Invalid sidebar settings",
+    "ja": "サイドバー設定の形式が正しくありません",
+    "es": "Configuración de barra lateral no válida"
+  },
+  "主題設定不合法": {
+    "zh-CN": "主题设置不合法",
+    "en": "Invalid theme setting",
+    "ja": "テーマ設定が正しくありません",
+    "es": "Configuración de tema no válida"
+  },
+  "語言設定不合法": {
+    "zh-CN": "语言设置不合法",
+    "en": "Invalid language setting",
+    "ja": "言語設定が正しくありません",
+    "es": "Configuración de idioma no válida"
+  },
+  "檔案顯示設定不合法": {
+    "zh-CN": "文件显示设置不合法",
+    "en": "Invalid file display setting",
+    "ja": "ファイル表示の設定が正しくありません",
+    "es": "Configuración de vista de archivos no válida"
+  },
+  "影片音量設定不合法": {
+    "zh-CN": "视频音量设置不合法",
+    "en": "Invalid video volume setting",
+    "ja": "動画音量の設定が正しくありません",
+    "es": "Configuración de volumen de vídeo no válida"
+  },
+  "播放順序設定不合法": {
+    "zh-CN": "播放顺序设置不合法",
+    "en": "Invalid play order setting",
+    "ja": "再生順の設定が正しくありません",
+    "es": "Configuración de orden de reproducción no válida"
+  },
+  "側欄群組或專案引用不合法": {
+    "zh-CN": "侧栏群组或项目引用不合法",
+    "en": "Invalid sidebar group or project reference",
+    "ja": "サイドバーのグループかプロジェクトの参照が正しくありません",
+    "es": "Referencia de grupo o proyecto de la barra lateral no válida"
+  },
+  "未分類設定不合法": {
+    "zh-CN": "未分类设置不合法",
+    "en": "Invalid uncategorized setting",
+    "ja": "未分類の設定が正しくありません",
+    "es": "Configuración de sin categoría no válida"
+  },
+  "群組順序不合法": {
+    "zh-CN": "群组顺序不合法",
+    "en": "Invalid group order",
+    "ja": "グループの順序が正しくありません",
+    "es": "Orden de grupos no válido"
+  },
+  "專案順序不合法": {
+    "zh-CN": "项目顺序不合法",
+    "en": "Invalid project order",
+    "ja": "プロジェクトの順序が正しくありません",
+    "es": "Orden de proyectos no válido"
+  },
+  "瀏覽設定不合法": {
+    "zh-CN": "浏览设置不合法",
+    "en": "Invalid browsing setting",
+    "ja": "閲覧設定が正しくありません",
+    "es": "Configuración de navegación no válida"
+  },
+  "檔案總覽偏好不合法": {
+    "zh-CN": "文件总览偏好不合法",
+    "en": "Invalid file overview preference",
+    "ja": "ファイル一覧の設定が正しくありません",
+    "es": "Preferencia de vista de archivos no válida"
+  },
+  "捲動位置不合法": {
+    "zh-CN": "滚动位置不合法",
+    "en": "Invalid scroll position",
+    "ja": "スクロール位置が正しくありません",
+    "es": "Posición de desplazamiento no válida"
+  },
+  "瀏覽位置或內容面板設定不合法": {
+    "zh-CN": "浏览位置或内容面板设置不合法",
+    "en": "Invalid browsing location or content panel setting",
+    "ja": "閲覧位置かコンテンツパネルの設定が正しくありません",
+    "es": "Ubicación de navegación o configuración del panel no válida"
+  },
+  "樹狀收合設定不合法": {
+    "zh-CN": "树状收合设置不合法",
+    "en": "Invalid tree collapse setting",
+    "ja": "ツリーの折りたたみ設定が正しくありません",
+    "es": "Configuración de plegado del árbol no válida"
+  },
+  "表格欄位顯示不合法": {
+    "zh-CN": "表格栏位显示不合法",
+    "en": "Invalid table column visibility",
+    "ja": "表の列の表示設定が正しくありません",
+    "es": "Visibilidad de columnas de tabla no válida"
+  },
+  "表格欄位順序不合法": {
+    "zh-CN": "表格栏位顺序不合法",
+    "en": "Invalid table column order",
+    "ja": "表の列の順序が正しくありません",
+    "es": "Orden de columnas de tabla no válido"
+  },
+  "側欄設定無法讀取，原檔保留；暫用預設且停止保存。{0}": {
+    "zh-CN": "侧栏设置无法读取，原文件保留；暂用默认且停止保存。{0}",
+    "en": "The sidebar settings can't be read; the file is kept, defaults are used and saving stops. {0}",
+    "ja": "サイドバー設定を読めません。元のファイルは保持し、既定値を使って保存を止めます。{0}",
+    "es": "No se puede leer la configuración de la barra lateral; el archivo se conserva, se usan valores predeterminados y se deja de guardar. {0}"
+  },
+  "專案身分不合法": {
+    "zh-CN": "项目身份不合法",
+    "en": "Invalid project identity",
+    "ja": "プロジェクトの ID が正しくありません",
+    "es": "Identidad de proyecto no válida"
+  },
+  "無效的側欄操作": {
+    "zh-CN": "无效的侧栏操作",
+    "en": "Invalid sidebar operation",
+    "ja": "サイドバーの操作が無効です",
+    "es": "Operación de barra lateral no válida"
+  },
+  "群組不存在": {
+    "zh-CN": "群组不存在",
+    "en": "The group doesn't exist",
+    "ja": "グループがありません",
+    "es": "El grupo no existe"
+  },
+  "設定值必須為布林": {
+    "zh-CN": "设置值必须为布尔",
+    "en": "The setting must be true or false",
+    "ja": "設定値は true か false にしてください",
+    "es": "El valor debe ser verdadero o falso"
+  },
+  "群組名稱已存在": {
+    "zh-CN": "群组名称已存在",
+    "en": "That group name already exists",
+    "ja": "そのグループ名は既にあります",
+    "es": "Ese nombre de grupo ya existe"
+  },
+  "排序目標不合法": {
+    "zh-CN": "排序目标不合法",
+    "en": "Invalid sort target",
+    "ja": "並べ替えの対象が正しくありません",
+    "es": "Destino de ordenación no válido"
+  },
+  "設定匯入預覽已失效，請重新預覽": {
+    "zh-CN": "设置导入预览已失效，请重新预览",
+    "en": "The settings import preview has expired; preview again",
+    "ja": "設定の読み込みプレビューが期限切れです。プレビューし直してください",
+    "es": "La vista previa de importación de configuración caducó; vuelve a previsualizar"
+  },
+  "復原身分不合法": {
+    "zh-CN": "恢复身份不合法",
+    "en": "Invalid restore identity",
+    "ja": "復元の ID が正しくありません",
+    "es": "Identidad de restauración no válida"
+  },
+  "復原備份不合法": {
+    "zh-CN": "恢复备份不合法",
+    "en": "Invalid restore backup",
+    "ja": "復元用バックアップが正しくありません",
+    "es": "Copia de restauración no válida"
+  },
+  "外觀設定不合法": {
+    "zh-CN": "外观设置不合法",
+    "en": "Invalid appearance setting",
+    "ja": "外観の設定が正しくありません",
+    "es": "Configuración de apariencia no válida"
+  },
+  "群組排序需包含全部群組且不可重複": {
+    "zh-CN": "群组排序需包含全部群组且不可重复",
+    "en": "Group order must include every group exactly once",
+    "ja": "グループの並びにはすべてのグループを 1 回ずつ含めてください",
+    "es": "El orden de grupos debe incluir cada grupo una sola vez"
+  },
+  "未知區塊": {
+    "zh-CN": "未知区块",
+    "en": "Unknown section",
+    "ja": "不明なセクション",
+    "es": "Sección desconocida"
+  },
+  "欄寬需為 200～360": {
+    "zh-CN": "栏宽需为 200～360",
+    "en": "Column width must be 200–360",
+    "ja": "列幅は 200～360 にしてください",
+    "es": "El ancho debe estar entre 200 y 360"
+  },
+  "不支援的側欄操作": {
+    "zh-CN": "不支持的侧栏操作",
+    "en": "Unsupported sidebar operation",
+    "ja": "対応していないサイドバー操作です",
+    "es": "Operación de barra lateral no admitida"
+  },
+  "不是有效的 M:orph 備份": {
+    "zh-CN": "不是有效的 M:orph 备份",
+    "en": "Not a valid M:orph backup",
+    "ja": "有効な M:orph バックアップではありません",
+    "es": "No es una copia válida de M:orph"
+  },
+  "方案名稱需為 1～100 字，且不可重複": {
+    "zh-CN": "方案名称需为 1～100 字，且不可重复",
+    "en": "Layout names must be 1–100 characters and unique",
+    "ja": "レイアウト名は 1～100 文字で、重複できません",
+    "es": "Los nombres de diseño deben tener de 1 a 100 caracteres y ser únicos"
+  },
+  "版面方案不存在": {
+    "zh-CN": "版面方案不存在",
+    "en": "The layout doesn't exist",
+    "ja": "レイアウトがありません",
+    "es": "El diseño no existe"
+  },
+  "至少保留一個方案": {
+    "zh-CN": "至少保留一个方案",
+    "en": "Keep at least one layout",
+    "ja": "レイアウトを少なくとも 1 つ残してください",
+    "es": "Conserva al menos un diseño"
+  },
+  "記錄損壞、版本不支援或不屬於本程式；原檔保留": {
+    "zh-CN": "记录损坏、版本不支持或不属于本程序；原文件保留",
+    "en": "The record is damaged, from an unsupported version, or not from this app; the file is kept",
+    "ja": "記録が壊れているか、未対応のバージョンか、このアプリのものではありません。元のファイルは保持しました",
+    "es": "El registro está dañado, es de una versión no admitida o no es de esta app; el archivo se conserva"
+  },
+  "內容設定不合法": {
+    "zh-CN": "内容设置不合法",
+    "en": "Invalid content setting",
+    "ja": "コンテンツ設定が正しくありません",
+    "es": "Configuración de contenido no válida"
+  },
+  "遊戲邊界設定不合法": {
+    "zh-CN": "游戏边界设置不合法",
+    "en": "Invalid game boundary setting",
+    "ja": "ゲーム境界の設定が正しくありません",
+    "es": "Configuración de límite de juego no válida"
+  },
+  "遊戲操作顯示設定不合法": {
+    "zh-CN": "游戏操作显示设置不合法",
+    "en": "Invalid game action display setting",
+    "ja": "ゲーム操作の表示設定が正しくありません",
+    "es": "Configuración de acciones de juego no válida"
+  },
+  "封面身分不合法": {
+    "zh-CN": "封面身份不合法",
+    "en": "Invalid cover identity",
+    "ja": "表紙の ID が正しくありません",
+    "es": "Identidad de portada no válida"
+  },
+  "圖片組件設定不合法": {
+    "zh-CN": "图片组件设置不合法",
+    "en": "Invalid image component setting",
+    "ja": "画像コンポーネントの設定が正しくありません",
+    "es": "Configuración de componente de imagen no válida"
+  },
+  "閱讀設定不合法": {
+    "zh-CN": "阅读设置不合法",
+    "en": "Invalid reading setting",
+    "ja": "閲覧設定が正しくありません",
+    "es": "Configuración de lectura no válida"
+  },
+  "任務設定不合法": {
+    "zh-CN": "任务设置不合法",
+    "en": "Invalid task setting",
+    "ja": "タスクの設定が正しくありません",
+    "es": "Configuración de tarea no válida"
+  },
+  "字幕記錄不合法": {
+    "zh-CN": "字幕记录不合法",
+    "en": "Invalid subtitle record",
+    "ja": "字幕の記録が正しくありません",
+    "es": "Registro de subtítulos no válido"
+  },
+  "播放設定不合法": {
+    "zh-CN": "播放设置不合法",
+    "en": "Invalid playback setting",
+    "ja": "再生設定が正しくありません",
+    "es": "Configuración de reproducción no válida"
+  },
+  "CARD 顯示範圍不合法": {
+    "zh-CN": "CARD 显示范围不合法",
+    "en": "Invalid CARD display range",
+    "ja": "CARD の表示範囲が正しくありません",
+    "es": "Rango de visualización de CARD no válido"
+  },
+  "專案設定不合法或版本不支援": {
+    "zh-CN": "项目设置不合法或版本不支持",
+    "en": "The project settings are invalid or from an unsupported version",
+    "ja": "プロジェクト設定が正しくないか、未対応のバージョンです",
+    "es": "La configuración del proyecto no es válida o es de una versión no admitida"
+  },
+  "組件 ID 或欄位別名重複": {
+    "zh-CN": "组件 ID 或栏位别名重复",
+    "en": "Duplicate component ID or field alias",
+    "ja": "コンポーネント ID か項目の別名が重複しています",
+    "es": "ID de componente o alias de campo duplicado"
+  },
+  "組件顯示條件不合法": {
+    "zh-CN": "组件显示条件不合法",
+    "en": "Invalid component display condition",
+    "ja": "コンポーネントの表示条件が正しくありません",
+    "es": "Condición de visualización del componente no válida"
+  },
+  "資料夾版面指定不合法": {
+    "zh-CN": "文件夹版面指定不合法",
+    "en": "Invalid folder layout assignment",
+    "ja": "フォルダーのレイアウト指定が正しくありません",
+    "es": "Asignación de diseño de carpeta no válida"
+  },
+  "類型版面指定不合法": {
+    "zh-CN": "类型版面指定不合法",
+    "en": "Invalid kind layout assignment",
+    "ja": "種類ごとのレイアウト指定が正しくありません",
+    "es": "Asignación de diseño por tipo no válida"
+  },
+  "自訂樣式不合法或名稱重複": {
+    "zh-CN": "自定义样式不合法或名称重复",
+    "en": "Invalid custom style or duplicate name",
+    "ja": "カスタムスタイルが正しくないか、名前が重複しています",
+    "es": "Estilo personalizado no válido o nombre duplicado"
+  },
+  "版面方案不合法或名稱重複": {
+    "zh-CN": "版面方案不合法或名称重复",
+    "en": "Invalid layout or duplicate name",
+    "ja": "レイアウトが正しくないか、名前が重複しています",
+    "es": "Diseño no válido o nombre duplicado"
+  },
+  "作用中方案不存在": {
+    "zh-CN": "作用中方案不存在",
+    "en": "The active layout doesn't exist",
+    "ja": "使用中のレイアウトがありません",
+    "es": "El diseño activo no existe"
+  },
+  "方案清單不存在": {
+    "zh-CN": "方案清单不存在",
+    "en": "The layout list doesn't exist",
+    "ja": "レイアウトの一覧がありません",
+    "es": "La lista de diseños no existe"
+  },
+  "內容模板不合法": {
+    "zh-CN": "内容模板不合法",
+    "en": "Invalid content template",
+    "ja": "コンテンツのテンプレートが正しくありません",
+    "es": "Plantilla de contenido no válida"
+  },
+  "遍歷偏好不合法": {
+    "zh-CN": "遍历偏好不合法",
+    "en": "Invalid traversal preference",
+    "ja": "巡回の設定が正しくありません",
+    "es": "Preferencia de recorrido no válida"
+  },
+  "任務版型不合法": {
+    "zh-CN": "任务版型不合法",
+    "en": "Invalid task template",
+    "ja": "タスクのテンプレートが正しくありません",
+    "es": "Plantilla de tarea no válida"
+  },
+  "常用搜尋不合法": {
+    "zh-CN": "常用搜索不合法",
+    "en": "Invalid saved search",
+    "ja": "保存した検索が正しくありません",
+    "es": "Búsqueda guardada no válida"
+  },
+  "組件不能重疊": {
+    "zh-CN": "组件不能重叠",
+    "en": "Components can't overlap",
+    "ja": "コンポーネントは重ねられません",
+    "es": "Los componentes no pueden superponerse"
+  },
+  "欄位群組不存在": {
+    "zh-CN": "栏位群组不存在",
+    "en": "The field group doesn't exist",
+    "ja": "項目グループがありません",
+    "es": "El grupo de campos no existe"
+  },
+  "欄位群組不合法：成員須存在、型別相容、只屬一個群組，名稱不可重複": {
+    "zh-CN": "栏位群组不合法：成员须存在、类型相容、只属一个群组，名称不可重复",
+    "en": "Invalid field group: members must exist, have compatible types and belong to one group, with unique names",
+    "ja": "項目グループが正しくありません：メンバーは存在し、型が合い、1 つのグループだけに属し、名前は重複できません",
+    "es": "Grupo de campos no válido: los miembros deben existir, tener tipos compatibles y pertenecer a un solo grupo, con nombres únicos"
+  },
+  "組件顯示的欄位群組不存在或型別不相容": {
+    "zh-CN": "组件显示的栏位群组不存在或类型不相容",
+    "en": "The component's field group doesn't exist or has an incompatible type",
+    "ja": "コンポーネントが表示する項目グループがないか、型が合いません",
+    "es": "El grupo de campos del componente no existe o tiene un tipo incompatible"
+  },
+  "資料夾指定的群組來源不合法": {
+    "zh-CN": "文件夹指定的群组来源不合法",
+    "en": "Invalid group source assigned to the folder",
+    "ja": "フォルダーに指定したグループの取得元が正しくありません",
+    "es": "Fuente de grupo asignada a la carpeta no válida"
+  },
+  "沒有從匯出版本 {0} 升級的方式": {
+    "zh-CN": "没有从导出版本 {0} 升级的方式",
+    "en": "There's no way to upgrade from export version {0}",
+    "ja": "書き出しバージョン {0} からアップグレードする方法がありません",
+    "es": "No hay forma de actualizar desde la versión de exportación {0}"
+  },
+  "這不是專案匯出資料夾": {
+    "zh-CN": "这不是项目导出文件夹",
+    "en": "This is not a project export folder",
+    "ja": "これはプロジェクトの書き出しフォルダーではありません",
+    "es": "Esta no es una carpeta de exportación de proyecto"
+  },
+  "匯出資料的版本比這個程式新，請先更新程式": {
+    "zh-CN": "导出数据的版本比这个程序新，请先更新程序",
+    "en": "The export is from a newer version; update the app first",
+    "ja": "書き出しデータがこのアプリより新しいバージョンです。先にアプリを更新してください",
+    "es": "La exportación es de una versión más nueva; actualiza primero la app"
+  },
+  "匯出資料的專案身分不合法": {
+    "zh-CN": "导出数据的项目身份不合法",
+    "en": "The export's project identity is invalid",
+    "ja": "書き出しデータのプロジェクト ID が正しくありません",
+    "es": "La identidad de proyecto de la exportación no es válida"
+  },
+  "匯出資料的檔案清單不合法": {
+    "zh-CN": "导出数据的文件清单不合法",
+    "en": "The export's file list is invalid",
+    "ja": "書き出しデータのファイル一覧が正しくありません",
+    "es": "La lista de archivos de la exportación no es válida"
+  },
+  "匯出資料的檔案清單有重複項目": {
+    "zh-CN": "导出数据的文件清单有重复项目",
+    "en": "The export's file list has duplicates",
+    "ja": "書き出しデータのファイル一覧に重複があります",
+    "es": "La lista de archivos de la exportación tiene duplicados"
+  },
+  "找不到欄位「{0}」，可從欄位提示選擇": {
+    "zh-CN": "找不到栏位「{0}」，可从栏位提示选择",
+    "en": "Field \"{0}\" not found; pick one from the suggestions",
+    "ja": "項目「{0}」が見つかりません。候補から選んでください",
+    "es": "No se encontró el campo «{0}»; elige uno de las sugerencias"
+  },
+  "欄位「{0}」有多個身分；請使用提示中的 key@完整屬性ID": {
+    "zh-CN": "栏位「{0}」有多个身份；请使用提示中的 key@完整属性ID",
+    "en": "Field \"{0}\" has several identities; use key@full-property-ID from the suggestions",
+    "ja": "項目「{0}」に複数の ID があります。候補の key@完全な属性ID を使ってください",
+    "es": "El campo «{0}» tiene varias identidades; usa key@ID-completo de las sugerencias"
+  },
+  "常用搜尋格式不合法": {
+    "zh-CN": "常用搜索格式不合法",
+    "en": "Invalid saved search format",
+    "ja": "保存した検索の形式が正しくありません",
+    "es": "Formato de búsqueda guardada no válido"
+  },
+  "常用搜尋的欄位已移除或型別變更，請重新確認條件": {
+    "zh-CN": "常用搜索的栏位已移除或类型变更，请重新确认条件",
+    "en": "A field in the saved search was removed or changed type; check the conditions again",
+    "ja": "保存した検索の項目が削除されたか型が変わりました。条件を確認し直してください",
+    "es": "Un campo de la búsqueda guardada se quitó o cambió de tipo; revisa las condiciones"
+  },
+  "搜尋字串最多 2,000 字": {
+    "zh-CN": "搜索字符串最多 2,000 字",
+    "en": "Searches can be at most 2,000 characters",
+    "ja": "検索文字列は 2,000 文字までです",
+    "es": "Las búsquedas pueden tener como máximo 2.000 caracteres"
+  },
+  "條件缺少欄位或值": {
+    "zh-CN": "条件缺少栏位或值",
+    "en": "A condition is missing a field or value",
+    "ja": "条件に項目か値がありません",
+    "es": "A una condición le falta un campo o un valor"
+  },
+  "OR 前缺少條件": {
+    "zh-CN": "OR 前缺少条件",
+    "en": "Missing condition before OR",
+    "ja": "OR の前に条件がありません",
+    "es": "Falta una condición antes de OR"
+  },
+  "引號或跳脫未完成": {
+    "zh-CN": "引号或转义未完成",
+    "en": "Unfinished quote or escape",
+    "ja": "引用符かエスケープが閉じていません",
+    "es": "Comilla o escape sin terminar"
+  },
+  "OR 後缺少條件": {
+    "zh-CN": "OR 后缺少条件",
+    "en": "Missing condition after OR",
+    "ja": "OR の後に条件がありません",
+    "es": "Falta una condición después de OR"
+  },
+  "一次最多 50 個條件": {
+    "zh-CN": "一次最多 50 个条件",
+    "en": "At most 50 conditions at once",
+    "ja": "条件は一度に 50 個までです",
+    "es": "Como máximo 50 condiciones a la vez"
+  },
+  "同人／商店": {
+    "zh-CN": "同人／商店",
+    "en": "Doujin / stores",
+    "ja": "同人／ストア",
+    "es": "Doujin / tiendas"
+  },
+  "字幕時間格式不合法": {
+    "zh-CN": "字幕时间格式不合法",
+    "en": "Invalid subtitle time format",
+    "ja": "字幕の時間形式が正しくありません",
+    "es": "Formato de tiempo de subtítulo no válido"
+  },
+  "字幕結束時間需晚於開始": {
+    "zh-CN": "字幕结束时间需晚于开始",
+    "en": "A subtitle's end must be after its start",
+    "ja": "字幕の終了時間は開始より後にしてください",
+    "es": "El final del subtítulo debe ser posterior al inicio"
+  },
+  "找不到有效 SRT／VTT 字幕，原字幕保留": {
+    "zh-CN": "找不到有效 SRT／VTT 字幕，原字幕保留",
+    "en": "No valid SRT / VTT subtitles found; the original subtitles are kept",
+    "ja": "有効な SRT／VTT 字幕が見つからないため、元の字幕を残しました",
+    "es": "No se encontraron subtítulos SRT / VTT válidos; se conservan los originales"
+  },
+  "資料夾內容設定": {
+    "zh-CN": "文件夹内容设置",
+    "en": "folder content settings",
+    "ja": "フォルダー内容の設定",
+    "es": "configuración del contenido de la carpeta"
+  },
+  "設定包": {
+    "zh-CN": "设置包",
+    "en": "settings pack",
+    "ja": "設定パック",
+    "es": "paquete de configuración"
+  },
+  "這份{0}來自較新版本的 M:orph（格式 v{1}，這個版本只認得到 v{2}）；請更新程式，在那之前只能查看，不會寫入或覆蓋。": {
+    "zh-CN": "这份{0}来自较新版本的 M:orph（格式 v{1}，这个版本只认得到 v{2}）；请更新程序，在那之前只能查看，不会写入或覆盖。",
+    "en": "This {0} comes from a newer M:orph (format v{1}; this version knows up to v{2}). Update the app — until then it can only be viewed, never written or overwritten.",
+    "ja": "この{0}は新しい M:orph のものです（形式 v{1}、このバージョンは v{2} まで対応）。アプリを更新してください。それまでは表示のみで、書き込みや上書きはしません。",
+    "es": "Este {0} viene de un M:orph más nuevo (formato v{1}; esta versión conoce hasta v{2}). Actualiza la app: hasta entonces solo se puede ver, nunca escribir ni sobrescribir."
+  },
+  "缺少{0}格式 v{1} → v{2} 的升級步驟": {
+    "zh-CN": "缺少{0}格式 v{1} → v{2} 的升级步骤",
+    "en": "No upgrade step for {0} format v{1} → v{2}",
+    "ja": "{0}の形式 v{1} → v{2} のアップグレード手順がありません",
+    "es": "Falta el paso de actualización de {0} del formato v{1} → v{2}"
+  },
+  "圖片來源已失效": {
+    "zh-CN": "图片来源已失效",
+    "en": "The image source is no longer available",
+    "ja": "画像の取得元が無効になりました",
+    "es": "La fuente de la imagen ya no está disponible"
+  },
+  "圖片尺寸過大": {
+    "zh-CN": "图片尺寸过大",
+    "en": "The image dimensions are too large",
+    "ja": "画像のサイズが大きすぎます",
+    "es": "Las dimensiones de la imagen son demasiado grandes"
   }
 }

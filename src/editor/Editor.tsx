@@ -929,7 +929,7 @@ export function Editor({
               </Alert>
               {fieldDeletion.skipped.map((text) => (
                 <Text key={text} size="xs" c="dimmed">
-                  {text}
+                  {tr(text)}
                 </Text>
               ))}
               <Text size="xs" className="path">

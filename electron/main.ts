@@ -195,6 +195,7 @@ else {
           // Decode asynchronously from the already-scoped stream. No original image
           // buffer/base64 crosses IPC, and full bitmap decoding stays off main.
           const bytes = await win.webContents.executeJavaScript(
+            // i18n-ignore: script source run in the hidden window; its two messages have their own keys
             `(async()=>{const response=await fetch(${JSON.stringify(url)});if(!response.ok)throw new Error('圖片來源已失效');const bitmap=await createImageBitmap(await response.blob(),{resizeWidth:320,resizeQuality:'low'});try{if(!bitmap.width||!bitmap.height||bitmap.width*bitmap.height>100000000)throw new Error('圖片尺寸過大');const scale=Math.min(1,320/Math.max(bitmap.width,bitmap.height));const canvas=new OffscreenCanvas(Math.max(1,Math.round(bitmap.width*scale)),Math.max(1,Math.round(bitmap.height*scale)));canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);return Array.from(new Uint8Array(await(await canvas.convertToBlob({type:'image/jpeg',quality:.78})).arrayBuffer()))}finally{bitmap.close()}})()`
           )
           return Buffer.from(bytes)

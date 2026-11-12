@@ -1,5 +1,6 @@
+import { fmt } from '../shared/message'
 export async function limitedBytes(response: Response, limit: number) {
-  if (!response.ok) throw new Error(`來源無法取得（HTTP ${response.status}）`)
+  if (!response.ok) throw new Error(fmt('來源無法取得（HTTP {0}）', response.status))
   if (Number(response.headers.get('content-length') ?? 0) > limit) throw new Error('來源回應過大')
   const reader = response.body?.getReader()
   if (!reader) throw new Error('來源沒有內容')

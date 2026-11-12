@@ -271,7 +271,7 @@ export function ProjectSettings({
               <Alert mt="md" color="orange" title={tr('部分移除未完成')}>
                 {result.failed.map((text, index) => (
                   <Text size="xs" key={index}>
-                    {text}
+                    {tr(text)}
                   </Text>
                 ))}
                 <Text size="xs">{tr('已處理的資訊都有備份；其餘的資料保留，可以重新預覽。')}</Text>

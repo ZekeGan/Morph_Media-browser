@@ -219,7 +219,7 @@ export function FolderAdvanced({
               </div>
               {cleanup.skipped.map((s, i) => (
                 <Text key={i} size="xs" c="dimmed">
-                  {s}
+                  {tr(s)}
                 </Text>
               ))}
               {cleanup.scope === 'folder' && (

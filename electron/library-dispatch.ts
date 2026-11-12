@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 // Runs one library:request from the renderer. main.ts checks the sender and the request shape first
 // (ipc-requests.ts); this module turns the request into Library, backup and native dialog calls.
 import { app, clipboard, dialog, shell, type BrowserWindow } from 'electron'
@@ -174,10 +175,7 @@ export function libraryDispatcher({ library, workspace, window, text: nt }: Disp
           result.projects,
           result.skipped.length,
           '已建立備份' +
-            (result.skipped.length
-              ? `
-未備份：${result.skipped.join('、')}`
-              : '')
+            (result.skipped.length ? fmt('\n未備份：{0}', result.skipped.join('、')) : '')
         )
         extra.backups = await listBackups(library)
         break
@@ -199,7 +197,7 @@ export function libraryDispatcher({ library, workspace, window, text: nt }: Disp
           break
         }
         const target = await exportBackup(library, request.id, chosen.filePaths[0])
-        extra.notice = completionNotice(1, 0, `已匯出備份：${target}`)
+        extra.notice = completionNotice(1, 0, fmt('已匯出備份：{0}', target))
         break
       }
       case 'previewBackup': {
@@ -243,8 +241,10 @@ export function libraryDispatcher({ library, workspace, window, text: nt }: Disp
         extra.notice = completionNotice(
           done,
           result.failed.length,
-          `已還原：${[...(result.settings ? ['設定'] : []), ...result.projects].join('、') || '無'}` +
-            (result.failed.length ? `\n未還原：${result.failed.join('\n')}` : '')
+          fmt(
+            '已還原：{0}',
+            [...(result.settings ? [fmt('設定')] : []), ...result.projects].join('、') || fmt('無')
+          ) + (result.failed.length ? fmt('\n未還原：{0}', result.failed.join('\n')) : '')
         )
         break
       }

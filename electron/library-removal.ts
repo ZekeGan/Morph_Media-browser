@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { upgradeStored } from '../shared/upgrade'
@@ -186,7 +187,7 @@ export async function fullRemoveProject(ex: Library, token: string): Promise<Cle
       removed.push(dir)
     } catch (error) {
       const code = (error as NodeJS.ErrnoException).code
-      if (code === 'ENOTEMPTY') result.skipped.push(`${dir}: 尚有未驗證資料，目錄保留`)
+      if (code === 'ENOTEMPTY') result.skipped.push(fmt('{0}: 尚有未驗證資料，目錄保留', dir))
       else if (code !== 'ENOENT') result.failed.push(`${dir}: ${message(error)}`)
     }
   await ex.scan()
@@ -296,7 +297,7 @@ export async function previewRemoveProject(
     try {
       await safePath(linked.root, dir)
       if (insideAppBundle(dir)) {
-        skipped.push(`${dir}: App 內資料保留`)
+        skipped.push(fmt('{0}: App 內資料保留', dir))
         continue
       }
       const record = await readFolder(dir).catch((e) => {
@@ -309,7 +310,7 @@ export async function previewRemoveProject(
       }
       const boundary = record?.details?.boundary
       if (boundary?.state !== 'not-game' && (boundary || (await detectGame(dir)))) {
-        skipped.push(`${dir}: 遊戲內部記錄保留`)
+        skipped.push(fmt('{0}: 遊戲內部記錄保留', dir))
         continue
       }
       for (const entry of await fs.readdir(dir, { withFileTypes: true }))
@@ -338,7 +339,7 @@ export async function previewRemoveProject(
     ...(rootFiles ? { recoveryPath: path.join(ex.userData, 'project-removals', token) } : {}),
   }
   if (!rootFiles)
-    skipped.push(`${linked.root}: 根記錄仍有共用資料、其他專案或未驗證檔案，保留根身分`)
+    skipped.push(fmt('{0}: 根記錄仍有共用資料、其他專案或未驗證檔案，保留根身分', linked.root))
   for (const file of rootFiles ?? [])
     if (!files.some((item) => item.path === file.path)) files.push(file)
   ex.removalPlans.clear()
@@ -511,9 +512,11 @@ export async function removeProject(ex: Library, token: string): Promise<Cleanup
           }
         }
       } catch (restoreError) {
-        result.failed.push(`根記錄復原未完成：${message(restoreError)}`)
+        result.failed.push(fmt('根記錄復原未完成：{0}', message(restoreError)))
       }
-      result.failed.push(`${plan.root}: ${message(error)}；復原位置：${plan.preview.recoveryPath}`)
+      result.failed.push(
+        fmt('{0}: {1}；復原位置：{2}', plan.root, message(error), plan.preview.recoveryPath)
+      )
     }
   await ex.scan()
   return result

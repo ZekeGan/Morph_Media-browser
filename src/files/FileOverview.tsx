@@ -285,7 +285,7 @@ export function FileOverview({
           <details>
             <summary>{tr('部分內容未能列出')}</summary>
             {notices.map((notice, index) => (
-              <div key={index}>{notice}</div>
+              <div key={index}>{tr(notice)}</div>
             ))}
           </details>
         </Alert>

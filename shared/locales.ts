@@ -3,9 +3,9 @@ export type LocaleId = (typeof localeIds)[number]
 export const isLocaleId = (value: unknown): value is LocaleId =>
   typeof value === 'string' && localeIds.includes(value as LocaleId)
 export const localeOptions = [
-  { value: 'zh-TW', label: '繁體中文' },
-  { value: 'ja', label: '日本語' },
-  { value: 'zh-CN', label: '简体中文' },
+  { value: 'zh-TW', label: '繁體中文' }, // i18n-ignore: shown in its own language
+  { value: 'ja', label: '日本語' }, // i18n-ignore: shown in its own language
+  { value: 'zh-CN', label: '简体中文' }, // i18n-ignore: shown in its own language
   { value: 'en', label: 'English' },
   { value: 'es', label: 'Español' },
 ]

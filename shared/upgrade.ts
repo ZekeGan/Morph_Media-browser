@@ -1,3 +1,4 @@
+import { fmt } from './message'
 // Every stored format carries its own `schemaVersion`. A newer app reads older data by running the steps below in
 // order (v1 -> v2 -> ...) right after reading; the upgraded value is written back only when that record is saved for
 // another reason. Data written by a newer app is never treated as damaged: it raises NewerFormatError, stays read-only
@@ -36,7 +37,12 @@ export class NewerFormatError extends Error {
     readonly version: number
   ) {
     super(
-      `這份${NAMES[format]}來自較新版本的 M:orph（格式 v${version}，這個版本只認得到 v${FORMAT_VERSION[format]}）；請更新程式，在那之前只能查看，不會寫入或覆蓋。`
+      fmt(
+        '這份{0}來自較新版本的 M:orph（格式 v{1}，這個版本只認得到 v{2}）；請更新程式，在那之前只能查看，不會寫入或覆蓋。',
+        NAMES[format],
+        version,
+        FORMAT_VERSION[format]
+      )
     )
   }
 }
@@ -62,7 +68,10 @@ export function upgradeFormat(format: FormatKind, value: unknown): unknown {
   let out = value
   for (let version = from; version < FORMAT_VERSION[format]; version++) {
     const step = UPGRADE_STEPS[format][version]
-    if (!step) throw new Error(`缺少${NAMES[format]}格式 v${version} → v${version + 1} 的升級步驟`)
+    if (!step)
+      throw new Error(
+        fmt('缺少{0}格式 v{1} → v{2} 的升級步驟', NAMES[format], version, version + 1)
+      )
     out = { ...step(structuredClone(out)), schemaVersion: version + 1 }
   }
   return out

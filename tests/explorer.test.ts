@@ -1,3 +1,4 @@
+import { plainMessage } from '../shared/message'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
@@ -174,7 +175,7 @@ test('typed attributes, explicit private override, stale revision and partial ba
     mode: 'add',
   })
   assert.equal(result.notice?.level, 'warning')
-  assert.match(result.notice!.message, /批次保存 1 筆/)
+  assert.match(plainMessage(result.notice!.message), /批次保存 1 筆/)
   assert.match(result.notice!.message, /失敗/)
   assert.deepEqual(
     (await readFolder(a.path)).attributes.find((a) => a.attributeId === 'tags')!.value,

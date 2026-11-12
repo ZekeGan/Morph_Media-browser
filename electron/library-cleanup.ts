@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -102,7 +103,7 @@ export async function previewCleanup(
           const file = path.join(folder, e.name)
           if (e.isDirectory() && !e.isSymbolicLink()) await inspect(file)
           else if (!known.has(keyPath(file)) && scope !== 'private')
-            skipped.push(`${file}: 未驗證歸屬，保留`)
+            skipped.push(fmt('{0}: 未驗證歸屬，保留', file))
         }
       }
       await inspect(meta)

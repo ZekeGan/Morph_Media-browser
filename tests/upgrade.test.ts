@@ -1,3 +1,4 @@
+import { plainMessage } from '../shared/message'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
@@ -63,7 +64,10 @@ test('upgrade steps run in order, and a missing step or newer data is refused', 
     delete UPGRADE_STEPS.project[2]
   })
   UPGRADE_STEPS.project[1] = (v) => ({ ...v, trail: ['1→2'] })
-  assert.throws(() => upgradeFormat('project', { schemaVersion: 1 }), /v2 → v3/)
+  assert.throws(
+    () => upgradeFormat('project', { schemaVersion: 1 }),
+    (error) => /v2 → v3/.test(plainMessage(String(error)))
+  )
   UPGRADE_STEPS.project[2] = (v) => ({ ...v, trail: [...(v.trail as string[]), '2→3'] })
   const input = { schemaVersion: 1 }
   assert.deepEqual(upgradeFormat('project', input), { schemaVersion: 3, trail: ['1→2', '2→3'] })

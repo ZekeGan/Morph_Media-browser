@@ -1,3 +1,4 @@
+import { plainMessage } from '../shared/message'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
@@ -77,7 +78,7 @@ test('image URL download rejects unsafe targets, non-images, oversize content an
       fetcher: (async () => respond('', { status: 404 })) as typeof fetch,
       lookup: pub,
     }),
-    /HTTP 404/
+    (error) => /HTTP 404/.test(plainMessage(String(error)))
   )
   const loop = (async () =>
     respond('', {

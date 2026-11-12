@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { randomUUID, createHash } from 'node:crypto'
@@ -196,7 +197,7 @@ export async function ensureFolder(
     if (hide && process.platform === 'win32')
       await promisify(execFile)('attrib.exe', ['+H', meta], { windowsHide: true })
   } catch (e) {
-    throw new Error(`建立可攜記錄失敗：${message(e)}`)
+    throw new Error(fmt('建立可攜記錄失敗：{0}', message(e)))
   }
   return { record, created: true }
 }

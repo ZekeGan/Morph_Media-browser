@@ -582,7 +582,7 @@ export function App() {
             <Alert color="orange">
               {tr('未連結或離線的副本不在這次範圍內。不認得的檔案與無法確認的資訊都會保留。')}
               {cleanup.skipped.map((s, i) => (
-                <div key={i}>{s}</div>
+                <div key={i}>{tr(s)}</div>
               ))}
             </Alert>
             {cleanup.scope === 'folder' && (

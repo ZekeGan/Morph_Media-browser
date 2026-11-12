@@ -1,3 +1,4 @@
+import { fmt } from './message'
 import { DATA_DIR } from './model'
 
 // A project export is a folder: manifest.json plus files/<path relative to the project root> holding the
@@ -68,7 +69,7 @@ const steps: Record<number, (value: unknown, kind: 'folder' | 'project') => unkn
 export function migrateRecord(version: number, value: unknown, kind: 'folder' | 'project') {
   for (let v = version; v < EXPORT_VERSION; v++) {
     const step = steps[v]
-    if (!step) throw new Error(`沒有從匯出版本 ${v} 升級的方式`)
+    if (!step) throw new Error(fmt('沒有從匯出版本 {0} 升級的方式', v))
     value = step(value, kind)
   }
   return value

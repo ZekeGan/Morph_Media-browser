@@ -1,3 +1,4 @@
+import { fmt } from './message'
 export interface Term {
   key?: string
   value: string
@@ -28,9 +29,9 @@ export function queryField(key: string, available: QueryField[]): { field: strin
     ids = [...new Set(found.map((field) => field.attributeId))]
   if (!ids.length && ['name', 'folder_name', 'path'].includes(alias) && !explicit)
     return { field: alias === 'path' ? '@path' : '@name', type: 'string' }
-  if (!ids.length) throw new Error(`找不到欄位「${key}」，可從欄位提示選擇`)
+  if (!ids.length) throw new Error(fmt('找不到欄位「{0}」，可從欄位提示選擇', key))
   if (ids.length > 1 || new Set(found.map((field) => field.type)).size > 1)
-    throw new Error(`欄位「${alias}」有多個身分；請使用提示中的 key@完整屬性ID`)
+    throw new Error(fmt('欄位「{0}」有多個身分；請使用提示中的 key@完整屬性ID', alias))
   return { field: ids[0], type: found[0].type }
 }
 export function stabilizeQuery(query: string, fields: QueryField[]): StableQuery {

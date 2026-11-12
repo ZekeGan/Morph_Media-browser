@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import { parseQuery, stabilizeQuery, type QueryField } from '../shared/query'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -131,15 +132,19 @@ export async function previewDeleteField(
             (key) => aliases.includes(key) || key.endsWith('@' + attributeId.toLocaleLowerCase())
           )
         )
-          throw new Error(`常用搜尋「${search.name}」的欄位身分不明，請先修正：${message(error)}`)
-        preview.skipped.push(`常用搜尋「${search.name}」無法解析，原樣保留；未宣稱其引用已清除`)
+          throw new Error(
+            fmt('常用搜尋「{0}」的欄位身分不明，請先修正：{1}', search.name, message(error))
+          )
+        preview.skipped.push(
+          fmt('常用搜尋「{0}」無法解析，原樣保留；未宣稱其引用已清除', search.name)
+        )
         return search
       }
     }),
   })
   for (const ref of ex.state.projects) {
     if (!ref.project || ref.error) {
-      preview.skipped.push(`${ref.root}: 專案不可用，保留`)
+      preview.skipped.push(fmt('{0}: 專案不可用，保留', ref.root))
       continue
     }
     const file = projectFile(ref.root, ref.projectId)
@@ -231,7 +236,7 @@ export async function previewDeleteField(
     ].filter((value) => value.attributeId === attributeId)
     for (const [id, values] of Object.entries(record.projectOverrides))
       if (!linkedIds.has(id) && values.some((value) => value.attributeId === attributeId))
-        preview.skipped.push(`${row.path}: 未連結專案 ${id} 的私有值保留，未納入刪除`)
+        preview.skipped.push(fmt('{0}: 未連結專案 {1} 的私有值保留，未納入刪除', row.path, id))
     const strip = (source: FolderRecord) => {
       const next = structuredClone(source)
       next.attributes = next.attributes.filter((value) => value.attributeId !== attributeId)
@@ -241,7 +246,7 @@ export async function previewDeleteField(
             (value) => value.attributeId !== attributeId
           )
         else if (next.projectOverrides[id].some((value) => value.attributeId === attributeId))
-          preview.skipped.push(`${row.path}: 未連結專案 ${id} 的私有值保留，未納入刪除`)
+          preview.skipped.push(fmt('{0}: 未連結專案 {1} 的私有值保留，未納入刪除', row.path, id))
       }
       if (next.details?.cellImages) delete next.details.cellImages[attributeId]
       return next

@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
@@ -52,7 +53,7 @@ export async function content(
     try {
       hidden = await hiddenFileNames(row.path)
     } catch (error) {
-      notices.push('無法確認隱藏屬性：' + String(error))
+      notices.push(fmt('無法確認隱藏屬性：{0}', String(error)))
     }
     names = (await fs.readdir(row.path, { withFileTypes: true }))
       .filter(

@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import { DATA_DIR } from '../shared/model'
@@ -175,7 +176,9 @@ export async function hideDirectories(dirs: string[]): Promise<{ dir: string; er
       })
       child.on('close', (code) => {
         clearTimeout(timer)
-        code === 0 ? resolve(stdout) : reject(new Error(stderr || `隱藏屬性程序退出：${code}`))
+        code === 0
+          ? resolve(stdout)
+          : reject(new Error(stderr || fmt('隱藏屬性程序退出：{0}', code)))
       })
       child.stdin.on('error', reject)
       child.stdin.end(JSON.stringify(paths))

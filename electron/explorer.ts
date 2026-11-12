@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import { isFolderKind } from '../shared/kind'
 import { archiveIndex, type ArchiveIndex } from './archive'
 import { dateOrText, httpUrl, validFieldValue } from '../shared/fields'
@@ -213,7 +214,7 @@ export class Explorer {
     if (!key(a.attributeId) || typeof a.key !== 'string' || a.key.length > 100)
       throw new Error('欄位身分不合法')
     const valid = validFieldValue(a.type, a.value)
-    if (!valid) throw new Error(`欄位 ${a.key} 的值與型別 ${a.type} 不符`)
+    if (!valid) throw new Error(fmt('欄位 {0} 的值與型別 {1} 不符', a.key, a.type))
     const old = record.attributes.find((v) => v.attributeId === a.attributeId)
     if (old && old.type !== a.type && !dateOrText(old.type, a.type))
       throw new Error('不能改變既有欄位型別')
@@ -414,7 +415,11 @@ export class Explorer {
           notice: completionNotice(
             saved,
             failed.length,
-            `批次保存 ${saved} 筆${failed.length ? '\n失敗（已成功項目保留）：\n' + failed.join('\n') : ''}`
+            fmt(
+              '批次保存 {0} 筆{1}',
+              saved,
+              failed.length ? fmt('\n失敗（已成功項目保留）：\n') + failed.join('\n') : ''
+            )
           ),
         }
       }
@@ -464,7 +469,11 @@ export class Explorer {
           notice: completionNotice(
             saved,
             failed.length,
-            `已指定 ${saved} 個資料夾的類型${failed.length ? '\n失敗（已成功項目保留）：\n' + failed.join('\n') : ''}`
+            fmt(
+              '已指定 {0} 個資料夾的類型{1}',
+              saved,
+              failed.length ? fmt('\n失敗（已成功項目保留）：\n') + failed.join('\n') : ''
+            )
           ),
         }
       }

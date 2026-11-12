@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Languages: every error and notice from the main process (archives, backups, import and export, cleanup, scanning, game detection, settings files) is now translated, including sentences with paths and counts in them (R-281).
 - Website keys: a new App settings tab keeps your own keys encrypted on this computer (only the main process reads them), with save-and-test, clear and how-to-apply steps; new keyed sources TMDB, MyAnimeList, OMDb (IMDb addresses), Trakt, RAWG, Giant Bomb, Comic Vine, SteamGridDB, Last.fm, Discogs, IGDB, TheTVDB, FANZA and AniDB, and optional keys for Bangumi (NSFW entries), Danbooru and Google Books. The import panel says when a site needs a key and opens the right row (R-285–R-291).
 - Website sources: any HTTPS page can fill in from its JSON-LD / OpenGraph (local and private addresses refused); new sources MangaDex, Kitsu, MangaUpdates, Shōsetsuka ni Narō, Pixiv novels, Apple Music, Deezer, Danbooru, Google Books, BOOTH and Kakuyomu; requests now identify as `Morph/<version>` (R-283, R-284, R-292).
 - Novel reader for TXT and EPUB: legacy encodings detected, chapters found from headings, pages or scrolling, vertical text with upright digits and ruby, font / size / spacing / margins / line length / background settings, contents, full-text search, bookmarks, immersive mode, next book; the place in each book is kept, and cards and tables can show reading progress and last read (R-282).

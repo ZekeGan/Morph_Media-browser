@@ -1,3 +1,4 @@
+import { fmt } from '../shared/message'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { execFile } from 'node:child_process'
@@ -91,7 +92,7 @@ export async function exportProject(
       const rel = relPath(root, file.path),
         bytes = await fs.readFile(file.path),
         target = inBundle(out, rel)
-      if (sha(bytes) !== file.hash) throw new Error(`匯出期間檔案已改變，請重試：${rel}`)
+      if (sha(bytes) !== file.hash) throw new Error(fmt('匯出期間檔案已改變，請重試：{0}', rel))
       await fs.mkdir(path.dirname(target), { recursive: true })
       await fs.writeFile(target, bytes, { flag: 'wx' })
       files.push({ path: rel, sha256: file.hash, size: bytes.length })
@@ -131,10 +132,10 @@ export async function previewProjectImport(
     warnings: string[] = []
   let blocker: string | undefined
   const protectedBy = await ex.protectedAncestor(targetRoot)
-  if (protectedBy) blocker = `目標位置受遊戲／App 邊界保護，請選擇外層資料夾：${protectedBy}`
+  if (protectedBy) blocker = fmt('目標位置受遊戲／App 邊界保護，請選擇外層資料夾：{0}', protectedBy)
   const linked = ex.refs.find((ref) => ref.projectId === manifest.projectId)
   if (linked && keyPath(linked.root) !== keyPath(targetRoot) && (await exists(linked.root)))
-    blocker = `同一專案仍連結在另一個位置：${linked.root}。若要搬移，請先取消那個連結`
+    blocker = fmt('同一專案仍連結在另一個位置：{0}。若要搬移，請先取消那個連結', linked.root)
   const entries: ImportPlan['entries'] = [],
     missingDirs = new Set<string>(),
     protectedDirs = new Set<string>(),
@@ -162,8 +163,10 @@ export async function previewProjectImport(
     const source = inBundle(bundle, file.path)
     await safePath(bundle, source)
     const stat = await fs.stat(source).catch(() => undefined)
-    if (!stat?.isFile() || stat.size !== file.size) throw new Error(`匯出資料不完整：${file.path}`)
-    if ((await fingerprint(source)) !== file.sha256) throw new Error(`匯出資料已損壞：${file.path}`)
+    if (!stat?.isFile() || stat.size !== file.size)
+      throw new Error(fmt('匯出資料不完整：{0}', file.path))
+    if ((await fingerprint(source)) !== file.sha256)
+      throw new Error(fmt('匯出資料已損壞：{0}', file.path))
     const segments = file.path.split('/'),
       meta = segments.findIndex((s) => s.toLowerCase() === DATA_DIR),
       dir = path.join(targetRoot, ...segments.slice(0, meta))
@@ -236,11 +239,12 @@ export async function applyProjectImport(
     const source = inBundle(plan.bundle, entry.rel)
     await safePath(plan.bundle, source)
     const data = await fs.readFile(source)
-    if (sha(data) !== entry.sha256) throw new Error(`匯出資料已改變：${entry.rel}`)
+    if (sha(data) !== entry.sha256) throw new Error(fmt('匯出資料已改變：{0}', entry.rel))
     bytes.set(entry.rel, data)
     await safePath(plan.root, entry.target)
     const now = (await exists(entry.target)) ? await fingerprint(entry.target) : undefined
-    if (now !== entry.existing) throw new Error(`目標檔案在預覽後已改變，請重新預覽：${entry.rel}`)
+    if (now !== entry.existing)
+      throw new Error(fmt('目標檔案在預覽後已改變，請重新預覽：{0}', entry.rel))
     // A record (or its backup) a newer version wrote is never replaced; nothing is written then.
     if (entry.role !== 'asset')
       for (const file of [entry.target, `${entry.target}.bak`])
@@ -352,7 +356,12 @@ export async function applyProjectImport(
         incomplete = true
       })
     throw new Error(
-      `匯入失敗：${message(error)}${incomplete ? '；部分變更無法自動還原' : '；已還原變更'}${copies.size ? `（備份：${backup}）` : ''}`
+      fmt(
+        '匯入失敗：{0}{1}{2}',
+        message(error),
+        incomplete ? fmt('；部分變更無法自動還原') : fmt('；已還原變更'),
+        copies.size ? fmt('（備份：{0}）', backup) : ''
+      )
     )
   }
   return {
