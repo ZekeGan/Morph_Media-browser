@@ -238,9 +238,6 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .file-overview-item small{font-size:10px;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .file-overview-list .file-overview-item{display:grid;grid-template-columns:44px minmax(100px,1fr) minmax(100px,2fr);align-items:center}
 .file-overview-list .file-overview-thumb{height:42px}
-.single-file-preview{height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;min-height:0;overflow:auto}
-.single-file-image{width:100%;flex:1;min-height:80px;object-fit:contain}
-.single-file-preview h3{margin:0;font-size:14px;overflow-wrap:anywhere}
 .cell-link{padding:0;border:0;background:none;color:inherit;text-decoration:underline;cursor:pointer;overflow-wrap:anywhere}
 .spacer-preview{display:block;width:100%;height:100%;min-height:20px;border:1px dashed var(--muted);opacity:.5}
 
@@ -270,7 +267,6 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 
 .editor-toolbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding-bottom:14px; margin-bottom:16px; border-bottom:1px solid var(--line); }
 .editor-toolbar>strong { font-size:13px; }.editor-toolbar .scheme-toolbar { flex:1; min-width:280px; margin:0; }.editor-toolbar .scheme-toolbar .mantine-InputWrapper-label { display:none; }.editor-save { margin-left:auto; }.editor-history { flex-shrink:0; }.palette-item,.editor-cell { isolation:isolate; }.editor-cell { overflow:hidden; }
-.single-file-image-open { display:block; padding:0; border:0; width:100%; background:transparent; cursor:zoom-in; }
 
 .inspector-empty { padding:4px 2px; }.canvas-empty { padding:24px 8px; }
 
@@ -448,3 +444,38 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .reader-webtoon-page.pending { min-height:60vh; }
 .reader-webtoon-width { display:flex; align-items:center; gap:8px; min-width:150px; }.reader-webtoon-width .mantine-Slider-root { flex:1; }
 .settings-section.site-key.focused{outline:2px solid var(--accent);outline-offset:-2px}
+/* R-337: one file in the right panel — preview, title, kind and size, the main action, folded details. */
+.file-page { height:100%; display:flex; flex-direction:column; gap:10px; padding:10px; min-height:0; overflow:auto; }
+.file-page-preview { display:grid; place-items:center; flex-shrink:0; width:100%; min-height:120px; max-height:min(55vh, 420px); padding:0; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel-2, var(--panel)); color:var(--muted); cursor:zoom-in; overflow:hidden; }
+.file-page-preview:disabled { cursor:default; }
+.file-page-preview img { display:block; max-width:100%; max-height:min(55vh, 420px); object-fit:contain; }
+.file-page-preview.empty { aspect-ratio:3 / 2; max-height:200px; }
+.file-page-preview:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.file-page-heading { display:flex; align-items:center; gap:6px; min-width:0; }
+.file-page-heading h3 { flex:1; min-width:0; margin:0; font-size:15px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.file-page-progress { display:grid; gap:4px; }
+.file-page-details summary { cursor:pointer; color:var(--muted); font-size:12px; }
+.file-page-details dl { display:grid; grid-template-columns:max-content 1fr; gap:4px 12px; margin:8px 0 0; font-size:12px; }
+.file-page-details dt { color:var(--muted); }
+.file-page-details dd { margin:0; overflow-wrap:anywhere; }
+/* R-338: the books in a folder, with how far each has been read. */
+.book-shelf { display:grid; gap:6px; margin:0; padding:0; list-style:none; }
+.book-shelf li { display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:10px; padding:6px 8px; border:1px solid var(--line); border-radius:var(--radius); }
+.book-shelf-name { display:grid; gap:4px; min-width:0; }
+.book-shelf-name span { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.book-shelf small { color:var(--muted); white-space:nowrap; }
+/* R-343: what a folder is, as its icon in lists and a badge on its card. A candidate game is dashed: not yet confirmed. */
+.kind-icon { display:inline-flex; flex-shrink:0; margin-right:6px; vertical-align:-2px; color:var(--muted); }
+.kind-icon.kind-game { color:var(--accent); }
+.kind-icon.unconfirmed { opacity:.6; }
+.folder-card { position:relative; }
+.kind-badge { position:absolute; top:8px; right:8px; z-index:2; display:grid; place-items:center; width:26px; height:26px; padding:0; border:1px solid var(--line); border-radius:50%; background:var(--surface); color:var(--accent); cursor:pointer; }
+.kind-badge.unconfirmed { border-style:dashed; color:var(--muted); }
+.kind-badge:hover { border-color:var(--accent); }
+.kind-badge:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.browse-panel-name { display:inline-flex; align-items:center; min-width:0; }
+/* R-339: empty fields as "+ fill in" chips; a website's imported values read-only, each with "change by hand". */
+.field-fill-chips { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+.site-field { display:grid; grid-template-columns:minmax(6em, max-content) 1fr auto; align-items:baseline; gap:4px 10px; }
+.site-field-value { min-width:0; overflow-wrap:anywhere; white-space:pre-wrap; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden; }
+.card-display-advanced summary { cursor:pointer; color:var(--muted); font-size:12px; margin-bottom:6px; }

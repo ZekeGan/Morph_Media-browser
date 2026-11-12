@@ -50,9 +50,12 @@ test('all-depth inventory and independent CARD/TREE/TABLE display; presets keep 
     browserRows(rows, single, media, 'TABLE', '').map((r) => r.name),
     ['A']
   )
-  assert.equal(
-    browserRows(rows, { ...p, cardView: { mode: 'multi', level: 2 } }, media, 'CARD', '').length,
-    2
+  // R-340: "all works" (the old multi view) passes A, which holds only a folder, and stops at the depth limit.
+  assert.deepEqual(
+    browserRows(rows, { ...p, cardView: { mode: 'multi', level: 2 } }, media, 'CARD', '').map(
+      (r) => r.name
+    ),
+    ['B']
   )
   const changed = saveCardPreset(
     { ...single, list: { itemsPerRow: 3, pageSize: 20 } },

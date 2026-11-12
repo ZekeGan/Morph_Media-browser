@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-> 最後確認：2026-11-13（R-293、R-329、R-321、R-334、R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
+> 最後確認：2026-11-13（R-339、R-293、R-329、R-321、R-334、R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
 
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
@@ -89,6 +89,7 @@ Hitomi 的作品資料主機是 `ltn.gold-usergeneratedcontent.net`（2026-11 �
 
 - main 驗證精確主機及作品 ID，請求固定 API 端點，限制回應大小、逾時與重新導向；封面限白名單 HTTPS 主機及支援的影像簽名，取得失敗仍可預覽欄位。
 - 任意主機的請求（通用網頁、圖片網址）在建立連線時才解析 DNS 並檢查位址，socket 直接連到檢查通過的位址，不再解析第二次，避免 DNS rebinding 把請求轉到本機或內網（R-334，`electron/pinned-fetch.ts`）。只用 GET、不跟隨重新導向（由呼叫端逐跳重新檢查）。
+- **資料分頁的欄位**（R-339）：上方是「你的欄位」（自建欄位，可直接編輯）；這個專案還沒填的欄位收成一排「＋ 補填」小按鈕，按了才出現輸入框（不再有「顯示未填欄位」勾選）。下方每個網站一組「來自 VNDB」等，值唯讀並以匯入預覽的中文欄位名顯示；單一欄位按「改成手動」才變成可編輯，保存後標成手動、之後重新匯入不覆蓋。每組有「重新取得」（把該站網址帶回上方的網址欄）與「移除這個來源的資料」：確認後只移除該站在共用資料裡、沒被手動改過的值（`removeSource`，以記錄版本防衝突），手動改過的與其他網站、各專案私有值都保留。
 - 預覽顯示候選值與已存在的來源值；預設只填空值，0／false 視為有值。明確勾選「覆寫已填來源欄位」才取代既有來源值，人工欄位分開保留。曾手動修改的來源欄位不會被來源再次覆寫：只填空值時跳過該欄位、其他欄位照填；勾選覆寫時整批拒絕並說明衝突。
 - 屬性仍以來源前綴分開保存，可選 sourceRecord 記錄 provider、原網址與 fetchedAt；手動編輯會移除此擷取註記。schemaVersion 維持 1，不自動遷移收藏，也不把同名欄位視為相同身分。
 - 日期存成日期：E-Hentai 的圖庫公開時間存成「日期時間」（換算成本機時間），各來源的發售日（Steam 的 `12 Nov, 2020`、`2020/11/12`、`2020年11月12日`、英文月份等）存成來源寫的那一天 `YYYY-MM-DD`。只有年份、年月或「TBA」等讀不成完整日期的值照原樣存文字，不補日子。專案裡該欄位已是「文字」時，新匯入照文字存。日期仍是來源寫的語意，不改稱首次發行日。封面寫入沿用可攜資產及原子保存；保存失敗移除本次新增的封面，保留原值及原資產。預設重複補空不重複加入同來源封面。

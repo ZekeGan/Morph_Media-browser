@@ -156,7 +156,13 @@ export async function readEpub(
   const spine = tags(opf, 'itemref')
     .map((tag) => manifest.get(attr(tag, 'idref') ?? ''))
     .filter((item): item is { href: string; type: string; properties: string } => !!item?.href)
-  const title = plain(elements(opf, 'dc:title')[0]?.inner ?? '')
+  const title = plain(elements(opf, 'dc:title')[0]?.inner ?? ''),
+    author = plain(elements(opf, 'dc:creator')[0]?.inner ?? '').slice(0, 200)
+  // The cover: an EPUB 3 item marked cover-image, else the EPUB 2 <meta name="cover" content="item id">.
+  const coverMeta = tags(opf, 'meta').find((tag) => attr(tag, 'name') === 'cover'),
+    coverItem =
+      [...manifest.values()].find((item) => /\bcover-image\b/.test(item.properties)) ??
+      (coverMeta ? manifest.get(attr(coverMeta, 'content') ?? '') : undefined)
   // Chapter names from the EPUB 3 navigation document, else the EPUB 2 NCX.
   const names = new Map<string, string>()
   const nav = [...manifest.values()].find((item) => /\bnav\b/.test(item.properties))
@@ -190,11 +196,20 @@ export async function readEpub(
   }
   if (!chapters.length) throw new Error('EPUB 沒有可讀的章節')
   // Images are served through the existing read-only archive stream, by their position in the image list.
-  const images: Record<string, string> = {}
+  const images: Record<string, string> = Object.create(null)
   index.images.forEach((image, number) => {
     images[image.name] = imageUrl(number)
   })
-  return { format: 'epub', title, chapters, images }
+  const cover = coverItem?.href ? images[coverItem.href] : undefined
+  return {
+    format: 'epub',
+    title,
+    ...(author ? { author } : {}),
+    ...(cover ? { cover } : {}),
+    chapters,
+    // A plain object again for IPC; built without a prototype so names like __proto__ stay ordinary keys.
+    images: { ...images },
+  }
 }
 
 export async function readNovel(

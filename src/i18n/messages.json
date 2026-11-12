@@ -509,36 +509,6 @@
     "en": "Folder path",
     "es": "Ruta de carpeta"
   },
-  "多層": {
-    "ja": "複数階層",
-    "zh-CN": "多层",
-    "en": "Multiple levels",
-    "es": "Varios niveles"
-  },
-  "單層": {
-    "ja": "単一階層",
-    "zh-CN": "单层",
-    "en": "Single level",
-    "es": "Un nivel"
-  },
-  "全部（最深第": {
-    "ja": "すべて（最大階層",
-    "zh-CN": "全部（最深第",
-    "en": "All (deepest level",
-    "es": "Todos (nivel más profundo"
-  },
-  "層）": {
-    "ja": "）",
-    "zh-CN": "层）",
-    "en": ")",
-    "es": ")"
-  },
-  "第 1–": {
-    "ja": "第1–",
-    "zh-CN": "第 1–",
-    "en": "Levels 1–",
-    "es": "Niveles 1–"
-  },
   "層": {
     "ja": "階層",
     "zh-CN": "层",
@@ -688,12 +658,6 @@
     "zh-CN": "层级显示",
     "en": "Level display",
     "es": "Vista por niveles"
-  },
-  "顯示層數": {
-    "ja": "表示階層",
-    "zh-CN": "显示层数",
-    "en": "Display levels",
-    "es": "Niveles visibles"
   },
   "每列卡片數": {
     "ja": "1行のカード数",
@@ -1546,12 +1510,6 @@
     "zh-CN": "各项目共用的信息",
     "en": "Info shared by all projects",
     "es": "Información compartida entre proyectos"
-  },
-  "匯入及其他欄位（": {
-    "ja": "インポート済み・その他の項目（",
-    "zh-CN": "导入及其他栏位（",
-    "en": "Imported and other fields (",
-    "es": "Campos importados y otros ("
   },
   "保存": {
     "ja": "保存",
@@ -3310,12 +3268,6 @@
     "zh-CN": "由左至右",
     "en": "Left to right",
     "es": "De izquierda a derecha"
-  },
-  "開啟圖片 {0}": {
-    "ja": "画像を開く {0}",
-    "zh-CN": "打开图片 {0}",
-    "en": "Open image {0}",
-    "es": "Abrir imagen {0}"
   },
   "先保存版面後才能刪除欄位": {
     "en": "Save the layout before deleting a field",
@@ -6412,12 +6364,6 @@
     "en": "Edited manually",
     "ja": "手動で変更済み",
     "es": "Editado manualmente"
-  },
-  "顯示未填欄位（{0}）": {
-    "zh-CN": "显示未填字段（{0}）",
-    "en": "Show empty fields ({0})",
-    "ja": "未入力のフィールドを表示（{0}）",
-    "es": "Mostrar campos vacíos ({0})"
   },
   "備用欄位必須存在且型別可相容顯示": {
     "zh-CN": "备用字段必须存在且类型兼容",
@@ -11626,5 +11572,239 @@
     "en": "{0} pages left in the chapter",
     "ja": "この章は残り {0} ページ",
     "es": "Quedan {0} páginas del capítulo"
+  },
+  "小說": {
+    "zh-CN": "小说",
+    "en": "Novel",
+    "ja": "小説",
+    "es": "Novela"
+  },
+  "顯示類型圖示": {
+    "zh-CN": "显示类型图标",
+    "en": "Show kind icons",
+    "ja": "種類アイコンを表示",
+    "es": "Mostrar iconos de tipo"
+  },
+  "疑似遊戲 · 尚未確認": {
+    "zh-CN": "疑似游戏 · 尚未确认",
+    "en": "Possible game · not confirmed",
+    "ja": "ゲームの可能性 · 未確認",
+    "es": "Posible juego · sin confirmar"
+  },
+  "你指定的": {
+    "zh-CN": "你指定的",
+    "en": "set by you",
+    "ja": "手動で指定",
+    "es": "elegido por ti"
+  },
+  "自動判斷": {
+    "zh-CN": "自动判断",
+    "en": "detected",
+    "ja": "自動判定",
+    "es": "detectado"
+  },
+  "繼續閱讀（{0}）": {
+    "zh-CN": "继续阅读（{0}）",
+    "en": "Continue reading ({0})",
+    "ja": "続きを読む（{0}）",
+    "es": "Seguir leyendo ({0})"
+  },
+  "開始閱讀": {
+    "zh-CN": "开始阅读",
+    "en": "Start reading",
+    "ja": "読み始める",
+    "es": "Empezar a leer"
+  },
+  "檢視圖片": {
+    "zh-CN": "查看图片",
+    "en": "View image",
+    "ja": "画像を見る",
+    "es": "Ver imagen"
+  },
+  "{0} 章": {
+    "zh-CN": "{0} 章",
+    "en": "{0} chapters",
+    "ja": "{0} 章",
+    "es": "{0} capítulos"
+  },
+  "讀到 {0} · {1}% · {2}": {
+    "zh-CN": "读到 {0} · {1}% · {2}",
+    "en": "Up to {0} · {1}% · {2}",
+    "ja": "{0} まで · {1}% · {2}",
+    "es": "Hasta {0} · {1}% · {2}"
+  },
+  "詳細資料": {
+    "zh-CN": "详细资料",
+    "en": "Details",
+    "ja": "詳細",
+    "es": "Detalles"
+  },
+  "檔名": {
+    "zh-CN": "文件名",
+    "en": "File name",
+    "ja": "ファイル名",
+    "es": "Nombre de archivo"
+  },
+  "{0} 位元組": {
+    "zh-CN": "{0} 字节",
+    "en": "{0} bytes",
+    "ja": "{0} バイト",
+    "es": "{0} bytes"
+  },
+  "修改日期": {
+    "zh-CN": "修改日期",
+    "en": "Modified",
+    "ja": "更新日時",
+    "es": "Modificado"
+  },
+  "編碼": {
+    "zh-CN": "编码",
+    "en": "Encoding",
+    "ja": "文字コード",
+    "es": "Codificación"
+  },
+  "文字書與文件": {
+    "zh-CN": "文字书与文件",
+    "en": "Books and documents",
+    "ja": "本とドキュメント",
+    "es": "Libros y documentos"
+  },
+  "繼續閱讀": {
+    "zh-CN": "继续阅读",
+    "en": "Continue reading",
+    "ja": "続きを読む",
+    "es": "Seguir leyendo"
+  },
+  "移除「{0}」匯入的資料？你手動修改過的欄位會保留。": {
+    "zh-CN": "移除「{0}」导入的数据？你手动修改过的栏位会保留。",
+    "en": "Remove the data imported from \"{0}\"? Fields you changed by hand are kept.",
+    "ja": "「{0}」から取り込んだデータを削除しますか？手動で変更した項目は残ります。",
+    "es": "¿Quitar los datos importados de «{0}»? Los campos que cambiaste a mano se conservan."
+  },
+  "{0} 項": {
+    "zh-CN": "{0} 项",
+    "en": "{0} items",
+    "ja": "{0} 件",
+    "es": "{0} elementos"
+  },
+  "重新取得": {
+    "zh-CN": "重新获取",
+    "en": "Fetch again",
+    "ja": "再取得",
+    "es": "Obtener de nuevo"
+  },
+  "移除這個來源的資料": {
+    "zh-CN": "移除这个来源的数据",
+    "en": "Remove this site's data",
+    "ja": "このサイトのデータを削除",
+    "es": "Quitar los datos de este sitio"
+  },
+  "改成手動 {0}": {
+    "zh-CN": "改成手动 {0}",
+    "en": "Change {0} by hand",
+    "ja": "{0} を手動に変更",
+    "es": "Cambiar {0} a mano"
+  },
+  "改成手動": {
+    "zh-CN": "改成手动",
+    "en": "Change by hand",
+    "ja": "手動に変更",
+    "es": "Cambiar a mano"
+  },
+  "補填": {
+    "zh-CN": "补填",
+    "en": "Fill in",
+    "ja": "入力する",
+    "es": "Rellenar"
+  },
+  "補填：": {
+    "zh-CN": "补填：",
+    "en": "Fill in: ",
+    "ja": "入力する：",
+    "es": "Rellenar: "
+  },
+  "來源不存在": {
+    "zh-CN": "来源不存在",
+    "en": "The source doesn't exist",
+    "ja": "取得元がありません",
+    "es": "La fuente no existe"
+  },
+  "所有作品": {
+    "zh-CN": "所有作品",
+    "en": "All works",
+    "ja": "すべての作品",
+    "es": "Todas las obras"
+  },
+  "最多 {0} 層": {
+    "zh-CN": "最多 {0} 层",
+    "en": "Up to {0} levels",
+    "ja": "最大 {0} 階層",
+    "es": "Hasta {0} niveles"
+  },
+  "逐層瀏覽": {
+    "zh-CN": "逐层浏览",
+    "en": "One level at a time",
+    "ja": "1 階層ずつ",
+    "es": "Nivel por nivel"
+  },
+  "往下找到每個作品就停；只裝資料夾的分類會直接穿過。": {
+    "zh-CN": "往下找到每个作品就停；只装文件夹的分类会直接穿过。",
+    "en": "Goes down to each work and stops there; folders that only hold folders are passed through.",
+    "ja": "各作品まで下りてそこで止まります。フォルダーだけを入れた分類は通り抜けます。",
+    "es": "Baja hasta cada obra y se detiene; las carpetas que solo contienen carpetas se atraviesan."
+  },
+  "像檔案總管一樣，一次看一層。": {
+    "zh-CN": "像文件资源管理器一样，一次看一层。",
+    "en": "Like File Explorer: one level at a time.",
+    "ja": "エクスプローラーのように 1 階層ずつ表示します。",
+    "es": "Como el Explorador de archivos: un nivel cada vez."
+  },
+  "最多往下幾層": {
+    "zh-CN": "最多往下几层",
+    "en": "How many levels down",
+    "ja": "下りる階層の上限",
+    "es": "Cuántos niveles bajar"
+  },
+  "不限": {
+    "zh-CN": "不限",
+    "en": "No limit",
+    "ja": "制限なし",
+    "es": "Sin límite"
+  },
+  "{0} 層": {
+    "zh-CN": "{0} 层",
+    "en": "{0} levels",
+    "ja": "{0} 階層",
+    "es": "{0} niveles"
+  },
+  "在「所有作品」裡": {
+    "zh-CN": "在「所有作品」里",
+    "en": "In \"All works\"",
+    "ja": "「すべての作品」では",
+    "es": "En «Todas las obras»"
+  },
+  "自動：裝著自己的圖片、影片、音樂或文字書，或是一套分集的資料夾，就算一部作品；只裝資料夾的會被穿過。": {
+    "zh-CN": "自动：装着自己的图片、视频、音乐或文字书，或是一套分集的文件夹，就算一部作品；只装文件夹的会被穿过。",
+    "en": "Automatic: a folder holding its own pictures, videos, music or books, or a set of numbered volumes, is one work; a folder holding only folders is passed through.",
+    "ja": "自動：自分の画像・動画・音楽・本を入れたフォルダー、または巻ごとのフォルダーのまとまりは 1 作品。フォルダーだけを入れたものは通り抜けます。",
+    "es": "Automático: una carpeta con sus propias imágenes, vídeos, música o libros, o un conjunto de volúmenes numerados, es una obra; una carpeta que solo contiene carpetas se atraviesa."
+  },
+  "算一部作品": {
+    "zh-CN": "算一部作品",
+    "en": "One work",
+    "ja": "1 作品として扱う",
+    "es": "Una obra"
+  },
+  "是分類，往裡面找": {
+    "zh-CN": "是分类，往里面找",
+    "en": "A category: look inside",
+    "ja": "分類として中を探す",
+    "es": "Una categoría: buscar dentro"
+  },
+  "瀏覽方式不合法": {
+    "zh-CN": "浏览方式不合法",
+    "en": "Invalid browse setting",
+    "ja": "閲覧方法が正しくありません",
+    "es": "Ajuste de exploración no válido"
   }
 }

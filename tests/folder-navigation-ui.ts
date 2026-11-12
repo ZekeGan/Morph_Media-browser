@@ -17,6 +17,8 @@ const root = await fs.mkdtemp(path.join(base, 'folder-navigation-')),
 await fs.mkdir(path.join(media, 'A', 'B'), { recursive: true })
 await fs.mkdir(path.join(media, 'C'))
 await fs.mkdir(path.join(multi, 'A', 'B'), { recursive: true })
+// R-340: two works (B inside the category A, and C) so "all works" shows several cards.
+await fs.mkdir(path.join(multi, 'C'))
 await fs.writeFile(path.join(media, 'book.cbz'), zipFixture([{ name: '001.png', bytes: tinyPng }]))
 const library = new Library(local, undefined, false)
 await library.init()

@@ -164,7 +164,8 @@ export interface Project {
   // Card layout preset applied to every folder of a kind (book, game, media, general) unless the folder picks its own.
   kindLayouts?: Record<string, string>
   scanAll?: boolean
-  cardView?: { mode: 'multi' | 'single'; level: number | 'all' }
+  // R-340: works shows every work below the current folder (category folders passed through); level then limits depth.
+  cardView?: { mode: 'multi' | 'single'; level: number | 'all'; works?: boolean }
   traversal?: Record<string, boolean>
   savedSearches?: { id: string; name: string; query: string; queryAst?: StableQuery }[]
   // Fields holding the same kind of data from different sources, shown as one: the first member with a value.
@@ -197,6 +198,8 @@ export interface FolderRow {
   structural?: boolean
   readonly?: boolean
   boundary?: { engines: string[]; evidence: string[]; state: string }
+  // R-340: the files directly inside, counted while scanning (not saved); absent where the scan did not look inside.
+  contents?: { images: number; videos: number; audio: number; texts: number; total: number }
 }
 export interface ScanProgress {
   visited: number
@@ -681,6 +684,8 @@ export function validateDetails(v: unknown): asserts v is FolderDetails {
     throw new Error('遊戲操作顯示設定不合法')
   if (v.kind !== undefined && !['game', 'book', 'media', 'general'].includes(v.kind))
     throw new Error('資料夾類型不合法')
+  if (v.browseAs !== undefined && !['work', 'collection'].includes(v.browseAs))
+    throw new Error('瀏覽方式不合法')
   if (v.bannerAssetId !== undefined && !id(v.bannerAssetId)) throw new Error('封面身分不合法')
   if (
     v.cellImages !== undefined &&
@@ -749,6 +754,7 @@ export function validateProject(v: unknown): asserts v is Project {
       (v.cardView !== undefined &&
         (!obj(v.cardView) ||
           !['multi', 'single'].includes(v.cardView.mode) ||
+          (v.cardView.works !== undefined && typeof v.cardView.works !== 'boolean') ||
           !(
             integer(v.cardView.level, 1, Number.MAX_SAFE_INTEGER) ||
             (v.cardView.mode === 'multi' && v.cardView.level === 'all')

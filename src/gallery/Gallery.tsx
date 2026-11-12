@@ -13,6 +13,7 @@ import {
 import { Icon } from '../common/icons'
 import { FileMenu } from '../media/FileMenu'
 import { audioCover } from '../media/MediaThumb'
+import { fileSize, friendlyType } from '../media/fileLabels'
 import { ActionIcon, Center, Group, Modal, SegmentedControl, Stack, Tooltip } from '@mantine/core'
 import { canPreviewMedia, mediaIdentity } from '../../shared/media'
 import type { MediaEntry, OverviewEntry, ReadingPrefs } from '../../shared/explorer'
@@ -25,25 +26,6 @@ import {
 } from '../../shared/gallery'
 const Reader = lazy(() => import('../reader/Reader').then((module) => ({ default: module.Reader })))
 const PAGE_SIZE = 200
-const friendlyType = (entry: MediaEntry) => {
-  const extension = entry.name.includes('.') ? entry.name.split('.').pop()!.toUpperCase() : ''
-  const label = {
-    image: tr('圖片'),
-    video: tr('影片'),
-    audio: tr('音樂'),
-    subtitle: tr('字幕'),
-    archive: tr('壓縮檔'),
-    pdf: tr('PDF 文件'),
-    text: tr('文字書'),
-    folder: tr('資料夾'),
-    other: tr('其他'),
-  }[entry.kind]
-  return extension && entry.kind !== 'pdf' ? label + ' · ' + extension : label
-}
-const fileSize = (bytes: number) =>
-  bytes >= 1024 * 1024
-    ? (bytes / 1024 / 1024).toFixed(1) + ' MB'
-    : (bytes / 1024).toFixed(1) + ' KB'
 const Tile = memo(
   function Tile({
     entry,

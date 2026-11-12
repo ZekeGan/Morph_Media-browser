@@ -1,4 +1,5 @@
 import { fmt } from '../shared/message'
+import { mediaTypes } from './media-files'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
@@ -187,9 +188,20 @@ export async function scan(ex: Library) {
       }
       if ((!p.scanAll && depth >= p.depth.level) || ex.cancelled) return []
       const children: ScanEntry[] = []
+      const contents = { images: 0, videos: 0, audio: 0, texts: 0, total: 0 }
       try {
         for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
           if (entry.name.toLowerCase() === DATA_DIR) continue
+          if (entry.isFile()) {
+            // R-340: what the folder holds itself, by extension only (nothing is opened).
+            const kind = mediaTypes[path.extname(entry.name).toLowerCase()]?.[0]
+            contents.total++
+            if (kind === 'image') contents.images++
+            else if (kind === 'video') contents.videos++
+            else if (kind === 'audio') contents.audio++
+            else if (kind === 'text') contents.texts++
+            continue
+          }
           if (entry.isSymbolicLink()) {
             problems.push(fmt('{0}: 略過連結', path.join(dir, entry.name)))
             continue
@@ -201,6 +213,7 @@ export async function scan(ex: Library) {
               readonly: readonly || !!boundary,
             })
         }
+        row.contents = contents
       } catch (e) {
         problems.push(`${dir}: ${message(e)}`)
         progress.errors++

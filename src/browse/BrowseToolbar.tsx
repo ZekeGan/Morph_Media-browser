@@ -1,4 +1,5 @@
 import '../media/media-workspace.css'
+import { setKindBadgeVisible, useKindBadgeVisible } from './folderKind'
 import { t as tr } from '../i18n'
 import { Icon } from '../common/icons'
 import { iconLabel } from '../common/IconLabel'
@@ -12,6 +13,7 @@ import {
   SegmentedControl,
   Select,
   Stack,
+  Switch,
   Text,
   TextInput,
   Tooltip,
@@ -87,6 +89,7 @@ export function BrowseToolbar(props: Props) {
     state,
     switchMode,
   } = props
+  const kindBadge = useKindBadgeVisible()
   return (
     <>
       <div className={'workspace-toolbar' + (folderMode ? '' : ' file-mode-toolbar')}>
@@ -262,11 +265,10 @@ export function BrowseToolbar(props: Props) {
                   leftSection={<Icon name="sliders" size={14} />}
                 >
                   <span className="card-display-summary">
-                    {(display.mode === 'multi' ? tr('多層') : tr('單層')) +
-                      ' · ' +
-                      (display.level === 'all'
-                        ? tr('全部')
-                        : tr('第 ') + display.level + tr(' 層'))}
+                    {display.works
+                      ? tr('所有作品') +
+                        (display.level === 'all' ? '' : ' · ' + tr('最多 {0} 層', display.level))
+                      : tr('逐層瀏覽')}
                   </span>
                 </Button>
               </Popover.Target>
@@ -280,40 +282,54 @@ export function BrowseToolbar(props: Props) {
                       size="xs"
                       fullWidth
                       aria-label={tr('層級顯示')}
-                      value={display.mode}
+                      value={display.works ? 'works' : 'step'}
                       data={[
-                        { value: 'multi', label: tr('多層') },
-                        { value: 'single', label: tr('單層') },
+                        { value: 'step', label: tr('逐層瀏覽') },
+                        { value: 'works', label: tr('所有作品') },
                       ]}
-                      onChange={(mode) => {
-                        setDisplay({
-                          mode: mode as 'multi' | 'single',
-                          level: mode === 'single' && display.level === 'all' ? 1 : display.level,
-                        })
+                      onChange={(value) => {
+                        setDisplay(
+                          value === 'works'
+                            ? { mode: 'multi', level: 'all', works: true }
+                            : { mode: 'single', level: 1, works: false }
+                        )
                         changedCard()
                       }}
                     />
+                    <Text size="xs" c="dimmed" mt={4}>
+                      {display.works
+                        ? tr('往下找到每個作品就停；只裝資料夾的分類會直接穿過。')
+                        : tr('像檔案總管一樣，一次看一層。')}
+                    </Text>
                   </div>
-                  <Select
-                    size="xs"
-                    label={tr('顯示層數')}
-                    aria-label={tr('顯示層數')}
-                    value={String(display.level)}
-                    allowDeselect={false}
-                    data={[
-                      ...(display.mode === 'multi' ? [{ value: 'all', label: tr('全部') }] : []),
-                      ...Array.from({ length: deepest }, (_, index) => ({
-                        value: String(index + 1),
-                        label: tr('第 ') + (index + 1) + tr(' 層'),
-                      })),
-                    ]}
-                    onChange={(value) => {
-                      if (value) {
-                        setDisplay({ ...display, level: value === 'all' ? 'all' : Number(value) })
-                        changedCard()
-                      }
-                    }}
-                  />
+                  {display.works && (
+                    <details className="card-display-advanced">
+                      <summary>{tr('進階')}</summary>
+                      <Select
+                        size="xs"
+                        label={tr('最多往下幾層')}
+                        aria-label={tr('最多往下幾層')}
+                        value={String(display.level)}
+                        allowDeselect={false}
+                        data={[
+                          { value: 'all', label: tr('不限') },
+                          ...Array.from({ length: deepest }, (_, index) => ({
+                            value: String(index + 1),
+                            label: tr('{0} 層', index + 1),
+                          })),
+                        ]}
+                        onChange={(value) => {
+                          if (value) {
+                            setDisplay({
+                              ...display,
+                              level: value === 'all' ? 'all' : Number(value),
+                            })
+                            changedCard()
+                          }
+                        }}
+                      />
+                    </details>
+                  )}
                   <NumberInput
                     size="xs"
                     label={tr('每列卡片數')}
@@ -337,6 +353,12 @@ export function BrowseToolbar(props: Props) {
                       setDensity({ ...density, pageSize: value })
                       changedCard()
                     }}
+                  />
+                  <Switch
+                    size="xs"
+                    label={tr('顯示類型圖示')}
+                    checked={kindBadge}
+                    onChange={(event) => setKindBadgeVisible(event.currentTarget.checked)}
                   />
                   {cardSaveError && (
                     <Button size="compact-xs" color="red" variant="subtle" onClick={changedCard}>

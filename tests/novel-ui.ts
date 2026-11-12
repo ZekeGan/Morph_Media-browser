@@ -39,9 +39,9 @@ await fs.writeFile(
     ),
     xml(
       'OPS/book.opf',
-      '<package><metadata><dc:title>Picture Book</dc:title></metadata><manifest>' +
+      '<package><metadata><dc:title>Picture Book</dc:title><dc:creator>Ann Author</dc:creator></metadata><manifest>' +
         '<item id="c1" href="c1.xhtml" media-type="application/xhtml+xml"/>' +
-        '<item id="p" href="p.png" media-type="image/png"/></manifest><spine><itemref idref="c1"/></spine></package>'
+        '<item id="p" href="p.png" media-type="image/png" properties="cover-image"/></manifest><spine><itemref idref="c1"/></spine></package>'
     ),
     xml(
       'OPS/c1.xhtml',
@@ -71,7 +71,11 @@ const choose = async (name: string) => {
 let passed = false
 try {
   await page.getByRole('button', { name: '開啟專案 Novel test', exact: true }).first().click()
-  await page.getByRole('button', { name: 'story.txt', exact: true }).click()
+  // R-338: the folder lists its books with how far each has been read.
+  await page.locator('.book-shelf').waitFor()
+  assert.equal(await page.locator('.book-shelf li').count(), 2)
+  await page.screenshot({ path: path.join(base, 'shot', 'r338-book-shelf.png') })
+  await page.getByRole('button', { name: /^(開始|繼續)閱讀 story.txt$/ }).click()
   await reader().waitFor()
   // Chapter 0 is the foreword; the ruby renders as <ruby>.
   // The book loads after the dialog opens; wait for its chapter label.
@@ -236,14 +240,14 @@ try {
     'the book is never written'
   )
   // Opening it again returns to chapter 3.
-  await page.getByRole('button', { name: 'story.txt', exact: true }).click()
+  await page.getByRole('button', { name: /^(開始|繼續)閱讀 story.txt$/ }).click()
   await page.waitForFunction(() =>
     /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
   )
   await page.keyboard.press('Escape')
   await reader().waitFor({ state: 'detached' })
   // EPUB: allowed elements only (no script runs), ruby kept, the picture comes from inside the book.
-  await page.getByRole('button', { name: 'book.epub', exact: true }).click()
+  await page.getByRole('button', { name: /^(開始|繼續)閱讀 book.epub$/ }).click()
   await reader().locator('h1', { hasText: 'Opening' }).waitFor()
   assert.equal(await reader().locator('ruby rt', { hasText: 'かん' }).count(), 1)
   assert.equal(await reader().locator('script').count(), 0)
@@ -256,6 +260,20 @@ try {
     undefined
   )
   await page.screenshot({ path: path.join(base, 'shot', 'r282-novel-epub.png') })
+  await page.keyboard.press('Escape')
+  await reader().waitFor({ state: 'detached' })
+  // R-337, R-338: one book in the right panel shows its cover, title, author and chapters.
+  await page.locator('.workspace-toolbar').getByText('檔案', { exact: true }).click()
+  await page.locator('.file-overview-item').filter({ hasText: 'book.epub' }).click()
+  const filePage = page.locator('.file-page')
+  await filePage.locator('h3', { hasText: 'Picture Book' }).waitFor()
+  await filePage.getByText('Ann Author', { exact: true }).waitFor()
+  await page.waitForFunction(() => {
+    const image = document.querySelector<HTMLImageElement>('.file-page-preview img')
+    return !!image && image.complete && image.naturalWidth > 0
+  })
+  assert.match(await filePage.innerText(), /1 章/)
+  await page.screenshot({ path: path.join(base, 'shot', 'r337-file-page-epub.png') })
   assert.deepEqual(errors, [])
   passed = true
   console.log(

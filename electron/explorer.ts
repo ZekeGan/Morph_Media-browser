@@ -2,7 +2,7 @@ import { fmt } from '../shared/message'
 import { isFolderKind } from '../shared/kind'
 import { archiveIndex, type ArchiveIndex } from './archive'
 import { dateOrText, httpUrl, validFieldValue } from '../shared/fields'
-import { type MetadataSourceId } from '../shared/sources'
+import { type MetadataSourceId, metadataSources } from '../shared/sources'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
@@ -378,6 +378,20 @@ export class Explorer {
       case 'attributes':
         await this.attributes(req.rowId, req.revision, req.values, req.private)
         return this.after(await this.library.refreshRecord(req.rowId))
+      case 'removeSource': {
+        // R-339: only a known website's own fields (its id prefix), and only values not changed by hand.
+        if (!metadataSources.some((source) => source.id === req.provider))
+          throw new Error('來源不存在')
+        const { row, record } = await this.record(req.rowId, req.revision),
+          prefix = req.provider + '-',
+          kept = record.attributes.filter(
+            (a) => !a.attributeId.startsWith(prefix) || a.source === 'manual'
+          )
+        if (kept.length === record.attributes.length) return this.after(this.library.snapshot())
+        record.attributes = kept
+        await saveFolder(row.path, record, req.revision)
+        return this.after(await this.library.refreshRecord(req.rowId))
+      }
       case 'batch': {
         if (
           !Array.isArray(req.rows) ||
@@ -458,6 +472,16 @@ export class Explorer {
           ...this.after(snapshot),
           notice: { level: 'success' as const, message: '已更新資料夾類型' },
         }
+      }
+      case 'browseAs': {
+        if (req.value !== null && req.value !== 'work' && req.value !== 'collection')
+          throw new Error('瀏覽方式不合法')
+        return this.after(
+          await this.details(req.rowId, req.revision, (d) => {
+            if (req.value === null) delete d.browseAs
+            else d.browseAs = req.value
+          })
+        )
       }
       case 'folderKinds': {
         if (req.kind !== null && !isFolderKind(req.kind)) throw new Error('資料夾類型不合法')
@@ -862,10 +886,19 @@ export class Explorer {
           file.file,
           (number) => `media://archive/${req.rowId}/${req.fileId}/${token}/${number}`
         )
-        if (novel.format === 'epub') {
+        if (novel.format === 'epub' && (!req.summary || novel.cover)) {
           while (this.archives.size >= 4) this.archives.delete(this.archives.keys().next().value!)
           this.archives.set(token, { file: file.file, index: await archiveIndex(file.file) })
         }
+        // R-338: the file page only needs the title, author, cover and chapter names.
+        if (req.summary)
+          return {
+            novel: {
+              ...novel,
+              chapters: novel.chapters.map((chapter) => ({ title: chapter.title })),
+              images: undefined,
+            },
+          }
         return { novel }
       }
       case 'novelProgress': {

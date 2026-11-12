@@ -232,7 +232,7 @@ try {
   await button('開啟專案 Image title test').first().click()
   await page.locator('.workspace-toolbar').getByText('檔案', { exact: true }).click()
   await page.locator('.file-overview-item').filter({ hasText: imageName }).click()
-  const heading = page.locator('.single-file-heading')
+  const heading = page.locator('.file-page-heading')
   assert.equal(await heading.locator('h3').getAttribute('title'), imageName)
   assert.equal(
     await heading.locator('h3').evaluate((element) => getComputedStyle(element).textOverflow),
@@ -240,7 +240,7 @@ try {
   )
   assert.equal(
     await page
-      .locator('.single-file-preview')
+      .locator('.file-page')
       .getByRole('button', { name: '開啟所在資料夾', exact: true })
       .count(),
     1

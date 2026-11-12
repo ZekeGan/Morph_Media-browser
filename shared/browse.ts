@@ -4,11 +4,14 @@ import { readDate } from './fields'
 import type { BrowseMode } from './explorer'
 export const pathKey = (p: string) => p.replace(/\\/g, '/').replace(/\/$/, '').toLocaleLowerCase()
 export const parentPath = (p: string) => p.replace(/[\\/][^\\/]+[\\/]?$/, '')
-export const cardDisplay = (p: Project): NonNullable<Project['cardView']> =>
-  p.cardView ?? {
+export const cardDisplay = (p: Project): NonNullable<Project['cardView']> => {
+  const view = p.cardView ?? {
     mode: p.depth.mode === 'exact' ? 'single' : 'multi',
     level: p.scanAll ? 'all' : p.depth.level,
   }
+  // A project that only scans one exact level keeps its old view (its middle levels are not rows to walk through).
+  return { ...view, works: view.works ?? (view.mode === 'multi' && p.depth.mode !== 'exact') }
+}
 export const maxBrowseDepth = (rows: FolderRow[]) =>
   rows.reduce(
     (depth, row) =>
@@ -46,6 +49,17 @@ export function browserRows(
   const display = cardDisplay(project)
   const known = rows.filter((r) => !r.readonly && (r.record || r.error || r.stopped))
   if (mode === 'TREE') return known
+  if (mode === 'CARD' && display.works) {
+    // The walk goes through folders without a record too, so their subfolders are still reached; only folders that
+    // can be shown are listed.
+    const shown = new Set(known.map((r) => r.rowId))
+    // Like the old multi view, the whole project is the scope: opening a folder does not narrow the list.
+    return worksBelow(
+      rows.filter((r) => !r.readonly),
+      root,
+      display.level === 'all' ? Infinity : display.level
+    ).filter((r) => shown.has(r.rowId))
+  }
   if (mode === 'TABLE' || (mode === 'CARD' && display.mode === 'single' && location)) {
     const children = rows.filter((r) => pathKey(parentPath(r.path)) === pathKey(location || root))
     // A folder without subfolders shows its own card instead of an empty page.
@@ -154,4 +168,48 @@ export function columnValue(project: Project, row: FolderRow, id: string): unkno
   }
   const cell = project.cells.find((c) => FALLBACK_COLUMN + c.cellId === id)
   return cell ? cellField(cell, row, project).value : undefined
+}
+
+// R-340: "all works" — each branch below a folder is followed down to its first work, which is shown and not entered;
+// folders that only hold other folders (collections) are passed through. A folder marked by hand wins; then a game
+// (or a possible one), a folder read as manga, a folder that holds media of its own, a series of volumes, and any folder
+// without subfolders. maxDepth limits how far below the starting folder to look.
+type Contents = NonNullable<FolderRow['contents']>
+const holdsMedia = (c: Contents | undefined) =>
+  !!c && (c.images >= 3 || c.videos >= 1 || c.audio >= 2 || c.texts >= 1)
+// Volumes of one series: two or more subfolders, every one a leaf of pictures, and nearly all named with a number.
+const numbered = /\d|[一二三四五六七八九十]+[巻卷話话集冊册]|vol/i
+function isSeries(children: FolderRow[], kids: Map<string, FolderRow[]>) {
+  return (
+    children.length >= 2 &&
+    children.every(
+      (child) => !kids.get(child.rowId)?.length && (child.contents?.images ?? 0) >= 3
+    ) &&
+    children.filter((child) => numbered.test(child.name)).length >= children.length * 0.8
+  )
+}
+export function isWork(row: FolderRow, kids: Map<string, FolderRow[]>) {
+  const mark = row.record?.details?.browseAs
+  if (mark) return mark === 'work'
+  if (row.boundary || row.record?.details?.boundary?.state) return true
+  if (row.record?.details?.kind && row.record.details.kind !== 'general') return true
+  if (row.record?.details?.reading?.mode === 'manga') return true
+  if (holdsMedia(row.contents)) return true
+  const children = kids.get(row.rowId) ?? []
+  return !children.length || isSeries(children, kids)
+}
+export function worksBelow(rows: FolderRow[], start: string, maxDepth: number) {
+  const { children } = treeStructure(rows),
+    startKey = pathKey(start),
+    top = rows.filter(
+      (r) => pathKey(r.path) !== startKey && pathKey(parentPath(r.path)) === startKey
+    ),
+    found: FolderRow[] = []
+  const visit = (row: FolderRow, level: number) => {
+    const below = children.get(row.rowId) ?? []
+    if (isWork(row, children) || level >= maxDepth || !below.length) found.push(row)
+    else for (const child of below) visit(child, level + 1)
+  }
+  for (const row of top) visit(row, 1)
+  return found
 }

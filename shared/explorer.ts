@@ -65,6 +65,9 @@ export interface NovelProgress {
 export interface NovelBook {
   format: 'txt' | 'epub'
   title: string
+  // R-338: from the EPUB package (dc:creator, the cover image); a summary leaves the chapters' text out.
+  author?: string
+  cover?: string
   encoding: string
   chapters: { title: string; text?: string; html?: string; path?: string }[]
   images?: Record<string, string>
@@ -82,6 +85,8 @@ export type GameExtra = (typeof gameExtras)[number]
 export interface FolderDetails {
   // Set by hand; without it the kind is detected (see shared/kind.ts).
   kind?: import('./kind').FolderKind
+  // R-340 (provisional): in "all works", this folder is one work, or a collection to look through, whatever it holds.
+  browseAs?: 'work' | 'collection'
   cellImages?: Record<string, string>
   // Game actions whose button is not shown in this folder's action row.
   hiddenActions?: string[]
@@ -238,6 +243,8 @@ export type ExplorerRequest =
   | { action: 'content'; rowId: string; limit?: number; cursor?: string }
   | { action: 'visit'; rowId: string }
   | { action: 'attributes'; rowId: string; revision: number; values: Attribute[]; private: boolean }
+  | { action: 'removeSource'; rowId: string; revision: number; provider: string }
+  | { action: 'browseAs'; rowId: string; revision: number; value: 'work' | 'collection' | null }
   | {
       action: 'batch'
       rows: { rowId: string; revision: number }[]
@@ -318,7 +325,7 @@ export type ExplorerRequest =
   | { action: 'setKey'; site: string; values: Record<string, string> }
   | { action: 'clearKey'; site: string }
   | { action: 'testKey'; site: string }
-  | { action: 'novel'; rowId: string; fileId: string }
+  | { action: 'novel'; rowId: string; fileId: string; summary?: boolean }
   // Only this book's place changes, so main writes it against the record's current revision.
   | { action: 'novelProgress'; rowId: string; fileId: string; progress: NovelProgress }
   | {

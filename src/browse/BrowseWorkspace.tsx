@@ -779,13 +779,10 @@ export function BrowseWorkspace({
                 tr('筆') +
                 (browse.mode === 'CARD'
                   ? ' · ' +
-                    (card.mode === 'multi' ? tr('多層') : tr('單層')) +
-                    ' · ' +
-                    (card.level === 'all'
-                      ? tr('全部（最深第 ') + deepest + tr(' 層）')
-                      : card.mode === 'multi'
-                        ? tr('第 1–') + card.level + tr(' 層')
-                        : tr('第 ') + card.level + tr(' 層'))
+                    (card.works
+                      ? tr('所有作品') +
+                        (card.level === 'all' ? '' : ' · ' + tr('最多 {0} 層', card.level))
+                      : tr('逐層瀏覽'))
                   : '')
               : undefined
           }
@@ -891,6 +888,7 @@ export function BrowseWorkspace({
               panelOpen={panelOpen}
               showPanelFor={showPanelFor}
               act={act}
+              configure={openConfig}
             />
           )}
           {!current.length && browse.mode !== 'TREE' && (

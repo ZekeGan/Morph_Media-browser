@@ -158,8 +158,8 @@ try {
     assert.equal(Math.round((await toggle.boundingBox())!.width), Math.round(before.width))
   await page.locator('.file-overview-item').first().waitFor()
   await page.locator('.file-overview-item').filter({ hasText: 'cover.png' }).click()
-  const preview = page.locator('.single-file-preview')
-  await preview.getByRole('button', { name: '開啟圖片 cover.png', exact: true }).click()
+  const preview = page.locator('.file-page')
+  await preview.getByRole('button', { name: '檢視圖片 · cover.png', exact: true }).click()
   await page.getByRole('dialog', { name: '圖片檢視', exact: true }).waitFor()
   await button('放大').click()
   await page.waitForFunction(

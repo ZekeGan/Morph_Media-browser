@@ -1,4 +1,5 @@
 import { t as tr, useLocale } from '../i18n'
+import { KindIcon } from './folderKind'
 import { Icon } from '../common/icons'
 import { BoundaryFlag } from '../game/BoundaryFlag'
 import { useAppTheme } from '../themes/ThemeProvider'
@@ -110,7 +111,7 @@ export default function Tree({
                 }}
               >
                 <strong className="tree-node-title">
-                  <Icon name="folder" />
+                  <KindIcon row={r} size={18} />
                   {r.name}
                 </strong>
                 <small>

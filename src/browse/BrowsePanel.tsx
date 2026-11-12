@@ -1,4 +1,6 @@
 import '../media/media-workspace.css'
+import { KindIcon } from './folderKind'
+import { useFolderSample } from './folderStats'
 import type { OverviewEntry } from '../../shared/explorer'
 import { t as tr } from '../i18n'
 import { Icon } from '../common/icons'
@@ -91,7 +93,10 @@ export function BrowsePanel(props: Props) {
     history,
   } = props
   const { canEnter, switchTo, switchDiscard, switchStay, nextBook, readNext, readNextDone } = props
-  const kind = detail ? effectiveKind(detail) : 'general'
+  // R-327: what the folder contains counts too (once its content was read), so a manga folder found by its pictures
+  // gets its layout button like one marked by hand.
+  const sample = useFolderSample(detail?.rowId)
+  const kind = detail ? effectiveKind(detail, sample) : 'general'
   return (
     <div
       ref={panelSlot}
@@ -138,7 +143,12 @@ export function BrowsePanel(props: Props) {
                   <Icon name="arrow-right" />
                 </ActionIcon>
               </Tooltip>
-              {kind !== 'media' && <strong>{detail.name}</strong>}
+              {kind !== 'media' && (
+                <strong className="browse-panel-name">
+                  <KindIcon row={detail} size={16} />
+                  {detail.name}
+                </strong>
+              )}
 
               <Tooltip label={tr('在檔案總管開啟')}>
                 <ActionIcon

@@ -43,6 +43,7 @@
         "src/browse/ViewToggle*",
         "src/browse/KindBatchBar*",
         "src/browse/folderStats*",
+        "src/browse/folderKind*",
         "src/browse/refresh*",
         "shared/browse*",
         "shared/kind*"
@@ -55,7 +56,7 @@
         "game-folder-page-ui",
         "image-delete-ui"
       ],
-      "tests": ["browse.test.ts", "revision.test.ts", "folder-kind.test.ts"]
+      "tests": ["browse.test.ts", "revision.test.ts", "folder-kind.test.ts", "browse-works.test.ts"]
     },
     {
       "id": "panel",
@@ -70,6 +71,7 @@
         "src/panel/FolderPanel*",
         "src/panel/FolderParts*",
         "src/panel/FolderContent*",
+        "src/panel/FilePage*",
         "src/panel/FolderAdvanced*",
         "src/panel/FolderFieldInput*",
         "src/editor/fieldSources*",
@@ -117,6 +119,7 @@
         "src/media/FileMenu*",
         "src/media/useVideoAudio*",
         "src/media/MediaThumb*",
+        "src/media/fileLabels*",
         "src/media/FolderAlbumCover*",
         "src/media/playOrder*",
         "src/media/media-workspace.css",
@@ -296,8 +299,8 @@
         "src/metadata/ImageUrlImport*",
         "src/metadata/FolderSourceImport*"
       ],
-      "ui": ["media-feedback-ui", "keys-ui"],
-      "tests": ["metadata.test.ts", "decided-media.test.ts", "keys.test.ts", "web-sources.test.ts", "vndb-store.test.ts", "date-fields.test.ts"]
+      "ui": ["media-feedback-ui", "keys-ui", "field-sources-ui"],
+      "tests": ["metadata.test.ts", "decided-media.test.ts", "keys.test.ts", "web-sources.test.ts", "vndb-store.test.ts", "remove-source.test.ts", "date-fields.test.ts"]
     },
     {
       "id": "appearance",

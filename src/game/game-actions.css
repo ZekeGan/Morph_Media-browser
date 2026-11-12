@@ -9,9 +9,6 @@
 .game-action-dot { flex: 0 0 8px; height: 8px; border-radius: 50%; }
 .game-action-down { display: inline-flex; transform: rotate(180deg); }
 .game-action-inspector { min-width: 0; }
-.single-file-heading { display: flex; align-items: center; gap: 6px; min-width: 0; }
-.single-file-heading h3 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.single-file-heading > button { flex: 0 0 auto; }
 @media (max-width: 620px) { .game-action-editor { grid-template-columns: minmax(0, 1fr); } }
 
 .game-candidate { position:absolute; left:10px; top:10px; z-index:1; padding:4px 8px; background:var(--panel); color:var(--muted); border-radius:var(--radius); font-size:12px; }

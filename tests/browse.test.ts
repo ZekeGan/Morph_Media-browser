@@ -23,11 +23,8 @@ const cards = (location: string, cardView: { mode: 'single' | 'multi'; level: nu
 test('opening a project lists the root folders instead of one lone root card', () => {
   assert.deepEqual(cards('', { mode: 'single', level: 1 }), ['A', 'B'])
   assert.deepEqual(cards('', { mode: 'single', level: 3 }), ['deep'])
-  assert.deepEqual(
-    cards('', { mode: 'multi', level: 1 }),
-    ['lib'],
-    'multi level 1 still includes only the root'
-  )
+  // R-340: the old "multi" view is "all works"; a limit of 1 stops at the root's own folders.
+  assert.deepEqual(cards('', { mode: 'multi', level: 1 }), ['A', 'B'])
 })
 
 test('a project with no subfolders keeps showing its root', () => {

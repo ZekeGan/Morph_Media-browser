@@ -1,4 +1,5 @@
 import { MediaBrowser } from '../media/MediaBrowser'
+import { BookShelf, FilePage } from './FilePage'
 import { MediaViewer } from '../media/MediaViewer'
 import { isGameFolder, visibleFile } from '../../shared/media'
 import { effectiveKind, sampleOf } from '../../shared/kind'
@@ -270,22 +271,18 @@ export function FolderContent({
     )
   if (selectedFile && selectedFile.kind !== 'video')
     return (
-      <div className="single-file-preview">
-        <div className="single-file-heading">
-          <h3 title={selectedFile.name}>{selectedFile.name}</h3>
-          <Tooltip label={tr('開啟所在資料夾')}>
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              size="sm"
-              aria-label={tr('開啟所在資料夾')}
-              onClick={() => void act({ action: 'open', rowId: row.rowId })}
-            >
-              <Icon name="folder" size={15} />
-            </ActionIcon>
-          </Tooltip>
-        </div>
-        <small className="path">{row.path}</small>
+      <FilePage
+        row={row}
+        file={selectedFile}
+        openFolder={() => void act({ action: 'open', rowId: row.rowId })}
+        open={
+          ['pdf', 'archive', 'text'].includes(selectedFile.kind)
+            ? () => setDocumentFile(selectedFile)
+            : selectedFile.kind === 'image'
+              ? () => setFileReader(true)
+              : undefined
+        }
+      >
         {documentFile && (
           <DocumentViewer
             rowId={row.rowId}
@@ -296,48 +293,31 @@ export function FolderContent({
             next={nextText(documentFile)}
           />
         )}
-        {['pdf', 'archive', 'text'].includes(selectedFile.kind) && (
-          <Button onClick={() => setDocumentFile(selectedFile)}>{tr('開啟檢視器')}</Button>
+        {selectedFile.kind === 'image' && fileReader && (
+          <Suspense fallback={<PanelSkeleton />}>
+            <Reader
+              images={content.entries.filter((entry) => entry.kind === 'image')}
+              start={content.entries
+                .filter((entry) => entry.kind === 'image')
+                .findIndex((entry) => entry.id === selectedFile.id)}
+              manga={kind === 'book'}
+              // R-322: an image picked by hand opens at that image, never at the book's saved page.
+              resume={false}
+              prefs={row.record?.details?.reading}
+              close={() => setFileReader(false)}
+              save={(prefs) => {
+                if (row.record && !row.readonly && !row.stopped && !row.error)
+                  void run({
+                    action: 'reading',
+                    rowId: row.rowId,
+                    revision: row.record.revision,
+                    prefs,
+                  })
+              }}
+            />
+          </Suspense>
         )}
-        {selectedFile.kind === 'image' ? (
-          <>
-            <button
-              type="button"
-              className="single-file-image-open"
-              aria-label={tr('開啟圖片 {0}', selectedFile.name)}
-              onClick={() => setFileReader(true)}
-            >
-              <img className="single-file-image" src={selectedFile.url} alt={selectedFile.name} />
-            </button>
-            {fileReader && (
-              <Suspense fallback={<PanelSkeleton />}>
-                <Reader
-                  images={content.entries.filter((entry) => entry.kind === 'image')}
-                  start={content.entries
-                    .filter((entry) => entry.kind === 'image')
-                    .findIndex((entry) => entry.id === selectedFile.id)}
-                  manga={kind === 'book'}
-                  prefs={row.record?.details?.reading}
-                  close={() => setFileReader(false)}
-                  save={(prefs) => {
-                    if (row.record && !row.readonly && !row.stopped && !row.error)
-                      void run({
-                        action: 'reading',
-                        rowId: row.rowId,
-                        revision: row.record.revision,
-                        prefs,
-                      })
-                  }}
-                />
-              </Suspense>
-            )}
-          </>
-        ) : (
-          <p>
-            {selectedFile.mime} · {selectedFile.size.toLocaleString()} B
-          </p>
-        )}
-      </div>
+      </FilePage>
     )
   if (selectedFile?.kind === 'video')
     return (
@@ -635,16 +615,11 @@ export function FolderContent({
           next={nextText(documentFile)}
         />
       )}
-      <Group gap="xs">
-        {content.entries
-          .filter((entry) => ['archive', 'pdf', 'text'].includes(entry.kind))
-          .map((entry) => (
-            <Button key={entry.id} variant="light" onClick={() => setDocumentFile(entry)}>
-              <Icon name="file" />
-              {entry.name}
-            </Button>
-          ))}
-      </Group>
+      <BookShelf
+        row={row}
+        entries={content.entries.filter((entry) => ['archive', 'pdf', 'text'].includes(entry.kind))}
+        open={setDocumentFile}
+      />
       {error && (
         <p role="alert" className="media-content-error">
           {tr('部分內容讀取未完成，已載入的圖片仍可查看。')}
@@ -694,7 +669,9 @@ export function FolderContent({
           />
         ) : null}
       </div>
-      {
+      {/* R-338: a folder of books only has no picture list to show. */}
+      {(content.entries.some((entry) => entry.kind === 'image') ||
+        !content.entries.some((entry) => ['archive', 'pdf', 'text'].includes(entry.kind))) && (
         <Gallery
           entries={content.entries}
           loading={!!content.nextCursor && !error}
@@ -713,7 +690,7 @@ export function FolderContent({
               })
           }}
         />
-      }
+      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 # 漫畫資料夾內容與閱讀器
 
-> 最後確認：2026-11-12。漫畫內容與閱讀器的現行規則；共用焦點與媒體生命週期見 [UI_RULES](UI_RULES.md)，工作區位置見 [WORKSPACE_REVISION](WORKSPACE_REVISION.md)。程式：`src/reader/Reader.tsx`、`src/panel/FolderContent.tsx`、`shared/reader.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-76、C-85）。
+> 最後確認：2026-11-13。漫畫內容與閱讀器的現行規則；共用焦點與媒體生命週期見 [UI_RULES](UI_RULES.md)，工作區位置見 [WORKSPACE_REVISION](WORKSPACE_REVISION.md)。程式：`src/reader/Reader.tsx`、`src/panel/FolderContent.tsx`、`shared/reader.ts`；契約在 `shared/explorer.ts`；取捨見 [決策索引](DECISIONS.md)（C-76、C-85）。
 
 <a id="漫畫閱讀器"></a>
 
@@ -9,7 +9,7 @@
 漫畫屬性及資訊 CELL 保持獨立，僅共用 [統一媒體工作區](MEDIA_WORKSPACE.md#統一媒體工作區) 的大視窗外框與同資料夾圖片佇列。大視窗預設覆蓋應用程式，下面的系統全螢幕是明確啟用的沉浸操作，不能在開啟檢視器時自動觸發；一般圖片需明確選擇漫畫閱讀模式，不自動改寫分類。
 
 - 大量圖片沿用 [相簿效能基線](ALBUM_VIEWER_DESIGN.md#檔案與效能基線)：內容分批、可見範圍虛擬化、固定縮圖網格及非同步縮圖快取；保留 200 張分組與原始閱讀順序。
-- 漫畫內容標頭的「編輯漫畫展示」開啟本專案漫畫資訊 CELL 模板；保存到 contentCells.manga，CARD 方案與 cells 保持獨立。TOP 遵循 [右側內容](WORKSPACE_REVISION.md#右側內容與覆蓋層) 的條件式顯示，只回捲目前內容區。
+- 漫畫內容標頭的「編輯漫畫展示」開啟本專案漫畫資訊 CELL 模板（依內容判斷為漫畫的資料夾，內容讀過一次後也會出現，R-327）；保存到 contentCells.manga，CARD 方案與 cells 保持獨立。TOP 遵循 [右側內容](WORKSPACE_REVISION.md#右側內容與覆蓋層) 的條件式顯示，只回捲目前內容區。
 - 閱讀器上方分成頁碼導覽、頁面模式（單頁、雙頁、首張獨立、閱讀方向）、縮放與沉浸閱讀；退出 ICON 在右上，圖片資訊在底部。
 - 漫畫移除寬度／高度適應按鈕及 W／H 快捷鍵。圖片預設等比貼齊上方工具列與下方資訊列之間的實際可視高度，移除固定上下留白；縮放以貼合可視高度為 100% 起點／縮小下限，可繼續放大至 1000% 看細節（可調上限），不限制為原圖像素或可視區最大高度。放大後可拖曳平移，過寬頁面／雙頁可橫向拖曳，RTL 從右側開始。保留滾輪縮放與重設。相簿原有適應功能不受影響。
 

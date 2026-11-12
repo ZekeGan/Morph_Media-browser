@@ -1,3 +1,4 @@
+import { KindIcon } from './folderKind'
 import {
   useLayoutEffect,
   useRef,
@@ -238,6 +239,7 @@ export function FolderTable({
                 >
                   {c.id === 'name' ? (
                     <>
+                      <KindIcon row={r} size={15} />
                       {r.name}
                       {!r.record ? ' ⚠' : r.boundary ? <BoundaryFlag /> : null}
                       {!panelOpen && (

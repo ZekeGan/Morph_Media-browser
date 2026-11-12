@@ -103,6 +103,9 @@ try {
     win.setMinimumSize(500, 400)
     win.setBounds({ width: 1000, height: 760 })
   })
+  // R-327: a manga folder found by its pictures offers its layout button in the panel header.
+  await page.locator('.manga-gallery .media-thumbnail').first().waitFor()
+  await page.getByRole('button', { name: '編輯漫畫展示', exact: true }).waitFor()
   await page.locator('.manga-gallery .media-thumbnail').first().click()
   await waitPages('1')
   await fit()

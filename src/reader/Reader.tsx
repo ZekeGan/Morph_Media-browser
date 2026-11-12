@@ -53,6 +53,7 @@ export function Reader({
   onImmersive,
   nextBook,
   startImmersive,
+  resume = true,
 }: {
   images: MediaEntry[]
   start: number
@@ -71,12 +72,15 @@ export function Reader({
   nextBook?: { name: string; open: (keepImmersive: boolean) => void }
   // The window is already in fullscreen from the previous book: start in immersive mode (R-275).
   startImmersive?: boolean
+  // R-322: false when the reader opens at an image the user picked, not at the start of the book.
+  resume?: boolean
 }) {
   useLocale()
 
   // R-253: opening a manga from its first page continues where it was left (the page the folder record keeps).
   // Decided once when the reader opens: the viewer's selection (and so start) follows the resumed page afterwards.
   const [resumeAt] = useState(() =>
+    resume &&
     manga &&
     start <= 0 &&
     prefs?.page &&

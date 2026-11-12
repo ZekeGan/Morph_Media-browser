@@ -1,4 +1,6 @@
 import { dateOrText } from '../../shared/fields'
+import { Icon } from '../common/icons'
+import { importedFieldLabels } from '../editor/importedFieldLabels'
 import { metadataSources } from '../../shared/sources'
 import {
   detectFolderKind,
@@ -21,11 +23,9 @@ import { t as tr, useLocale } from '../i18n'
 import { HelpLabel, HelpTip } from '../common/HelpTip'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import {
-  Accordion,
   Alert,
   Badge,
   Button,
-  Checkbox,
   Divider,
   Group,
   Modal,
@@ -83,8 +83,7 @@ export function FolderPanel({
     [privateValues, setPrivate] = useState(false),
     [values, setValues] = useState<Record<string, unknown>>({}),
     [newOptions, setNewOptions] = useState<Record<string, string>>({})
-  const [showEmpty, setShowEmpty] = useState(false),
-    [editedFields, setEditedFields] = useState<string[]>([])
+  const [editedFields, setEditedFields] = useState<string[]>([])
   useEffect(() => setEditedFields([]), [row.rowId, privateValues])
   const [tab, setTab] = useState<string | null>(
       initialTab === 'source'
@@ -168,8 +167,7 @@ export function FolderPanel({
     // Fields in a group are shown together under the group (R-226), not in their source.
     mainFields = fields.filter(
       (f) => configured.has(f.attributeId) && !groupOfField(project, f.attributeId)
-    ),
-    otherFields = fields.filter((f) => !configured.has(f.attributeId))
+    )
   const imageCells = [
     ...new Map(
       [...rowCells(project, row), ...contentCells(project, effectiveKind(row, sample))]
@@ -229,10 +227,7 @@ export function FolderPanel({
   const effective = (id: string) => (Object.hasOwn(values, id) ? values[id] : original[id])
   const attributes = rowFieldAttributes([row])
   const visibleField = (f: { attributeId: string }) =>
-    showEmpty || isFilled(effective(f.attributeId)) || editedFields.includes(f.attributeId)
-  const hiddenFields = fields.filter(
-    (f) => !visibleField(f) && !groupOfField(project, f.attributeId)
-  ).length
+    isFilled(effective(f.attributeId)) || editedFields.includes(f.attributeId)
   const save = async () => {
     const changed: Attribute[] = fields
       .filter(
@@ -381,21 +376,129 @@ export function FolderPanel({
         </details>
       )
     })
-  const renderGroups = (items: typeof fields, sections: number, prefix = '') =>
-    fieldSourceGroups(items.filter(visibleField), attributes).map(({ source, fields }) => {
-      const fold = section(prefix + source, sections <= 1)
+  // Which website a field came from (its id prefix, or the import record), and the folder's address there.
+  const providerOf = (attributeId: string) =>
+    metadataSources.find((source) => attributeId.startsWith(source.id + '-'))?.id ??
+    row.record?.attributes.find((a) => a.attributeId === attributeId)?.sourceRecord?.provider
+  const own = tr('自建')
+  const ownFields = fields.filter((f) => fieldSource(f.attributeId, attributes) === own)
+  const siteFields = fields.filter((f) => fieldSource(f.attributeId, attributes) !== own)
+  const handMade = (attributeId: string) =>
+    editedFields.includes(attributeId) ||
+    (privateValues
+      ? row.record?.projectOverrides[row.projectId]?.find((a) => a.attributeId === attributeId)
+      : row.record?.attributes.find((a) => a.attributeId === attributeId)
+    )?.source === 'manual'
+  const shownValue = (value: unknown) =>
+    Array.isArray(value)
+      ? value.join('、')
+      : typeof value === 'boolean'
+        ? value
+          ? tr('是')
+          : tr('否')
+        : value == null
+          ? ''
+          : String(value)
+  const importedLabels = importedFieldLabels()
+  const fieldLabel = (attributeId: string) => {
+    const key = fields.find((field) => field.attributeId === attributeId)?.key ?? attributeId
+    return (
+      project.fieldBindings.find((binding) => binding.attributeId === attributeId)?.alias ??
+      importedLabels[key] ??
+      key
+    )
+  }
+  const refetch = (provider: string | undefined) => {
+    const address =
+      (provider &&
+        row.record?.attributes.find((a) => a.attributeId === provider + '-source_url')?.value) ??
+      row.record?.attributes.find((a) => providerOf(a.attributeId) === provider)?.sourceRecord?.url
+    if (typeof address === 'string') importer.setSource(address)
+    const input = document.getElementById('folder-source-url')
+    input?.scrollIntoView({ block: 'center' })
+    input?.focus()
+  }
+  const removeSite = (provider: string | undefined, name: string) => {
+    if (!provider || !row.record) return
+    if (!window.confirm(tr('移除「{0}」匯入的資料？你手動修改過的欄位會保留。', name))) return
+    void run({ action: 'removeSource', rowId: row.rowId, revision: row.record.revision, provider })
+  }
+  const renderSites = () =>
+    fieldSourceGroups(
+      siteFields.filter((f) => isFilled(effective(f.attributeId)) || handMade(f.attributeId)),
+      attributes
+    ).map(({ source, fields: items }) => {
+      const provider = providerOf(items[0].attributeId),
+        fold = section('site:' + source, false)
       return (
-        <details key={source} className="field-source-group" open={fold.open}>
+        <details key={source} className="field-source-group site-fields" open={fold.open}>
           <summary onClick={fold.onClick}>
-            {source}{' '}
+            {tr('來自 {0}', source)}{' '}
             <Text component="span" size="xs" c="dimmed">
-              {tr('{0} 項有資料', fields.filter((f) => isFilled(effective(f.attributeId))).length)}
+              {tr('{0} 項', items.length)}
             </Text>
           </summary>
-          <Stack>{fields.map(renderField)}</Stack>
+          <Group gap="xs" mb="xs">
+            <Button
+              size="compact-xs"
+              variant="light"
+              disabled={disabled}
+              onClick={() => refetch(provider)}
+            >
+              {tr('重新取得')}
+            </Button>
+            {provider && (
+              <Button
+                size="compact-xs"
+                variant="subtle"
+                color="red"
+                disabled={disabled || fieldDirty}
+                onClick={() => removeSite(provider, source)}
+              >
+                {tr('移除這個來源的資料')}
+              </Button>
+            )}
+          </Group>
+          <Stack gap="xs">
+            {items.map((field) =>
+              handMade(field.attributeId) ? (
+                renderField(field)
+              ) : (
+                <div key={field.attributeId} className="site-field">
+                  <Text size="xs" c="dimmed">
+                    {fieldLabel(field.attributeId)}
+                  </Text>
+                  <Text size="sm" className="site-field-value">
+                    {shownValue(effective(field.attributeId))}
+                  </Text>
+                  <Button
+                    size="compact-xs"
+                    variant="subtle"
+                    disabled={disabled}
+                    aria-label={tr('改成手動 {0}', fieldLabel(field.attributeId))}
+                    onClick={() =>
+                      setEditedFields((ids) =>
+                        ids.includes(field.attributeId) ? ids : [...ids, field.attributeId]
+                      )
+                    }
+                  >
+                    {tr('改成手動')}
+                  </Button>
+                </div>
+              )
+            )}
+          </Stack>
         </details>
       )
     })
+  // Empty fields of this project (yours, or a website's not filled here) wait as chips; a click opens the input.
+  const emptyFields = fields.filter(
+    (f) =>
+      configured.has(f.attributeId) &&
+      !groupOfField(project, f.attributeId) &&
+      !isFilled(effective(f.attributeId)) &&
+      !editedFields.includes(f.attributeId)
+  )
   const boundary = (state: 'root' | 'not-game' | 'candidate', traverse = false) => {
     if (!row.record || (fieldDirty && !window.confirm(tr('套用邊界前放棄欄位草稿？')))) return
     void run({
@@ -589,23 +692,47 @@ export function FolderPanel({
                 <Divider />
               </>
             )}
-            <Checkbox
-              size="xs"
-              label={tr(
-                '顯示未填欄位（{0}）',
-                fields.filter((f) => !isFilled(effective(f.attributeId))).length
-              )}
-              checked={showEmpty}
-              onChange={(event) => setShowEmpty(event.currentTarget.checked)}
-            />
-            {hiddenFields > 0 && (
-              <Text size="xs" c="dimmed">
-                {tr('已隱藏 {0} 個未填欄位', hiddenFields)}
-              </Text>
-            )}
             {renderFieldGroups()}
-            {renderGroups(mainFields, mainSections)}
-            {!mainFields.length && !project.fieldGroups?.length && (
+            {(() => {
+              const mine = ownFields.filter(
+                (f) =>
+                  !groupOfField(project, f.attributeId) &&
+                  (isFilled(effective(f.attributeId)) || editedFields.includes(f.attributeId))
+              )
+              return mine.length ? (
+                <section className="own-fields" aria-label={tr('你的欄位')}>
+                  <Text size="sm" fw={600} mb={4}>
+                    {tr('你的欄位')}
+                  </Text>
+                  <Stack>{mine.map(renderField)}</Stack>
+                </section>
+              ) : null
+            })()}
+            {emptyFields.length > 0 && (
+              <div className="field-fill-chips" role="group" aria-label={tr('補填')}>
+                <Text size="xs" c="dimmed">
+                  {tr('補填：')}
+                </Text>
+                {emptyFields.map((field) => (
+                  <Button
+                    key={field.attributeId}
+                    size="compact-xs"
+                    variant="default"
+                    disabled={disabled}
+                    leftSection={<Icon name="plus" size={12} />}
+                    onClick={() =>
+                      setEditedFields((ids) =>
+                        ids.includes(field.attributeId) ? ids : [...ids, field.attributeId]
+                      )
+                    }
+                  >
+                    {fieldLabel(field.attributeId)}
+                  </Button>
+                ))}
+              </div>
+            )}
+            {renderSites()}
+            {!mainFields.length && !project.fieldGroups?.length && !siteFields.length && (
               <Group justify="space-between" wrap="nowrap" gap="xs">
                 <Text c="dimmed" size="sm">
                   {tr('專案尚未配置欄位。')}
@@ -633,25 +760,6 @@ export function FolderPanel({
                   )}
                 </Group>
               </Group>
-            )}
-            {!!otherFields.length && (
-              <Accordion variant="separated">
-                <Accordion.Item value="other">
-                  <Accordion.Control>
-                    {tr('匯入及其他欄位（')}
-                    {otherFields.length}）
-                  </Accordion.Control>
-                  <Accordion.Panel>
-                    <Stack>
-                      {renderGroups(
-                        otherFields,
-                        fieldSourceGroups(otherFields.filter(visibleField), attributes).length,
-                        'other:'
-                      )}
-                    </Stack>
-                  </Accordion.Panel>
-                </Accordion.Item>
-              </Accordion>
             )}
             {fieldDirty && (
               <div className="settings-savebar" role="region" aria-label={tr('未保存的變更')}>
@@ -705,6 +813,36 @@ export function FolderPanel({
                     rowId: row.rowId,
                     revision: row.record!.revision,
                     kind: value === 'auto' ? null : (value as (typeof folderKinds)[number]),
+                  })
+                }
+              />
+            )}
+            {row.record && (
+              // R-340: how this folder counts in the "all works" view.
+              <Select
+                label={
+                  <HelpLabel
+                    label={tr('在「所有作品」裡')}
+                    help={tr(
+                      '自動：裝著自己的圖片、影片、音樂或文字書，或是一套分集的資料夾，就算一部作品；只裝資料夾的會被穿過。'
+                    )}
+                  />
+                }
+                allowDeselect={false}
+                value={row.record.details?.browseAs ?? 'auto'}
+                data={[
+                  { value: 'auto', label: tr('自動判斷') },
+                  { value: 'work', label: tr('算一部作品') },
+                  { value: 'collection', label: tr('是分類，往裡面找') },
+                ]}
+                disabled={disabled || fieldDirty}
+                onChange={(value) =>
+                  value &&
+                  void run({
+                    action: 'browseAs',
+                    rowId: row.rowId,
+                    revision: row.record!.revision,
+                    value: value === 'auto' ? null : (value as 'work' | 'collection'),
                   })
                 }
               />

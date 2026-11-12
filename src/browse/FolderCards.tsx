@@ -1,7 +1,7 @@
 import type { CSSProperties, KeyboardEvent, MouseEvent } from 'react'
+import { KindBadge } from './folderKind'
 import { ActionIcon, Tooltip } from '@mantine/core'
 import type { FolderRow, Project, Request, Response } from '../../shared/model'
-import { BoundaryFlag } from '../game/BoundaryFlag'
 import { Card } from '../cells/Card'
 import { t as tr } from '../i18n'
 import { Icon } from '../common/icons'
@@ -25,6 +25,7 @@ export function FolderCards({
   panelOpen,
   showPanelFor,
   act,
+  configure,
 }: {
   rows: FolderRow[]
   project: Project
@@ -35,6 +36,8 @@ export function FolderCards({
   panelOpen: boolean
   showPanelFor: (id: string) => void
   act: Act
+  // Opens the folder settings at a tab (the kind is chosen under "Advanced").
+  configure?: (id: string, tab?: string) => void
 }) {
   return (
     <div className="cards" style={{ '--columns': itemsPerRow } as CSSProperties}>
@@ -66,22 +69,15 @@ export function FolderCards({
               </ActionIcon>
             </Tooltip>
           )}
+          <KindBadge row={row} configure={configure && (() => configure(row.rowId, 'advanced'))} />
           <Card
             project={project}
             row={row}
             open={() => void act({ action: 'open', rowId: row.rowId })}
           />
-          {(row.error || !row.record || row.readonly || row.boundary) && (
+          {(row.error || !row.record || row.readonly) && (
             <small className="folder-state">
-              {row.error ? (
-                tr('需要處理')
-              ) : row.readonly ? (
-                tr('受保護')
-              ) : !row.record ? (
-                tr('尚未建立資料')
-              ) : (
-                <BoundaryFlag />
-              )}
+              {row.error ? tr('需要處理') : row.readonly ? tr('受保護') : tr('尚未建立資料')}
             </small>
           )}
         </article>
