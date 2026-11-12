@@ -262,8 +262,10 @@ export function ApplicationSettings({
           <Text size="xs" c="dimmed" mt="md" role="status">
             {applied ? tr('已套用') : ''}
           </Text>
-          <LocaleEmulatorSetting opened={opened} />
-          <FlashPlayerSetting opened={opened} />
+          <Stack gap="sm">
+            <LocaleEmulatorSetting opened={opened} />
+            <FlashPlayerSetting opened={opened} />
+          </Stack>
         </Tabs.Panel>
         <Tabs.Panel value="data" pt="lg">
           <Stack gap="lg">

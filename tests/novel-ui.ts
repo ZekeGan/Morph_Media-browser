@@ -147,6 +147,15 @@ try {
     .locator('.novel-chapter-end')
     .getByRole('button', { name: /^下一章：/ })
     .waitFor({ state: 'attached' })
+  // In vertical text the button stands upright like the text instead of lying across the page.
+  const endButton = reader().locator('.novel-chapter-end button')
+  await endButton.scrollIntoViewIfNeeded()
+  const upright = await endButton.evaluate((node) => {
+    const box = node.getBoundingClientRect()
+    return getComputedStyle(node).writingMode.startsWith('vertical') && box.height > box.width
+  })
+  assert.ok(upright, 'the chapter-end button is upright in vertical text')
+  await page.screenshot({ path: path.join(base, 'shot', 'r324-novel-chapter-end-vertical.png') })
   await page.evaluate(() => {
     const element = document.querySelector('.novel-page')!
     element.scrollLeft = -element.scrollWidth

@@ -745,15 +745,15 @@ export function NovelReader({
                 {/* R-324: the end of a chapter offers the next one (or, after the last, the next book). */}
                 {chapter < book.chapters.length - 1 ? (
                   <div className="novel-chapter-end">
-                    <Button variant="light" onClick={() => goChapter(chapter + 1)}>
+                    <Button variant="outline" onClick={() => goChapter(chapter + 1)}>
                       {tr('下一章：{0}', chapterLabel(chapter + 1))}
                     </Button>
                   </div>
                 ) : (
                   next && (
                     <div className="novel-chapter-end">
-                      <Button variant="light" onClick={() => next.open()}>
-                        {tr('下一本：{0}', next.name)}
+                      <Button variant="outline" onClick={() => next.open()}>
+                        {tr('下一本：{0}', next.name.replace(/\.(txt|epub)$/i, ''))}
                       </Button>
                     </div>
                   )
@@ -767,7 +767,8 @@ export function NovelReader({
             <strong>{tr('已讀完')}</strong>
             {next && (
               <span>
-                {tr('下一本：{0}', next.name)} · {tr('再按一次下一頁開啟')}
+                {tr('下一本：{0}', next.name.replace(/\.(txt|epub)$/i, ''))} ·{' '}
+                {tr('再按一次下一頁開啟')}
               </span>
             )}
             <Button size="compact-xs" variant="subtle" onClick={() => setEnding(false)}>

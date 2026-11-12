@@ -214,15 +214,36 @@
     color: #222222;
 }
 
-/* R-324: the button after a chapter; it stays upright in vertical text. */
+/* R-324: the button after a chapter, centred across the page and running in the text's own direction; a long
+   name is cut short. */
 .novel-chapter-end {
     display: flex;
     justify-content: center;
-    padding: 2em 0;
-    writing-mode: horizontal-tb;
+    padding-block: 2em;
 }
 
-.novel-page.vertical .novel-chapter-end {
-    padding: 0 2em;
-    align-items: center;
+.novel-chapter-end .mantine-Button-root {
+    /* The page's own text colour, so it reads well on paper, white and dark backgrounds alike. */
+    color: inherit;
+    border-color: currentColor;
+    background: transparent;
+    max-inline-size: 80%;
+    height: auto;
+    min-height: 36px;
+    padding-block: 8px;
+}
+
+.novel-chapter-end .mantine-Button-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Vertical text: the button stands upright like the text, in the middle of the column. */
+.novel-page.vertical .novel-chapter-end .mantine-Button-root {
+    writing-mode: vertical-rl;
+    min-height: 0;
+    min-width: 36px;
+    padding-block: 12px;
+    padding-inline: 8px;
 }
