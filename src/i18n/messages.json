@@ -8386,5 +8386,137 @@
     "en": "The novel reading record is invalid",
     "ja": "小説の読書記録が正しくありません",
     "es": "El registro de lectura de novelas no es válido"
+  },
+  "網站名稱": {
+    "zh-CN": "网站名称",
+    "en": "Site name",
+    "ja": "サイト名",
+    "es": "Nombre del sitio"
+  },
+  "年份": {
+    "zh-CN": "年份",
+    "en": "Year",
+    "ja": "年",
+    "es": "Año"
+  },
+  "連載狀態": {
+    "zh-CN": "连载状态",
+    "en": "Status",
+    "ja": "連載状況",
+    "es": "Estado"
+  },
+  "別名": {
+    "zh-CN": "别名",
+    "en": "Other titles",
+    "ja": "別名",
+    "es": "Otros títulos"
+  },
+  "字數": {
+    "zh-CN": "字数",
+    "en": "Characters",
+    "ja": "文字数",
+    "es": "Caracteres"
+  },
+  "曲數": {
+    "zh-CN": "曲数",
+    "en": "Tracks",
+    "ja": "曲数",
+    "es": "Pistas"
+  },
+  "版權": {
+    "zh-CN": "版权",
+    "en": "Copyright",
+    "ja": "著作権",
+    "es": "Copyright"
+  },
+  "唱片公司": {
+    "zh-CN": "唱片公司",
+    "en": "Label",
+    "ja": "レーベル",
+    "es": "Sello"
+  },
+  "副標題": {
+    "zh-CN": "副标题",
+    "en": "Subtitle",
+    "ja": "サブタイトル",
+    "es": "Subtítulo"
+  },
+  "價格": {
+    "zh-CN": "价格",
+    "en": "Price",
+    "ja": "価格",
+    "es": "Precio"
+  },
+  "宣傳語": {
+    "zh-CN": "宣传语",
+    "en": "Tagline",
+    "ja": "キャッチコピー",
+    "es": "Lema"
+  },
+  "完結": {
+    "zh-CN": "完结",
+    "en": "Complete",
+    "ja": "完結",
+    "es": "Completa"
+  },
+  "連載中": {
+    "zh-CN": "连载中",
+    "en": "Ongoing",
+    "ja": "連載中",
+    "es": "En curso"
+  },
+  "成人": {
+    "zh-CN": "成人",
+    "en": "Adult",
+    "ja": "成人向け",
+    "es": "Adultos"
+  },
+  "全年齡": {
+    "zh-CN": "全年龄",
+    "en": "All ages",
+    "ja": "全年齢",
+    "es": "Todas las edades"
+  },
+  "請輸入此來源的完整作品網址": {
+    "zh-CN": "请输入此来源的完整作品网址",
+    "en": "Enter the full address of a work on this site",
+    "ja": "このサイトの作品の完全な URL を入力してください",
+    "es": "Introduce la dirección completa de una obra de este sitio"
+  },
+  "只接受不含帳號密碼的 HTTPS 網址": {
+    "zh-CN": "只接受不含账号密码的 HTTPS 网址",
+    "en": "Only HTTPS addresses without a user name or password are accepted",
+    "ja": "ユーザー名やパスワードを含まない HTTPS の URL のみ使えます",
+    "es": "Solo se aceptan direcciones HTTPS sin usuario ni contraseña"
+  },
+  "不允許本機或內網位址": {
+    "zh-CN": "不允许本机或内网地址",
+    "en": "Local and private network addresses are not allowed",
+    "ja": "ローカルや内部ネットワークのアドレスは使えません",
+    "es": "No se permiten direcciones locales ni de red privada"
+  },
+  "來源回應過大": {
+    "zh-CN": "来源响应过大",
+    "en": "The site's reply is too large",
+    "ja": "サイトの応答が大きすぎます",
+    "es": "La respuesta del sitio es demasiado grande"
+  },
+  "封面無法取得；可略過或手動匯入": {
+    "zh-CN": "封面无法获取；可跳过或手动导入",
+    "en": "The cover couldn't be fetched; skip it or import one by hand",
+    "ja": "表紙を取得できません。省略するか手動で取り込んでください",
+    "es": "No se pudo obtener la portada; omítela o impórtala a mano"
+  },
+  "小説家になろう": {
+    "zh-CN": "小説家になろう",
+    "en": "Shōsetsuka ni Narō",
+    "ja": "小説家になろう",
+    "es": "Shōsetsuka ni Narō"
+  },
+  "網頁": {
+    "zh-CN": "网页",
+    "en": "Web pages",
+    "ja": "ウェブページ",
+    "es": "Páginas web"
   }
 }

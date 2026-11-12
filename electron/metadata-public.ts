@@ -11,6 +11,17 @@ import { musicbrainz } from './sources/musicbrainz'
 import { openlibrary } from './sources/openlibrary'
 import { pixiv } from './sources/pixiv'
 import { vndb } from './sources/vndb'
+import { booth, kakuyomu } from './sources/pages'
+import {
+  danbooru,
+  deezer,
+  googlebooks,
+  itunes,
+  kitsu,
+  mangadex,
+  mangaupdates,
+  narou,
+} from './sources/batch1'
 
 type Result = {
   preview: Omit<MetadataPreview, 'token'>
@@ -27,6 +38,16 @@ const adapters: Record<PublicSourceId, Adapter> = {
   dlsite,
   pixiv,
   hitomi,
+  mangadex,
+  kitsu,
+  mangaupdates,
+  narou,
+  itunes,
+  deezer,
+  danbooru,
+  googlebooks,
+  booth,
+  kakuyomu,
 }
 
 // The requested URLs are constructed from validated IDs, never from remote JSON links, and must be on the site's
@@ -51,7 +72,7 @@ export async function publicMetadata(
     const bytes = await sourceRequest(fetcher, target, {
       method: body ? 'POST' : 'GET',
       headers: {
-        Accept: 'application/json',
+        Accept: config.accept ?? 'application/json',
         'User-Agent': userAgent,
         ...(body ? { 'Content-Type': 'application/json' } : {}),
         ...(config.referer ? { Referer: source } : {}),

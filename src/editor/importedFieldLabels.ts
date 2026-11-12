@@ -60,4 +60,16 @@ export const importedFieldLabels = (): Record<string, string> => ({
   DOWNLOAD_COUNT: tr('下載數'),
   RATING: tr('評分'),
   COVER_STATUS: tr('封面狀態'),
+  // R-283, R-284, R-292
+  SITE_NAME: tr('網站名稱'),
+  RELEASE_YEAR: tr('年份'),
+  STATUS: tr('連載狀態'),
+  TITLE_ALIASES: tr('別名'),
+  WORD_COUNT: tr('字數'),
+  TRACK_COUNT: tr('曲數'),
+  COPYRIGHT: tr('版權'),
+  LABEL: tr('唱片公司'),
+  SUBTITLE: tr('副標題'),
+  PRICE: tr('價格'),
+  CATCHPHRASE: tr('宣傳語'),
 })

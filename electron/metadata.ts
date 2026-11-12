@@ -10,6 +10,8 @@ import {
 export { limitedBytes } from './metadata-common'
 import { sourceForUrl, type MetadataSourceId } from '../shared/sources'
 import { publicMetadata } from './metadata-public'
+import { webMetadata } from './sources/webSource'
+import type { WebOptions } from './sources/web'
 // E-Hentai tags are "namespace:name". Besides the full list, each namespace becomes its own field so that
 // artist, parody, language, characters… can be shown and filtered on their own.
 const tagNamespaces = [
@@ -299,7 +301,8 @@ export async function steamMetadata(
 export async function metadata(
   source: string,
   fetcher: typeof fetch = fetch,
-  expected?: MetadataSourceId
+  expected?: MetadataSourceId,
+  options: WebOptions = {}
 ) {
   if (typeof source !== 'string' || source.length > 2048) throw new Error('來源網址不合法')
   source = source.trim()
@@ -308,5 +311,6 @@ export async function metadata(
     throw new Error('來源網址與選定來源不符或未支援')
   if (provider === 'steam') return steamMetadata(source, fetcher)
   if (provider === 'eh' || provider === 'exh') return ehMetadata(source, fetcher)
+  if (provider === 'web') return webMetadata(source, fetcher, options)
   return publicMetadata(provider, source, fetcher)
 }

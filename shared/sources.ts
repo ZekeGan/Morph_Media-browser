@@ -77,6 +77,86 @@ export const metadataSources = [
     categories: ['album', 'other'],
     hint: 'https://commons.wikimedia.org/wiki/File:NAME',
   },
+  // R-284: public APIs without a key.
+  {
+    id: 'mangadex',
+    name: 'MangaDex',
+    group: '漫畫／動畫',
+    categories: ['manga'],
+    hint: 'https://mangadex.org/title/UUID',
+  },
+  {
+    id: 'kitsu',
+    name: 'Kitsu',
+    group: '漫畫／動畫',
+    categories: ['manga', 'video'],
+    hint: 'https://kitsu.app/anime/SLUG',
+  },
+  {
+    id: 'mangaupdates',
+    name: 'MangaUpdates',
+    group: '漫畫／動畫',
+    categories: ['manga'],
+    hint: 'https://www.mangaupdates.com/series/ID',
+  },
+  {
+    id: 'narou',
+    name: '小説家になろう',
+    group: '書籍',
+    categories: ['manga', 'other'],
+    hint: 'https://ncode.syosetu.com/n0000aa/',
+  },
+  {
+    id: 'itunes',
+    name: 'Apple Music',
+    group: '音樂',
+    categories: ['music', 'other'],
+    hint: 'https://music.apple.com/jp/album/NAME/ID',
+  },
+  {
+    id: 'deezer',
+    name: 'Deezer',
+    group: '音樂',
+    categories: ['music', 'other'],
+    hint: 'https://www.deezer.com/album/ID',
+  },
+  {
+    id: 'danbooru',
+    name: 'Danbooru',
+    group: '圖片／插畫',
+    categories: ['album'],
+    hint: 'https://danbooru.donmai.us/posts/ID',
+  },
+  {
+    id: 'googlebooks',
+    name: 'Google Books',
+    group: '書籍',
+    categories: ['manga', 'other'],
+    hint: 'https://books.google.com/books?id=ID',
+  },
+  // R-292: page sources.
+  {
+    id: 'booth',
+    name: 'BOOTH',
+    group: '同人／商店',
+    categories: ['manga', 'game', 'music', 'album', 'other'],
+    hint: 'https://booth.pm/ja/items/ID',
+  },
+  {
+    id: 'kakuyomu',
+    name: 'カクヨム',
+    group: '書籍',
+    categories: ['manga', 'other'],
+    hint: 'https://kakuyomu.jp/works/ID',
+  },
+  // R-283: any other HTTPS page, read only from what it says about itself (JSON-LD, OpenGraph, title).
+  {
+    id: 'web',
+    name: 'Web',
+    group: '網頁',
+    categories: ['manga', 'video', 'game', 'music', 'album', 'other'],
+    hint: 'https://',
+  },
 ] as const
 export type MetadataSourceId = (typeof metadataSources)[number]['id']
 // E-Hentai and ExHentai are one site with the same galleries: they share stored field ids (eh-…).
@@ -106,6 +186,23 @@ export function sourceForUrl(source: string): MetadataSourceId | undefined {
     'pixiv.net': 'pixiv',
     'commons.wikimedia.org': 'commons',
     'www.dlsite.com': 'dlsite',
+    'mangadex.org': 'mangadex',
+    'kitsu.app': 'kitsu',
+    'kitsu.io': 'kitsu',
+    'www.mangaupdates.com': 'mangaupdates',
+    'mangaupdates.com': 'mangaupdates',
+    'ncode.syosetu.com': 'narou',
+    'novel18.syosetu.com': 'narou',
+    'music.apple.com': 'itunes',
+    'www.deezer.com': 'deezer',
+    'deezer.com': 'deezer',
+    'danbooru.donmai.us': 'danbooru',
+    'books.google.com': 'googlebooks',
+    'booth.pm': 'booth',
+    'kakuyomu.jp': 'kakuyomu',
   } as Record<string, MetadataSourceId>
-  return Object.hasOwn(sources, url.hostname) ? sources[url.hostname] : undefined
+  if (url.hostname === 'www.google.com' && url.pathname.startsWith('/books/')) return 'googlebooks'
+  // Shop pages on a BOOTH subdomain (<shop>.booth.pm/items/<id>).
+  if (/^[a-z0-9-]{1,63}\.booth\.pm$/.test(url.hostname)) return 'booth'
+  return Object.hasOwn(sources, url.hostname) ? sources[url.hostname] : 'web'
 }

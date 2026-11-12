@@ -16,17 +16,57 @@ const privateV4 = (ip: string) => {
     (a === 169 && b === 254) ||
     (a === 172 && b >= 16 && b <= 31) ||
     (a === 192 && b === 168) ||
+    // Protocol assignments, documentation and benchmarking ranges.
+    (a === 192 && b === 0) ||
+    (a === 198 && (b === 18 || b === 19 || b === 51)) ||
+    (a === 203 && b === 0) ||
     a >= 224
   )
 }
+// The eight 16-bit groups of an IPv6 address (with "::" expanded and a trailing dotted IPv4 converted).
+function groups(ip: string): number[] | undefined {
+  let value = ip.toLowerCase().split('%')[0]
+  const dotted = /(\d+\.\d+\.\d+\.\d+)$/.exec(value)
+  if (dotted) {
+    const [a, b, c, d] = dotted[1].split('.').map(Number)
+    value =
+      value.slice(0, -dotted[1].length) +
+      ((a << 8) | b).toString(16) +
+      ':' +
+      ((c << 8) | d).toString(16)
+  }
+  const [head, tail] = value.split('::')
+  const left = head ? head.split(':') : [],
+    right = tail ? tail.split(':') : []
+  const parts = value.includes('::')
+    ? [...left, ...Array(8 - left.length - right.length).fill('0'), ...right]
+    : left
+  if (parts.length !== 8) return undefined
+  const numbers = parts.map((part) => parseInt(part, 16))
+  return numbers.every((n) => Number.isInteger(n) && n >= 0 && n <= 0xffff) ? numbers : undefined
+}
+const v4 = (high: number, low: number) => [high >> 8, high & 255, low >> 8, low & 255].join('.')
+// Any IPv6 form, including hex-written IPv4-mapped (::ffff:7f00:1), NAT64 (64:ff9b::/96) and 6to4 (2002::/16)
+// addresses, is judged by the IPv4 address it carries.
 export const privateAddress = (ip: string): boolean => {
   const version = net.isIP(ip)
   if (version === 4) return privateV4(ip)
   if (version !== 6) return true
-  const value = ip.toLowerCase()
-  const mapped = value.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/)
-  if (mapped) return privateV4(mapped[1])
-  return value === '::' || value === '::1' || /^f[cd]/.test(value) || /^fe[89ab]/.test(value)
+  const g = groups(ip)
+  if (!g) return true
+  if (g.slice(0, 5).every((n) => n === 0) && (g[5] === 0xffff || g[5] === 0))
+    return g[5] === 0 && g[6] === 0 ? true : privateV4(v4(g[6], g[7]))
+  if (g[0] === 0x64 && g[1] === 0xff9b && g.slice(2, 6).every((n) => n === 0))
+    return privateV4(v4(g[6], g[7]))
+  if (g[0] === 0x2002) return privateV4(v4(g[1], g[2]))
+  return (
+    g.every((n) => n === 0) ||
+    (g.slice(0, 7).every((n) => n === 0) && g[7] === 1) ||
+    (g[0] & 0xfe00) === 0xfc00 ||
+    (g[0] & 0xffc0) === 0xfe80 ||
+    (g[0] & 0xff00) === 0xff00 ||
+    (g[0] === 0x2001 && g[1] === 0x0db8)
+  )
 }
 
 export interface RemoteImage {

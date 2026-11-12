@@ -219,9 +219,12 @@ try {
   const address = drawer.getByRole('textbox', { name: '作品網址或 ID', exact: true }),
     preview = drawer.getByRole('button', { name: '取得預覽', exact: true })
   assert.equal(await preview.isDisabled(), true)
-  await address.fill('https://unknown.example.test/work/1')
+  // Text that is not an address cannot be previewed; any other HTTPS page is read as a generic web page (R-283).
+  await address.fill('not an address')
   assert.equal(await preview.isDisabled(), true)
   await drawer.getByText('無法辨識這個網址的來源').waitFor()
+  await address.fill('https://unknown.example.test/work/1')
+  await drawer.locator('.mantine-Badge-root').filter({ hasText: 'Web' }).waitFor()
   await address.fill('https://www.dlsite.com/maniax/work/=/product_id/RJ123456.html')
   await drawer.locator('.mantine-Badge-root').filter({ hasText: 'DLsite' }).waitFor()
   assert.equal(await preview.isDisabled(), false)

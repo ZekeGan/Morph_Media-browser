@@ -22,6 +22,17 @@ const samples: Record<MetadataSourceId, string> = {
   openlibrary: 'https://openlibrary.org/works/OL45804W',
   pixiv: 'https://www.pixiv.net/artworks/20',
   commons: 'https://commons.wikimedia.org/wiki/File:Example.jpg',
+  mangadex: 'https://mangadex.org/title/801513ba-a712-498c-8f57-cae55b38cc92',
+  kitsu: 'https://kitsu.app/anime/cowboy-bebop',
+  mangaupdates: 'https://www.mangaupdates.com/series/njeqwry/berserk',
+  narou: 'https://ncode.syosetu.com/n9669bk/',
+  itunes: 'https://music.apple.com/jp/album/discovery/697194953',
+  deezer: 'https://www.deezer.com/album/302127',
+  danbooru: 'https://danbooru.donmai.us/posts/1',
+  googlebooks: 'https://books.google.com/books?id=zyTCAlFPjgYC',
+  booth: 'https://booth.pm/ja/items/8011749',
+  kakuyomu: 'https://kakuyomu.jp/works/2912051603596422650',
+  web: 'https://www.example.com/',
 }
 const args = process.argv.slice(2)
 const overrides = new Map(
