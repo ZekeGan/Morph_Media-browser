@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Novel reader: a simpler toolbar (search, bookmark, an "Aa" panel for layout, paging, font and background, immersive, close) and a bottom bar with a whole-book slider and chapter buttons that runs right to left for vertical text; scroll mode reads on into the next chapter with only a line between them; paged mode ends each chapter with a page of its own and the book with "The end"; the contents push the text aside on a wide window and float on a narrow one; in immersive reading the bars come back at the top and bottom edges (R-335, R-336, R-342).
 - Website sources: game pages on Getchu, ErogameScape, Melonbooks, Toranoana and FANZA (without a key) are looked up through VNDB, so no age check, key or region matters; the address field's help is one line, with the supported sites in a list you can open (R-293, R-329).
 - Website keys: only sites without a keyless alternative remain (TMDB, SteamGridDB, FANZA, and the optional Bangumi, Danbooru and Google Books keys); MyAnimeList, OMDb, Trakt, TheTVDB, Last.fm, Discogs, AniDB, IGDB, RAWG, Giant Bomb and Comic Vine are read as ordinary web pages now (R-321).
 - Games: an EXE action can start with any Locale Emulator profile (Simplified Chinese and so on), not just Japanese; Flash games (.swf) start in the Flash player chosen in the app settings (R-319, R-320).

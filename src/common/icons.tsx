@@ -183,6 +183,8 @@ const paths = {
   bookmark: <path d="M6 3h8v14l-4-3-4 3Z" />,
   'text-vertical': <path d="M13 3v14M9 3v14M5 3v9" />,
   'text-horizontal': <path d="M3 6h14M3 10h14M3 14h9" />,
+  // Reading layout settings ("Aa"): a large and a small letter A.
+  typography: <path d="M2 16 6.5 4 11 16M3.6 12h5.8M12 16l2.8-7 2.8 7m-4.7-2.3h3.8" />,
   'scroll-mode': <path d="M5 3h10v14H5ZM10 7v6m-2-2 2 2 2-2" />,
   // Webtoon: pages stacked in one tall column.
   'page-webtoon': <path d="M6.5 2h7v5h-7ZM6.5 7.5h7v5h-7ZM6.5 13h7v5h-7Z" />,

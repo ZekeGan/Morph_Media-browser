@@ -3,7 +3,9 @@ import { createPortal } from 'react-dom'
 import {
   ActionIcon,
   Button,
+  DirectionProvider,
   FocusTrap,
+  Menu,
   Popover,
   SegmentedControl,
   Slider,
@@ -12,6 +14,7 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import type {
   ExplorerRequest,
   ExplorerResponse,
@@ -93,7 +96,9 @@ export function NovelReader({
     [box, setBox] = useState({ width: 1, height: 1 })
   const scroller = useRef<HTMLDivElement>(null),
     restore = useRef<number | 'end'>(saved?.position ?? 0),
-    findAfterRender = useRef<{ text: string; nth: number } | undefined>(undefined)
+    findAfterRender = useRef<{ text: string; nth: number } | undefined>(undefined),
+    // Scroll mode: how far into the newly current chapter the view was when scrolling crossed into it.
+    anchor = useRef<number | undefined>(undefined)
   const setSettings = (change: Partial<Settings>) =>
     setSettingsState((previous) => {
       const next = { ...previous, ...change }
@@ -164,6 +169,18 @@ export function NovelReader({
             page: element.clientHeight * 0.9,
           }
   }
+  const sectionBox = (index: number) => {
+    const element = scroller.current,
+      section = element?.querySelector<HTMLElement>(`[data-chapter="${index}"]`)
+    if (!element || !section) return undefined
+    const frame = element.getBoundingClientRect(),
+      rect = section.getBoundingClientRect()
+    return vertical
+      ? { start: frame.right - rect.right + Math.abs(element.scrollLeft), size: rect.width }
+      : { start: rect.top - frame.top + element.scrollTop, size: rect.height }
+  }
+  const viewSize = () =>
+    scroller.current ? (vertical ? scroller.current.clientWidth : scroller.current.clientHeight) : 1
   const scrollTo = (value: number) => {
     const element = scroller.current!
     if (paged && vertical) element.scrollTop = value
@@ -177,10 +194,18 @@ export function NovelReader({
     if (!element || !current) return
     const target = restore.current
     restore.current = 0
-    const { max, page } = extent()
-    let value = target === 'end' ? max : Math.round(max * target)
-    if (paged && page > 0) value = Math.min(max, Math.round(value / page) * page)
-    scrollTo(value)
+    const box = paged ? undefined : sectionBox(chapter)
+    if (box) {
+      const span = Math.max(0, box.size - viewSize()),
+        into = anchor.current ?? (target === 'end' ? span : span * target)
+      anchor.current = undefined
+      scrollTo(box.start + into)
+    } else {
+      const { max, page } = extent()
+      let value = target === 'end' ? max : Math.round(max * target)
+      if (paged && page > 0) value = Math.min(max, Math.round(value / page) * page)
+      scrollTo(value)
+    }
     track()
     if (findAfterRender.current) {
       const { text, nth } = findAfterRender.current
@@ -200,8 +225,27 @@ export function NovelReader({
     settings.font,
   ])
   const track = () => {
+    if (!scroller.current) return
     const { at, max } = extent()
-    setPosition(max > 0 ? Math.min(1, Math.max(0, at / max)) : 0)
+    if (paged) return setPosition(max > 0 ? Math.min(1, Math.max(0, at / max)) : 0)
+    const view = viewSize(),
+      line = at + view * 0.1,
+      shown = [chapter - 1, chapter + 1].find((index) => {
+        const box = sectionBox(index)
+        return box && line >= box.start && line < box.start + box.size
+      })
+    if (shown !== undefined) {
+      anchor.current = at - sectionBox(shown)!.start
+      setEnding(false)
+      setChapter(shown)
+      return
+    }
+    const box = sectionBox(chapter)
+    if (!box) return
+    const span = box.size - view
+    setPosition(
+      span > 0 ? Math.min(1, Math.max(0, (at - box.start) / span)) : at >= box.start ? 1 : 0
+    )
   }
   // --- Saving the place: on chapter change, every half minute while reading, and when leaving. ---
   const latest = useRef({ chapter, position, bookmarks, lengths })
@@ -250,6 +294,15 @@ export function NovelReader({
     setEnding(false)
     restore.current = at
     setChapter(index)
+    if (index === chapter && !paged) {
+      const box = sectionBox(index)
+      if (box) {
+        const span = Math.max(0, box.size - viewSize())
+        scrollTo(box.start + (at === 'end' ? span : span * at))
+      }
+      track()
+      return
+    }
     if (index === chapter) {
       // Same chapter (a bookmark or search result in it): only the place changes.
       const { max, page } = extent()
@@ -302,11 +355,19 @@ export function NovelReader({
   }, [])
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f' && !event.altKey) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        setPanel('search')
+        return
+      }
       if (event.isComposing || event.ctrlKey || event.altKey || event.metaKey) return
       if ((event.target as HTMLElement)?.closest('input,textarea,select,[role="combobox"]')) {
         if (event.key === 'Escape') {
           event.preventDefault()
-          setPanel(undefined)
+          // Esc in the settings closes them first, then the side panel.
+          if (settingsOpen) setSettingsOpen(false)
+          else setPanel(undefined)
           scroller.current?.focus({ preventScroll: true })
         }
         return
@@ -381,7 +442,7 @@ export function NovelReader({
     setHits(found)
   }
   const showMatch = (text: string, nth: number) => {
-    const root = scroller.current?.querySelector('.novel-content')
+    const root = scroller.current?.querySelector(`[data-chapter="${chapter}"]`)
     if (!root) return
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: (node) =>
@@ -462,6 +523,43 @@ export function NovelReader({
   const chapterLabel = (index: number) =>
     book?.chapters[index]?.title || tr('第 {0} 部分', index + 1)
   const percent = Math.round(bookPercent(lengths, chapter, position) * 100)
+  // R-336: the bottom slider works on the whole book (per mille); a point on it maps back to a chapter and place.
+  const total = lengths.reduce((sum, value) => sum + value, 0) || 1
+  const starts = lengths.reduce<number[]>(
+    (list, value, index) => [...list, index ? list[index - 1] + lengths[index - 1] : 0],
+    []
+  )
+  const placeAt = (permille: number) => {
+    const at = (permille / 1000) * total
+    let index = starts.findIndex((start, i) => at >= start && at < start + lengths[i])
+    if (index < 0) index = Math.max(0, lengths.length - 1)
+    return { chapter: index, position: lengths[index] ? (at - starts[index]) / lengths[index] : 0 }
+  }
+  const [dragging, setDragging] = useState<number>()
+  const narrow = useMediaQuery('(max-width: 900px)')
+  const left = (() => {
+    if (!paged || !scroller.current) return undefined
+    const { at, max, page } = extent()
+    return page > 0 ? Math.max(0, Math.round((max - at) / page)) : undefined
+  })()
+  // The list scrolls to the chapter being read when the contents open.
+  const panelList = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (panel === 'toc')
+      panelList.current?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'center' })
+  }, [panel])
+  const addBookmark = () => {
+    setBookmarks((list) => [
+      ...list,
+      {
+        chapter,
+        position: Math.round(position * 1000) / 1000,
+        label: `${chapterLabel(chapter)} · ${percent}%`.slice(0, 200),
+      },
+    ])
+    setPanel('marks')
+  }
+  const nextName = next?.name.replace(/\.(txt|epub)$/i, '')
   const tool = (label: string, icon: IconName, action: () => void, pressed?: boolean, key = '') => (
     <Tooltip zIndex={510} label={label + (key ? ' · ' + key : '')}>
       <ActionIcon
@@ -488,47 +586,96 @@ export function NovelReader({
         aria-modal="true"
         aria-label={tr('小說閱讀器')}
       >
-        {!immersive && (
-          <div className="reader-toolbar novel-toolbar">
-            {tool(
-              tr('目錄、書籤與搜尋'),
-              'list',
-              () => setPanel(panel ? undefined : 'toc'),
-              !!panel
-            )}
-            {tool(tr('上一章'), 'chevron-left', () => goChapter(chapter - 1))}
-            <span className="novel-heading" title={title}>
-              <strong>{title}</strong>
-              <small>{current ? chapterLabel(chapter) : ''}</small>
-            </span>
-            {tool(tr('下一章'), 'chevron-right', () => goChapter(chapter + 1))}
-            <span className="novel-tool-gap" />
-            {tool(tr('橫排'), 'text-horizontal', () => setSettings({ vertical: false }), !vertical)}
-            {tool(tr('直排'), 'text-vertical', () => setSettings({ vertical: true }), vertical)}
-            {tool(tr('分頁'), 'page-single', () => setSettings({ paged: true }), paged)}
-            {tool(tr('捲動'), 'scroll-mode', () => setSettings({ paged: false }), !paged)}
-            <Popover
-              position="bottom-end"
-              withinPortal={false}
-              shadow="md"
-              width={280}
-              opened={settingsOpen}
-              onChange={setSettingsOpen}
-              transitionProps={{ transition: 'fade' }}
-            >
-              <Popover.Target>
-                <ActionIcon
-                  aria-label={tr('閱讀設定')}
-                  size="lg"
-                  variant={settingsOpen ? 'light' : 'subtle'}
-                  color="gray"
-                  onClick={() => setSettingsOpen((open) => !open)}
-                >
-                  <Icon name="sliders" />
+        {/* R-336: title on the left; search, bookmark, the Aa settings, immersive and close on the right. In immersive
+            reading the bar hides and comes back when the mouse reaches the top edge. */}
+        <div className="reader-toolbar novel-toolbar">
+          {tool(tr('目錄、書籤與搜尋'), 'list', () => setPanel(panel ? undefined : 'toc'), !!panel)}
+          <span className="novel-heading" title={title}>
+            <strong>{title}</strong>
+            <small>{current ? chapterLabel(chapter) : ''}</small>
+          </span>
+          <span className="novel-tool-gap" />
+          {narrow ? (
+            <Menu position="bottom-end" withinPortal={false}>
+              <Menu.Target>
+                <ActionIcon aria-label={tr('更多')} size="lg" variant="subtle" color="gray">
+                  <Icon name="more" />
                 </ActionIcon>
-              </Popover.Target>
-              <Popover.Dropdown>
-                <Stack gap="sm">
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item
+                  leftSection={<Icon name="search" size={16} />}
+                  onClick={() => setPanel('search')}
+                >
+                  {tr('搜尋全文')}
+                </Menu.Item>
+                <Menu.Item leftSection={<Icon name="bookmark" size={16} />} onClick={addBookmark}>
+                  {tr('加入書籤')}
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          ) : (
+            <>
+              {tool(
+                tr('搜尋全文'),
+                'search',
+                () => setPanel(panel === 'search' ? undefined : 'search'),
+                panel === 'search',
+                'Ctrl+F'
+              )}
+              {tool(tr('加入書籤'), 'bookmark', addBookmark)}
+            </>
+          )}
+          <Popover
+            position="bottom-end"
+            withinPortal={false}
+            shadow="md"
+            width={300}
+            opened={settingsOpen}
+            onChange={setSettingsOpen}
+            transitionProps={{ transition: 'fade' }}
+          >
+            <Popover.Target>
+              <ActionIcon
+                aria-label={tr('閱讀設定')}
+                size="lg"
+                variant={settingsOpen ? 'light' : 'subtle'}
+                color="gray"
+                onClick={() => setSettingsOpen((open) => !open)}
+              >
+                <Icon name="typography" />
+              </ActionIcon>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Stack gap="sm" className="novel-settings">
+                <div className="novel-setting-row">
+                  <Text size="xs">{tr('排版')}</Text>
+                  <SegmentedControl
+                    size="xs"
+                    aria-label={tr('排版')}
+                    value={vertical ? 'vertical' : 'horizontal'}
+                    onChange={(value) => setSettings({ vertical: value === 'vertical' })}
+                    data={[
+                      { value: 'horizontal', label: tr('橫排') },
+                      { value: 'vertical', label: tr('直排') },
+                    ]}
+                  />
+                </div>
+                <div className="novel-setting-row">
+                  <Text size="xs">{tr('翻頁')}</Text>
+                  <SegmentedControl
+                    size="xs"
+                    aria-label={tr('翻頁')}
+                    value={paged ? 'paged' : 'scrolled'}
+                    onChange={(value) => setSettings({ paged: value === 'paged' })}
+                    data={[
+                      { value: 'paged', label: tr('分頁') },
+                      { value: 'scrolled', label: tr('捲動') },
+                    ]}
+                  />
+                </div>
+                <div className="novel-setting-row">
+                  <Text size="xs">{tr('字型')}</Text>
                   <SegmentedControl
                     size="xs"
                     aria-label={tr('字型')}
@@ -539,76 +686,93 @@ export function NovelReader({
                       { value: 'sans', label: tr('黑體') },
                     ]}
                   />
-                  <Text size="xs">{tr('字級 {0}', settings.size)}</Text>
-                  <Slider
-                    aria-label={tr('字級')}
-                    min={12}
-                    max={36}
-                    value={settings.size}
-                    onChange={(size) => setSettings({ size })}
-                  />
-                  <Text size="xs">{tr('行距 {0}', settings.lineHeight.toFixed(1))}</Text>
-                  <Slider
-                    aria-label={tr('行距')}
-                    min={1.2}
-                    max={2.6}
-                    step={0.1}
-                    label={null}
-                    value={settings.lineHeight}
-                    onChange={(lineHeight) => setSettings({ lineHeight })}
-                  />
-                  <Text size="xs">{tr('邊界 {0}%', settings.margin)}</Text>
-                  <Slider
-                    aria-label={tr('邊界')}
-                    min={0}
-                    max={20}
-                    value={settings.margin}
-                    onChange={(margin) => setSettings({ margin })}
-                  />
-                  <Text size="xs">
-                    {settings.chars ? tr('每行 {0} 字', settings.chars) : tr('每行字數：自動')}
+                </div>
+                <Text size="xs">{tr('字級 {0}', settings.size)}</Text>
+                <Slider
+                  aria-label={tr('字級')}
+                  min={12}
+                  max={36}
+                  value={settings.size}
+                  onChange={(size) => setSettings({ size })}
+                />
+                <Text size="xs">{tr('行距 {0}', settings.lineHeight.toFixed(1))}</Text>
+                <Slider
+                  aria-label={tr('行距')}
+                  min={1.2}
+                  max={2.6}
+                  step={0.1}
+                  label={null}
+                  value={settings.lineHeight}
+                  onChange={(lineHeight) => setSettings({ lineHeight })}
+                />
+                <Text size="xs">{tr('邊界 {0}%', settings.margin)}</Text>
+                <Slider
+                  aria-label={tr('邊界')}
+                  min={0}
+                  max={20}
+                  value={settings.margin}
+                  onChange={(margin) => setSettings({ margin })}
+                />
+                <Text size="xs">
+                  {settings.chars ? tr('每行 {0} 字', settings.chars) : tr('每行字數：自動')}
+                </Text>
+                <Slider
+                  aria-label={tr('每行字數')}
+                  min={0}
+                  max={60}
+                  step={5}
+                  label={null}
+                  value={settings.chars}
+                  onChange={(chars) => setSettings({ chars })}
+                />
+                <div className="novel-setting-row">
+                  <Text size="xs">{tr('背景')}</Text>
+                  <div className="novel-swatches" role="radiogroup" aria-label={tr('背景')}>
+                    {(
+                      [
+                        ['paper', tr('米色')],
+                        ['light', tr('白色')],
+                        ['dark', tr('深色')],
+                      ] as const
+                    ).map(([value, label]) => (
+                      <Tooltip key={value} zIndex={510} label={label}>
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={settings.theme === value}
+                          aria-label={label}
+                          className={'novel-swatch novel-theme-' + value}
+                          onClick={() => setSettings({ theme: value })}
+                        />
+                      </Tooltip>
+                    ))}
+                  </div>
+                </div>
+                {book?.format === 'txt' && (
+                  <Text size="xs" c="dimmed">
+                    {tr('編碼：{0}', book.encoding.toUpperCase())}
                   </Text>
-                  <Slider
-                    aria-label={tr('每行字數')}
-                    min={0}
-                    max={60}
-                    step={5}
-                    label={null}
-                    value={settings.chars}
-                    onChange={(chars) => setSettings({ chars })}
-                  />
-                  <SegmentedControl
-                    size="xs"
-                    aria-label={tr('背景')}
-                    value={settings.theme}
-                    onChange={(value) => setSettings({ theme: value as Settings['theme'] })}
-                    data={[
-                      { value: 'paper', label: tr('米色') },
-                      { value: 'light', label: tr('白色') },
-                      { value: 'dark', label: tr('深色') },
-                    ]}
-                  />
-                </Stack>
-              </Popover.Dropdown>
-            </Popover>
-            {tool(tr('加入書籤'), 'bookmark', () => {
-              setBookmarks((list) => [
-                ...list,
-                {
-                  chapter,
-                  position: Math.round(position * 1000) / 1000,
-                  label: `${chapterLabel(chapter)} · ${percent}%`.slice(0, 200),
-                },
-              ])
-              setPanel('marks')
-            })}
-            {tool(tr('沉浸閱讀'), 'focus', () => void toggleImmersive(), false, 'F11 / T')}
-            {tool(tr('退出 · ESC'), 'close', exit)}
-          </div>
-        )}
+                )}
+              </Stack>
+            </Popover.Dropdown>
+          </Popover>
+          {tool(tr('沉浸閱讀'), 'focus', () => void toggleImmersive(), immersive, 'F11 / T')}
+          {tool(tr('退出 · ESC'), 'close', exit)}
+        </div>
         <div className="novel-body">
+          {panel && narrow && (
+            <button
+              type="button"
+              className="novel-panel-backdrop"
+              aria-label={tr('關閉目錄')}
+              onClick={() => setPanel(undefined)}
+            />
+          )}
           {panel && (
-            <aside className="novel-panel" aria-label={tr('目錄、書籤與搜尋')}>
+            <aside
+              className={'novel-panel' + (narrow ? ' floating' : '')}
+              aria-label={tr('目錄、書籤與搜尋')}
+            >
               <SegmentedControl
                 size="xs"
                 fullWidth
@@ -621,13 +785,16 @@ export function NovelReader({
                 ]}
               />
               {panel === 'toc' && (
-                <nav className="novel-list" aria-label={tr('目錄')}>
+                <nav className="novel-list" aria-label={tr('目錄')} ref={panelList}>
                   {book?.chapters.map((_, index) => (
                     <button
                       key={index}
                       type="button"
                       aria-current={index === chapter ? 'true' : undefined}
-                      onClick={() => goChapter(index)}
+                      onClick={() => {
+                        goChapter(index)
+                        if (narrow) setPanel(undefined)
+                      }}
                     >
                       {chapterLabel(index)}
                     </button>
@@ -663,6 +830,8 @@ export function NovelReader({
                 <div className="novel-list">
                   <TextInput
                     size="xs"
+                    data-autofocus
+                    autoFocus
                     aria-label={tr('搜尋全文')}
                     placeholder={tr('搜尋全文')}
                     value={query}
@@ -723,38 +892,90 @@ export function NovelReader({
             ) : !book || !current ? (
               <p className="novel-message">{tr('載入內容…')}</p>
             ) : (
-              <div
-                className={'novel-content novel-font-' + settings.font}
-                style={contentStyle}
-                lang={/[぀-ヿ]/.test(texts[chapter]?.slice(0, 2000) ?? '') ? 'ja' : undefined}
-              >
-                {current.html !== undefined ? (
-                  <HtmlChapter
-                    html={current.html}
-                    path={current.path ?? ''}
-                    images={book.images ?? {}}
-                    vertical={vertical}
-                  />
-                ) : (
-                  <TextChapter
-                    title={current.title}
-                    text={current.text ?? ''}
-                    vertical={vertical}
-                  />
-                )}
-                {/* R-324: the end of a chapter offers the next one (or, after the last, the next book). */}
-                {chapter < book.chapters.length - 1 ? (
-                  <div className="novel-chapter-end">
-                    <Button variant="outline" onClick={() => goChapter(chapter + 1)}>
-                      {tr('下一章：{0}', chapterLabel(chapter + 1))}
-                    </Button>
+              <div className={'novel-content novel-font-' + settings.font} style={contentStyle}>
+                {(paged ? [chapter] : [chapter - 1, chapter, chapter + 1])
+                  .filter((index) => index >= 0 && index < book.chapters.length)
+                  .map((index) => {
+                    const part = book.chapters[index]
+                    return (
+                      <section
+                        key={index}
+                        data-chapter={index}
+                        className="novel-section"
+                        lang={/[぀-ヿ]/.test(texts[index]?.slice(0, 2000) ?? '') ? 'ja' : undefined}
+                      >
+                        {part.html !== undefined ? (
+                          <HtmlChapter
+                            html={part.html}
+                            path={part.path ?? ''}
+                            images={book.images ?? {}}
+                            vertical={vertical}
+                          />
+                        ) : (
+                          <TextChapter
+                            title={part.title}
+                            text={part.text ?? ''}
+                            vertical={vertical}
+                          />
+                        )}
+                        {!paged && index < book.chapters.length - 1 && (
+                          <div className="novel-chapter-divider" role="separator">
+                            {tr('{0} 完', chapterLabel(index))}
+                          </div>
+                        )}
+                      </section>
+                    )
+                  })}
+                {/* R-342: in paged mode a chapter ends with a page of its own; turning it goes on. On the last chapter the
+                    page says the book is done and offers the next book. In scroll mode a line marks the end. */}
+                {paged ? (
+                  <div
+                    className="novel-end-page"
+                    style={{
+                      blockSize: Math.max(1, (vertical ? box.width : box.height) - 2 * pad),
+                    }}
+                  >
+                    {chapter < book.chapters.length - 1 ? (
+                      <button
+                        type="button"
+                        className="novel-end-card"
+                        onClick={() => goChapter(chapter + 1)}
+                      >
+                        <strong>{tr('{0} 完', chapterLabel(chapter))}</strong>
+                        <span>{tr('下一章：{0}', chapterLabel(chapter + 1))}</span>
+                        <small>
+                          {tr(
+                            '還有 {0} 章 · 全書 {1}%',
+                            book.chapters.length - chapter - 1,
+                            Math.round(bookPercent(lengths, chapter + 1, 0) * 100)
+                          )}
+                        </small>
+                        <small className="novel-end-hint">{tr('翻頁繼續')}</small>
+                      </button>
+                    ) : (
+                      <div className="novel-end-card">
+                        <strong>{tr('全書完')}</strong>
+                        {next && (
+                          <>
+                            <span>{tr('下一本：{0}', nextName ?? '')}</span>
+                            <Button variant="outline" onClick={() => next.open()}>
+                              {tr('開啟下一本')}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  next && (
-                    <div className="novel-chapter-end">
-                      <Button variant="outline" onClick={() => next.open()}>
-                        {tr('下一本：{0}', next.name.replace(/\.(txt|epub)$/i, ''))}
-                      </Button>
+                  chapter >= book.chapters.length - 2 && (
+                    <div className="novel-chapter-end" role="separator">
+                      {next ? (
+                        <Button variant="outline" onClick={() => next.open()}>
+                          {tr('下一本：{0}', nextName ?? '')}
+                        </Button>
+                      ) : (
+                        <span>{tr('全書完')}</span>
+                      )}
                     </div>
                   )
                 )}
@@ -776,15 +997,56 @@ export function NovelReader({
             </Button>
           </div>
         )}
-        {!immersive && (
+        <div className={'novel-progress' + (vertical ? ' rtl' : '')}>
+          {tool(tr('上一章'), vertical ? 'chevron-right' : 'chevron-left', () =>
+            goChapter(chapter - 1)
+          )}
+          {/* Vertical text reads right to left, so the slider runs that way too. */}
+          <DirectionProvider
+            key={String(vertical)}
+            initialDirection={vertical ? 'rtl' : 'ltr'}
+            detectDirection={false}
+          >
+            <div className="novel-progress-slider" dir={vertical ? 'rtl' : 'ltr'}>
+              <Slider
+                aria-label={tr('全書進度')}
+                min={0}
+                max={1000}
+                value={dragging ?? Math.round(bookPercent(lengths, chapter, position) * 1000)}
+                label={(value) => {
+                  const place = placeAt(value)
+                  return chapterLabel(place.chapter) + ' · ' + Math.round(value / 10) + '%'
+                }}
+                marks={
+                  lengths.length > 1 && lengths.length <= 200
+                    ? starts
+                        .slice(1)
+                        .map((start) => ({ value: Math.round((start / total) * 1000) }))
+                    : undefined
+                }
+                onChange={setDragging}
+                onChangeEnd={(value) => {
+                  setDragging(undefined)
+                  const place = placeAt(value)
+                  goChapter(place.chapter, place.position)
+                }}
+              />
+            </div>
+          </DirectionProvider>
+          {tool(tr('下一章'), vertical ? 'chevron-left' : 'chevron-right', () =>
+            goChapter(chapter + 1)
+          )}
           <div className="reader-info novel-info" aria-live="polite">
             <strong>
-              {book ? tr('第 {0} / {1} 章 · {2}%', chapter + 1, book.chapters.length, percent) : ''}
+              {book
+                ? narrow
+                  ? `${chapter + 1}/${book.chapters.length} · ${percent}%`
+                  : tr('第 {0} / {1} 章 · {2}%', chapter + 1, book.chapters.length, percent)
+                : ''}
             </strong>
-            {book?.format === 'txt' && <span>{book.encoding.toUpperCase()}</span>}
-            <span>{tr('方向鍵／空白鍵翻頁 · F11 沉浸閱讀 · ESC 返回')}</span>
+            {!narrow && paged && left !== undefined && <span>{tr('本章剩 {0} 頁', left)}</span>}
           </div>
-        )}
+        </div>
       </div>
     </FocusTrap>
   )

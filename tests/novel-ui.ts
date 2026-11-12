@@ -61,6 +61,13 @@ const errors: string[] = []
 const { app, page } = await launchApp(local, errors, { width: 1200, height: 820 })
 const reader = () => page.getByRole('dialog', { name: '小說閱讀器', exact: true })
 const info = () => reader().locator('.novel-info strong').innerText()
+// R-336: layout choices are in the "Aa" settings.
+const choose = async (name: string) => {
+  await reader().getByRole('button', { name: '閱讀設定', exact: true }).click()
+  await reader().locator('.novel-settings label').getByText(name, { exact: true }).click()
+  await page.keyboard.press('Escape')
+  await reader().locator('.novel-settings').waitFor({ state: 'hidden' })
+}
 let passed = false
 try {
   await page.getByRole('button', { name: '開啟專案 Novel test', exact: true }).first().click()
@@ -96,7 +103,7 @@ try {
     'settings panel is visible above the page'
   )
   await page.keyboard.press('Escape')
-  await reader().getByRole('button', { name: '直排', exact: true }).click()
+  await choose('直排')
   await page.waitForFunction(() =>
     getComputedStyle(document.querySelector('.novel-content')!).writingMode.startsWith('vertical')
   )
@@ -133,8 +140,8 @@ try {
     }),
     'the chapter opens at its first line'
   )
-  // Scrolling vertical text: past the end of a chapter the next one also opens at its start.
-  await reader().getByRole('button', { name: '捲動', exact: true }).click()
+  // Scrolling vertical text from chapter 2 on.
+  await choose('捲動')
   await reader()
     .getByRole('navigation', { name: '目錄' })
     .getByRole('button', { name: '第2章　章2', exact: true }) // ui-names: ignore
@@ -142,36 +149,50 @@ try {
   await page.waitForFunction(() =>
     /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
   )
-  // R-324: the end of a chapter has a button to the next one.
-  await reader()
-    .locator('.novel-chapter-end')
-    .getByRole('button', { name: /^下一章：/ })
-    .waitFor({ state: 'attached' })
-  // In vertical text the button stands upright like the text instead of lying across the page.
-  const endButton = reader().locator('.novel-chapter-end button')
-  await endButton.scrollIntoViewIfNeeded()
-  const upright = await endButton.evaluate((node) => {
-    const box = node.getBoundingClientRect()
-    return getComputedStyle(node).writingMode.startsWith('vertical') && box.height > box.width
+  // R-336: in scroll mode the next chapter follows the text, with only a line between them.
+  const divider = reader().locator('[data-chapter="2"] .novel-chapter-divider')
+  await divider.waitFor({ state: 'attached' })
+  assert.match(await divider.innerText(), /完/)
+  assert.equal(
+    await reader().locator('[data-chapter="3"]').count(),
+    1,
+    'the next chapter is laid out'
+  )
+  // Scrolling on until the next chapter passes the reading line makes it the current one, and the text stays put.
+  const placed = await page.evaluate(() => {
+    const element = document.querySelector('.novel-page')!,
+      next = element.querySelector('[data-chapter="3"]')!,
+      frame = element.getBoundingClientRect()
+    element.scrollLeft -=
+      frame.right - next.getBoundingClientRect().right - element.clientWidth * 0.05
+    return frame.right - next.getBoundingClientRect().right
   })
-  assert.ok(upright, 'the chapter-end button is upright in vertical text')
-  await page.screenshot({ path: path.join(base, 'shot', 'r324-novel-chapter-end-vertical.png') })
-  await page.evaluate(() => {
-    const element = document.querySelector('.novel-page')!
-    element.scrollLeft = -element.scrollWidth
-  })
-  await page.locator('.novel-page').focus()
-  await page.keyboard.press('ArrowLeft')
   await page.waitForFunction(() =>
     /第 4 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
   )
-  await page.waitForTimeout(300)
-  const start = await page.evaluate(() => {
+  await page.waitForTimeout(200)
+  const after = await page.evaluate(() => {
     const element = document.querySelector('.novel-page')!
-    return [element.scrollLeft, element.scrollWidth, element.clientWidth]
+    return (
+      element.getBoundingClientRect().right -
+      element.querySelector('[data-chapter="3"]')!.getBoundingClientRect().right
+    )
   })
-  assert.ok(Math.abs(start[0]) <= 2, 'next chapter starts on the right: ' + start.join(','))
-  await reader().getByRole('button', { name: '分頁', exact: true }).click()
+  assert.ok(Math.abs(after - placed) <= 3, `the text does not jump: ${placed} → ${after}`)
+  await page.screenshot({ path: path.join(base, 'shot', 'r336-novel-continuous.png') })
+  await choose('分頁')
+  // R-342: in paged mode the last page of a chapter is its end page; at the end of the book it says so.
+  await page.locator('.novel-page').focus()
+  await page.keyboard.press('End')
+  const endCard = reader().locator('.novel-end-card')
+  await endCard.getByText('全書完', { exact: true }).waitFor()
+  const cardBox = (await endCard.boundingBox())!,
+    pageBox = (await reader().locator('.novel-page').boundingBox())!
+  assert.ok(
+    cardBox.y >= pageBox.y - 1 && cardBox.y + cardBox.height <= pageBox.y + pageBox.height + 1,
+    'the end page is on screen'
+  )
+  await page.screenshot({ path: path.join(base, 'shot', 'r342-novel-end-page.png') })
   // Search finds the password in chapter 2 and goes there.
   await reader()
     .getByRole('radio', { name: '搜尋' })

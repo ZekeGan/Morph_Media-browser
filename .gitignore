@@ -48,3 +48,6 @@ graphify-out/
 
 # packaged builds
 /release
+
+# Saved store pages used only to write source adapters; never committed.
+samples/

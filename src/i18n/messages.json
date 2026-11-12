@@ -8291,12 +8291,6 @@
     "ja": "第 {0} / {1} 章 · {2}%",
     "es": "Capítulo {0} / {1} · {2}%"
   },
-  "方向鍵／空白鍵翻頁 · F11 沉浸閱讀 · ESC 返回": {
-    "zh-CN": "方向键／空格键翻页 · F11 沉浸阅读 · ESC 返回",
-    "en": "Arrows / Space turn pages · F11 immersive · ESC back",
-    "ja": "矢印キー／スペースでページ送り · F11 没入 · ESC 戻る",
-    "es": "Flechas / espacio pasan página · F11 inmersivo · ESC volver"
-  },
   "文字使用加密或不支援的壓縮方式": {
     "zh-CN": "文字使用加密或不支持的压缩方式",
     "en": "The text is encrypted or uses an unsupported compression",
@@ -11566,5 +11560,71 @@
     "en": "DMM / FANZA doujinshi and other items; without it, games are looked up through VNDB",
     "ja": "DMM／FANZA の同人誌やその他の商品。未入力の場合、ゲームは VNDB 経由で調べます",
     "es": "Doujinshi y otros artículos de DMM / FANZA; sin ella, los juegos se buscan en VNDB"
+  },
+  "更多": {
+    "zh-CN": "更多",
+    "en": "More",
+    "ja": "その他",
+    "es": "Más"
+  },
+  "翻頁": {
+    "zh-CN": "翻页",
+    "en": "Page turning",
+    "ja": "ページ送り",
+    "es": "Paso de página"
+  },
+  "編碼：{0}": {
+    "zh-CN": "编码：{0}",
+    "en": "Encoding: {0}",
+    "ja": "文字コード：{0}",
+    "es": "Codificación: {0}"
+  },
+  "關閉目錄": {
+    "zh-CN": "关闭目录",
+    "en": "Close contents",
+    "ja": "目次を閉じる",
+    "es": "Cerrar índice"
+  },
+  "{0} 完": {
+    "zh-CN": "{0} 完",
+    "en": "End of {0}",
+    "ja": "{0} 終わり",
+    "es": "Fin de {0}"
+  },
+  "還有 {0} 章 · 全書 {1}%": {
+    "zh-CN": "还有 {0} 章 · 全书 {1}%",
+    "en": "{0} chapters left · {1}% of the book",
+    "ja": "残り {0} 章 · 全体の {1}%",
+    "es": "Quedan {0} capítulos · {1}% del libro"
+  },
+  "翻頁繼續": {
+    "zh-CN": "翻页继续",
+    "en": "Turn the page to go on",
+    "ja": "ページをめくって続ける",
+    "es": "Pasa la página para seguir"
+  },
+  "全書完": {
+    "zh-CN": "全书完",
+    "en": "The end",
+    "ja": "完",
+    "es": "Fin"
+  },
+  "開啟下一本": {
+    "zh-CN": "打开下一本",
+    "en": "Open the next book",
+    "ja": "次の本を開く",
+    "es": "Abrir el siguiente libro"
+  },
+  "全書進度": {
+    "zh-CN": "全书进度",
+    "en": "Progress in the book",
+    "ja": "全体の進み具合",
+    "es": "Progreso en el libro"
+  },
+  "本章剩 {0} 頁": {
+    "zh-CN": "本章剩 {0} 页",
+    "en": "{0} pages left in the chapter",
+    "ja": "この章は残り {0} ページ",
+    "es": "Quedan {0} páginas del capítulo"
   }
 }

@@ -247,3 +247,187 @@
     padding-block: 12px;
     padding-inline: 8px;
 }
+
+/* R-336: the "Aa" settings. */
+.novel-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.novel-swatches {
+    display: flex;
+    gap: 8px;
+}
+
+.novel-swatch {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.novel-swatch[aria-checked='true'] {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.novel-swatch:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* R-336: the bottom bar, chapter buttons around a whole-book slider. Vertical text reads right to left, so the bar
+   is mirrored: the next chapter is on the left. */
+.novel-progress {
+    position: relative;
+    z-index: 7;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border-top: 1px solid var(--line);
+    background: var(--panel);
+}
+
+.novel-progress.rtl {
+    flex-direction: row-reverse;
+}
+
+.novel-progress.rtl .novel-info {
+    order: -1;
+}
+
+.novel-progress-slider {
+    flex: 1;
+    min-width: 80px;
+}
+
+.novel-progress .novel-info {
+    min-height: 0;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    white-space: nowrap;
+}
+
+/* Immersive reading: the bars leave the page and come back while the mouse is at the top or bottom edge. */
+.novel-immersive .novel-toolbar,
+.novel-immersive .novel-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.novel-immersive .novel-toolbar {
+    top: 0;
+}
+
+.novel-immersive .novel-progress {
+    bottom: 0;
+}
+
+.novel-immersive .novel-toolbar:hover,
+.novel-immersive .novel-toolbar:focus-within,
+.novel-immersive .novel-progress:hover,
+.novel-immersive .novel-progress:focus-within {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .novel-immersive .novel-toolbar,
+    .novel-immersive .novel-progress {
+        transition: none;
+    }
+}
+
+/* R-335: on a narrow window the contents float over the page; a click outside closes them. */
+.novel-panel.floating {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 6;
+    width: min(320px, 85%);
+    max-width: none;
+    box-shadow: 4px 0 16px rgb(0 0 0 / 25%);
+}
+
+.novel-panel-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    padding: 0;
+    border: 0;
+    background: rgb(0 0 0 / 25%);
+    cursor: default;
+}
+
+/* R-342: the page after a chapter in paged mode. It starts a new column (page) and fills it. */
+.novel-end-page {
+    break-before: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.novel-end-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8em;
+    padding: 2em 1.5em;
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    writing-mode: horizontal-tb;
+    cursor: pointer;
+}
+
+div.novel-end-card {
+    cursor: default;
+}
+
+.novel-end-card strong {
+    font-size: 1.4em;
+}
+
+.novel-end-card small {
+    opacity: 0.7;
+}
+
+.novel-end-card .novel-end-hint {
+    margin-top: 1em;
+}
+
+button.novel-end-card:hover,
+button.novel-end-card:focus-visible {
+    background: rgb(127 127 127 / 12%);
+    outline: none;
+}
+
+.novel-end-card .mantine-Button-root {
+    color: inherit;
+    border-color: currentColor;
+    background: transparent;
+}
+
+.novel-immersive.reader-embedded {
+    position: relative;
+}
+
+/* R-336: the line between chapters in continuous scroll reading. */
+.novel-chapter-divider {
+    margin-block: 2.5em;
+    text-align: center;
+    font-size: 0.9em;
+    opacity: 0.6;
+    letter-spacing: 0.2em;
+}
