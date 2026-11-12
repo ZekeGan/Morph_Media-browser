@@ -151,6 +151,10 @@ const explorer: Record<ExplorerRequest['action'], Shape> = {
   chooseLocaleEmulator: { clear: opt(bool) },
   targetLocale: { ...revisionRow, templateId: ref, value: bool },
   novel: { rowId: ref, fileId: ref },
+  keyStatus: {},
+  setKey: { site: ref, values: record(text) },
+  clearKey: { site: ref },
+  testKey: { site: ref },
   novelProgress: { rowId: ref, fileId: ref, progress: object },
   subtitle: {
     rowId: ref,

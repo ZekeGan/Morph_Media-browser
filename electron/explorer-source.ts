@@ -40,7 +40,9 @@ export async function metadataPreview(
   source: string,
   provider?: MetadataSourceId
 ): Promise<MetadataPreview> {
-  const item = await metadata(source, fetch, provider),
+  const item = await metadata(source, fetch, provider, {
+      keyFor: (site) => ex.desktop.keyStore?.get(site) ?? Promise.resolve(undefined),
+    }),
     preview: MetadataPreview = { ...item.preview, token: randomUUID() }
   for (const [id, p] of ex.previews) if (p.expires < Date.now()) ex.previews.delete(id)
   if (ex.previews.size >= 10) ex.previews.delete(ex.previews.keys().next().value!)

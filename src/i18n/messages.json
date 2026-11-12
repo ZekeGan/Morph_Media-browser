@@ -8518,5 +8518,377 @@
     "en": "Web pages",
     "ja": "ウェブページ",
     "es": "Páginas web"
+  },
+  "{0} 需要你自己的金鑰才能查資料。": {
+    "zh-CN": "{0} 需要你自己的密钥才能查询资料。",
+    "en": "{0} needs your own key to look things up.",
+    "ja": "{0} の検索にはご自身のキーが必要です。",
+    "es": "{0} necesita tu propia clave para buscar datos."
+  },
+  "{0} 可以加上你的金鑰：{1}": {
+    "zh-CN": "{0} 可以加上你的密钥：{1}",
+    "en": "You can add your key for {0}: {1}",
+    "ja": "{0} にキーを追加できます：{1}",
+    "es": "Puedes añadir tu clave para {0}: {1}"
+  },
+  "前往設定": {
+    "zh-CN": "前往设置",
+    "en": "Open settings",
+    "ja": "設定を開く",
+    "es": "Abrir ajustes"
+  },
+  "本產品使用 TMDB API，但未經 TMDB 認可或認證。": {
+    "zh-CN": "本产品使用 TMDB API，但未经 TMDB 认可或认证。",
+    "en": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+    "ja": "本製品は TMDB API を使用していますが、TMDB による承認・認定は受けていません。",
+    "es": "Este producto usa la API de TMDB, pero TMDB no lo respalda ni lo certifica."
+  },
+  "資料來自 RAWG。": {
+    "zh-CN": "资料来自 RAWG。",
+    "en": "Data from RAWG.",
+    "ja": "データ提供：RAWG。",
+    "es": "Datos de RAWG."
+  },
+  "網站金鑰": {
+    "zh-CN": "网站密钥",
+    "en": "Website keys",
+    "ja": "サイトのキー",
+    "es": "Claves de sitios"
+  },
+  "金鑰只存在這台電腦、加密保存，只在向該網站查資料時使用；不會寫進資料夾記錄或設定包。": {
+    "zh-CN": "密钥只存在这台电脑、加密保存，只在向该网站查询资料时使用；不会写进文件夹记录或设置包。",
+    "en": "Keys stay on this computer, encrypted, and are only used to ask that site. They never go into folder records or settings packages.",
+    "ja": "キーはこのパソコンにだけ暗号化して保存し、そのサイトへの問い合わせにのみ使います。フォルダー記録や設定パッケージには含めません。",
+    "es": "Las claves se guardan cifradas solo en este equipo y solo se usan para consultar ese sitio. Nunca van a los registros de carpetas ni a los paquetes de ajustes."
+  },
+  "可用": {
+    "zh-CN": "可用",
+    "en": "Working",
+    "ja": "使用可",
+    "es": "Funciona"
+  },
+  "無法驗證": {
+    "zh-CN": "无法验证",
+    "en": "Rejected",
+    "ja": "検証できません",
+    "es": "Rechazada"
+  },
+  "已設定": {
+    "zh-CN": "已设置",
+    "en": "Saved",
+    "ja": "設定済み",
+    "es": "Guardada"
+  },
+  "必要": {
+    "zh-CN": "必要",
+    "en": "Required",
+    "ja": "必須",
+    "es": "Obligatoria"
+  },
+  "選填": {
+    "zh-CN": "选填",
+    "en": "Optional",
+    "ja": "任意",
+    "es": "Opcional"
+  },
+  "（選填）": {
+    "zh-CN": "（选填）",
+    "en": "(optional)",
+    "ja": "（任意）",
+    "es": "(opcional)"
+  },
+  "已保存；輸入新的值會取代": {
+    "zh-CN": "已保存；输入新的值会取代",
+    "en": "Saved; typing a new value replaces it",
+    "ja": "保存済み。新しい値を入力すると置き換えます",
+    "es": "Guardada; escribir un valor nuevo la reemplaza"
+  },
+  "保存並測試": {
+    "zh-CN": "保存并测试",
+    "en": "Save and test",
+    "ja": "保存してテスト",
+    "es": "Guardar y probar"
+  },
+  "測試": {
+    "zh-CN": "测试",
+    "en": "Test",
+    "ja": "テスト",
+    "es": "Probar"
+  },
+  "怎麼申請": {
+    "zh-CN": "怎么申请",
+    "en": "How to get one",
+    "ja": "取得方法",
+    "es": "Cómo obtenerla"
+  },
+  "無法保存金鑰": {
+    "zh-CN": "无法保存密钥",
+    "en": "The key can't be saved",
+    "ja": "キーを保存できません",
+    "es": "No se puede guardar la clave"
+  },
+  "沒有這個網站": {
+    "zh-CN": "没有这个网站",
+    "en": "Unknown site",
+    "ja": "このサイトはありません",
+    "es": "Sitio desconocido"
+  },
+  "這台電腦無法加密保存金鑰": {
+    "zh-CN": "这台电脑无法加密保存密钥",
+    "en": "This computer can't store keys encrypted",
+    "ja": "このパソコンではキーを暗号化して保存できません",
+    "es": "Este equipo no puede guardar claves cifradas"
+  },
+  "金鑰欄位未填": {
+    "zh-CN": "密钥栏位未填",
+    "en": "A key field is empty",
+    "ja": "キーの欄が未入力です",
+    "es": "Falta un campo de la clave"
+  },
+  "金鑰格式不合法": {
+    "zh-CN": "密钥格式不合法",
+    "en": "The key format is invalid",
+    "ja": "キーの形式が正しくありません",
+    "es": "El formato de la clave no es válido"
+  },
+  "電影與影集": {
+    "zh-CN": "电影与剧集",
+    "en": "Films and series",
+    "ja": "映画とドラマ",
+    "es": "Películas y series"
+  },
+  "API Key 或 Read Access Token": {
+    "zh-CN": "API Key 或 Read Access Token",
+    "en": "API Key or Read Access Token",
+    "ja": "API Key または Read Access Token",
+    "es": "API Key o Read Access Token"
+  },
+  "在 themoviedb.org 註冊並登入，到「設定 → API」申請個人用途的金鑰，複製 API Key 或 API Read Access Token。": {
+    "zh-CN": "在 themoviedb.org 注册并登录，到“设置 → API”申请个人用途的密钥，复制 API Key 或 API Read Access Token。",
+    "en": "Sign up and sign in at themoviedb.org, request a personal-use key under Settings → API, and copy the API Key or the API Read Access Token.",
+    "ja": "themoviedb.org に登録・ログインし、「設定 → API」で個人利用のキーを申請して、API Key または API Read Access Token をコピーします。",
+    "es": "Regístrate e inicia sesión en themoviedb.org, solicita una clave de uso personal en Ajustes → API y copia la API Key o el API Read Access Token."
+  },
+  "動畫與漫畫": {
+    "zh-CN": "动画与漫画",
+    "en": "Anime and manga",
+    "ja": "アニメと漫画",
+    "es": "Anime y manga"
+  },
+  "在 myanimelist.net 登入，到「帳號設定 → API」建立用戶端（App Type 選 other），複製 Client ID。": {
+    "zh-CN": "在 myanimelist.net 登录，到“账号设置 → API”建立客户端（App Type 选 other），复制 Client ID。",
+    "en": "Sign in at myanimelist.net, create a client under Account Settings → API (App Type: other), and copy the Client ID.",
+    "ja": "myanimelist.net にログインし、「アカウント設定 → API」でクライアントを作成（App Type は other）、Client ID をコピーします。",
+    "es": "Inicia sesión en myanimelist.net, crea un cliente en Ajustes de cuenta → API (App Type: other) y copia el Client ID."
+  },
+  "電影（也接受 IMDb 網址）": {
+    "zh-CN": "电影（也接受 IMDb 网址）",
+    "en": "Films (IMDb addresses work too)",
+    "ja": "映画（IMDb の URL も可）",
+    "es": "Películas (también direcciones de IMDb)"
+  },
+  "到 omdbapi.com 的 API Key 頁面填 Email 申請免費金鑰，收信點連結啟用後即可使用。": {
+    "zh-CN": "到 omdbapi.com 的 API Key 页面填 Email 申请免费密钥，收信点链接启用后即可使用。",
+    "en": "Request a free key with your email on the API Key page at omdbapi.com, then activate it from the link in the email.",
+    "ja": "omdbapi.com の API Key ページでメールアドレスを入力して無料キーを申請し、届いたメールのリンクで有効化します。",
+    "es": "Solicita una clave gratuita con tu correo en la página API Key de omdbapi.com y actívala desde el enlace del correo."
+  },
+  "在 trakt.tv 登入，到「設定 → Your API Apps」建立新應用程式，複製 Client ID。": {
+    "zh-CN": "在 trakt.tv 登录，到“设置 → Your API Apps”建立新应用程序，复制 Client ID。",
+    "en": "Sign in at trakt.tv, create a new app under Settings → Your API Apps, and copy the Client ID.",
+    "ja": "trakt.tv にログインし、「設定 → Your API Apps」で新しいアプリを作成して Client ID をコピーします。",
+    "es": "Inicia sesión en trakt.tv, crea una aplicación en Ajustes → Your API Apps y copia el Client ID."
+  },
+  "在 rawg.io 註冊後到 rawg.io/apidocs 取得 API Key；使用時保留回到 RAWG 的連結。": {
+    "zh-CN": "在 rawg.io 注册后到 rawg.io/apidocs 获取 API Key；使用时保留回到 RAWG 的链接。",
+    "en": "Sign up at rawg.io and get an API Key at rawg.io/apidocs; the link back to RAWG is kept with the data.",
+    "ja": "rawg.io に登録後、rawg.io/apidocs で API Key を取得します。利用時は RAWG へのリンクを残します。",
+    "es": "Regístrate en rawg.io y obtén una API Key en rawg.io/apidocs; el enlace a RAWG se conserva con los datos."
+  },
+  "在 giantbomb.com 註冊並登入，到 giantbomb.com/api 複製你的 API Key。": {
+    "zh-CN": "在 giantbomb.com 注册并登录，到 giantbomb.com/api 复制你的 API Key。",
+    "en": "Sign up and sign in at giantbomb.com, then copy your API Key at giantbomb.com/api.",
+    "ja": "giantbomb.com に登録・ログインし、giantbomb.com/api で API Key をコピーします。",
+    "es": "Regístrate e inicia sesión en giantbomb.com y copia tu API Key en giantbomb.com/api."
+  },
+  "美式漫畫": {
+    "zh-CN": "美式漫画",
+    "en": "Western comics",
+    "ja": "アメコミ",
+    "es": "Cómics occidentales"
+  },
+  "在 comicvine.gamespot.com 註冊並登入，到 comicvine.gamespot.com/api 複製你的 API Key。": {
+    "zh-CN": "在 comicvine.gamespot.com 注册并登录，到 comicvine.gamespot.com/api 复制你的 API Key。",
+    "en": "Sign up and sign in at comicvine.gamespot.com, then copy your API Key at comicvine.gamespot.com/api.",
+    "ja": "comicvine.gamespot.com に登録・ログインし、comicvine.gamespot.com/api で API Key をコピーします。",
+    "es": "Regístrate e inicia sesión en comicvine.gamespot.com y copia tu API Key en comicvine.gamespot.com/api."
+  },
+  "遊戲封面與橫幅": {
+    "zh-CN": "游戏封面与横幅",
+    "en": "Game covers and banners",
+    "ja": "ゲームのカバーとバナー",
+    "es": "Portadas y banners de juegos"
+  },
+  "在 steamgriddb.com 用 Steam 登入，到「Preferences → API」產生 API Key。": {
+    "zh-CN": "在 steamgriddb.com 用 Steam 登录，到“Preferences → API”生成 API Key。",
+    "en": "Sign in at steamgriddb.com with Steam and generate an API Key under Preferences → API.",
+    "ja": "steamgriddb.com に Steam でログインし、「Preferences → API」で API Key を生成します。",
+    "es": "Inicia sesión en steamgriddb.com con Steam y genera una API Key en Preferences → API."
+  },
+  "在 last.fm 登入，到 last.fm/api/account/create 建立 API 帳號，複製 API key。": {
+    "zh-CN": "在 last.fm 登录，到 last.fm/api/account/create 建立 API 账号，复制 API key。",
+    "en": "Sign in at last.fm, create an API account at last.fm/api/account/create, and copy the API key.",
+    "ja": "last.fm にログインし、last.fm/api/account/create で API アカウントを作成して API key をコピーします。",
+    "es": "Inicia sesión en last.fm, crea una cuenta de API en last.fm/api/account/create y copia la API key."
+  },
+  "音樂（不填也能讀資料，填了才拿得到圖片）": {
+    "zh-CN": "音乐（不填也能读资料，填了才拿得到图片）",
+    "en": "Music (works without it; pictures need it)",
+    "ja": "音楽（なくても情報は取得可、画像には必要）",
+    "es": "Música (funciona sin ella; las imágenes la necesitan)"
+  },
+  "個人存取權杖": {
+    "zh-CN": "个人访问令牌",
+    "en": "Personal access token",
+    "ja": "個人アクセストークン",
+    "es": "Token de acceso personal"
+  },
+  "在 discogs.com 登入，到「Settings → Developers」產生個人存取權杖（Personal access token）。": {
+    "zh-CN": "在 discogs.com 登录，到“Settings → Developers”生成个人访问令牌（Personal access token）。",
+    "en": "Sign in at discogs.com and generate a personal access token under Settings → Developers.",
+    "ja": "discogs.com にログインし、「Settings → Developers」で個人アクセストークンを生成します。",
+    "es": "Inicia sesión en discogs.com y genera un token de acceso personal en Settings → Developers."
+  },
+  "成人（NSFW）條目需要權杖": {
+    "zh-CN": "成人（NSFW）条目需要令牌",
+    "en": "Adult (NSFW) entries need a token",
+    "ja": "成人向け（NSFW）の項目にはトークンが必要",
+    "es": "Las entradas para adultos (NSFW) necesitan un token"
+  },
+  "在 bgm.tv 登入，到 next.bgm.tv/demo/access-token 產生個人存取權杖。": {
+    "zh-CN": "在 bgm.tv 登录，到 next.bgm.tv/demo/access-token 生成个人访问令牌。",
+    "en": "Sign in at bgm.tv and generate a personal access token at next.bgm.tv/demo/access-token.",
+    "ja": "bgm.tv にログインし、next.bgm.tv/demo/access-token で個人アクセストークンを生成します。",
+    "es": "Inicia sesión en bgm.tv y genera un token de acceso personal en next.bgm.tv/demo/access-token."
+  },
+  "提高請求額度": {
+    "zh-CN": "提高请求额度",
+    "en": "Higher request limits",
+    "ja": "リクエスト上限を引き上げ",
+    "es": "Límites de solicitudes más altos"
+  },
+  "帳號名稱": {
+    "zh-CN": "账号名称",
+    "en": "User name",
+    "ja": "ユーザー名",
+    "es": "Nombre de usuario"
+  },
+  "在 danbooru.donmai.us 登入，到個人資料頁的「API Key」建立金鑰，帳號名稱填你的使用者名稱。": {
+    "zh-CN": "在 danbooru.donmai.us 登录，到个人资料页的“API Key”建立密钥，账号名称填你的用户名。",
+    "en": "Sign in at danbooru.donmai.us, create a key under API Key on your profile, and enter your user name.",
+    "ja": "danbooru.donmai.us にログインし、プロフィールの「API Key」でキーを作成し、ユーザー名を入力します。",
+    "es": "Inicia sesión en danbooru.donmai.us, crea una clave en API Key de tu perfil e introduce tu nombre de usuario."
+  },
+  "書籍（不填時共用匿名額度，常被拒絕）": {
+    "zh-CN": "书籍（不填时共享匿名额度，常被拒绝）",
+    "en": "Books (without it the shared anonymous quota is often used up)",
+    "ja": "書籍（なしでは共有の匿名枠がよく上限に達します）",
+    "es": "Libros (sin ella, la cuota anónima compartida suele agotarse)"
+  },
+  "在 Google Cloud Console 建立專案、啟用 Books API，再到「憑證」建立 API 金鑰。": {
+    "zh-CN": "在 Google Cloud Console 建立项目、启用 Books API，再到“凭据”建立 API 密钥。",
+    "en": "In the Google Cloud Console, create a project, enable the Books API, and create an API key under Credentials.",
+    "ja": "Google Cloud Console でプロジェクトを作成し、Books API を有効にして「認証情報」で API キーを作成します。",
+    "es": "En Google Cloud Console, crea un proyecto, activa la Books API y crea una clave de API en Credenciales."
+  },
+  "遊戲（用 Twitch 開發者帳號）": {
+    "zh-CN": "游戏（用 Twitch 开发者账号）",
+    "en": "Games (with a Twitch developer account)",
+    "ja": "ゲーム（Twitch 開発者アカウントを使用）",
+    "es": "Juegos (con una cuenta de desarrollador de Twitch)"
+  },
+  "在 dev.twitch.tv 開啟帳號的兩步驟驗證，到 Console 註冊應用程式（OAuth Redirect 可填 http://localhost），複製 Client ID 並產生 Client Secret。": {
+    "zh-CN": "在 dev.twitch.tv 开启账号的两步验证，到 Console 注册应用程序（OAuth Redirect 可填 http://localhost），复制 Client ID 并生成 Client Secret。",
+    "en": "Turn on two-factor authentication for your account at dev.twitch.tv, register an app in the Console (OAuth Redirect can be http://localhost), copy the Client ID and generate a Client Secret.",
+    "ja": "dev.twitch.tv でアカウントの二段階認証を有効にし、Console でアプリを登録（OAuth Redirect は http://localhost で可）して、Client ID をコピーし Client Secret を生成します。",
+    "es": "Activa la verificación en dos pasos en dev.twitch.tv, registra una aplicación en la Console (OAuth Redirect puede ser http://localhost), copia el Client ID y genera un Client Secret."
+  },
+  "影集": {
+    "zh-CN": "剧集",
+    "en": "Series",
+    "ja": "ドラマ",
+    "es": "Series"
+  },
+  "訂閱 PIN": {
+    "zh-CN": "订阅 PIN",
+    "en": "Subscriber PIN",
+    "ja": "購読 PIN",
+    "es": "PIN de suscriptor"
+  },
+  "在 thetvdb.com 登入，到「API Information」申請 API Key；使用者訂閱制金鑰另需填訂閱 PIN。": {
+    "zh-CN": "在 thetvdb.com 登录，到“API Information”申请 API Key；用户订阅制密钥另需填订阅 PIN。",
+    "en": "Sign in at thetvdb.com and request an API Key under API Information; a user-subscription key also needs your subscriber PIN.",
+    "ja": "thetvdb.com にログインし、「API Information」で API Key を申請します。ユーザー購読型のキーは購読 PIN も必要です。",
+    "es": "Inicia sesión en thetvdb.com y solicita una API Key en API Information; una clave de suscripción de usuario también necesita tu PIN."
+  },
+  "DMM／FANZA 商品": {
+    "zh-CN": "DMM／FANZA 商品",
+    "en": "DMM / FANZA products",
+    "ja": "DMM／FANZA の商品",
+    "es": "Productos de DMM / FANZA"
+  },
+  "在 affiliate.dmm.com 註冊 DMM アフィリエイト，到「Webサービス」取得 API ID 與 Affiliate ID（後綴 -990～-999）。": {
+    "zh-CN": "在 affiliate.dmm.com 注册 DMM アフィリエイト，到“Webサービス”获取 API ID 与 Affiliate ID（后缀 -990～-999）。",
+    "en": "Join the DMM affiliate program at affiliate.dmm.com and get the API ID and Affiliate ID (ending -990 to -999) under Web Services.",
+    "ja": "affiliate.dmm.com で DMM アフィリエイトに登録し、「Webサービス」で API ID と Affiliate ID（末尾 -990～-999）を取得します。",
+    "es": "Únete al programa de afiliados de DMM en affiliate.dmm.com y obtén el API ID y el Affiliate ID (terminado en -990 a -999) en Web Services."
+  },
+  "動畫（要登記的用戶端名稱與版本）": {
+    "zh-CN": "动画（要登记的客户端名称与版本）",
+    "en": "Anime (a registered client name and version)",
+    "ja": "アニメ（登録済みのクライアント名とバージョン）",
+    "es": "Anime (nombre y versión de un cliente registrado)"
+  },
+  "用戶端名稱": {
+    "zh-CN": "客户端名称",
+    "en": "Client name",
+    "ja": "クライアント名",
+    "es": "Nombre del cliente"
+  },
+  "用戶端版本": {
+    "zh-CN": "客户端版本",
+    "en": "Client version",
+    "ja": "クライアントのバージョン",
+    "es": "Versión del cliente"
+  },
+  "AniDB 的 HTTP API 要先在 anidb.net 以帳號登記用戶端（Client），填入登記時的用戶端名稱與版本。": {
+    "zh-CN": "AniDB 的 HTTP API 要先在 anidb.net 以账号登记客户端（Client），填入登记时的客户端名称与版本。",
+    "en": "AniDB's HTTP API needs a client registered with your anidb.net account; enter the client name and version you registered.",
+    "ja": "AniDB の HTTP API は、anidb.net のアカウントでクライアントを登録する必要があります。登録したクライアント名とバージョンを入力します。",
+    "es": "La API HTTP de AniDB necesita un cliente registrado con tu cuenta de anidb.net; introduce el nombre y la versión registrados."
+  },
+  "這個網站需要你自己的金鑰；請到「應用程式設定 → 網站金鑰」填入": {
+    "zh-CN": "这个网站需要你自己的密钥；请到“应用程序设置 → 网站密钥”填入",
+    "en": "This site needs your own key; enter it in App settings → Website keys",
+    "ja": "このサイトにはご自身のキーが必要です。「アプリの設定 → サイトのキー」で入力してください",
+    "es": "Este sitio necesita tu propia clave; introdúcela en Ajustes de la aplicación → Claves de sitios"
+  },
+  "找不到作品，或是需要權杖的成人作品；可到「應用程式設定 → 網站金鑰」填入權杖": {
+    "zh-CN": "找不到作品，或是需要令牌的成人作品；可到“应用程序设置 → 网站密钥”填入令牌",
+    "en": "No such work, or an adult work that needs a token; you can add one in App settings → Website keys",
+    "ja": "作品が見つからないか、トークンが必要な成人向け作品です。「アプリの設定 → サイトのキー」でトークンを入力できます",
+    "es": "No existe esa obra o es para adultos y necesita un token; puedes añadirlo en Ajustes de la aplicación → Claves de sitios"
+  },
+  "網站拒絕了你的金鑰；請到「應用程式設定 → 網站金鑰」確認": {
+    "zh-CN": "网站拒绝了你的密钥；请到“应用程序设置 → 网站密钥”确认",
+    "en": "The site refused your key; check it in App settings → Website keys",
+    "ja": "サイトがキーを拒否しました。「アプリの設定 → サイトのキー」で確認してください",
+    "es": "El sitio rechazó tu clave; revísala en Ajustes de la aplicación → Claves de sitios"
+  },
+  "影視": {
+    "zh-CN": "影视",
+    "en": "Film & TV",
+    "ja": "映像",
+    "es": "Cine y TV"
   }
 }

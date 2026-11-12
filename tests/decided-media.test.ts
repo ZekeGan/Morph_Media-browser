@@ -6,7 +6,6 @@ import { Library } from '../electron/library'
 import { Explorer } from '../electron/explorer'
 import { archiveIndex, archiveImage } from '../electron/archive'
 import { metadata } from '../electron/metadata'
-import { metadataSources } from '../shared/sources'
 import { stabilizeQuery, restoreQuery, queryText, parseQuery } from '../shared/query'
 import { readFolder, folderFile } from '../electron/files'
 import { writeSettingsFile } from '../electron/settings-file'
@@ -215,10 +214,17 @@ test('public metadata adapters use no credentials, retain source identities and 
       }) as typeof fetch),
       (error) => !String(error).includes('MUST NOT FETCH')
     )
-  assert.equal(
-    metadataSources.some((source) => ['tmdb', 'igdb'].includes(source.id)),
-    false
-  )
+  // Keyed sources (R-285) stop before any request when no key is set.
+  for (const source of [
+    'https://www.themoviedb.org/movie/12',
+    'https://www.igdb.com/games/portal-2',
+  ])
+    await assert.rejects(
+      metadata(source, (async () => {
+        throw new Error('MUST NOT FETCH')
+      }) as typeof fetch),
+      /網站金鑰/
+    )
   await assert.rejects(
     metadata(
       'https://hitomi.la/reader/12.html',

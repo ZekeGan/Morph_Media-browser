@@ -301,6 +301,11 @@ export type ExplorerRequest =
   | { action: 'chooseLocaleEmulator'; clear?: boolean }
   | { action: 'targetLocale'; rowId: string; revision: number; templateId: string; value: boolean }
   // R-282: open a text book, and keep where it was left.
+  // R-285: website keys. Values only ever travel from the window to main, never back.
+  | { action: 'keyStatus' }
+  | { action: 'setKey'; site: string; values: Record<string, string> }
+  | { action: 'clearKey'; site: string }
+  | { action: 'testKey'; site: string }
   | { action: 'novel'; rowId: string; fileId: string }
   // Only this book's place changes, so main writes it against the record's current revision.
   | { action: 'novelProgress'; rowId: string; fileId: string; progress: NovelProgress }
@@ -335,6 +340,7 @@ export interface ExplorerResponse {
   shortcuts?: string[]
   extras?: GameExtras
   novel?: NovelBook
+  keys?: Record<string, import('./keys').KeyStatus>
   localeEmulator?: string
   probe?: { kind: 'zip' | 'rar' | '7z' | 'gzip' | 'html' | 'empty' | 'media' | 'unknown' }
   preview?: MetadataPreview

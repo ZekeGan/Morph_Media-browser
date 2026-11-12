@@ -302,7 +302,9 @@ export async function metadata(
   source: string,
   fetcher: typeof fetch = fetch,
   expected?: MetadataSourceId,
-  options: WebOptions = {}
+  options: WebOptions & {
+    keyFor?: (site: string) => Promise<Record<string, string> | undefined>
+  } = {}
 ) {
   if (typeof source !== 'string' || source.length > 2048) throw new Error('來源網址不合法')
   source = source.trim()
@@ -312,5 +314,5 @@ export async function metadata(
   if (provider === 'steam') return steamMetadata(source, fetcher)
   if (provider === 'eh' || provider === 'exh') return ehMetadata(source, fetcher)
   if (provider === 'web') return webMetadata(source, fetcher, options)
-  return publicMetadata(provider, source, fetcher)
+  return publicMetadata(provider, source, fetcher, options)
 }

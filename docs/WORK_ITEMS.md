@@ -11,11 +11,17 @@
 
 ## 待你決定
 
-- **金鑰（提醒）**：R-285～R-291 的程式做完後，需要你到「應用程式設定」填入各站自己的金鑰（TMDB、MyAnimeList、OMDb、Trakt、RAWG、Giant Bomb、Comic Vine、SteamGridDB、Last.fm、Discogs、Bangumi 權杖、IGDB、TheTVDB、FANZA、AniDB 用戶端登記）才能實測；沒填之前只用固定回應測試。使用者 2026-11-12 說金鑰之後再加，請提醒。
+- **金鑰（提醒）**：R-285～R-290 的程式已完成（2026-11-12），需要你到「應用程式設定」填入各站自己的金鑰（TMDB、MyAnimeList、OMDb、Trakt、RAWG、Giant Bomb、Comic Vine、SteamGridDB、Last.fm、Discogs、Bangumi 權杖、IGDB、TheTVDB、FANZA、AniDB 用戶端登記）才能實測；沒填之前只用固定回應測試。使用者 2026-11-12 說金鑰之後再加，請提醒。
 
 - **R-293 與批評空間（需要你決定）**：探測需要年齡確認的成人網站（Getchu、Melonbooks、虎之穴，以及批評空間）的頁面結構時，我這邊的自動權限檢查擋下了請求，所以沒有實作。要繼續的話，需要你在設定裡允許這類請求，或親自提供這幾站作品頁的 HTML 結構（存成檔案），我再用固定回應寫轉接器與測試。原需求：每站在設定提供「我已成年」勾選，勾選後才帶年齡確認 Cookie。Getchu（EUC-JP 編碼）、Melonbooks、虎之穴（改版較頻繁）。
 
 ## 待查收
+
+- **R-285～R-290** 使用者自備金鑰＋金鑰類來源（TMDB、MyAnimeList、OMDb、Trakt、RAWG、Giant Bomb、Comic Vine、SteamGridDB、Last.fm、Discogs、Bangumi 權杖、Danbooru／Google Books 選填金鑰、IGDB、TheTVDB、FANZA、AniDB） ｜大｜安全邊界｜設定｜領域：metadata、appearance｜依賴：無
+  驗收：「應用程式設定 → 網站金鑰」每站一列；填一組你有的金鑰 →「保存並測試」顯示「可用」；在資料夾貼該站作品網址 → 預覽成功（TMDB／RAWG／FANZA 有出處標示）。沒填金鑰時貼網址 → 就地提示並可「前往設定」。**需要你的金鑰才能實站驗證**，目前只用固定回應測試。
+
+- **R-291** 待查證的金鑰來源 ｜小｜一般｜無｜領域：metadata｜依賴：R-285
+  驗收：看規格「查證過、另行登記的金鑰來源」：Spotify 不接入（原因已記），Gelbooru、DeviantArt、MobyGames 另登記為 R-312～R-314。
 
 - **R-283** 網頁解析基礎＋通用網頁來源 ｜中｜安全邊界｜無｜領域：metadata｜依賴：無
   驗收：在「從網站補充資訊」貼任何不認得的 https 網址（例如出版社或商店的作品頁）→ 來源顯示「Web」→ 預覽有標題、簡介、作者、封面等頁面自己宣告的資料。貼內網位址（如 `https://192.168.1.1/`）會被拒。User-Agent 已改成現行名稱與版號（R-302）。
@@ -83,38 +89,16 @@
 - **R-281** 主程序訊息翻譯 ｜大｜一般｜無｜領域：appearance、core｜依賴：R-277 — 使用者 2026-11-12 核定（全部登記項目）
   主程序有 507 句訊息（壓縮檔、備份、檔案總覽、匯入、清理等的錯誤與通知）沒有翻譯鍵，英文、日文、西班牙文、簡中介面仍顯示繁中。固定句子補進 messages.json（每句四種譯文）；帶數值的句子改成「翻譯鍵＋數值」送到畫面再組合。可分領域分批做，每批讓 `scripts/i18n-baseline.json` 變少。
 
-網站來源（[C-134](DECISIONS.md#c-134網站來源改為可用使用者金鑰與有條件解析網頁2026-11-12)）：下列網站需要的資料與特殊處理依 2026-11-12 討論時的認識，未上網查證；每站接入前先確認條款、限流與端點。標「？」的是較不確定的。
-
-- **R-285** 使用者自備金鑰＋TMDB ｜大｜安全邊界｜設定｜領域：metadata、appearance｜依賴：無 — 使用者 2026-11-12 核定（全部登記項目）
-  應用程式設定新增「網站金鑰」分頁：每站一列（名稱、用途、輸入框遮罩＋顯示切換、狀態「可用／無法驗證／未設定」、測試、清除、「怎麼申請」連到使用說明）；金鑰用 Electron 內建的 safeStorage 加密存本機，只有 main 讀取。資料夾設定貼了需要金鑰的網址時，就地提示並「前往設定」跳到該列；金鑰失效同樣提示。以 TMDB（API Key 或 Read Access Token）驗證整套流程：圖片在 `image.tmdb.org` 需指定尺寸，條款要求標示資料來自 TMDB，限非商業用途。使用說明補各站申請步驟。分頁名稱待定（網站金鑰／外部服務／連線）。
-
-- **R-286** 一般金鑰來源 ｜大｜安全邊界｜無｜領域：metadata｜依賴：R-285 — 使用者 2026-11-12 核定（全部登記項目）
-  - MyAnimeList（動畫、漫畫）：Client ID，放請求標頭 `X-MAL-CLIENT-ID`。
-  - OMDb（電影）：API Key（Email 啟用），免費每天 1000 次；可用 IMDb tt 編號查詢，間接支援 IMDb 網址。
-  - Trakt（影集、電影）：Client ID；沒有圖片，封面要再向 TMDB 取。
-  - RAWG（遊戲）：API Key；條款要求標示來源並附回連結。
-  - Giant Bomb（遊戲）、Comic Vine（美漫）：API Key；須帶自訂 User-Agent；限流以小時計。
-  - SteamGridDB（遊戲封面、橫幅、Logo）：API Key；只有圖片，可與 Steam App ID 搭配。
-  - Last.fm（音樂）：API Key；封面品質不一。
-  - Discogs（音樂）：個人權杖選填；不登入可讀資料，但圖片要帶權杖才拿得到。
-  - Bangumi（已接入，加選填權杖）：使用者在 Bangumi 產生個人存取權杖，以 `Authorization: Bearer` 送出，才能讀成人（NSFW）作品；未登入時這類作品可能直接回 404（2026-11-12 一般作品實測正常，成人作品未實測）。沒填權杖時，404 提示改為「找不到作品，或是需要權杖的成人作品」並連到設定。
-
-- **R-287** IGDB ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285 — 使用者 2026-11-12 核定（全部登記項目）
-  使用者準備 Twitch Client ID＋Secret（Twitch 帳號須開兩步驟驗證）。程式要換存取權杖並在約 60 天過期時自動更新；查詢語法是 Apicalypse（POST）；每秒最多 4 次；網址是 slug，要先查出 ID；圖片在 `images.igdb.com`。
-
-- **R-288** TheTVDB ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285 — 使用者 2026-11-12 核定（全部登記項目）
-  API Key（＋訂閱 PIN？）；先登入換權杖，約一個月過期。
-
-- **R-289** FANZA（DMM） ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285 — 使用者 2026-11-12 核定（全部登記項目）
-  使用者要先註冊 DMM 聯盟行銷取得 API ID＋Affiliate ID，門檻最高；條款要求顯示 Credit；FANZA／DMM 兩種站點與多個樓層，網址對應較複雜。
-
-- **R-290** AniDB ｜中｜安全邊界｜設定｜領域：metadata｜依賴：R-285 — 使用者 2026-11-12 核定（全部登記項目）
-  要由開發者先登記用戶端名稱＋版本（不是使用者金鑰）；約 2 秒一次的嚴格限流，違反會封 IP；回應是 gzip 壓縮的 XML；規定要快取，不重複查同一部。
-
-- **R-291** 待查證的金鑰來源 ｜小｜一般｜無｜領域：metadata｜依賴：R-285 — 使用者 2026-11-12 核定（全部登記項目）
-  只做研究，結果決定是否另登記：Spotify（Client ID＋Secret、權杖每小時過期，新應用權限收緊、條款可能限制儲存？）、Gelbooru（可能改為必須帳號 ID＋金鑰？）、DeviantArt（OAuth 用戶端憑證）、MobyGames（API 可能改為付費？）。
-
 ## 已登記（未核定）
+
+- **R-312** Gelbooru（選填金鑰） ｜小｜安全邊界｜無｜領域：metadata｜依賴：R-285
+  比照 Danbooru：`/index.php?page=post&s=view&id=` 的貼文 ID，用 `index.php?page=dapi&s=post&q=index&json=1&id=` 查；金鑰（`api_key`＋`user_id`）選填，不帶時有嚴格限流。
+
+- **R-313** DeviantArt（oEmbed） ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
+  以作品網址呼叫免金鑰的 oEmbed 取標題、作者、分級與縮圖；需要更多欄位時再評估 OAuth client credentials。
+
+- **R-314** MobyGames ｜小｜安全邊界｜設定｜領域：metadata｜依賴：R-285
+  非營利用途的免費金鑰（約每小時 720 次）；網址 `/game/<ID>/slug`。
 
 ## 擱置
 

@@ -99,6 +99,7 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | ROOT 的 `.media-viewer/projects/<projectId>.json` | 可攜專案定義、欄位／版面與掃描邊界 |
 | `.media-viewer/` 內受管資產／字幕 | 以相對參照復原；不依賴舊絕對路徑 |
 | Electron userData 的 `poc-projects.json`、`workspace-ui.json` | 本機連結登錄與 UI 偏好 |
+| userData 的 `site-keys.json` | 網站金鑰（R-285），以作業系統保護加密，只有 main 解密；不進設定包與備份 |
 | userData 的 `workspace-backups/` | 套用或還原設定前的本機設定備份，供「回到還原之前」 |
 | userData 的 `search.sqlite`、`thumbnails/` | 可重建索引／快取；不得當可攜原值 |
 

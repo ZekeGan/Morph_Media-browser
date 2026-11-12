@@ -33,7 +33,8 @@ export class SourceError extends Error {
 }
 export function sourceStatusKind(status: number): SourceErrorKind {
   if (status === 404 || status === 410) return 'notFound'
-  if (status === 401 || status === 403) return 'restricted'
+  // 400 is how token endpoints (Twitch, DMM) answer wrong credentials.
+  if (status === 400 || status === 401 || status === 403) return 'restricted'
   return 'offline'
 }
 // Requests a website source: a failed lookup, refused connection or timeout is "offline", and an HTTP error is

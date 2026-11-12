@@ -31,6 +31,10 @@ import * as overviewFns from './explorer-overview'
 import { bundledSuggestions, engineSaveFolder, steamAppId, storeUrl } from './game-extras'
 import { detectGame } from './game-detection'
 import { readNovel } from './novel'
+import type { KeyStore } from './keys'
+import { keySite, KEY_REJECTED } from '../shared/keys'
+import { metadata } from './metadata'
+import { SourceError } from './metadata-common'
 export { probeFile }
 
 export interface DesktopOperations {
@@ -52,6 +56,8 @@ export interface DesktopOperations {
   // R-309: Locale Emulator's LEProc.exe from the app settings, and setting it.
   localeEmulator?(): string | undefined
   setLocaleEmulator?(file: string | undefined): Promise<void>
+  // R-285: the encrypted website keys (main only).
+  keyStore?: KeyStore
   // R-308: a session of a game started from M:orph ended.
   played?(folderId: string, started: number, ended: number): void
   thumbnail(file: string, mime?: string, url?: string): Promise<Buffer>
@@ -756,6 +762,36 @@ export class Explorer {
         validateDetails(record.details)
         await saveFolder(row.path, record, req.revision)
         return this.after(await this.library.refreshRecord(req.rowId))
+      }
+      case 'keyStatus':
+        return { keys: (await this.desktop.keyStore?.status()) ?? {} }
+      case 'setKey': {
+        if (!this.desktop.keyStore) throw new Error('無法保存金鑰')
+        await this.desktop.keyStore.set(req.site, req.values)
+        return { keys: await this.desktop.keyStore.status() }
+      }
+      case 'clearKey': {
+        await this.desktop.keyStore?.clear(req.site)
+        return { keys: (await this.desktop.keyStore?.status()) ?? {} }
+      }
+      case 'testKey': {
+        // The key works when the site answers with or without the sample work; only a refusal fails the test.
+        const definition = keySite(req.site),
+          store = this.desktop.keyStore
+        if (!definition || !store) throw new Error('沒有這個網站')
+        let result: 'ok' | 'failed' = 'ok'
+        try {
+          await metadata(definition.sample, fetch, undefined, { keyFor: (site) => store.get(site) })
+        } catch (error) {
+          if (
+            (error instanceof SourceError && error.kind === 'restricted') ||
+            (error instanceof Error && error.message === KEY_REJECTED)
+          )
+            result = 'failed'
+          else if (error instanceof SourceError && error.kind === 'offline') throw error
+        }
+        await store.mark(req.site, result)
+        return { keys: await store.status() }
       }
       case 'novel': {
         const file = await this.file(req.rowId, req.fileId)

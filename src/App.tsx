@@ -76,7 +76,8 @@ export function App() {
   const [rootChoice, setRootChoice] = useState<RootSelection>(),
     [createGroup, setCreateGroup] = useState(''),
     [groups, setGroups] = useState<WorkspacePrefs['groups']>([]),
-    [settingsOpen, setSettingsOpen] = useState(false)
+    [settingsOpen, setSettingsOpen] = useState(false),
+    [settingsStart, setSettingsStart] = useState<{ tab: string; site?: string }>()
   useEffect(() => {
     if (createOpen)
       void window.desktop
@@ -157,6 +158,16 @@ export function App() {
     window.addEventListener('focus', focus)
     return () => window.removeEventListener('focus', focus)
   }, [modalOpen, selected, act])
+  // Other parts of the window can open the settings on a tab, e.g. the website keys from a source preview (R-285).
+  useEffect(() => {
+    const open = (event: Event) => {
+      const detail = (event as CustomEvent<{ tab: string; site?: string }>).detail
+      setSettingsStart(detail)
+      setSettingsOpen(true)
+    }
+    window.addEventListener('morph:open-settings', open)
+    return () => window.removeEventListener('morph:open-settings', open)
+  }, [])
   const playback = usePlayback()
   useEffect(() => {
     playback?.reconcile(snapshot.projects.map((link) => link.projectId))
@@ -305,7 +316,9 @@ export function App() {
           onSelect={openProject}
           onCreate={() => beginCreate()}
           onSettings={() => {
-            if (confirmLeave()) setSettingsOpen(true)
+            if (!confirmLeave()) return
+            setSettingsStart(undefined)
+            setSettingsOpen(true)
           }}
           onRefresh={() => {
             if (editor) return
@@ -497,6 +510,7 @@ export function App() {
         onDirty={setAppearanceDirty}
         act={act}
         busy={busy}
+        start={settingsStart}
       />
       <Modal
         opened={!!settings}

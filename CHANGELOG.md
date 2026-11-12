@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Website keys: a new App settings tab keeps your own keys encrypted on this computer (only the main process reads them), with save-and-test, clear and how-to-apply steps; new keyed sources TMDB, MyAnimeList, OMDb (IMDb addresses), Trakt, RAWG, Giant Bomb, Comic Vine, SteamGridDB, Last.fm, Discogs, IGDB, TheTVDB, FANZA and AniDB, and optional keys for Bangumi (NSFW entries), Danbooru and Google Books. The import panel says when a site needs a key and opens the right row (R-285–R-291).
 - Website sources: any HTTPS page can fill in from its JSON-LD / OpenGraph (local and private addresses refused); new sources MangaDex, Kitsu, MangaUpdates, Shōsetsuka ni Narō, Pixiv novels, Apple Music, Deezer, Danbooru, Google Books, BOOTH and Kakuyomu; requests now identify as `Morph/<version>` (R-283, R-284, R-292).
 - Novel reader for TXT and EPUB: legacy encodings detected, chapters found from headings, pages or scrolling, vertical text with upright digits and ruby, font / size / spacing / margins / line length / background settings, contents, full-text search, bookmarks, immersive mode, next book; the place in each book is kept, and cards and tables can show reading progress and last read (R-282).
 - Reader: webtoon mode (V) shows pages in one gapless column with a width slider (Ctrl + wheel); tall books suggest it once; the mode and width stay with each book (R-256).

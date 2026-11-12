@@ -1,5 +1,6 @@
 import {
   app,
+  safeStorage,
   BrowserWindow,
   dialog,
   ipcMain,
@@ -19,6 +20,7 @@ import type { Response } from '../shared/model'
 import { WorkspaceStore } from './workspace'
 import type { WindowAction } from '../shared/workspace'
 import { Explorer } from './explorer'
+import { KeyStore } from './keys'
 import { warmHiddenHelper } from './hidden'
 import type { LocaleId } from '../shared/locales'
 import { nativeText } from '../shared/native-messages'
@@ -161,6 +163,15 @@ else {
         setLocaleEmulator: async (file) => {
           await workspace.setLocaleEmulator(file)
         },
+        keyStore: new KeyStore(app.getPath('userData'), {
+          // Linux without a keyring falls back to plain text; keys are not stored then.
+          available: () =>
+            safeStorage.isEncryptionAvailable() &&
+            (process.platform !== 'linux' ||
+              safeStorage.getSelectedStorageBackend?.() !== 'basic_text'),
+          encrypt: (text) => safeStorage.encryptString(text),
+          decrypt: (data) => safeStorage.decryptString(data),
+        }),
         played: (folderId, started, ended) => {
           void workspace.recordPlay(folderId, started, ended).catch(() => {})
         },

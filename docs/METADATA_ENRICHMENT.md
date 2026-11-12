@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-> 最後確認：2026-11-12（R-297、R-300～R-302、R-296、R-311、R-283、R-284、R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
+> 最後確認：2026-11-12（R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
 
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
@@ -41,6 +41,38 @@
 | 書籍 | Open Library、Google Books、小説家になろう、カクヨム | [公開書目與作者](https://openlibrary.org/developers/api)，作者補讀最多三筆；Google Books 讀 `volumes/<ID>`（不填金鑰時共用匿名額度，常遇到 429，金鑰見 R-285）；なろう用官方小說 API（R18 的 novel18 走 `novel18api`）；カクヨム讀作品頁內嵌的 Next.js 資料，不執行頁面程式 |
 | 網頁 | 其他任何 HTTPS 網址（R-283） | 只讀頁面自己宣告的 JSON-LD、OpenGraph／Twitter、`<title>`：標題、簡介、作者、日期、關鍵字、網站名稱與封面。只接受不含帳號密碼的 HTTPS、不允許本機與內網位址（轉址也逐次檢查，最多三次）、2 MB、15 秒；依標頭或 `<meta charset>` 解碼（含 Shift_JIS、EUC-JP）；以只往前的掃描讀標籤，不執行頁面程式。封面主機無法事先列名單，一律經圖片網址匯入的安全下載（HTTPS、非內網、大小與影像格式檢查）。 |
 | 圖片／插畫 | Pixiv、Wikimedia Commons、Danbooru | Pixiv 公開作品回應（插畫 `/artworks/<ID>` 與小說 `/novel/show.php?id=`）；Danbooru 讀 `posts/<ID>.json`，標籤依作者／原作／角色／一般分欄，分級存進年齡分級；[Commons API](https://commons.wikimedia.org/wiki/Commons:API/MediaWiki) 保留作者及授權，不推論私人照片身分 |
+
+### 需要使用者金鑰的來源（R-285～R-290）
+
+應用程式設定「網站金鑰」分頁每站一列：名稱、用途、必要／選填、狀態（未設定、已設定、可用、無法驗證）、遮罩輸入（可顯示）、「保存並測試」「測試」「清除」與「怎麼申請」（申請步驟）。金鑰用 Electron safeStorage（Windows 為 DPAPI）加密後存在本機 `site-keys.json`，只有 main 解密；畫面只拿到狀態，不會收到金鑰本身，也不進可攜記錄、設定包或備份。測試用每站一個範例頁：網站接受金鑰就算可用（即使範例作品不存在），被拒（401／403 或網站回報金鑰錯誤）才算無法驗證。貼了需要金鑰的網址而尚未設定時，「從網站補充資訊」就地提示並停用「取得預覽」，按「前往設定」直接開到該列；選填金鑰的網站則提示可加上金鑰的好處。
+
+| 網站 | 金鑰 | 帶法與特殊處理 |
+| --- | --- | --- |
+| TMDB | API Key 或 Read Access Token | Read Access Token（JWT 格式）放 `Authorization: Bearer`，Key 放查詢參數；海報 `image.tmdb.org/t/p/w500`；預覽標示「本產品使用 TMDB API，但未經 TMDB 認可或認證」 |
+| MyAnimeList | Client ID | 標頭 `X-MAL-CLIENT-ID` |
+| OMDb | API Key | IMDb 的 `tt` 網址也走 OMDb |
+| Trakt | Client ID | 標頭 `trakt-api-key`、`trakt-api-version: 2`；沒有圖片 |
+| RAWG | API Key | 保留回連 RAWG 的來源網址，預覽標示資料來自 RAWG |
+| Giant Bomb、Comic Vine | API Key | 同一套 API（`/<類型>-<ID>/`），帶自訂 User-Agent |
+| SteamGridDB | API Key | Bearer；只取名稱與第一張 600×900 封面 |
+| Last.fm | API Key | 由網址的演出者與專輯名查 `album.getinfo` |
+| Discogs | 個人權杖（選填） | 不填也能讀資料，圖片要權杖 |
+| Bangumi | 個人權杖（選填） | Bearer；沒填時 404 改提示「找不到作品，或是需要權杖的成人作品」並可前往設定 |
+| Danbooru | 帳號＋API Key（選填） | 查詢參數 `login`、`api_key`，提高額度 |
+| Google Books | API Key（選填） | 不填時共用匿名額度，常回 429 |
+| IGDB | Twitch Client ID＋Secret | 先向 `id.twitch.tv` 換應用程式權杖，存在記憶體到快過期前；再以 Apicalypse 查詢語法依網址 slug 查 |
+| TheTVDB | API Key（＋訂閱 PIN） | 先登入換權杖，存在記憶體約 25 天；依 slug 查 ID 再取 extended |
+| FANZA／DMM | API ID＋Affiliate ID | 網址裡的 `cid`；`dmm.co.jp` 走 FANZA、`dmm.com` 走 DMM.com；預覽標示「Powered by FANZA Webサービス」 |
+| AniDB | 登記的用戶端名稱＋版本 | 唯一允許的純 HTTP 端點 `http://api.anidb.net:9001`；同一部只查一次（記憶體快取），兩次請求至少間隔 2.5 秒 |
+
+金鑰類來源在使用者填入金鑰前只用固定回應測試（`tests/keys.test.ts`），尚未實站驗證。
+
+### 查證過、另行登記的金鑰來源（R-291）
+
+- **Spotify**：2026-02 起開發模式只允許 5 個指定使用者，延伸額度限有登記的公司與每月 25 萬活躍使用者；個人桌面程式用不了，不接入（音樂已有 MusicBrainz、Apple Music、Deezer、Last.fm、Discogs）。
+- **Gelbooru**：實際需要帳號 ID＋金鑰（不帶時嚴格限流），可比照 Danbooru 做選填金鑰：R-312。
+- **DeviantArt**：公開資料走 OAuth client credentials；另有免金鑰的 oEmbed（以作品網址查標題、作者、縮圖），先用 oEmbed：R-313。
+- **MobyGames**：非營利用途可免費申請金鑰（約每小時 720 次）：R-314。
 
 接入規則（[C-134](DECISIONS.md#c-134網站來源改為可用使用者金鑰與有條件解析網頁2026-11-12)）：
 

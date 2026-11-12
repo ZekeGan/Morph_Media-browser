@@ -21,6 +21,7 @@ const writeUndo = (value?: { id: string; at: string }) => {
 import type { Request, Response } from '../../shared/model'
 import { t as tr, useLocale } from '../i18n'
 import { LocaleEmulatorSetting } from '../game/LocaleEmulatorSetting'
+import { SiteKeys } from './SiteKeys'
 import { HelpLabel, HelpTip } from '../common/HelpTip'
 import { useEffect, useState } from 'react'
 import { Alert, Button, Checkbox, Group, Modal, Select, Stack, Tabs, Text } from '@mantine/core'
@@ -36,13 +37,20 @@ export function ApplicationSettings({
   onDirty,
   act,
   busy,
+  start,
 }: {
   opened: boolean
   close: () => void
   onDirty: (value: boolean) => void
   act: (request: Request) => Promise<Response | undefined>
   busy: boolean
+  // Open on a given tab, e.g. the website keys with one site in view (R-285).
+  start?: { tab: string; site?: string }
 }) {
+  const [tab, setTab] = useState<string | null>('general')
+  useEffect(() => {
+    if (opened) setTab(start?.tab ?? 'general')
+  }, [opened, start])
   useLocale()
 
   const appearance = useAppTheme(),
@@ -167,13 +175,17 @@ export function ApplicationSettings({
       closeOnClickOutside={!saving}
       closeOnEscape={!saving}
     >
-      <Tabs defaultValue="general" keepMounted>
+      <Tabs value={tab} onChange={setTab} keepMounted>
         <Tabs.List>
           <Tabs.Tab value="general" leftSection={<Icon name="sliders" />}>
             {tr('一般')}
           </Tabs.Tab>
           <Tabs.Tab value="data">{tr('備份')}</Tabs.Tab>
+          <Tabs.Tab value="keys">{tr('網站金鑰')}</Tabs.Tab>
         </Tabs.List>
+        <Tabs.Panel value="keys" pt="lg">
+          <SiteKeys opened={opened && tab === 'keys'} focus={start?.site} />
+        </Tabs.Panel>
         <Tabs.Panel value="general" pt="lg">
           <Select
             label={

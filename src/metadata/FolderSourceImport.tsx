@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Alert, Badge, Button, Checkbox, Group, Stack, Text, TextInput } from '@mantine/core'
 import { metadataSources, sourceForUrl } from '../../shared/sources'
+import { keySite, type KeyStatus } from '../../shared/keys'
 import type { ExplorerRequest, ExplorerResponse, MetadataPreview } from '../../shared/explorer'
 import type { FolderRow } from '../../shared/model'
 import { t as tr } from '../i18n'
@@ -58,6 +59,26 @@ export function FolderSourceImport({
   // The source is recognised from the pasted address alone; the preview button only works for a known site.
   const detected = sourceForUrl(source.trim()),
     detectedName = metadataSources.find((item) => item.id === detected)?.name
+  // R-285: a site that needs the user's own key says so here, with a way to the settings, before anything is asked.
+  const keyed = detected ? keySite(detected) : undefined,
+    [keyStatus, setKeyStatus] = useState<Record<string, KeyStatus>>()
+  useEffect(() => {
+    if (!keyed) return
+    let alive = true
+    void window.explorer
+      .request({ action: 'keyStatus' })
+      .then((result) => alive && setKeyStatus(result.keys ?? {}))
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [keyed?.id])
+  const missingKey =
+    !!keyed && keyed.need === 'required' && !!keyStatus && !keyStatus[keyed.id]?.set
+  const openKeys = () =>
+    window.dispatchEvent(
+      new CustomEvent('morph:open-settings', { detail: { tab: 'keys', site: keyed?.id } })
+    )
   const loadPreview = async () => {
     setError('')
     importer.setResult('')
@@ -116,7 +137,7 @@ export function FolderSourceImport({
           />
           <Group justify="flex-end">
             <Button
-              disabled={disabled || fieldDirty || !detected}
+              disabled={disabled || fieldDirty || !detected || missingKey}
               loading={busy}
               onClick={() => void loadPreview()}
             >
@@ -126,6 +147,21 @@ export function FolderSourceImport({
         </Stack>
       </section>
 
+      {keyed &&
+        (missingKey || (keyed.need === 'optional' && keyStatus && !keyStatus[keyed.id]?.set)) && (
+          <Alert color={missingKey ? 'orange' : 'gray'}>
+            <Group justify="space-between" wrap="nowrap">
+              <span>
+                {missingKey
+                  ? tr('{0} 需要你自己的金鑰才能查資料。', keyed.name)
+                  : tr('{0} 可以加上你的金鑰：{1}', keyed.name, tr(keyed.purpose))}
+              </span>
+              <Button size="xs" variant="light" onClick={openKeys}>
+                {tr('前往設定')}
+              </Button>
+            </Group>
+          </Alert>
+        )}
       {importer.result && <Alert color="teal">{importer.result}</Alert>}
       {preview && (
         <Checkbox
@@ -156,6 +192,11 @@ export function FolderSourceImport({
             {preview.provider === 'steam'
               ? tr('發售日保留 Steam 商店顯示的日期，不推定為作品首次發行日。')
               : tr('日期依來源保留，不推定為作品首次發行日。')}
+            {/* Attribution the sources' terms ask for. */}
+            {preview.provider === 'tmdb' &&
+              ' ' + tr('本產品使用 TMDB API，但未經 TMDB 認可或認證。')}
+            {preview.provider === 'rawg' && ' ' + tr('資料來自 RAWG。')}
+            {preview.provider === 'fanza' && ' Powered by FANZA Webサービス'}
             {tr('預設只填空值；人工欄位保持原樣。')}
           </Text>
           <table className="source-diff">

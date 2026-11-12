@@ -211,7 +211,15 @@ export const deezer: Adapter = async (site) => {
 // Danbooru: /posts/<id>; tags come grouped (artist, copyright, character, general). Rating g/s/q/e.
 export const danbooru: Adapter = async (site) => {
   const id = site.match(/^\/posts\/(\d{1,12})\/?$/)[1]
-  const data = await site.json('https://danbooru.donmai.us/posts/' + id + '.json')
+  // The optional account key raises the request limits (R-284).
+  const auth =
+    site.keys.login && site.keys.apiKey
+      ? '?login=' +
+        encodeURIComponent(site.keys.login) +
+        '&api_key=' +
+        encodeURIComponent(site.keys.apiKey)
+      : ''
+  const data = await site.json('https://danbooru.donmai.us/posts/' + id + '.json' + auth)
   if (String(data.id) !== id) throw new SourceError('notFound')
   const split = (value: unknown) =>
     typeof value === 'string' ? value.split(' ').filter(Boolean) : []
@@ -241,7 +249,12 @@ export const googlebooks: Adapter = async (site) => {
     fromQuery && /^[\w-]{6,20}$/.test(fromQuery)
       ? fromQuery
       : site.match(/^\/books\/edition\/[^/]*\/([\w-]{6,20})\/?$/)[1]
-  const data = await site.json('https://www.googleapis.com/books/v1/volumes/' + id)
+  // Without a key the anonymous quota is shared by everyone and often used up (429).
+  const data = await site.json(
+    'https://www.googleapis.com/books/v1/volumes/' +
+      id +
+      (site.keys.apiKey ? '?key=' + encodeURIComponent(site.keys.apiKey) : '')
+  )
   if (data.id !== id) throw new SourceError('notFound')
   const v = data.volumeInfo ?? {}
   site.text('SUBTITLE', v.subtitle)
