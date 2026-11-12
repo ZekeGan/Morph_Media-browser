@@ -52,7 +52,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 - `cellImages`：圖片組件各自選定的資產；`bannerAssetId`：封面資產。
 - 刪除已保存圖片（`deleteImage`）：同一次原子寫入（含版本檢查）移除 `assets` 項目並清掉 `cellImages`／`bannerAssetId` 對它的引用；寫入成功後才刪除 `.media-viewer/assets/` 內的受管檔案（需通過 `safePath`、必須是一般檔案、且無其他項目共用同一路徑）。寫入失敗則檔案與記錄都保留；使用者原始媒體檔不會被觸碰。刪除後不保留副本，但 `.bak` 仍含舊記錄，不會復活檔案。
 - `kind`：使用者手動指定的資料夾類型（`game`、`book`、`media`、`general`）；沒有時由程式偵測，不寫入記錄（見 [WORK_ITEMS](WORK_ITEMS.md) 的資料夾類型整合）。
-- `reading`、`playback`、`subtitles`：漫畫閱讀偏好、影片續播進度與字幕設定。`reading` 的 `webtoon`、`webtoonWidth`（30～100）、`webtoonAsked`（R-256，**暫定**）記條漫模式、寬度與是否已回答過條漫提示。
+- `reading`、`playback`、`subtitles`：漫畫閱讀偏好、影片續播進度與字幕設定。`reading` 的 `webtoon`、`webtoonWidth`（30～100）、`webtoonAsked`（R-256）記條漫模式、寬度與是否已回答過條漫提示。
 - `novels`（R-282，**暫定**）：文字書的閱讀位置，以檔名為鍵 `{ chapter, position, percent, updated, bookmarks? }`；`position`、`percent` 是 0～1 的比例，書籤最多 500 個。
 
 ### 範例（簡化）
