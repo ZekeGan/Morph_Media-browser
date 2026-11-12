@@ -1,6 +1,6 @@
 # 可攜儲存與清理安全
 
-> 最後確認：2026-11-11。可攜記錄的寫入、清理、移除與復原規則；程式：`electron/files.ts`、`electron/maintenance.ts`、`electron/library-removal.ts`。
+> 最後確認：2026-11-12。可攜記錄的寫入、清理、移除與復原規則；程式：`electron/files.ts`、`electron/maintenance.ts`、`electron/library-removal.ts`。
 
 本頁持有資料安全及失敗語意，適用所有寫入／掃描／遷移／清理工作。身分與共用值語意見 [資料模型](FOLDER_PROJECT_MODEL.md)；位置與程式入口見 [架構](ARCHITECTURE.md)。原研究／舊方案見 [封存原文](history/agent-docs-before-cleanup.md#storage-options)。
 
