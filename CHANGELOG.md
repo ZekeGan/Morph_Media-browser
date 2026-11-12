@@ -18,6 +18,10 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Games: Start with Steam, the store button and Open save folder are hidden until the eye under "Other buttons" in the game settings shows them; the store button only comes from store sites (Steam, DLsite, FANZA, BOOTH) and names the store (R-315, R-316).
+- Files list on the right: music shows its embedded cover, and clicking a row opens it (R-317, R-318).
+- Novel reader: search results mark the keyword; a chapter ends with a "Next chapter" button; the settings panel shows above the page and Esc closes just the panel; vertical scrolling starts each chapter on the right (R-323–R-326).
+- Fixes: the cell copy button keeps one size; jumping to another image drops the old one at once; the level switch draws correctly the first time; website import previews keep field names on one line and fold long values; the pin button in the sidebar peek is gone (R-328, R-330–R-333).
 - Languages: every error and notice from the main process (archives, backups, import and export, cleanup, scanning, game detection, settings files) is now translated, including sentences with paths and counts in them (R-281).
 - Website keys: a new App settings tab keeps your own keys encrypted on this computer (only the main process reads them), with save-and-test, clear and how-to-apply steps; new keyed sources TMDB, MyAnimeList, OMDb (IMDb addresses), Trakt, RAWG, Giant Bomb, Comic Vine, SteamGridDB, Last.fm, Discogs, IGDB, TheTVDB, FANZA and AniDB, and optional keys for Bangumi (NSFW entries), Danbooru and Google Books. The import panel says when a site needs a key and opens the right row (R-285–R-291).
 - Website sources: any HTTPS page can fill in from its JSON-LD / OpenGraph (local and private addresses refused); new sources MangaDex, Kitsu, MangaUpdates, Shōsetsuka ni Narō, Pixiv novels, Apple Music, Deezer, Danbooru, Google Books, BOOTH and Kakuyomu; requests now identify as `Morph/<version>` (R-283, R-284, R-292).

@@ -43,8 +43,8 @@ await library.create(album, {
   name: 'Image title test',
   depth: { mode: 'through', level: 1 },
 })
-const originalRecord = await fs.readFile(folderFile(game), 'utf8'),
-  originalProject = await fs.readFile(projectFile(media, project.projectId), 'utf8')
+let originalRecord = await fs.readFile(folderFile(game), 'utf8')
+const originalProject = await fs.readFile(projectFile(media, project.projectId), 'utf8')
 const env: Record<string, string> = Object.fromEntries(
   Object.entries({ ...process.env, MEDIA_VIEWER_TEST_DATA: local }).filter(
     (entry): entry is [string, string] => entry[1] !== undefined
@@ -89,11 +89,11 @@ try {
     0
   )
   await page.locator('.game-launch-hint').waitFor()
-  // R-307: steam_appid.txt offers a Steam launch button next to the bound actions (disabled without Steam).
-  await page
+  // R-307, R-315: steam_appid.txt offers a Steam launch button, hidden until the game settings show it.
+  const steam = page
     .locator('.game-actions')
     .getByRole('button', { name: '用 Steam 啟動', exact: true })
-    .waitFor()
+  assert.equal(await steam.count(), 0)
   await page.screenshot({ path: path.join(base, 'shot', 'r305-game-extras.png') })
   await button('自訂遊戲操作').click()
   const drawer = page.locator('.folder-panel-dock-settings')
@@ -105,6 +105,18 @@ try {
   // R-305 / R-306: the save folder line and the bundled manual offered as a suggestion, not added on its own.
   await drawer.getByText('存檔資料夾', { exact: true }).waitFor()
   await drawer.getByRole('button', { name: '加入 manual.pdf', exact: true }).waitFor()
+  await drawer.getByRole('button', { name: '顯示按鈕 用 Steam 啟動', exact: true }).click()
+  await drawer.getByRole('button', { name: '隱藏按鈕 用 Steam 啟動', exact: true }).waitFor()
+  // The button row is on the content tab.
+  await page.getByRole('tab', { name: '內容', exact: true }).click()
+  await steam.waitFor()
+  await page.getByRole('tab', { name: '設定', exact: true }).click()
+  await drawer.getByRole('tab', { name: '遊戲操作', exact: true }).click()
+  // Hidden again; the eye writes the record on purpose, so the later "unchanged" checks start from here.
+  await drawer.getByRole('button', { name: '隱藏按鈕 用 Steam 啟動', exact: true }).click()
+  await drawer.getByRole('button', { name: '顯示按鈕 用 Steam 啟動', exact: true }).waitFor()
+  await idle()
+  originalRecord = await fs.readFile(folderFile(game), 'utf8')
   await page.screenshot({ path: path.join(base, 'shot', 'r305-game-extras-settings.png') })
   const args = drawer.getByRole('textbox', { name: '啟動參數（JSON 字串陣列）', exact: true })
   await args.fill('["with spaces", "\\\"quoted\\\"", "$(literal)"]')

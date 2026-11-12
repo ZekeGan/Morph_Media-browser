@@ -84,8 +84,10 @@ export function NovelReader({
     [position, setPosition] = useState(saved?.position ?? 0),
     [bookmarks, setBookmarks] = useState(saved?.bookmarks ?? []),
     [panel, setPanel] = useState<'toc' | 'marks' | 'search'>(),
+    [settingsOpen, setSettingsOpen] = useState(false),
     [query, setQuery] = useState(''),
-    [hits, setHits] = useState<{ chapter: number; at: number; snippet: string }[]>(),
+    [hits, setHits] =
+      useState<{ chapter: number; at: number; before: string; match: string; after: string }[]>(),
     [immersive, setImmersive] = useState(false),
     [ending, setEnding] = useState(false),
     [box, setBox] = useState({ width: 1, height: 1 })
@@ -319,7 +321,8 @@ export function NovelReader({
       else if (event.key === 'End') book && goChapter(book.chapters.length - 1, 'end')
       else if (event.key === 'F11' || event.key.toLowerCase() === 't') void toggleImmersive()
       else if (event.key === 'Escape') {
-        if (ending) setEnding(false)
+        if (settingsOpen) setSettingsOpen(false)
+        else if (ending) setEnding(false)
         else if (panel) setPanel(undefined)
         else if (immersive) void toggleImmersive()
         else exit()
@@ -357,7 +360,8 @@ export function NovelReader({
   const search = () => {
     const needle = query.trim().toLowerCase()
     if (!needle) return setHits(undefined)
-    const found: { chapter: number; at: number; snippet: string }[] = []
+    const found: { chapter: number; at: number; before: string; match: string; after: string }[] =
+      []
     texts.forEach((text, index) => {
       const lower = text.toLowerCase()
       let at = lower.indexOf(needle),
@@ -366,7 +370,10 @@ export function NovelReader({
         found.push({
           chapter: index,
           at: nth++,
-          snippet: text.slice(Math.max(0, at - 20), at + needle.length + 30).replace(/\s+/g, ' '),
+          // R-323: the snippet keeps the match apart so the list can mark it.
+          before: text.slice(Math.max(0, at - 20), at).replace(/\s+/g, ' '),
+          match: text.slice(at, at + needle.length),
+          after: text.slice(at + needle.length, at + needle.length + 30).replace(/\s+/g, ' '),
         })
         at = lower.indexOf(needle, at + needle.length)
       }
@@ -500,9 +507,23 @@ export function NovelReader({
             {tool(tr('直排'), 'text-vertical', () => setSettings({ vertical: true }), vertical)}
             {tool(tr('分頁'), 'page-single', () => setSettings({ paged: true }), paged)}
             {tool(tr('捲動'), 'scroll-mode', () => setSettings({ paged: false }), !paged)}
-            <Popover position="bottom-end" withinPortal={false} shadow="md" width={280}>
+            <Popover
+              position="bottom-end"
+              withinPortal={false}
+              shadow="md"
+              width={280}
+              opened={settingsOpen}
+              onChange={setSettingsOpen}
+              transitionProps={{ transition: 'fade' }}
+            >
               <Popover.Target>
-                <ActionIcon aria-label={tr('閱讀設定')} size="lg" variant="subtle" color="gray">
+                <ActionIcon
+                  aria-label={tr('閱讀設定')}
+                  size="lg"
+                  variant={settingsOpen ? 'light' : 'subtle'}
+                  color="gray"
+                  onClick={() => setSettingsOpen((open) => !open)}
+                >
                   <Icon name="sliders" />
                 </ActionIcon>
               </Popover.Target>
@@ -666,7 +687,11 @@ export function NovelReader({
                   {hits?.map((hit, index) => (
                     <button key={index} type="button" onClick={() => openHit(hit)}>
                       <small>{chapterLabel(hit.chapter)}</small>
-                      <span>{hit.snippet}</span>
+                      <span>
+                        {hit.before}
+                        <mark className="novel-hit">{hit.match}</mark>
+                        {hit.after}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -716,6 +741,22 @@ export function NovelReader({
                     text={current.text ?? ''}
                     vertical={vertical}
                   />
+                )}
+                {/* R-324: the end of a chapter offers the next one (or, after the last, the next book). */}
+                {chapter < book.chapters.length - 1 ? (
+                  <div className="novel-chapter-end">
+                    <Button variant="light" onClick={() => goChapter(chapter + 1)}>
+                      {tr('下一章：{0}', chapterLabel(chapter + 1))}
+                    </Button>
+                  </div>
+                ) : (
+                  next && (
+                    <div className="novel-chapter-end">
+                      <Button variant="light" onClick={() => next.open()}>
+                        {tr('下一本：{0}', next.name)}
+                      </Button>
+                    </div>
+                  )
                 )}
               </div>
             )}

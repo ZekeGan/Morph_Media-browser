@@ -1,6 +1,9 @@
 /* R-282: novel reader. The frame, toolbar and info bar reuse the image reader's classes; only the reading area has
    its own paper-like backgrounds, chosen in the reader's settings. */
 .novel-toolbar {
+    /* R-325: above the reading area, so the settings panel that drops from it is not painted over. */
+    position: relative;
+    z-index: 7;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -112,6 +115,8 @@
 .novel-page.scrolled.vertical {
     overflow-x: auto;
     overflow-y: hidden;
+    /* R-326: vertical text starts on the right, so the scroll origin is there too (scrollLeft 0 = start). */
+    direction: rtl;
 }
 
 .novel-page.vertical .novel-content {
@@ -120,6 +125,7 @@
 }
 
 .novel-page.scrolled.vertical .novel-content {
+    direction: ltr;
     width: max-content;
     min-width: 100%;
 }
@@ -196,7 +202,27 @@
     cursor: default;
 }
 
+.novel-hit {
+    padding: 0 1px;
+    border-radius: 2px;
+    background-color: #f6c343;
+    color: #222222;
+}
+
 ::highlight(novel-search) {
     background-color: #f6c343;
     color: #222222;
+}
+
+/* R-324: the button after a chapter; it stays upright in vertical text. */
+.novel-chapter-end {
+    display: flex;
+    justify-content: center;
+    padding: 2em 0;
+    writing-mode: horizontal-tb;
+}
+
+.novel-page.vertical .novel-chapter-end {
+    padding: 0 2em;
+    align-items: center;
 }

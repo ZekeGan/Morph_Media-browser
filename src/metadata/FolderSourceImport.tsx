@@ -240,8 +240,8 @@ export function FolderSourceImport({
                         />
                       </td>
                       <th scope="row">{sourceLabels[v.key] ?? v.key}</th>
-                      <td>{current || '—'}</td>
-                      <td>{same ? tr('相同') : next}</td>
+                      <td>{current ? <LongValue text={current} /> : '—'}</td>
+                      <td>{same ? tr('相同') : <LongValue text={next} />}</td>
                     </tr>
                   )
                 })}
@@ -289,5 +289,19 @@ export function FolderSourceImport({
         </section>
       )}
     </Stack>
+  )
+}
+
+// R-332: a long value (a synopsis) shows a few lines and opens on a click.
+function LongValue({ text }: { text: string }) {
+  const [open, setOpen] = useState(false)
+  if (text.length <= 160) return <>{text}</>
+  return (
+    <div className={'source-long' + (open ? ' open' : '')}>
+      <span>{text}</span>
+      <Button variant="subtle" size="compact-xs" onClick={() => setOpen(!open)}>
+        {open ? tr('收合') : tr('展開全文')}
+      </Button>
+    </div>
   )
 }

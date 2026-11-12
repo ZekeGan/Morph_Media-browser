@@ -77,12 +77,16 @@ export interface SubtitlePrefs {
   background: string
   encoding: 'utf-8' | 'big5' | 'shift_jis'
 }
+export const gameExtras = ['steam', 'store', 'save'] as const
+export type GameExtra = (typeof gameExtras)[number]
 export interface FolderDetails {
   // Set by hand; without it the kind is detected (see shared/kind.ts).
   kind?: import('./kind').FolderKind
   cellImages?: Record<string, string>
   // Game actions whose button is not shown in this folder's action row.
   hiddenActions?: string[]
+  // R-315 (provisional): the game page's own buttons are hidden until the eye in the game settings shows them.
+  shownExtras?: GameExtra[]
   schemaVersion: 1
   boundary?: GameBoundary
   bannerAssetId?: string
@@ -354,6 +358,8 @@ export interface GameExtras {
   steamAppId?: string
   steamReady: boolean
   storeUrl?: string
+  // R-316: the store's name for the button ("Open in Steam").
+  storeSite?: string
   // Where the save folder comes from: worked out from the engine, picked by the user, or not known.
   save: 'engine' | 'user' | 'none'
   saveEngine?: string

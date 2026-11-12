@@ -64,13 +64,10 @@ try {
     () => document.querySelector('.sidebar-slot')?.getAttribute('data-peek') === 'false'
   )
   assert.equal(await slot.getAttribute('data-open'), 'false')
-  // Pinning from the overlay really opens the sidebar.
+  // R-333: the overlay has no pin button of its own; the top-bar button opens the sidebar.
   await page.mouse.move(900, 500)
   await page.locator('.sidebar-edge').hover()
-  await page.getByRole('button', { name: '固定展開專案欄', exact: true }).click()
-  await page.waitForFunction(
-    () => document.querySelector('.sidebar-slot')?.getAttribute('data-open') === 'true'
-  )
+  assert.equal(await page.getByRole('button', { name: '固定展開專案欄', exact: true }).count(), 0) // ui-names: ignore
   assert.deepEqual(errors, [])
   passed = true
   console.log('PASS hover peek of the hidden project sidebar. ' + root)

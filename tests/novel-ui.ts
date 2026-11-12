@@ -82,6 +82,20 @@ try {
     'no upright digits in horizontal text'
   )
   // Vertical text: the page reads right to left and short digit runs stand upright.
+  // R-325: the settings button opens its panel.
+  await reader().getByRole('button', { name: '閱讀設定', exact: true }).click()
+  // The panel is on top of the page: the point at its slider belongs to the panel, not the reading area.
+  const size = reader().getByText(/^字級 \d+$/)
+  await size.waitFor({ timeout: 3000 })
+  const sizeBox = (await size.boundingBox())!
+  assert.ok(
+    await page.evaluate(
+      ([x, y]) => !!document.elementFromPoint(x, y)?.closest('.mantine-Popover-dropdown'),
+      [sizeBox.x + 4, sizeBox.y + sizeBox.height / 2]
+    ),
+    'settings panel is visible above the page'
+  )
+  await page.keyboard.press('Escape')
   await reader().getByRole('button', { name: '直排', exact: true }).click()
   await page.waitForFunction(() =>
     getComputedStyle(document.querySelector('.novel-content')!).writingMode.startsWith('vertical')
@@ -97,6 +111,58 @@ try {
   await page.waitForFunction(() =>
     /第 4 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
   )
+  // R-326: in vertical text a new chapter starts at its beginning, on the right, in view.
+  await page.waitForTimeout(300)
+  assert.ok(
+    await page.evaluate(() => {
+      const page = document.querySelector('.novel-page')!,
+        walker = document.createTreeWalker(
+          document.querySelector('.novel-content')!,
+          NodeFilter.SHOW_TEXT
+        )
+      let node = walker.nextNode()
+      while (node && !node.textContent?.trim()) node = walker.nextNode()
+      const range = document.createRange()
+      range.setStart(node!, 0)
+      range.setEnd(node!, 1)
+      const first = range.getBoundingClientRect(),
+        frame = page.getBoundingClientRect()
+      return (
+        first.right <= frame.right + 1 && first.left >= frame.left - 1 && first.top >= frame.top - 1
+      )
+    }),
+    'the chapter opens at its first line'
+  )
+  // Scrolling vertical text: past the end of a chapter the next one also opens at its start.
+  await reader().getByRole('button', { name: '捲動', exact: true }).click()
+  await reader()
+    .getByRole('navigation', { name: '目錄' })
+    .getByRole('button', { name: '第2章　章2', exact: true }) // ui-names: ignore
+    .click()
+  await page.waitForFunction(() =>
+    /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
+  )
+  // R-324: the end of a chapter has a button to the next one.
+  await reader()
+    .locator('.novel-chapter-end')
+    .getByRole('button', { name: /^下一章：/ })
+    .waitFor({ state: 'attached' })
+  await page.evaluate(() => {
+    const element = document.querySelector('.novel-page')!
+    element.scrollLeft = -element.scrollWidth
+  })
+  await page.locator('.novel-page').focus()
+  await page.keyboard.press('ArrowLeft')
+  await page.waitForFunction(() =>
+    /第 4 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
+  )
+  await page.waitForTimeout(300)
+  const start = await page.evaluate(() => {
+    const element = document.querySelector('.novel-page')!
+    return [element.scrollLeft, element.scrollWidth, element.clientWidth]
+  })
+  assert.ok(Math.abs(start[0]) <= 2, 'next chapter starts on the right: ' + start.join(','))
+  await reader().getByRole('button', { name: '分頁', exact: true }).click()
   // Search finds the password in chapter 2 and goes there.
   await reader()
     .getByRole('radio', { name: '搜尋' })
@@ -108,6 +174,11 @@ try {
   await box.fill('ペンギン')
   await box.press('Enter')
   await reader().getByText('找到 1 處', { exact: true }).waitFor()
+  // R-323: the result marks the keyword.
+  assert.equal(
+    await reader().locator('.novel-list mark.novel-hit', { hasText: 'ペンギン' }).count(),
+    1
+  )
   await reader().locator('.novel-list button', { hasText: 'ペンギン' }).click()
   await page.waitForFunction(() =>
     /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')

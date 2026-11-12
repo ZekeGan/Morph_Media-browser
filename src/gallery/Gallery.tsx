@@ -12,6 +12,7 @@ import {
 } from 'react'
 import { Icon } from '../common/icons'
 import { FileMenu } from '../media/FileMenu'
+import { audioCover } from '../media/MediaThumb'
 import { ActionIcon, Center, Group, Modal, SegmentedControl, Stack, Tooltip } from '@mantine/core'
 import { canPreviewMedia, mediaIdentity } from '../../shared/media'
 import type { MediaEntry, OverviewEntry, ReadingPrefs } from '../../shared/explorer'
@@ -77,7 +78,18 @@ const Tile = memo(
 
     const [error, setError] = useState(false),
       [fallback, setFallback] = useState(false),
-      [visible, setVisible] = useState(false)
+      [visible, setVisible] = useState(false),
+      [cover, setCover] = useState<string>()
+    // R-317: music shows its embedded cover; a file without one keeps the note icon.
+    useEffect(() => {
+      setCover(undefined)
+      if (entry.kind !== 'audio') return
+      let active = true
+      void audioCover(entry.url).then((url) => active && setCover(url))
+      return () => {
+        active = false
+      }
+    }, [entry.kind, entry.url])
     const image = useRef<HTMLImageElement | null>(null),
       wanted = useRef<string | undefined>(undefined)
     const bindImage = useCallback((node: HTMLImageElement | null) => {
@@ -95,7 +107,8 @@ const Tile = memo(
           : animate || fallback
             ? entry.url
             : (entry.thumb ?? entry.url)
-    wanted.current = entry.kind === 'image' ? source : entry.thumb
+    const still = entry.kind === 'image' ? source : (entry.thumb ?? cover)
+    wanted.current = still
     useEffect(() => {
       if (!animated) return
       const element = image.current?.closest('.gallery-tile')
@@ -130,6 +143,14 @@ const Tile = memo(
           </ActionIcon>
         </Tooltip>
       ) : null
+    const activate = (event: React.MouseEvent) =>
+      picking && (event.ctrlKey || event.metaKey)
+        ? pick(tile.index, 'toggle')
+        : picking && event.shiftKey
+          ? pick(tile.index, 'range')
+          : supported
+            ? open(tile.index)
+            : select(tile.index)
     const thumbnail = (
       <button
         className="media-thumbnail"
@@ -138,15 +159,10 @@ const Tile = memo(
           'sourcePath' in entry ? String(entry.sourcePath) + '/' + entry.name : entry.name
         }
         aria-pressed={picking && playable ? !!picked : undefined}
-        onClick={(event) =>
-          picking && (event.ctrlKey || event.metaKey)
-            ? pick(tile.index, 'toggle')
-            : picking && event.shiftKey
-              ? pick(tile.index, 'range')
-              : supported
-                ? open(tile.index)
-                : select(tile.index)
-        }
+        onClick={(event) => {
+          event.stopPropagation()
+          activate(event)
+        }}
       >
         <span className="thumbnail-image">
           {!supported && mode === 'list' ? (
@@ -159,7 +175,7 @@ const Tile = memo(
                 {friendlyType(entry)} · {fileSize(entry.size)}
               </small>
             </span>
-          ) : entry.kind !== 'image' && !entry.thumb ? (
+          ) : entry.kind !== 'image' && !still ? (
             <Icon
               name={entry.kind === 'audio' ? 'music' : entry.kind === 'video' ? 'video' : 'file'}
               size={36}
@@ -168,7 +184,7 @@ const Tile = memo(
             <img
               ref={bindImage}
               decoding="async"
-              src={entry.kind === 'image' ? source : entry.thumb}
+              src={still}
               alt={entry.name}
               onLoad={(event) => {
                 const node = event.currentTarget
@@ -195,7 +211,7 @@ const Tile = memo(
         }
         style={style}
         data-index={tile.index}
-        onClick={() => select(tile.index)}
+        onClick={activate}
         onContextMenu={(event) => menu(tile.index, event)}
       >
         {thumbnail}

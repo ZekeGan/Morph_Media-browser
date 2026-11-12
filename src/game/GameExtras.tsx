@@ -1,5 +1,5 @@
-import { Badge, Button, Group, Stack, Text, Tooltip } from '@mantine/core'
-import type { ExplorerRequest, ExplorerResponse } from '../../shared/explorer'
+import { ActionIcon, Badge, Button, Group, Stack, Text, Tooltip } from '@mantine/core'
+import type { ExplorerRequest, ExplorerResponse, GameExtra } from '../../shared/explorer'
 import type { FolderRow } from '../../shared/model'
 import { t as tr } from '../i18n'
 import { Icon } from '../common/icons'
@@ -12,9 +12,11 @@ type Run = (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
 export function GameExtraButtons({ row, busy, run }: { row: FolderRow; busy: boolean; run: Run }) {
   const extras = useGameExtras(row)
   const play = usePlaytime(row.record?.folderId)
+  // R-315: these buttons appear only after the eye in the game settings shows them.
+  const shown = (extra: GameExtra) => !!row.record?.details?.shownExtras?.includes(extra)
   return (
     <>
-      {extras?.steamAppId && (
+      {extras?.steamAppId && shown('steam') && (
         <Tooltip
           label={
             extras.steamReady
@@ -32,7 +34,7 @@ export function GameExtraButtons({ row, busy, run }: { row: FolderRow; busy: boo
           </Button>
         </Tooltip>
       )}
-      {extras?.storeUrl && (
+      {extras?.storeUrl && shown('store') && (
         <Tooltip label={extras.storeUrl}>
           <Button
             variant="default"
@@ -40,11 +42,11 @@ export function GameExtraButtons({ row, busy, run }: { row: FolderRow; busy: boo
             leftSection={<Icon name="external" size={14} />}
             onClick={() => void run({ action: 'runExtra', rowId: row.rowId, extra: 'store' })}
           >
-            {tr('開啟商店頁')}
+            {tr('在 {0} 開啟', extras.storeSite ?? '')}
           </Button>
         </Tooltip>
       )}
-      {extras && extras.save !== 'none' && (
+      {extras && extras.save !== 'none' && shown('save') && (
         <Button
           variant="default"
           disabled={busy}
@@ -80,8 +82,59 @@ export function GameExtraSettings({
   const extras = useGameExtras(row)
   if (!extras || !row.record) return null
   const revision = row.record.revision
+  const offered: { extra: GameExtra; label: string }[] = [
+    ...(extras.steamAppId ? [{ extra: 'steam' as const, label: tr('用 Steam 啟動') }] : []),
+    ...(extras.storeUrl
+      ? [{ extra: 'store' as const, label: tr('在 {0} 開啟', extras.storeSite ?? '') }]
+      : []),
+    ...(extras.save !== 'none' ? [{ extra: 'save' as const, label: tr('開啟存檔資料夾') }] : []),
+  ]
   return (
     <Stack gap="sm">
+      {offered.length > 0 && (
+        <section className="settings-section">
+          <Text fw={600}>{tr('其他按鈕')}</Text>
+          <Text size="sm" c="dimmed" mb="xs">
+            {tr('預設不顯示在遊戲的按鈕列；按眼睛顯示。')}
+          </Text>
+          <Stack gap={4}>
+            {offered.map(({ extra, label }) => {
+              const visible = !!row.record?.details?.shownExtras?.includes(extra)
+              return (
+                <Group key={extra} justify="space-between" wrap="nowrap">
+                  <Text size="sm">{label}</Text>
+                  <Tooltip
+                    label={
+                      visible
+                        ? tr('此遊戲的按鈕列顯示這個按鈕，點擊隱藏')
+                        : tr('此遊戲的按鈕列不顯示這個按鈕，點擊顯示')
+                    }
+                  >
+                    <ActionIcon
+                      variant="subtle"
+                      color={visible ? undefined : 'gray'}
+                      aria-label={visible ? tr('隱藏按鈕 {0}', label) : tr('顯示按鈕 {0}', label)}
+                      aria-pressed={visible}
+                      disabled={disabled}
+                      onClick={() =>
+                        void run({
+                          action: 'actionVisible',
+                          rowId: row.rowId,
+                          revision,
+                          templateId: 'extra-' + extra,
+                          visible: !visible,
+                        })
+                      }
+                    >
+                      <Icon name={visible ? 'eye' : 'eye-off'} size={16} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Group>
+              )
+            })}
+          </Stack>
+        </section>
+      )}
       <section className="settings-section">
         <Group justify="space-between" wrap="nowrap">
           <div>

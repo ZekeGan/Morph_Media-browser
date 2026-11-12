@@ -5813,12 +5813,6 @@
     "ja": "問題なし",
     "es": "Sin problemas"
   },
-  "固定展開專案欄": {
-    "zh-CN": "固定展开项目栏",
-    "en": "Pin the project sidebar open",
-    "ja": "プロジェクトバーを固定して開く",
-    "es": "Fijar la barra de proyectos abierta"
-  },
   "版面編輯": {
     "zh-CN": "版面编辑",
     "en": "Layout editor",
@@ -7846,12 +7840,6 @@
     "en": "Start with Steam",
     "ja": "Steam で起動",
     "es": "Iniciar con Steam"
-  },
-  "開啟商店頁": {
-    "zh-CN": "打开商店页",
-    "en": "Open store page",
-    "ja": "ストアページを開く",
-    "es": "Abrir página de la tienda"
   },
   "開啟存檔資料夾": {
     "zh-CN": "打开存档文件夹",
@@ -11554,5 +11542,35 @@
     "en": "The image dimensions are too large",
     "ja": "画像のサイズが大きすぎます",
     "es": "Las dimensiones de la imagen son demasiado grandes"
+  },
+  "在 {0} 開啟": {
+    "zh-CN": "在 {0} 打开",
+    "en": "Open in {0}",
+    "ja": "{0} で開く",
+    "es": "Abrir en {0}"
+  },
+  "其他按鈕": {
+    "zh-CN": "其他按钮",
+    "en": "Other buttons",
+    "ja": "その他のボタン",
+    "es": "Otros botones"
+  },
+  "預設不顯示在遊戲的按鈕列；按眼睛顯示。": {
+    "zh-CN": "默认不显示在游戏的按钮栏；按眼睛显示。",
+    "en": "Not shown in the game's button row by default; press the eye to show.",
+    "ja": "既定ではゲームのボタン列に表示しません。目のアイコンで表示します。",
+    "es": "No se muestran en la fila de botones del juego por defecto; pulsa el ojo para mostrarlos."
+  },
+  "展開全文": {
+    "zh-CN": "展开全文",
+    "en": "Show all",
+    "ja": "全文を表示",
+    "es": "Mostrar todo"
+  },
+  "下一章：{0}": {
+    "zh-CN": "下一章：{0}",
+    "en": "Next chapter: {0}",
+    "ja": "次の章：{0}",
+    "es": "Siguiente capítulo: {0}"
   }
 }

@@ -12,6 +12,7 @@ import { DATA_DIR, validateDetails, type Attribute, type FolderRecord } from '..
 import {
   documentFile,
   gameActionTemplates,
+  gameExtras,
   newDetails,
   type ContentResult,
   type ExplorerRequest,
@@ -29,7 +30,7 @@ import * as contentFns from './explorer-content'
 import * as streamFns from './explorer-stream'
 import * as sourceFns from './explorer-source'
 import * as overviewFns from './explorer-overview'
-import { bundledSuggestions, engineSaveFolder, steamAppId, storeUrl } from './game-extras'
+import { bundledSuggestions, engineSaveFolder, steamAppId, store, storeUrl } from './game-extras'
 import { detectGame } from './game-detection'
 import { readNovel } from './novel'
 import type { KeyStore } from './keys'
@@ -531,11 +532,20 @@ export class Explorer {
           project = this.library
             .snapshot()
             .projects.find((p) => p.projectId === row.projectId)?.project
-        if (
-          !project ||
-          typeof req.visible !== 'boolean' ||
-          !gameActionTemplates(project).some((t) => t.id === req.templateId)
-        )
+        if (typeof req.visible !== 'boolean') throw new Error('任務版型不存在')
+        // R-315: the game page's own buttons are opt-in, kept as the list of extras shown.
+        const extra = gameExtras.find((name) => 'extra-' + name === req.templateId)
+        if (extra)
+          return this.after(
+            await this.details(req.rowId, req.revision, (d) => {
+              const shown = new Set(d.shownExtras)
+              if (req.visible) shown.add(extra)
+              else shown.delete(extra)
+              if (shown.size) d.shownExtras = gameExtras.filter((name) => shown.has(name))
+              else delete d.shownExtras
+            })
+          )
+        if (!project || !gameActionTemplates(project).some((t) => t.id === req.templateId))
           throw new Error('任務版型不存在')
         return this.after(
           await this.details(req.rowId, req.revision, (d) => {
@@ -677,7 +687,9 @@ export class Explorer {
           extras: {
             ...(id ? { steamAppId: id } : {}),
             steamReady: !!this.desktop.protocolReady?.('steam'),
-            ...(storeUrl(record) ? { storeUrl: storeUrl(record) } : {}),
+            ...(store(record)
+              ? { storeUrl: store(record)!.url, storeSite: store(record)!.site }
+              : {}),
             save: user ? 'user' : engineFolder ? 'engine' : 'none',
             ...(engineFolder ? { saveEngine: engines.join('／') } : {}),
             suggestions: (await bundledSuggestions(row.path)).filter(

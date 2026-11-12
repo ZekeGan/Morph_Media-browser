@@ -607,7 +607,8 @@ export function Reader({
         setFrames((previous) =>
           previous.filter((item) => item.key === frame.key || item.token > frame.token)
         )
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+      // R-330: only a page turn keeps the old page under the new one; a jump (the queue, a load) drops it at once.
+      if (!frame.enter || window.matchMedia('(prefers-reduced-motion: reduce)').matches)
         requestAnimationFrame(settle)
       else setTimeout(settle, 220)
     })

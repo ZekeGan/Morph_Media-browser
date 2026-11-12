@@ -24,16 +24,29 @@ export async function steamAppId(root: string, record: FolderRecord | undefined)
   return /^[1-9]\d{0,9}$/.test(id) && Number(id) <= 4294967295 ? id : undefined
 }
 
-// R-310: the work's page on a store or catalogue site, from what a website import saved. HTTPS only.
-export function storeUrl(record: FolderRecord | undefined) {
-  const attributes = record?.attributes ?? []
-  const order = (id: string) => (id === 'steam-store_url' ? 0 : id.endsWith('-store_url') ? 1 : 2)
-  return attributes
-    .filter((a) => /-(store_url|source_url|gallery_url)$/.test(a.attributeId))
-    .sort((a, b) => order(a.attributeId) - order(b.attributeId))
-    .map((a) => (typeof a.value === 'string' ? a.value : ''))
-    .find((value) => httpUrl(value) && value.startsWith('https://'))
+// R-310, R-316: the work's page on a store, from what a website import saved. Catalogue sites (VNDB, Bangumi…)
+// are not stores, so they give no button. HTTPS only.
+export const storeSites: Record<string, string> = {
+  steam: 'Steam',
+  dlsite: 'DLsite',
+  fanza: 'FANZA',
+  booth: 'BOOTH',
 }
+export function store(record: FolderRecord | undefined) {
+  const attributes = record?.attributes ?? []
+  const site = (id: string) => id.slice(0, id.indexOf('-'))
+  const order = (id: string) => (id === 'steam-store_url' ? 0 : id.endsWith('-store_url') ? 1 : 2)
+  const found = attributes
+    .filter(
+      (a) => /-(store_url|source_url)$/.test(a.attributeId) && site(a.attributeId) in storeSites
+    )
+    .sort((a, b) => order(a.attributeId) - order(b.attributeId))
+    .find((a) => typeof a.value === 'string' && httpUrl(a.value) && a.value.startsWith('https://'))
+  return found
+    ? { url: found.value as string, site: storeSites[site(found.attributeId)] }
+    : undefined
+}
+export const storeUrl = (record: FolderRecord | undefined) => store(record)?.url
 
 const isDir = async (file: string) => {
   try {

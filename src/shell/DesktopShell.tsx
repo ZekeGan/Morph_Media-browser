@@ -676,21 +676,6 @@ export function DesktopShell(props: Props) {
                   <Icon name="home" />
                 </ActionIcon>
               </Tooltip>
-              {peeking && (
-                <Tooltip label={tr('固定展開專案欄')}>
-                  <ActionIcon
-                    aria-label={tr('固定展開專案欄')}
-                    variant="subtle"
-                    color="gray"
-                    onClick={() => {
-                      setPeek(false)
-                      void mutate({ action: 'layout', sidebarHidden: false })
-                    }}
-                  >
-                    <Icon name="panel-left" />
-                  </ActionIcon>
-                </Tooltip>
-              )}
             </div>
             <div className="sidebar-groups">
               <div className="groups-title">

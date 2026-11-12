@@ -1,5 +1,6 @@
 .cell-copy { margin-left:auto; flex-shrink:0; padding-left:6px; }
-.cell-copy button { font:inherit; color:inherit; border:1px solid currentColor; border-radius:4px; background:transparent; cursor:pointer; padding:2px 5px; }
+/* R-328: a fixed size, whatever the cell's own font size, weight or style. */
+.cell-copy button { font-family:inherit; font-size:12px; font-weight:400; font-style:normal; line-height:1.4; text-decoration:none; color:inherit; border:1px solid currentColor; border-radius:4px; background:transparent; cursor:pointer; padding:2px 5px; }
 .cell-copy button:disabled { opacity:.45; cursor:default; }
 .cell-copy small { display:block; white-space:normal; }
 .card-cell .cell-progress,.editor-cell .cell-progress { display:flex; flex:1; min-width:0; flex-direction:column; gap:3px; }

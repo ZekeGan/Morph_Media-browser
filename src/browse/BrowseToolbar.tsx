@@ -245,7 +245,14 @@ export function BrowseToolbar(props: Props) {
             style={{ display: folderMode ? 'none' : undefined }}
           />
           {folderMode && browse.mode === 'CARD' && (
-            <Popover position="bottom-end" withArrow shadow="md" width={260}>
+            // R-331: a fade, not the default scale, so the switch inside measures its real size when it opens.
+            <Popover
+              position="bottom-end"
+              withArrow
+              shadow="md"
+              width={260}
+              transitionProps={{ transition: 'fade' }}
+            >
               <Popover.Target>
                 <Button
                   className="card-display-button scope-button"

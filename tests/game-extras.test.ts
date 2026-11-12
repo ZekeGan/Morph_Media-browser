@@ -193,6 +193,15 @@ test('Steam launch, store page and save folder come from the game and its record
   await saveFolder(media, record, record.revision)
   await explorer.request({ action: 'visit', rowId: row().rowId })
   assert.equal(storeUrl(await readFolder(media)), 'https://store.steampowered.com/app/620/')
+  // R-316: a catalogue page (VNDB) is not a store, so alone it gives no store button.
+  assert.equal(
+    storeUrl({ ...(await readFolder(media)), attributes: record.attributes.slice(0, 1) }),
+    undefined
+  )
+  assert.equal(
+    (await explorer.request({ action: 'gameExtras', rowId: row().rowId }))?.extras?.storeSite,
+    'Steam'
+  )
   await explorer.request({ action: 'runExtra', rowId: row().rowId, extra: 'store' })
   assert.equal(calls.external.at(-1), 'https://store.steampowered.com/app/620/')
   // A folder the user picks wins over the engine's guess and can be cleared again.
