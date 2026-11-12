@@ -312,13 +312,13 @@ try {
   await button('目前資料夾設定').click()
   const drawer = page.getByRole('region', { name: '資料夾設定 · Library', exact: true })
   await drawer.waitFor()
-  // Field sections start folded when there are several (R-231); their titles stay visible.
+  // Group sections start folded when there are several (R-231); their titles stay visible.
   const sectionOf = (title: string) =>
     drawer.locator('details.field-source-group').filter({
       has: page.locator('summary', { hasText: title }),
     })
-  assert.equal(await sectionOf('自建').getAttribute('open'), null)
-  await sectionOf('自建').locator('summary').click()
+  // R-339: your own fields are always shown, above the websites' data.
+  await drawer.getByRole('region', { name: '你的欄位', exact: true }).waitFor()
   await sectionOf(groupName).locator('summary').click()
   assert.equal(await drawer.getByLabel('Score', { exact: true }).inputValue(), '0')
   assert.equal(await drawer.getByRole('textbox', { name: 'Flag', exact: true }).inputValue(), '否')
