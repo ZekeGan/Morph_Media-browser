@@ -35,11 +35,11 @@ const keysOf = (values: Record<string, Record<string, string>>) => ({
 test('keys are stored encrypted on this computer and the window only learns whether they are set', async (t) => {
   await fs.mkdir(base, { recursive: true })
   const root = await fs.mkdtemp(path.join(base, 'keys-'))
-  t.after(() => fs.rm(root, { recursive: true, force: true }))
+  t.after(() => fs.rm(root, { recursive: true, force: true, maxRetries: 5 }))
   const store = new KeyStore(root, cipher)
   await store.set('tmdb', { token: '  secret-token  ' })
-  await store.set('tvdb', { apiKey: 'k' })
-  assert.deepEqual(await store.status(), { tmdb: { set: true }, tvdb: { set: true } })
+  await store.set('steamgriddb', { apiKey: 'k' })
+  assert.deepEqual(await store.status(), { tmdb: { set: true }, steamgriddb: { set: true } })
   assert.equal((await fs.readFile(store.file, 'utf8')).includes('secret-token'), false)
   assert.deepEqual(await new KeyStore(root, cipher).get('tmdb'), { token: 'secret-token' })
   await store.mark('tmdb', 'ok')
@@ -53,6 +53,14 @@ test('keys are stored encrypted on this computer and the window only learns whet
   )
   await store.clear('tmdb')
   assert.equal(await store.get('tmdb'), undefined)
+  // A key saved for a site that is no longer offered is ignored and dropped at the next save.
+  const stored = JSON.parse(await fs.readFile(store.file, 'utf8'))
+  stored.sites.anidb = stored.sites.steamgriddb
+  await fs.writeFile(store.file, JSON.stringify(stored))
+  const reopened = new KeyStore(root, cipher)
+  assert.deepEqual(Object.keys(await reopened.status()), ['steamgriddb'])
+  await reopened.mark('steamgriddb', 'ok')
+  assert.equal(JSON.parse(await fs.readFile(store.file, 'utf8')).sites.anidb, undefined)
   // Every key site has fields, steps and a test page the sources know.
   for (const site of keySites) {
     assert.ok(site.fields.length && site.steps && site.sample, site.id)
@@ -97,94 +105,16 @@ test('keyed sources: missing keys stop before any request, keys travel the way e
     ),
     (e) => String(e).includes(KEY_REJECTED)
   )
-  // MyAnimeList: the client ID header.
-  const malSeen: { url: string; init?: RequestInit }[] = []
-  await metadata(
-    'https://myanimelist.net/anime/1/Cowboy_Bebop',
-    fake(
-      {
-        'https://api.myanimelist.net/v2/anime/1?fields=title,alternative_titles,start_date,synopsis,genres,num_episodes,studios,main_picture,media_type,status':
-          { id: 1, title: 'Cowboy Bebop' },
-      },
-      malSeen
-    ),
-    undefined,
-    keysOf({ mal: { clientId: 'cid' } })
-  )
-  assert.equal(new Headers(malSeen[0].init?.headers).get('X-MAL-CLIENT-ID'), 'cid')
-  // OMDb through an IMDb address.
-  const omdb = await metadata(
+  // R-321: removed keyed sites (here AniDB, whose API was plain HTTP) are ordinary web pages now, fetched like any
+  // other page over HTTPS; no source may use plain HTTP.
+  const { sourceForUrl } = await import('../shared/sources')
+  for (const url of [
+    'https://anidb.net/anime/1',
     'https://www.imdb.com/title/tt0133093/',
-    fake({
-      'https://www.omdbapi.com/?i=tt0133093&plot=full&apikey=o': {
-        Response: 'True',
-        imdbID: 'tt0133093',
-        Title: 'The Matrix',
-        Genre: 'Action, Sci-Fi',
-        Poster: 'N/A',
-      },
-    }),
-    undefined,
-    keysOf({ omdb: { apiKey: 'o' } })
-  )
-  assert.deepEqual(omdb.preview.values.find((v) => v.key === 'GENRES')?.value, ['Action', 'Sci-Fi'])
-  // IGDB: Twitch token first, then a query-language POST; the token is reused.
-  const igdbSeen: { url: string; init?: RequestInit }[] = []
-  const igdbReplies = {
-    'https://id.twitch.tv/oauth2/token': {
-      access_token: 'tok',
-      expires_in: 5000000,
-    },
-    'https://api.igdb.com/v4/games': [
-      { slug: 'portal-2', name: 'Portal 2', cover: { image_id: 'abc' } },
-    ],
-  }
-  for (let i = 0; i < 2; i++)
-    await metadata(
-      'https://www.igdb.com/games/portal-2',
-      fake(igdbReplies, igdbSeen),
-      undefined,
-      keysOf({ igdb: { clientId: 'c', clientSecret: 's' } })
-    )
-  const tokenRequest = igdbSeen.filter((r) => r.url.includes('twitch'))
-  assert.equal(tokenRequest.length, 1)
-  assert.equal(tokenRequest[0].url.includes('secret'), false, 'the secret is not in the address')
-  assert.match(String(tokenRequest[0].init?.body), /client_secret=s/)
-  const query = igdbSeen.find((r) => r.url.includes('igdb.com'))!
-  assert.match(String(query.init?.body), /where slug = "portal-2"/)
-  assert.equal(new Headers(query.init?.headers).get('Authorization'), 'Bearer tok')
-  // TheTVDB: log in with key and PIN, then look the slug up.
-  const tvdb = await metadata(
-    'https://www.thetvdb.com/series/cowboy-bebop',
-    fake({
-      'https://api4.thetvdb.com/v4/login': { data: { token: 't' } },
-      'https://api4.thetvdb.com/v4/series/slug/cowboy-bebop': { data: { id: 76885 } },
-      'https://api4.thetvdb.com/v4/series/76885/extended?short=true': {
-        data: { id: 76885, name: 'Cowboy Bebop' },
-      },
-    }),
-    undefined,
-    keysOf({ tvdb: { apiKey: 'k', pin: 'p' } })
-  )
-  assert.equal(tvdb.preview.title, 'Cowboy Bebop')
-  // AniDB: its fixed plain-HTTP API origin only, and each anime asked once.
-  const anidbSeen: { url: string; init?: RequestInit }[] = []
-  const xml =
-    '<anime id="1"><titles><title type="main">Seikai</title></titles><episodecount>13</episodecount></anime>'
-  for (let i = 0; i < 2; i++)
-    await metadata(
-      'https://anidb.net/anime/1',
-      fake(
-        {
-          'http://api.anidb.net:9001/httpapi?request=anime&protover=1&client=morph&clientver=1&aid=1':
-            xml,
-        },
-        anidbSeen
-      ),
-      undefined,
-      keysOf({ anidb: { client: 'morph', clientver: '1' } })
-    )
-  assert.equal(anidbSeen.length, 1)
+    'https://myanimelist.net/anime/1',
+    'https://www.igdb.com/games/portal-2',
+  ])
+    assert.equal(sourceForUrl(url), 'web', url)
   // FANZA: the content ID from the address.
   const fanza = await metadata(
     'https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_123456/',
@@ -238,17 +168,17 @@ test('the key test passes when the site accepts the key and fails when it refuse
     explorer.index.close()
     await fs.rm(root, { recursive: true, force: true })
   })
-  await explorer.request({ action: 'setKey', site: 'rawg', values: { apiKey: 'good' } })
+  await explorer.request({ action: 'setKey', site: 'tmdb', values: { token: 'good' } })
   globalThis.fetch = (async (input: RequestInfo | URL) =>
     String(input).includes('key=good')
       ? new Response('{"detail":"Not found."}', { status: 404 })
       : new Response('{}', { status: 401 })) as typeof fetch
-  assert.deepEqual((await explorer.request({ action: 'testKey', site: 'rawg' })).keys?.rawg, {
+  assert.deepEqual((await explorer.request({ action: 'testKey', site: 'tmdb' })).keys?.tmdb, {
     set: true,
     test: 'ok',
   })
-  await explorer.request({ action: 'setKey', site: 'rawg', values: { apiKey: 'bad' } })
-  assert.deepEqual((await explorer.request({ action: 'testKey', site: 'rawg' })).keys?.rawg, {
+  await explorer.request({ action: 'setKey', site: 'tmdb', values: { token: 'bad' } })
+  assert.deepEqual((await explorer.request({ action: 'testKey', site: 'tmdb' })).keys?.tmdb, {
     set: true,
     test: 'failed',
   })

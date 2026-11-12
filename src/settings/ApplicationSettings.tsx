@@ -21,6 +21,7 @@ const writeUndo = (value?: { id: string; at: string }) => {
 import type { Request, Response } from '../../shared/model'
 import { t as tr, useLocale } from '../i18n'
 import { LocaleEmulatorSetting } from '../game/LocaleEmulatorSetting'
+import { FlashPlayerSetting } from '../game/FlashPlayerSetting'
 import { SiteKeys } from './SiteKeys'
 import { HelpLabel, HelpTip } from '../common/HelpTip'
 import { useEffect, useState } from 'react'
@@ -262,6 +263,7 @@ export function ApplicationSettings({
             {applied ? tr('已套用') : ''}
           </Text>
           <LocaleEmulatorSetting opened={opened} />
+          <FlashPlayerSetting opened={opened} />
         </Tabs.Panel>
         <Tabs.Panel value="data" pt="lg">
           <Stack gap="lg">

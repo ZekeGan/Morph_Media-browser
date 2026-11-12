@@ -323,6 +323,10 @@ export interface MediaApi {
 
 const obj = (v: unknown): v is Record<string, any> =>
   !!v && typeof v === 'object' && !Array.isArray(v)
+// R-319: a Locale Emulator profile GUID (the only form passed to LEProc.exe -runas).
+export const localeProfileId = (v: unknown): v is string =>
+  typeof v === 'string' &&
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(v)
 const id = (v: unknown): v is string =>
   typeof v === 'string' &&
   /^[a-zA-Z0-9_-]{1,100}$/.test(v) &&
@@ -554,7 +558,8 @@ function validTargetEntry([k, t]: [string, unknown]): boolean {
     // A bundled file (manual, readme) opens with its default application from inside the game folder (R-306).
     (t.kind !== 'file' || (t.args.length === 0 && t.relative === true && documentFile(t.path))) &&
     (t.localeEmulator === undefined ||
-      (t.kind === 'exe' && typeof t.localeEmulator === 'boolean')) &&
+      (t.kind === 'exe' &&
+        (typeof t.localeEmulator === 'boolean' || localeProfileId(t.localeEmulator)))) &&
     (t.kind === 'file-app'
       ? obj(t.application) &&
         text(t.application.path, 10000) &&

@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { safePath } from './files'
 import { httpUrl } from '../shared/fields'
-import type { FolderRecord } from '../shared/model'
+import { localeProfileId, type FolderRecord } from '../shared/model'
 
 // Game page extras (R-305–R-310): everything here is read-only and worked out in main from the game folder and its
 // record. The window only ever learns names and labels, never paths it could hand back to be opened.
@@ -133,3 +133,34 @@ export async function bundledSuggestions(root: string) {
     .sort((a, b) => a.role.localeCompare(b.role) || a.name.localeCompare(b.name))
     .slice(0, 20)
 }
+
+// R-319: the profiles made in Locale Emulator, from LEConfig.xml next to LEProc.exe. Only names and GUIDs are read
+// (a small file, forward attribute scanning, no XML parser); a missing or odd file just means no profiles.
+export async function localeProfiles(runner: string | undefined) {
+  if (!runner) return []
+  try {
+    const file = path.join(path.dirname(runner), 'LEConfig.xml'),
+      stat = await fs.stat(file)
+    if (!stat.isFile() || stat.size > 512 * 1024) return []
+    const text = await fs.readFile(file, 'utf8'),
+      found: { guid: string; name: string }[] = []
+    for (const tag of text.match(/<Profile\s[^>]{0,2000}>/g) ?? []) {
+      const attr = (name: string) => tag.match(new RegExp('\\s' + name + '="([^"]{0,200})"'))?.[1]
+      const guid = attr('Guid'),
+        name = attr('Name')
+      if (guid && name && localeProfileId(guid) && !found.some((p) => p.guid === guid))
+        found.push({ guid: guid.toLowerCase(), name: xmlText(name).slice(0, 100) })
+      if (found.length >= 50) break
+    }
+    return found
+  } catch {
+    return []
+  }
+}
+const xmlText = (value: string) =>
+  value
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&')

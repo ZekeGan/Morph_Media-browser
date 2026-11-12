@@ -84,6 +84,14 @@ export function validateWorkspace(v: unknown): asserts v is WorkspacePrefs {
   )
     throw new Error('Locale Emulator 路徑不合法')
   if (
+    v.flashPlayer !== undefined &&
+    (typeof v.flashPlayer !== 'string' ||
+      !path.isAbsolute(v.flashPlayer) ||
+      !/\.exe$/i.test(v.flashPlayer) ||
+      v.flashPlayer.length > 4000)
+  )
+    throw new Error('Flash 播放器路徑不合法')
+  if (
     v.playtime !== undefined &&
     (!object(v.playtime) ||
       Object.keys(v.playtime).length > 100000 ||
@@ -400,6 +408,20 @@ export class WorkspaceStore {
   }
   localeEmulatorPath() {
     return this.prefs.localeEmulator
+  }
+  // R-320: the Flash player's path, set the same way (main-process dialog only) or cleared.
+  setFlashPlayer(file: string | undefined) {
+    return this.run(async () => {
+      if (this.error) throw new Error(this.error)
+      const next = structuredClone(this.prefs)
+      if (file) next.flashPlayer = file
+      else delete next.flashPlayer
+      await this.commit(next)
+      return this.state()
+    })
+  }
+  flashPlayerPath() {
+    return this.prefs.flashPlayer
   }
   update(command: WorkspaceCommand, ids: string[]): Promise<WorkspaceState> {
     return this.run(async () => {

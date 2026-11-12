@@ -21,8 +21,6 @@ export const sourceConfig: Record<
     // R-285: the key site (shared/keys.ts) and whether the source works without it.
     keySite?: string
     keyNeed?: 'required' | 'optional'
-    // The one plain-HTTP origin a source may use (AniDB's API has no HTTPS).
-    plainOrigin?: string
   }
 > = {
   // Bangumi's optional token opens NSFW entries (R-286).
@@ -48,65 +46,10 @@ export const sourceConfig: Record<
     keySite: 'tmdb',
     keyNeed: 'required',
   },
-  mal: {
-    requestHosts: ['api.myanimelist.net'],
-    coverHosts: ['cdn.myanimelist.net', 'api-cdn.myanimelist.net'],
-    keySite: 'mal',
-    keyNeed: 'required',
-  },
-  omdb: {
-    requestHosts: ['www.omdbapi.com'],
-    coverHosts: ['m.media-amazon.com'],
-    keySite: 'omdb',
-    keyNeed: 'required',
-  },
-  trakt: { requestHosts: ['api.trakt.tv'], coverHosts: [], keySite: 'trakt', keyNeed: 'required' },
-  rawg: {
-    requestHosts: ['api.rawg.io'],
-    coverHosts: ['media.rawg.io'],
-    keySite: 'rawg',
-    keyNeed: 'required',
-  },
-  giantbomb: {
-    requestHosts: ['www.giantbomb.com'],
-    coverHosts: ['www.giantbomb.com'],
-    keySite: 'giantbomb',
-    keyNeed: 'required',
-  },
-  comicvine: {
-    requestHosts: ['comicvine.gamespot.com'],
-    coverHosts: ['comicvine.gamespot.com'],
-    keySite: 'comicvine',
-    keyNeed: 'required',
-  },
   steamgriddb: {
     requestHosts: ['www.steamgriddb.com'],
     coverHosts: ['cdn2.steamgriddb.com'],
     keySite: 'steamgriddb',
-    keyNeed: 'required',
-  },
-  lastfm: {
-    requestHosts: ['ws.audioscrobbler.com'],
-    coverHosts: ['lastfm.freetls.fastly.net'],
-    keySite: 'lastfm',
-    keyNeed: 'required',
-  },
-  discogs: {
-    requestHosts: ['api.discogs.com'],
-    coverHosts: ['i.discogs.com'],
-    keySite: 'discogs',
-    keyNeed: 'optional',
-  },
-  igdb: {
-    requestHosts: ['id.twitch.tv', 'api.igdb.com'],
-    coverHosts: ['images.igdb.com'],
-    keySite: 'igdb',
-    keyNeed: 'required',
-  },
-  tvdb: {
-    requestHosts: ['api4.thetvdb.com'],
-    coverHosts: ['artworks.thetvdb.com'],
-    keySite: 'tvdb',
     keyNeed: 'required',
   },
   fanza: {
@@ -114,14 +57,6 @@ export const sourceConfig: Record<
     coverHosts: ['pics.dmm.co.jp', 'pics.dmm.com', 'doujin-assets.dmm.co.jp'],
     keySite: 'fanza',
     keyNeed: 'required',
-  },
-  anidb: {
-    requestHosts: ['api.anidb.net'],
-    coverHosts: ['cdn-eu.anidb.net', 'cdn-us.anidb.net'],
-    keySite: 'anidb',
-    keyNeed: 'required',
-    plainOrigin: 'http://api.anidb.net:9001',
-    accept: 'application/xml',
   },
   // R-292
   booth: { requestHosts: ['booth.pm'], coverHosts: ['booth.pximg.net'] },

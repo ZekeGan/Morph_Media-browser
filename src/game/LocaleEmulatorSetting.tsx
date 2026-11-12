@@ -33,7 +33,7 @@ export function LocaleEmulatorSetting({ opened }: { opened: boolean }) {
     <section className="settings-section" aria-label="Locale Emulator">
       <Text fw={600}>Locale Emulator</Text>
       <Text size="sm" c="dimmed" mb="xs">
-        {tr('指定 LEProc.exe 後，遊戲的 EXE 操作可以勾選「用日文語系啟動」。')}
+        {tr('指定 LEProc.exe 後，遊戲的 EXE 操作可以選擇用 Locale Emulator 的語系設定檔啟動。')}
       </Text>
       <Text size="sm" className="path" title={file}>
         {file ?? tr('尚未指定')}

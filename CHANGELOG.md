@@ -18,6 +18,9 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Website keys: only sites without a keyless alternative remain (TMDB, SteamGridDB, FANZA, and the optional Bangumi, Danbooru and Google Books keys); MyAnimeList, OMDb, Trakt, TheTVDB, Last.fm, Discogs, AniDB, IGDB, RAWG, Giant Bomb and Comic Vine are read as ordinary web pages now (R-321).
+- Games: an EXE action can start with any Locale Emulator profile (Simplified Chinese and so on), not just Japanese; Flash games (.swf) start in the Flash player chosen in the app settings (R-319, R-320).
+- Security: web pages and image addresses connect only to the address that passed the local-network check, closing a DNS-rebinding gap (R-334).
 - Games: Start with Steam, the store button and Open save folder are hidden until the eye under "Other buttons" in the game settings shows them; the store button only comes from store sites (Steam, DLsite, FANZA, BOOTH) and names the store (R-315, R-316).
 - Files list on the right: music shows its embedded cover, and clicking a row opens it (R-317, R-318).
 - Novel reader: search results mark the keyword; a chapter ends with a "Next chapter" button; the settings panel shows above the page and Esc closes just the panel; vertical scrolling starts each chapter on the right (R-323–R-326).

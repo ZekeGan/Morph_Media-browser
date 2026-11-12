@@ -11,11 +11,23 @@
 
 ## 待你決定
 
-- **金鑰（提醒）**：R-285～R-290 的程式已完成（2026-11-12），需要你到「應用程式設定」填入各站自己的金鑰（TMDB、MyAnimeList、OMDb、Trakt、RAWG、Giant Bomb、Comic Vine、SteamGridDB、Last.fm、Discogs、Bangumi 權杖、IGDB、TheTVDB、FANZA、AniDB 用戶端登記）才能實測；沒填之前只用固定回應測試。使用者 2026-11-12 說金鑰之後再加，請提醒。
+- **金鑰（提醒）**：需要你到「應用程式設定 → 網站金鑰」填入自己的金鑰才能實測：TMDB、SteamGridDB、FANZA（必填），Bangumi 權杖、Danbooru、Google Books（選填）。沒填之前只用固定回應測試。其餘金鑰來源已於 2026-11-12 移除（R-321）。
 
 - **R-293 與批評空間（需要你決定）**：探測需要年齡確認的成人網站（Getchu、Melonbooks、虎之穴，以及批評空間）的頁面結構時，我這邊的自動權限檢查擋下了請求，所以沒有實作。要繼續的話，需要你在設定裡允許這類請求，或親自提供這幾站作品頁的 HTML 結構（存成檔案），我再用固定回應寫轉接器與測試。原需求：每站在設定提供「我已成年」勾選，勾選後才帶年齡確認 Cookie。Getchu（EUC-JP 編碼）、Melonbooks、虎之穴（改版較頻繁）。
 
 ## 待查收
+
+- **R-321** 精簡金鑰來源 ｜中｜安全邊界｜設定｜領域：metadata、appearance｜依賴：R-285
+  驗收：「應用程式設定 → 網站金鑰」只剩 TMDB、SteamGridDB、FANZA 與選填的 Bangumi、Danbooru、Google Books；貼 MyAnimeList 或 IMDb 網址會當一般網頁（來源顯示 Web）讀取。
+
+- **R-319** Locale Emulator 選擇設定檔 ｜中｜安全邊界｜新增欄位（暫定）｜領域：game｜依賴：R-309
+  驗收：在 Locale Emulator 裡建一個簡體中文設定檔 → 遊戲設定「遊戲操作」的「用 Locale Emulator 啟動」下拉選單出現它 → 選它後按「啟動遊戲」，遊戲以簡中語系執行；選「日文（預設）」照舊。
+
+- **R-320** 用外部播放器開 Flash 遊戲 ｜中｜安全邊界｜設定｜領域：game、detection｜依賴：無
+  驗收：應用程式設定「一般」→「Flash 播放器」選 flashplayer_sa.exe（或 Ruffle）→ 在 Flash 遊戲的「啟動遊戲」選 .swf → 按下用播放器開啟；沒指定播放器時提示去設定。
+
+- **R-334** 外部網站請求固定已檢查的 IP（防 DNS rebinding） ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
+  驗收：一般網頁與圖片網址照常能抓（例如貼出版社作品頁、貼圖片網址當封面）；`tests/pinned-fetch.test.ts` 模擬 DNS 第二次回答本機時連線被擋。
 
 - **R-315** 遊戲額外按鈕預設隱藏 ｜小｜一般｜設定｜領域：game｜依賴：無
   驗收：遊戲內容頁預設不再出現「用 Steam 啟動」「在 … 開啟」「開啟存檔資料夾」；設定「遊戲操作」→「其他按鈕」按眼睛後，按鈕出現在內容頁，再按一次消失。
@@ -81,15 +93,6 @@
 
 ## 已核定（未做）
 
-- **R-321** 精簡金鑰來源 ｜中｜安全邊界｜設定｜領域：metadata、appearance｜依賴：R-285 — 使用者 2026-11-12 核定
-  移除有免金鑰替代的金鑰來源：MyAnimeList（→ AniList）、OMDb／Trakt／TheTVDB（→ TMDB）、Last.fm／Discogs（→ MusicBrainz）、AniDB（→ AniList／Bangumi）、IGDB／RAWG／Giant Bomb（→ Steam、VNDB、DLsite）、Comic Vine。保留 TMDB、FANZA、SteamGridDB，以及選填的 Bangumi 權杖、Danbooru、Google Books。已匯入的欄位保留在記錄裡；已存的金鑰在設定頁不再顯示並於下次保存時清掉。R-314（MobyGames，需金鑰）一併撤銷。
-
-- **R-319** Locale Emulator 選擇設定檔 ｜中｜安全邊界｜新增欄位（暫定）｜領域：game｜依賴：R-309 — 使用者 2026-11-12 核定
-  讀出 Locale Emulator 裡已建立的設定檔（日文、簡中等），每個 EXE 動作用下拉選擇，預設日文；啟動時用該設定檔。`localeEmulator` 從是／否改成設定檔（仍是暫定，不升格式）。
-
-- **R-320** 用外部播放器開 Flash 遊戲 ｜中｜安全邊界｜設定｜領域：game、detection｜依賴：無 — 使用者 2026-11-12 核定
-  應用程式設定指定 SWF 播放器（Flash Player projector 或 Ruffle 桌面版）；遊戲資料夾內的 `.swf` 可設為啟動動作，用該播放器開啟。M:orph 不附帶播放器、不內嵌執行。
-
 - **R-322** 修正：圖片檢視器出現「上次閱讀位置」 ｜小｜一般｜無｜領域：reader、media｜依賴：無 — 使用者 2026-11-12 核定
   續讀只給漫畫與小說，圖片資料夾不顯示。 2026-11-12 未能重現：「從第 N 頁繼續」只在漫畫模式出現，需要使用者提供出現的資料夾與開啟方式。
 
@@ -97,9 +100,6 @@
 
 - **R-329** 「作品網址或 ID」說明提示精簡 ｜小｜一般｜無｜領域：metadata｜依賴：無 — 使用者 2026-11-12 核定
   提示只留一句加例子；支援網站清單可展開，貼上後顯示認出的站名。
-
-- **R-334** 外部網站請求固定已檢查的 IP（防 DNS rebinding） ｜小｜安全邊界｜無｜領域：metadata｜依賴：無 — 使用者 2026-11-12 核定
-  先解析並檢查位址，實際連線用同一個 IP，不再重新解析。
 
 - **R-335** 小說目錄不擋內文 ｜小｜一般｜無｜領域：novel｜依賴：R-282 — 使用者 2026-11-12 核定
   寬視窗把內文往右推；窄視窗浮動、點外面關閉；標出並捲到目前章節。

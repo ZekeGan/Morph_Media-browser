@@ -138,4 +138,8 @@ C-80 採特徵候選＋人工修正與集中處理；純手動仍作無法辨識
 
 ### Locale Emulator（R-309）
 
-應用程式設定「一般」可指定 `LEProc.exe`（只在 main 的檔案對話框選，檔名必須是 `LEProc.exe`），存本機設定 `localeEmulator`。已綁定的 EXE 動作可勾選「用日文語系啟動」（記錄在該目標的 `localeEmulator`，暫定），執行時改為 `LEProc.exe -run <exe> <參數…>`；未指定 LEProc.exe 時勾選停用並提示。原本用 `.lnk` 捷徑的做法照常可用。
+應用程式設定「一般」可指定 `LEProc.exe`（只在 main 的檔案對話框選，檔名必須是 `LEProc.exe`），存本機設定 `localeEmulator`。已綁定的 EXE 動作可選「用 Locale Emulator 啟動」：「日文（預設）」執行 `LEProc.exe -run <exe> <參數…>`；也可選在 Locale Emulator 裡建立的設定檔（例如簡體中文，讀自 LEProc.exe 旁的 `LEConfig.xml`，只取名稱與 GUID），執行 `LEProc.exe -runas <GUID> <exe> <參數…>`（R-319）。選擇記錄在該目標的 `localeEmulator`（`true` 或 GUID，暫定）；Locale Emulator 裡已刪掉的設定檔顯示「找不到的設定檔」。未指定 LEProc.exe 時選單停用並提示。原本用 `.lnk` 捷徑的做法照常可用。
+
+### Flash 遊戲（R-320）
+
+應用程式設定「一般」可指定播放 `.swf` 的程式（Flash Player projector 或 Ruffle 桌面版，只在 main 的檔案對話框選，必須是 `.exe`），存本機設定 `flashPlayer`。「啟動遊戲」這類 EXE 動作選檔時也接受 `.swf`；執行時以 `<播放程式> <swf> <參數…>` 開啟，計入遊玩時間。M:orph 不附帶、不內嵌任何 Flash 執行環境。未指定播放程式時，啟動會提示到應用程式設定指定。

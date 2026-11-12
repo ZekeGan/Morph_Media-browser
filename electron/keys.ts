@@ -31,8 +31,11 @@ export class KeyStore {
     try {
       await safePath(this.root, this.file)
       const value = (await readJson(this.file)) as Stored
-      if (value?.schemaVersion === 1 && value.sites && typeof value.sites === 'object')
+      if (value?.schemaVersion === 1 && value.sites && typeof value.sites === 'object') {
+        // R-321: keys of sites that are no longer offered are dropped (and gone from the file at the next save).
+        for (const site of Object.keys(value.sites)) if (!keySite(site)) delete value.sites[site]
         this.data = value
+      }
     } catch {}
   }
   private async save() {

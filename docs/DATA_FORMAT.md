@@ -46,7 +46,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 **`details`（`FolderDetails`，`schemaVersion: 1`）** 常用欄位：
 
 - `boundary`：遊戲邊界 `{ state: 'root' | 'not-game' | 'candidate', engines, evidence }`。
-- `targets`：遊戲動作目標 `{ <actionId>: { kind: 'exe' | 'folder' | 'file-app' | 'url' | 'shortcut' | 'file', path, relative, args, localeEmulator? } }`；`shortcut` 只能是遊戲資料夾內最上層的 `.lnk`／`.url` 檔名；`file`（R-306）是遊戲資料夾內的說明文件（`relative: true`、沒有參數、副檔名限 pdf／html／htm／txt／md／rtf），用系統預設程式開啟；`localeEmulator`（R-309，**暫定**）只用於 `exe`，`true` 表示經 Locale Emulator 啟動。
+- `targets`：遊戲動作目標 `{ <actionId>: { kind: 'exe' | 'folder' | 'file-app' | 'url' | 'shortcut' | 'file', path, relative, args, localeEmulator? } }`；`shortcut` 只能是遊戲資料夾內最上層的 `.lnk`／`.url` 檔名；`file`（R-306）是遊戲資料夾內的說明文件（`relative: true`、沒有參數、副檔名限 pdf／html／htm／txt／md／rtf），用系統預設程式開啟；`localeEmulator`（R-309、R-319，**暫定**）只用於 `exe`：`true` 表示用 Locale Emulator 的預設（日文）啟動，GUID 字串表示用該設定檔啟動。`exe` 目標的檔案可以是 `.exe` 或 `.swf`（R-320，用應用程式設定的 Flash 播放程式開啟）。
 - `saveFolder`（R-305，**暫定**）：使用者指定的存檔資料夾 `{ path, relative }`（遊戲外的只接受本機磁碟路徑，不接受網路路徑）；沒有時依引擎推算。
 - `hiddenActions`：這個遊戲不在按鈕列顯示的動作 id。
 - `shownExtras`（R-315，**暫定**）：這個遊戲按鈕列要顯示的自動操作，`steam`／`store`／`save` 的子集；沒有時都不顯示。

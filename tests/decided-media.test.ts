@@ -217,7 +217,7 @@ test('public metadata adapters use no credentials, retain source identities and 
   // Keyed sources (R-285) stop before any request when no key is set.
   for (const source of [
     'https://www.themoviedb.org/movie/12',
-    'https://www.igdb.com/games/portal-2',
+    'https://www.steamgriddb.com/game/1',
   ])
     await assert.rejects(
       metadata(source, (async () => {

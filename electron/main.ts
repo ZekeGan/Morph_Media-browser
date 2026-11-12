@@ -127,8 +127,13 @@ else {
               : {
                   filters: [
                     {
-                      name: nt(kind === 'exe' ? '程式' : '字幕'),
-                      extensions: kind === 'exe' ? ['exe'] : ['srt', 'vtt'],
+                      name: nt(kind === 'subtitle' ? '字幕' : '程式'),
+                      extensions:
+                        kind === 'game'
+                          ? ['exe', 'swf']
+                          : kind === 'exe'
+                            ? ['exe']
+                            : ['srt', 'vtt'],
                     },
                   ],
                 }),
@@ -162,6 +167,10 @@ else {
         localeEmulator: () => workspace.localeEmulatorPath(),
         setLocaleEmulator: async (file) => {
           await workspace.setLocaleEmulator(file)
+        },
+        flashPlayer: () => workspace.flashPlayerPath(),
+        setFlashPlayer: async (file) => {
+          await workspace.setFlashPlayer(file)
         },
         keyStore: new KeyStore(app.getPath('userData'), {
           // Linux without a keyring falls back to plain text; keys are not stored then.

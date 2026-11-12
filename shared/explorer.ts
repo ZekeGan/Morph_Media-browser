@@ -103,8 +103,9 @@ export interface FolderDetails {
       relative: boolean
       args: string[]
       application?: { path: string; relative: boolean }
-      // EXE actions only (R-309, provisional): start through Locale Emulator's LEProc.exe in Japanese locale.
-      localeEmulator?: boolean
+      // EXE actions only (R-309, R-319, provisional): start through Locale Emulator's LEProc.exe; true is its
+      // default (Japanese) profile, a GUID one of the profiles made in Locale Emulator (Simplified Chinese…).
+      localeEmulator?: true | string
     }
   >
   // R-282, provisional: where each text book in the folder was left, by file name.
@@ -303,7 +304,14 @@ export type ExplorerRequest =
   // R-306: bind a suggested file (by its name in the game folder) as an action.
   | { action: 'addSuggestion'; rowId: string; revision: number; name: string }
   | { action: 'chooseLocaleEmulator'; clear?: boolean }
-  | { action: 'targetLocale'; rowId: string; revision: number; templateId: string; value: boolean }
+  | { action: 'chooseFlashPlayer'; clear?: boolean }
+  | {
+      action: 'targetLocale'
+      rowId: string
+      revision: number
+      templateId: string
+      value: boolean | string
+    }
   // R-282: open a text book, and keep where it was left.
   // R-285: website keys. Values only ever travel from the window to main, never back.
   | { action: 'keyStatus' }
@@ -346,6 +354,7 @@ export interface ExplorerResponse {
   novel?: NovelBook
   keys?: Record<string, import('./keys').KeyStatus>
   localeEmulator?: string
+  flashPlayer?: string
   probe?: { kind: 'zip' | 'rar' | '7z' | 'gzip' | 'html' | 'empty' | 'media' | 'unknown' }
   preview?: MetadataPreview
   imagePreview?: { token: string; image: string; name: string; size: number }
@@ -366,6 +375,10 @@ export interface GameExtras {
   // Bundled tools and manuals at the top of the game folder, not yet bound as actions.
   suggestions: { name: string; role: 'config' | 'manual' }[]
   localeEmulator: boolean
+  // R-319: the profiles made in Locale Emulator (LEConfig.xml next to LEProc.exe), by GUID.
+  localeProfiles?: { guid: string; name: string }[]
+  // R-320: whether a Flash player is set, so an .swf action can start.
+  flashPlayer?: boolean
 }
 export interface ExplorerApi {
   request(request: ExplorerRequest): Promise<ExplorerResponse>

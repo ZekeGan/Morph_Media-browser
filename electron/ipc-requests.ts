@@ -3,7 +3,7 @@
 // Nested objects (a project, attributes, reading or playback settings, browse state) are only checked to be
 // objects or arrays here; their contents are validated by the code that writes them (validateProject,
 // validateDetails, WorkspaceStore).
-import type { Request } from '../shared/model'
+import { localeProfileId, type Request } from '../shared/model'
 import type { ExplorerRequest } from '../shared/explorer'
 import type { WorkspaceCommand } from '../shared/workspace'
 
@@ -149,7 +149,12 @@ const explorer: Record<ExplorerRequest['action'], Shape> = {
   chooseSaveFolder: { ...revisionRow, clear: opt(bool) },
   addSuggestion: { ...revisionRow, name: text },
   chooseLocaleEmulator: { clear: opt(bool) },
-  targetLocale: { ...revisionRow, templateId: ref, value: bool },
+  chooseFlashPlayer: { clear: opt(bool) },
+  targetLocale: {
+    ...revisionRow,
+    templateId: ref,
+    value: (v) => typeof v === 'boolean' || localeProfileId(v),
+  },
   novel: { rowId: ref, fileId: ref },
   keyStatus: {},
   setKey: { site: ref, values: record(text) },

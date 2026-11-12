@@ -3,6 +3,7 @@ import net from 'node:net'
 import { privateAddress } from '../image-url'
 import { SourceError, sourceStatusKind, limitedBytes } from '../metadata-common'
 import { userAgent } from './config'
+import { pinnedFetch } from '../pinned-fetch'
 
 // R-283: reading web pages without running them. A page is fetched under main's control (HTTPS only, no
 // credentials, no local or private addresses, at most three redirects, 2 MiB, 15 s), decoded with the page's own
@@ -33,11 +34,13 @@ export async function fetchPage(
 ): Promise<{ url: URL; html: string }> {
   let url = new URL(raw)
   const origin = url.origin
+  // R-334: the real network goes through a connection pinned to the checked address (tests pass their own fetcher).
+  const send = fetcher === globalThis.fetch ? pinnedFetch : fetcher
   for (let hop = 0; ; hop++) {
     await safeAddress(url, options.lookup)
     let response: Response
     try {
-      response = await fetcher(url, {
+      response = await send(url, {
         redirect: 'manual',
         signal: AbortSignal.timeout(15000),
         headers: {

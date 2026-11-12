@@ -139,9 +139,9 @@
         "ALBUM_VIEWER_DESIGN.md#檔案與效能基線",
         "ALBUM_VIEWER_DESIGN.md#圖片閱讀器"
       ],
-      "code": ["src/gallery/Gallery*", "shared/gallery*", "shared/images*", "electron/image-url*"],
+      "code": ["src/gallery/Gallery*", "shared/gallery*", "shared/images*", "electron/image-url*", "electron/pinned-fetch*"],
       "ui": ["gallery-performance-ui", "media-scope-ui", "reader-ui", "image-nth-ui"],
-      "tests": ["gallery.test.ts", "image-url.test.ts"]
+      "tests": ["gallery.test.ts", "image-url.test.ts", "pinned-fetch.test.ts"]
     },
     {
       "id": "reader",
@@ -264,6 +264,7 @@
         "src/game/useGameExtras*",
         "src/game/playtime*",
         "src/game/LocaleEmulatorSetting*",
+        "src/game/FlashPlayerSetting*",
         "electron/game-extras*", "src/game/game-actions.css", "shared/launchArgs*"],
       "ui": ["game-actions-ui", "game-launch-cell-ui", "game-folder-page-ui"],
       "tests": ["game-actions.test.ts",

@@ -195,7 +195,6 @@ export function FolderSourceImport({
             {/* Attribution the sources' terms ask for. */}
             {preview.provider === 'tmdb' &&
               ' ' + tr('本產品使用 TMDB API，但未經 TMDB 認可或認證。')}
-            {preview.provider === 'rawg' && ' ' + tr('資料來自 RAWG。')}
             {preview.provider === 'fanza' && ' Powered by FANZA Webサービス'}
             {tr('預設只填空值；人工欄位保持原樣。')}
           </Text>

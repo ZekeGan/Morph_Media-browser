@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-> 最後確認：2026-11-12（R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
+> 最後確認：2026-11-12（R-321、R-334、R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
 
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
@@ -42,28 +42,20 @@
 | 網頁 | 其他任何 HTTPS 網址（R-283） | 只讀頁面自己宣告的 JSON-LD、OpenGraph／Twitter、`<title>`：標題、簡介、作者、日期、關鍵字、網站名稱與封面。只接受不含帳號密碼的 HTTPS、不允許本機與內網位址（轉址也逐次檢查，最多三次）、2 MB、15 秒；依標頭或 `<meta charset>` 解碼（含 Shift_JIS、EUC-JP）；以只往前的掃描讀標籤，不執行頁面程式。封面主機無法事先列名單，一律經圖片網址匯入的安全下載（HTTPS、非內網、大小與影像格式檢查）。 |
 | 圖片／插畫 | Pixiv、Wikimedia Commons、Danbooru | Pixiv 公開作品回應（插畫 `/artworks/<ID>` 與小說 `/novel/show.php?id=`）；Danbooru 讀 `posts/<ID>.json`，標籤依作者／原作／角色／一般分欄，分級存進年齡分級；[Commons API](https://commons.wikimedia.org/wiki/Commons:API/MediaWiki) 保留作者及授權，不推論私人照片身分 |
 
-### 需要使用者金鑰的來源（R-285～R-290）
+### 需要使用者金鑰的來源（R-285～R-290、R-321）
+
+只保留沒有免金鑰替代的網站（R-321）：動畫與漫畫用 AniList、Bangumi，電影與影集只有 TMDB，音樂用 MusicBrainz，遊戲用 Steam、VNDB、DLsite。MyAnimeList、OMDb、Trakt、TheTVDB、Last.fm、Discogs、AniDB、IGDB、RAWG、Giant Bomb、Comic Vine 已移除：這些網址改當一般網頁讀取，已匯入的欄位留在記錄裡，已存的金鑰在設定頁不再顯示，下次保存金鑰檔時清掉。來源一律走 HTTPS，不再有純 HTTP 的例外。
 
 應用程式設定「網站金鑰」分頁每站一列：名稱、用途、必要／選填、狀態（未設定、已設定、可用、無法驗證）、遮罩輸入（可顯示）、「保存並測試」「測試」「清除」與「怎麼申請」（申請步驟）。金鑰用 Electron safeStorage（Windows 為 DPAPI）加密後存在本機 `site-keys.json`，只有 main 解密；畫面只拿到狀態，不會收到金鑰本身，也不進可攜記錄、設定包或備份。測試用每站一個範例頁：網站接受金鑰就算可用（即使範例作品不存在），被拒（401／403 或網站回報金鑰錯誤）才算無法驗證。貼了需要金鑰的網址而尚未設定時，「從網站補充資訊」就地提示並停用「取得預覽」，按「前往設定」直接開到該列；選填金鑰的網站則提示可加上金鑰的好處。
 
 | 網站 | 金鑰 | 帶法與特殊處理 |
 | --- | --- | --- |
 | TMDB | API Key 或 Read Access Token | Read Access Token（JWT 格式）放 `Authorization: Bearer`，Key 放查詢參數；海報 `image.tmdb.org/t/p/w500`；預覽標示「本產品使用 TMDB API，但未經 TMDB 認可或認證」 |
-| MyAnimeList | Client ID | 標頭 `X-MAL-CLIENT-ID` |
-| OMDb | API Key | IMDb 的 `tt` 網址也走 OMDb |
-| Trakt | Client ID | 標頭 `trakt-api-key`、`trakt-api-version: 2`；沒有圖片 |
-| RAWG | API Key | 保留回連 RAWG 的來源網址，預覽標示資料來自 RAWG |
-| Giant Bomb、Comic Vine | API Key | 同一套 API（`/<類型>-<ID>/`），帶自訂 User-Agent |
 | SteamGridDB | API Key | Bearer；只取名稱與第一張 600×900 封面 |
-| Last.fm | API Key | 由網址的演出者與專輯名查 `album.getinfo` |
-| Discogs | 個人權杖（選填） | 不填也能讀資料，圖片要權杖 |
 | Bangumi | 個人權杖（選填） | Bearer；沒填時 404 改提示「找不到作品，或是需要權杖的成人作品」並可前往設定 |
 | Danbooru | 帳號＋API Key（選填） | 查詢參數 `login`、`api_key`，提高額度 |
 | Google Books | API Key（選填） | 不填時共用匿名額度，常回 429 |
-| IGDB | Twitch Client ID＋Secret | 先向 `id.twitch.tv` 換應用程式權杖，存在記憶體到快過期前；再以 Apicalypse 查詢語法依網址 slug 查 |
-| TheTVDB | API Key（＋訂閱 PIN） | 先登入換權杖，存在記憶體約 25 天；依 slug 查 ID 再取 extended |
 | FANZA／DMM | API ID＋Affiliate ID | 網址裡的 `cid`；`dmm.co.jp` 走 FANZA、`dmm.com` 走 DMM.com；預覽標示「Powered by FANZA Webサービス」 |
-| AniDB | 登記的用戶端名稱＋版本 | 唯一允許的純 HTTP 端點 `http://api.anidb.net:9001`；同一部只查一次（記憶體快取），兩次請求至少間隔 2.5 秒 |
 
 金鑰類來源在使用者填入金鑰前只用固定回應測試（`tests/keys.test.ts`），尚未實站驗證。
 
@@ -96,6 +88,7 @@ Hitomi 的作品資料主機是 `ltn.gold-usergeneratedcontent.net`（2026-11 �
 ## 預覽、套用與追溯
 
 - main 驗證精確主機及作品 ID，請求固定 API 端點，限制回應大小、逾時與重新導向；封面限白名單 HTTPS 主機及支援的影像簽名，取得失敗仍可預覽欄位。
+- 任意主機的請求（通用網頁、圖片網址）在建立連線時才解析 DNS 並檢查位址，socket 直接連到檢查通過的位址，不再解析第二次，避免 DNS rebinding 把請求轉到本機或內網（R-334，`electron/pinned-fetch.ts`）。只用 GET、不跟隨重新導向（由呼叫端逐跳重新檢查）。
 - 預覽顯示候選值與已存在的來源值；預設只填空值，0／false 視為有值。明確勾選「覆寫已填來源欄位」才取代既有來源值，人工欄位分開保留。曾手動修改的來源欄位不會被來源再次覆寫：只填空值時跳過該欄位、其他欄位照填；勾選覆寫時整批拒絕並說明衝突。
 - 屬性仍以來源前綴分開保存，可選 sourceRecord 記錄 provider、原網址與 fetchedAt；手動編輯會移除此擷取註記。schemaVersion 維持 1，不自動遷移收藏，也不把同名欄位視為相同身分。
 - 日期存成日期：E-Hentai 的圖庫公開時間存成「日期時間」（換算成本機時間），各來源的發售日（Steam 的 `12 Nov, 2020`、`2020/11/12`、`2020年11月12日`、英文月份等）存成來源寫的那一天 `YYYY-MM-DD`。只有年份、年月或「TBA」等讀不成完整日期的值照原樣存文字，不補日子。專案裡該欄位已是「文字」時，新匯入照文字存。日期仍是來源寫的語意，不改稱首次發行日。封面寫入沿用可攜資產及原子保存；保存失敗移除本次新增的封面，保留原值及原資產。預設重複補空不重複加入同來源封面。

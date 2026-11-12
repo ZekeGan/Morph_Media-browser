@@ -7805,12 +7805,6 @@
     "ja": "フォルダー内のファイルを開く",
     "es": "Abrir un archivo de la carpeta"
   },
-  "用日文語系啟動（Locale Emulator）": {
-    "zh-CN": "以日文语系启动（Locale Emulator）",
-    "en": "Start in Japanese locale (Locale Emulator)",
-    "ja": "日本語ロケールで起動（Locale Emulator）",
-    "es": "Iniciar con configuración regional japonesa (Locale Emulator)"
-  },
   "先到「應用程式設定」指定 LEProc.exe 才能使用": {
     "zh-CN": "先到“应用程序设置”指定 LEProc.exe 才能使用",
     "en": "Choose LEProc.exe in the application settings first",
@@ -7924,12 +7918,6 @@
     "en": "Add",
     "ja": "追加",
     "es": "Añadir"
-  },
-  "指定 LEProc.exe 後，遊戲的 EXE 操作可以勾選「用日文語系啟動」。": {
-    "zh-CN": "指定 LEProc.exe 后，游戏的 EXE 操作可以勾选“以日文语系启动”。",
-    "en": "After choosing LEProc.exe, a game's EXE actions can be set to start in Japanese locale.",
-    "ja": "LEProc.exe を指定すると、ゲームの EXE 操作で「日本語ロケールで起動」を選べます。",
-    "es": "Tras elegir LEProc.exe, las acciones EXE de un juego pueden iniciarse con configuración regional japonesa."
   },
   "尚未指定": {
     "zh-CN": "尚未指定",
@@ -8531,12 +8519,6 @@
     "ja": "本製品は TMDB API を使用していますが、TMDB による承認・認定は受けていません。",
     "es": "Este producto usa la API de TMDB, pero TMDB no lo respalda ni lo certifica."
   },
-  "資料來自 RAWG。": {
-    "zh-CN": "资料来自 RAWG。",
-    "en": "Data from RAWG.",
-    "ja": "データ提供：RAWG。",
-    "es": "Datos de RAWG."
-  },
   "網站金鑰": {
     "zh-CN": "网站密钥",
     "en": "Website keys",
@@ -8657,60 +8639,6 @@
     "ja": "themoviedb.org に登録・ログインし、「設定 → API」で個人利用のキーを申請して、API Key または API Read Access Token をコピーします。",
     "es": "Regístrate e inicia sesión en themoviedb.org, solicita una clave de uso personal en Ajustes → API y copia la API Key o el API Read Access Token."
   },
-  "動畫與漫畫": {
-    "zh-CN": "动画与漫画",
-    "en": "Anime and manga",
-    "ja": "アニメと漫画",
-    "es": "Anime y manga"
-  },
-  "在 myanimelist.net 登入，到「帳號設定 → API」建立用戶端（App Type 選 other），複製 Client ID。": {
-    "zh-CN": "在 myanimelist.net 登录，到“账号设置 → API”建立客户端（App Type 选 other），复制 Client ID。",
-    "en": "Sign in at myanimelist.net, create a client under Account Settings → API (App Type: other), and copy the Client ID.",
-    "ja": "myanimelist.net にログインし、「アカウント設定 → API」でクライアントを作成（App Type は other）、Client ID をコピーします。",
-    "es": "Inicia sesión en myanimelist.net, crea un cliente en Ajustes de cuenta → API (App Type: other) y copia el Client ID."
-  },
-  "電影（也接受 IMDb 網址）": {
-    "zh-CN": "电影（也接受 IMDb 网址）",
-    "en": "Films (IMDb addresses work too)",
-    "ja": "映画（IMDb の URL も可）",
-    "es": "Películas (también direcciones de IMDb)"
-  },
-  "到 omdbapi.com 的 API Key 頁面填 Email 申請免費金鑰，收信點連結啟用後即可使用。": {
-    "zh-CN": "到 omdbapi.com 的 API Key 页面填 Email 申请免费密钥，收信点链接启用后即可使用。",
-    "en": "Request a free key with your email on the API Key page at omdbapi.com, then activate it from the link in the email.",
-    "ja": "omdbapi.com の API Key ページでメールアドレスを入力して無料キーを申請し、届いたメールのリンクで有効化します。",
-    "es": "Solicita una clave gratuita con tu correo en la página API Key de omdbapi.com y actívala desde el enlace del correo."
-  },
-  "在 trakt.tv 登入，到「設定 → Your API Apps」建立新應用程式，複製 Client ID。": {
-    "zh-CN": "在 trakt.tv 登录，到“设置 → Your API Apps”建立新应用程序，复制 Client ID。",
-    "en": "Sign in at trakt.tv, create a new app under Settings → Your API Apps, and copy the Client ID.",
-    "ja": "trakt.tv にログインし、「設定 → Your API Apps」で新しいアプリを作成して Client ID をコピーします。",
-    "es": "Inicia sesión en trakt.tv, crea una aplicación en Ajustes → Your API Apps y copia el Client ID."
-  },
-  "在 rawg.io 註冊後到 rawg.io/apidocs 取得 API Key；使用時保留回到 RAWG 的連結。": {
-    "zh-CN": "在 rawg.io 注册后到 rawg.io/apidocs 获取 API Key；使用时保留回到 RAWG 的链接。",
-    "en": "Sign up at rawg.io and get an API Key at rawg.io/apidocs; the link back to RAWG is kept with the data.",
-    "ja": "rawg.io に登録後、rawg.io/apidocs で API Key を取得します。利用時は RAWG へのリンクを残します。",
-    "es": "Regístrate en rawg.io y obtén una API Key en rawg.io/apidocs; el enlace a RAWG se conserva con los datos."
-  },
-  "在 giantbomb.com 註冊並登入，到 giantbomb.com/api 複製你的 API Key。": {
-    "zh-CN": "在 giantbomb.com 注册并登录，到 giantbomb.com/api 复制你的 API Key。",
-    "en": "Sign up and sign in at giantbomb.com, then copy your API Key at giantbomb.com/api.",
-    "ja": "giantbomb.com に登録・ログインし、giantbomb.com/api で API Key をコピーします。",
-    "es": "Regístrate e inicia sesión en giantbomb.com y copia tu API Key en giantbomb.com/api."
-  },
-  "美式漫畫": {
-    "zh-CN": "美式漫画",
-    "en": "Western comics",
-    "ja": "アメコミ",
-    "es": "Cómics occidentales"
-  },
-  "在 comicvine.gamespot.com 註冊並登入，到 comicvine.gamespot.com/api 複製你的 API Key。": {
-    "zh-CN": "在 comicvine.gamespot.com 注册并登录，到 comicvine.gamespot.com/api 复制你的 API Key。",
-    "en": "Sign up and sign in at comicvine.gamespot.com, then copy your API Key at comicvine.gamespot.com/api.",
-    "ja": "comicvine.gamespot.com に登録・ログインし、comicvine.gamespot.com/api で API Key をコピーします。",
-    "es": "Regístrate e inicia sesión en comicvine.gamespot.com y copia tu API Key en comicvine.gamespot.com/api."
-  },
   "遊戲封面與橫幅": {
     "zh-CN": "游戏封面与横幅",
     "en": "Game covers and banners",
@@ -8723,29 +8651,11 @@
     "ja": "steamgriddb.com に Steam でログインし、「Preferences → API」で API Key を生成します。",
     "es": "Inicia sesión en steamgriddb.com con Steam y genera una API Key en Preferences → API."
   },
-  "在 last.fm 登入，到 last.fm/api/account/create 建立 API 帳號，複製 API key。": {
-    "zh-CN": "在 last.fm 登录，到 last.fm/api/account/create 建立 API 账号，复制 API key。",
-    "en": "Sign in at last.fm, create an API account at last.fm/api/account/create, and copy the API key.",
-    "ja": "last.fm にログインし、last.fm/api/account/create で API アカウントを作成して API key をコピーします。",
-    "es": "Inicia sesión en last.fm, crea una cuenta de API en last.fm/api/account/create y copia la API key."
-  },
-  "音樂（不填也能讀資料，填了才拿得到圖片）": {
-    "zh-CN": "音乐（不填也能读资料，填了才拿得到图片）",
-    "en": "Music (works without it; pictures need it)",
-    "ja": "音楽（なくても情報は取得可、画像には必要）",
-    "es": "Música (funciona sin ella; las imágenes la necesitan)"
-  },
   "個人存取權杖": {
     "zh-CN": "个人访问令牌",
     "en": "Personal access token",
     "ja": "個人アクセストークン",
     "es": "Token de acceso personal"
-  },
-  "在 discogs.com 登入，到「Settings → Developers」產生個人存取權杖（Personal access token）。": {
-    "zh-CN": "在 discogs.com 登录，到“Settings → Developers”生成个人访问令牌（Personal access token）。",
-    "en": "Sign in at discogs.com and generate a personal access token under Settings → Developers.",
-    "ja": "discogs.com にログインし、「Settings → Developers」で個人アクセストークンを生成します。",
-    "es": "Inicia sesión en discogs.com y genera un token de acceso personal en Settings → Developers."
   },
   "成人（NSFW）條目需要權杖": {
     "zh-CN": "成人（NSFW）条目需要令牌",
@@ -8789,35 +8699,11 @@
     "ja": "Google Cloud Console でプロジェクトを作成し、Books API を有効にして「認証情報」で API キーを作成します。",
     "es": "En Google Cloud Console, crea un proyecto, activa la Books API y crea una clave de API en Credenciales."
   },
-  "遊戲（用 Twitch 開發者帳號）": {
-    "zh-CN": "游戏（用 Twitch 开发者账号）",
-    "en": "Games (with a Twitch developer account)",
-    "ja": "ゲーム（Twitch 開発者アカウントを使用）",
-    "es": "Juegos (con una cuenta de desarrollador de Twitch)"
-  },
-  "在 dev.twitch.tv 開啟帳號的兩步驟驗證，到 Console 註冊應用程式（OAuth Redirect 可填 http://localhost），複製 Client ID 並產生 Client Secret。": {
-    "zh-CN": "在 dev.twitch.tv 开启账号的两步验证，到 Console 注册应用程序（OAuth Redirect 可填 http://localhost），复制 Client ID 并生成 Client Secret。",
-    "en": "Turn on two-factor authentication for your account at dev.twitch.tv, register an app in the Console (OAuth Redirect can be http://localhost), copy the Client ID and generate a Client Secret.",
-    "ja": "dev.twitch.tv でアカウントの二段階認証を有効にし、Console でアプリを登録（OAuth Redirect は http://localhost で可）して、Client ID をコピーし Client Secret を生成します。",
-    "es": "Activa la verificación en dos pasos en dev.twitch.tv, registra una aplicación en la Console (OAuth Redirect puede ser http://localhost), copia el Client ID y genera un Client Secret."
-  },
   "影集": {
     "zh-CN": "剧集",
     "en": "Series",
     "ja": "ドラマ",
     "es": "Series"
-  },
-  "訂閱 PIN": {
-    "zh-CN": "订阅 PIN",
-    "en": "Subscriber PIN",
-    "ja": "購読 PIN",
-    "es": "PIN de suscriptor"
-  },
-  "在 thetvdb.com 登入，到「API Information」申請 API Key；使用者訂閱制金鑰另需填訂閱 PIN。": {
-    "zh-CN": "在 thetvdb.com 登录，到“API Information”申请 API Key；用户订阅制密钥另需填订阅 PIN。",
-    "en": "Sign in at thetvdb.com and request an API Key under API Information; a user-subscription key also needs your subscriber PIN.",
-    "ja": "thetvdb.com にログインし、「API Information」で API Key を申請します。ユーザー購読型のキーは購読 PIN も必要です。",
-    "es": "Inicia sesión en thetvdb.com y solicita una API Key en API Information; una clave de suscripción de usuario también necesita tu PIN."
   },
   "DMM／FANZA 商品": {
     "zh-CN": "DMM／FANZA 商品",
@@ -8830,30 +8716,6 @@
     "en": "Join the DMM affiliate program at affiliate.dmm.com and get the API ID and Affiliate ID (ending -990 to -999) under Web Services.",
     "ja": "affiliate.dmm.com で DMM アフィリエイトに登録し、「Webサービス」で API ID と Affiliate ID（末尾 -990～-999）を取得します。",
     "es": "Únete al programa de afiliados de DMM en affiliate.dmm.com y obtén el API ID y el Affiliate ID (terminado en -990 a -999) en Web Services."
-  },
-  "動畫（要登記的用戶端名稱與版本）": {
-    "zh-CN": "动画（要登记的客户端名称与版本）",
-    "en": "Anime (a registered client name and version)",
-    "ja": "アニメ（登録済みのクライアント名とバージョン）",
-    "es": "Anime (nombre y versión de un cliente registrado)"
-  },
-  "用戶端名稱": {
-    "zh-CN": "客户端名称",
-    "en": "Client name",
-    "ja": "クライアント名",
-    "es": "Nombre del cliente"
-  },
-  "用戶端版本": {
-    "zh-CN": "客户端版本",
-    "en": "Client version",
-    "ja": "クライアントのバージョン",
-    "es": "Versión del cliente"
-  },
-  "AniDB 的 HTTP API 要先在 anidb.net 以帳號登記用戶端（Client），填入登記時的用戶端名稱與版本。": {
-    "zh-CN": "AniDB 的 HTTP API 要先在 anidb.net 以账号登记客户端（Client），填入登记时的客户端名称与版本。",
-    "en": "AniDB's HTTP API needs a client registered with your anidb.net account; enter the client name and version you registered.",
-    "ja": "AniDB の HTTP API は、anidb.net のアカウントでクライアントを登録する必要があります。登録したクライアント名とバージョンを入力します。",
-    "es": "La API HTTP de AniDB necesita un cliente registrado con tu cuenta de anidb.net; introduce el nombre y la versión registrados."
   },
   "這個網站需要你自己的金鑰；請到「應用程式設定 → 網站金鑰」填入": {
     "zh-CN": "这个网站需要你自己的密钥；请到“应用程序设置 → 网站密钥”填入",
@@ -11572,5 +11434,101 @@
     "en": "Next chapter: {0}",
     "ja": "次の章：{0}",
     "es": "Siguiente capítulo: {0}"
+  },
+  "Flash 播放器": {
+    "zh-CN": "Flash 播放器",
+    "en": "Flash player",
+    "ja": "Flash プレーヤー",
+    "es": "Reproductor de Flash"
+  },
+  "指定播放 .swf 的程式（Flash Player projector 或 Ruffle 桌面版）後，遊戲的「啟動遊戲」可以選 .swf 檔。": {
+    "zh-CN": "指定播放 .swf 的程序（Flash Player projector 或 Ruffle 桌面版）后，游戏的「启动游戏」可以选 .swf 文件。",
+    "en": "Once a program that plays .swf files is set (Flash Player projector or Ruffle desktop), a game's \"Launch game\" can use an .swf file.",
+    "ja": ".swf を再生するプログラム（Flash Player projector または Ruffle デスクトップ版）を指定すると、ゲームの「ゲームを起動」で .swf ファイルを選べます。",
+    "es": "Con un programa que reproduzca .swf (Flash Player projector o Ruffle de escritorio), «Iniciar juego» puede usar un archivo .swf."
+  },
+  "選擇播放程式": {
+    "zh-CN": "选择播放程序",
+    "en": "Choose player",
+    "ja": "再生プログラムを選択",
+    "es": "Elegir reproductor"
+  },
+  "用 Locale Emulator 啟動": {
+    "zh-CN": "用 Locale Emulator 启动",
+    "en": "Start with Locale Emulator",
+    "ja": "Locale Emulator で起動",
+    "es": "Iniciar con Locale Emulator"
+  },
+  "在 Locale Emulator 裡建立的設定檔（例如簡體中文）會列在這裡": {
+    "zh-CN": "在 Locale Emulator 里建立的配置文件（例如简体中文）会列在这里",
+    "en": "Profiles made in Locale Emulator (Simplified Chinese, for example) are listed here",
+    "ja": "Locale Emulator で作ったプロファイル（簡体字中国語など）がここに並びます",
+    "es": "Aquí aparecen los perfiles creados en Locale Emulator (por ejemplo, chino simplificado)"
+  },
+  "不使用": {
+    "zh-CN": "不使用",
+    "en": "Off",
+    "ja": "使用しない",
+    "es": "No usar"
+  },
+  "日文（預設）": {
+    "zh-CN": "日文（默认）",
+    "en": "Japanese (default)",
+    "ja": "日本語（既定）",
+    "es": "Japonés (predeterminado)"
+  },
+  "找不到的設定檔": {
+    "zh-CN": "找不到的配置文件",
+    "en": "Profile not found",
+    "ja": "見つからないプロファイル",
+    "es": "Perfil no encontrado"
+  },
+  "指定 LEProc.exe 後，遊戲的 EXE 操作可以選擇用 Locale Emulator 的語系設定檔啟動。": {
+    "zh-CN": "指定 LEProc.exe 后，游戏的 EXE 操作可以选择用 Locale Emulator 的语系配置文件启动。",
+    "en": "Once LEProc.exe is set, a game's EXE action can start with one of Locale Emulator's locale profiles.",
+    "ja": "LEProc.exe を指定すると、ゲームの EXE 操作を Locale Emulator の言語プロファイルで起動できます。",
+    "es": "Con LEProc.exe indicado, la acción EXE de un juego puede iniciarse con un perfil de idioma de Locale Emulator."
+  },
+  "尚未設定 Flash 播放器；請到應用程式設定指定": {
+    "zh-CN": "尚未设置 Flash 播放器；请到应用程序设置指定",
+    "en": "No Flash player is set; choose one in the app settings",
+    "ja": "Flash プレーヤーが未設定です。アプリ設定で指定してください",
+    "es": "No hay reproductor de Flash; elige uno en la configuración de la app"
+  },
+  "無法設定 Flash 播放器": {
+    "zh-CN": "无法设置 Flash 播放器",
+    "en": "Couldn't set the Flash player",
+    "ja": "Flash プレーヤーを設定できません",
+    "es": "No se pudo configurar el reproductor de Flash"
+  },
+  "請選擇播放 Flash 的程式（.exe）": {
+    "zh-CN": "请选择播放 Flash 的程序（.exe）",
+    "en": "Choose the program that plays Flash (.exe)",
+    "ja": "Flash を再生するプログラム（.exe）を選んでください",
+    "es": "Elige el programa que reproduce Flash (.exe)"
+  },
+  "無法解析主機": {
+    "zh-CN": "无法解析主机",
+    "en": "The host can't be resolved",
+    "ja": "ホストを解決できません",
+    "es": "No se puede resolver el servidor"
+  },
+  "只接受不含帳號密碼的 HTTP(S) 網址": {
+    "zh-CN": "只接受不含账号密码的 HTTP(S) 网址",
+    "en": "Only HTTP(S) addresses without a user name or password are accepted",
+    "ja": "ユーザー名やパスワードを含まない HTTP(S) の URL のみ使えます",
+    "es": "Solo se aceptan direcciones HTTP(S) sin usuario ni contraseña"
+  },
+  "只接受 GET": {
+    "zh-CN": "只接受 GET",
+    "en": "Only GET is allowed",
+    "ja": "GET のみ使えます",
+    "es": "Solo se permite GET"
+  },
+  "Flash 播放器路徑不合法": {
+    "zh-CN": "Flash 播放器路径不合法",
+    "en": "Invalid Flash player path",
+    "ja": "Flash プレーヤーのパスが正しくありません",
+    "es": "Ruta del reproductor de Flash no válida"
   }
 }

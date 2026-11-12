@@ -8,7 +8,13 @@ import path from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import type { Library } from './library'
 import { readFolder, relPath, safePath, saveFolder, within } from './files'
-import { DATA_DIR, validateDetails, type Attribute, type FolderRecord } from '../shared/model'
+import {
+  DATA_DIR,
+  localeProfileId,
+  validateDetails,
+  type Attribute,
+  type FolderRecord,
+} from '../shared/model'
 import {
   documentFile,
   gameActionTemplates,
@@ -30,7 +36,14 @@ import * as contentFns from './explorer-content'
 import * as streamFns from './explorer-stream'
 import * as sourceFns from './explorer-source'
 import * as overviewFns from './explorer-overview'
-import { bundledSuggestions, engineSaveFolder, steamAppId, store, storeUrl } from './game-extras'
+import {
+  bundledSuggestions,
+  engineSaveFolder,
+  localeProfiles,
+  steamAppId,
+  store,
+  storeUrl,
+} from './game-extras'
 import { detectGame } from './game-detection'
 import { readNovel } from './novel'
 import type { KeyStore } from './keys'
@@ -42,7 +55,7 @@ export { probeFile }
 export interface DesktopOperations {
   external?(url: string): Promise<void>
   choose(
-    kind: 'exe' | 'folder' | 'file' | 'subtitle',
+    kind: 'exe' | 'game' | 'folder' | 'file' | 'subtitle',
     initialPath?: string
   ): Promise<string | undefined>
   open(file: string): Promise<void>
@@ -58,6 +71,9 @@ export interface DesktopOperations {
   // R-309: Locale Emulator's LEProc.exe from the app settings, and setting it.
   localeEmulator?(): string | undefined
   setLocaleEmulator?(file: string | undefined): Promise<void>
+  // R-320: the program that plays .swf games, from the app settings, and setting it.
+  flashPlayer?(): string | undefined
+  setFlashPlayer?(file: string | undefined): Promise<void>
   // R-285: the encrypted website keys (main only).
   keyStore?: KeyStore
   // R-308: a session of a game started from M:orph ended.
@@ -137,7 +153,7 @@ export class Explorer {
     await saveFolder(row.path, record, revision)
     return this.library.refreshRecord(rowId)
   }
-  async targetPath(root: string, file: string, kind: 'exe' | 'folder' | 'file') {
+  async targetPath(root: string, file: string, kind: 'exe' | 'game' | 'folder' | 'file') {
     if (!path.isAbsolute(file) || file.includes('\0')) throw new Error('目標路徑不合法')
     await safePath(path.parse(file).root, file)
     const target = await fs.realpath(file),
@@ -145,7 +161,9 @@ export class Explorer {
     if (
       kind === 'folder'
         ? !stat.isDirectory()
-        : !stat.isFile() || (kind === 'exe' && path.extname(target).toLowerCase() !== '.exe')
+        : !stat.isFile() ||
+          (kind === 'exe' && path.extname(target).toLowerCase() !== '.exe') ||
+          (kind === 'game' && !['.exe', '.swf'].includes(path.extname(target).toLowerCase()))
     )
       throw new Error('目標類型不符')
     return {
@@ -156,7 +174,7 @@ export class Explorer {
   async resolvedTarget(
     root: string,
     target: { path: string; relative: boolean },
-    kind: 'exe' | 'folder' | 'file'
+    kind: 'exe' | 'game' | 'folder' | 'file'
   ) {
     const file = target.relative ? path.join(root, target.path) : target.path
     if (target.relative) await safePath(root, file)
@@ -591,14 +609,20 @@ export class Explorer {
           target = { kind: 'shortcut', path: name, relative: true, args: [] }
         } else {
           const chosen = await this.desktop.choose(
-            template.kind === 'file-app' ? 'exe' : template.kind,
+            template.kind === 'file-app' ? 'exe' : template.kind === 'exe' ? 'game' : template.kind,
             row.path
           )
           if (!chosen) return { cancelled: true }
           const selected = await this.targetPath(
             row.path,
             chosen,
-            template.kind === 'folder' ? 'folder' : template.kind === 'file' ? 'file' : 'exe'
+            template.kind === 'folder'
+              ? 'folder'
+              : template.kind === 'file'
+                ? 'file'
+                : template.kind === 'exe'
+                  ? 'game'
+                  : 'exe'
           )
           // A bundled document is opened from inside the game folder only (R-306).
           if (template.kind === 'file' && (!selected.relative || !documentFile(selected.path)))
@@ -645,16 +669,29 @@ export class Explorer {
           const file = await this.resolvedTarget(
             row.path,
             target,
-            target.kind === 'folder' ? 'folder' : target.kind === 'exe' ? 'exe' : 'file'
+            target.kind === 'folder' ? 'folder' : target.kind === 'exe' ? 'game' : 'file'
           )
           if (target.kind === 'file' && !documentFile(file)) throw new Error('目標類型不符')
           if (target.kind === 'folder' || target.kind === 'file') await this.desktop.open(file)
-          else if (target.kind === 'exe' && target.localeEmulator) {
-            // R-309: LEProc.exe starts the game in Japanese locale and exits at once, so this session is not timed.
+          // The extension is read from the real file, the same one the type check looked at.
+          else if (target.kind === 'exe' && /\.swf$/i.test(await fs.realpath(file))) {
+            // R-320: an .swf game opens in the Flash player chosen in the app settings (never run by M:orph).
+            const player = this.desktop.flashPlayer?.()
+            if (!player) throw new Error('尚未設定 Flash 播放器；請到應用程式設定指定')
+            const folderId = record.folderId
+            await this.desktop.launch(player, [file, ...target.args], (started, ended) =>
+              this.desktop.played?.(folderId, started, ended)
+            )
+          } else if (target.kind === 'exe' && target.localeEmulator) {
+            // R-309: LEProc.exe starts the game in the chosen locale and exits at once, so this session is not
+            // timed. R-319: a profile GUID runs with that profile, otherwise LE's default (Japanese).
             const runner = this.desktop.localeEmulator?.()
             if (!runner)
               throw new Error('尚未設定 Locale Emulator（LEProc.exe）；請到應用程式設定指定')
-            await this.desktop.launch(runner, ['-run', file, ...target.args])
+            const profile = localeProfileId(target.localeEmulator)
+              ? ['-runas', target.localeEmulator]
+              : ['-run']
+            await this.desktop.launch(runner, [...profile, file, ...target.args])
           } else if (target.kind === 'exe') {
             const folderId = record.folderId
             await this.desktop.launch(file, target.args, (started, ended) =>
@@ -696,6 +733,8 @@ export class Explorer {
               (item) => !bound.has(item.name.toLowerCase())
             ),
             localeEmulator: !!this.desktop.localeEmulator?.(),
+            localeProfiles: await localeProfiles(this.desktop.localeEmulator?.()),
+            flashPlayer: !!this.desktop.flashPlayer?.(),
           },
         }
       }
@@ -863,7 +902,8 @@ export class Explorer {
           await this.details(req.rowId, req.revision, (d) => {
             const target = d.targets?.[req.templateId]
             if (target?.kind !== 'exe') throw new Error('只有 EXE 操作可以用日文語系啟動')
-            if (req.value) target.localeEmulator = true
+            if (req.value === true) target.localeEmulator = true
+            else if (localeProfileId(req.value)) target.localeEmulator = req.value
             else delete target.localeEmulator
           })
         )
@@ -882,6 +922,21 @@ export class Explorer {
           throw new Error('請選擇 Locale Emulator 的 LEProc.exe')
         await this.desktop.setLocaleEmulator(file)
         return { localeEmulator: file }
+      }
+      case 'chooseFlashPlayer': {
+        // R-320: picked in a main-process dialog; any .exe (Flash Player projector, Ruffle desktop).
+        if (!this.desktop.setFlashPlayer) throw new Error('無法設定 Flash 播放器')
+        if (req.clear) {
+          await this.desktop.setFlashPlayer(undefined)
+          return {}
+        }
+        const chosen = await this.desktop.choose('exe')
+        if (!chosen) return { cancelled: true }
+        const file = await fs.realpath(chosen)
+        if (!/\.exe$/i.test(file) || !(await fs.stat(file)).isFile())
+          throw new Error('請選擇播放 Flash 的程式（.exe）')
+        await this.desktop.setFlashPlayer(file)
+        return { flashPlayer: file }
       }
       case 'listShortcuts': {
         const row = await this.library.checkedRow(req.rowId)

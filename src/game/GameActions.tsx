@@ -3,7 +3,6 @@ import {
   ActionIcon,
   Alert,
   Button,
-  Checkbox,
   ColorPicker,
   ColorSwatch,
   Group,
@@ -67,7 +66,8 @@ export function GameActionTargets({
     [shortcuts, setShortcuts] = useState<string[]>(),
     [choice, setChoice] = useState<Record<string, string>>({})
   const templates = gameActionTemplates(project)
-  const localeReady = useGameExtras(row)?.localeEmulator
+  const extras = useGameExtras(row),
+    localeReady = extras?.localeEmulator
   const wantsShortcuts = templates.some((t) => t.kind === 'shortcut')
   // The folder's own shortcuts (.lnk/.url), e.g. one made by Locale Emulator, are listed for picking.
   useEffect(() => {
@@ -247,22 +247,39 @@ export function GameActionTargets({
               </Text>
             )}
             {template.kind === 'exe' && bound && (
-              <Checkbox
-                label={tr('用日文語系啟動（Locale Emulator）')}
+              // R-319: Locale Emulator's default (Japanese) or one of the profiles made in it.
+              <Select
+                label={tr('用 Locale Emulator 啟動')}
                 description={
                   localeReady === false
                     ? tr('先到「應用程式設定」指定 LEProc.exe 才能使用')
-                    : undefined
+                    : tr('在 Locale Emulator 裡建立的設定檔（例如簡體中文）會列在這裡')
                 }
-                checked={!!target?.localeEmulator}
+                allowDeselect={false}
+                value={
+                  target?.localeEmulator === true ? 'default' : (target?.localeEmulator ?? 'off')
+                }
                 disabled={disabled || (localeReady === false && !target?.localeEmulator)}
-                onChange={(event) =>
+                data={[
+                  { value: 'off', label: tr('不使用') },
+                  { value: 'default', label: tr('日文（預設）') },
+                  ...(extras?.localeProfiles ?? []).map((profile) => ({
+                    value: profile.guid,
+                    label: profile.name,
+                  })),
+                  // A saved profile that is no longer in Locale Emulator stays visible until changed.
+                  ...(typeof target?.localeEmulator === 'string' &&
+                  !extras?.localeProfiles?.some((p) => p.guid === target.localeEmulator)
+                    ? [{ value: target.localeEmulator, label: tr('找不到的設定檔') }]
+                    : []),
+                ]}
+                onChange={(value) =>
                   void run({
                     action: 'targetLocale',
                     rowId: row.rowId,
                     revision: row.record!.revision,
                     templateId: template.id,
-                    value: event.currentTarget.checked,
+                    value: value === 'default' ? true : value === 'off' || !value ? false : value,
                   })
                 }
               />

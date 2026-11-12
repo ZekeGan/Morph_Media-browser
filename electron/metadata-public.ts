@@ -13,22 +13,7 @@ import { openlibrary } from './sources/openlibrary'
 import { pixiv } from './sources/pixiv'
 import { vndb } from './sources/vndb'
 import { booth, kakuyomu } from './sources/pages'
-import {
-  anidb,
-  comicvine,
-  discogs,
-  fanza,
-  giantbomb,
-  igdb,
-  lastfm,
-  mal,
-  omdb,
-  rawg,
-  steamgriddb,
-  tmdb,
-  trakt,
-  tvdb,
-} from './sources/keyed'
+import { fanza, steamgriddb, tmdb } from './sources/keyed'
 import {
   danbooru,
   deezer,
@@ -66,19 +51,8 @@ const adapters: Record<PublicSourceId, Adapter> = {
   booth,
   kakuyomu,
   tmdb,
-  mal,
-  omdb,
-  trakt,
-  rawg,
-  giantbomb,
-  comicvine,
   steamgriddb,
-  lastfm,
-  discogs,
-  igdb,
-  tvdb,
   fanza,
-  anidb,
 }
 
 // The requested URLs are constructed from validated IDs, never from remote JSON links, and must be on the site's
@@ -97,10 +71,9 @@ export async function publicMetadata(
     throw new Error(KEY_MISSING)
   const request = async (url: string, body?: unknown, extra: RequestExtra = {}) => {
     const target = new URL(url)
-    // Only AniDB's fixed HTTP API port is allowed besides plain HTTPS hosts.
-    const plainOrigin = config.plainOrigin && target.origin === config.plainOrigin
     if (
-      (!plainOrigin && (target.protocol !== 'https:' || target.port)) ||
+      target.protocol !== 'https:' ||
+      target.port ||
       target.username ||
       target.password ||
       !config.requestHosts.includes(target.hostname)

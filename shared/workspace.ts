@@ -34,6 +34,8 @@ export interface WorkspacePrefs {
   fileVisibility?: { hidden: boolean; dotfiles: boolean }
   // Locale Emulator's LEProc.exe (R-309), chosen in a main-process dialog; only main reads it to start a game.
   localeEmulator?: string
+  // R-320: the program that plays .swf games (Flash Player projector or Ruffle), chosen like LEProc.exe.
+  flashPlayer?: string
   // Play time of games started from M:orph (R-308), by folder identity. Local only, never in portable records.
   playtime?: Record<string, PlayRecord>
   groups: { id: string; name: string; collapsed: boolean }[]

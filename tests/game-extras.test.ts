@@ -308,6 +308,35 @@ test('Locale Emulator launches go through LEProc.exe and direct launches are tim
     args: ['-run', path.join(media, 'Game.exe'), '-w'],
     timed: false,
   })
+  // R-319: the profiles made in Locale Emulator are listed from LEConfig.xml, and a chosen one runs with -runas.
+  const guid = 'ec7ff5cc-a45c-4bbb-9e31-9a2d2a9d7f11'
+  await fs.writeFile(
+    path.join(root, 'LE', 'LEConfig.xml'),
+    `<?xml version="1.0"?><LEConfig><Profiles><Profile Name="簡体中文 &amp; GBK" Guid="${guid.toUpperCase()}" MainMenu="false"><Location>zh-CN</Location></Profile><Profile Name="Bad" Guid="not-a-guid"/></Profiles></LEConfig>`
+  )
+  const listed = await explorer.request({ action: 'gameExtras', rowId: row().rowId })
+  assert.deepEqual(listed.extras?.localeProfiles, [{ guid, name: '簡体中文 & GBK' }])
+  const revision = (await readFolder(media)).revision
+  await explorer.request({
+    action: 'targetLocale',
+    rowId: row().rowId,
+    revision,
+    templateId: 'default-launch-game',
+    value: guid,
+  })
+  await explorer.request({
+    action: 'runTarget',
+    rowId: row().rowId,
+    templateId: 'default-launch-game',
+  })
+  assert.deepEqual(calls.launch.at(-1)?.args, ['-runas', guid, path.join(media, 'Game.exe'), '-w'])
+  // Only a GUID or true is ever stored, so nothing else can reach LEProc's arguments.
+  const record = await readFolder(media)
+  record.details!.targets!['default-launch-game'].localeEmulator = '--evil' as unknown as true
+  assert.throws(() => validateDetails(record.details), /不合法/)
+  // An older record with false (never written by M:orph, but valid before) still passes.
+  record.details!.targets!['default-launch-game'].localeEmulator = false as unknown as true
+  validateDetails(record.details)
 })
 
 test('play time is stored locally per folder and validated (R-308)', async (t) => {

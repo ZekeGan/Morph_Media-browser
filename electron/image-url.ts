@@ -2,6 +2,7 @@ import dns from 'node:dns/promises'
 import net from 'node:net'
 import { limitedBytes } from './metadata-common'
 import { identifyImage } from '../shared/images'
+import { pinnedFetch } from './pinned-fetch'
 
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 const MAX_REDIRECTS = 3
@@ -90,7 +91,14 @@ export async function fetchImageUrl(
   raw: string,
   options: ImageUrlOptions = {}
 ): Promise<RemoteImage> {
-  const fetcher = options.fetcher ?? fetch,
+  // R-334: the real network goes through a connection pinned to the checked address.
+  // The plain global fetch passed down from the website import counts as "the real network" too.
+  const fetcher =
+      options.fetcher && options.fetcher !== globalThis.fetch
+        ? options.fetcher
+        : options.allowPrivate
+          ? fetch
+          : pinnedFetch,
     lookup = options.lookup ?? resolveHost
   if (typeof raw !== 'string' || raw.length > 2048) throw new Error('圖片網址不合法')
   let url: URL
