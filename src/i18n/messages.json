@@ -8062,5 +8062,47 @@
     "en": "Choose a document inside the game folder (PDF, HTML, TXT, MD, RTF)",
     "ja": "ゲームフォルダー内の説明文書を選んでください（PDF、HTML、TXT、MD、RTF）",
     "es": "Elige un documento dentro de la carpeta del juego (PDF, HTML, TXT, MD, RTF)"
+  },
+  "條漫": {
+    "zh-CN": "条漫",
+    "en": "Webtoon",
+    "ja": "縦読み",
+    "es": "Webtoon"
+  },
+  "條漫寬度 · Ctrl＋滾輪": {
+    "zh-CN": "条漫宽度 · Ctrl＋滚轮",
+    "en": "Webtoon width · Ctrl + wheel",
+    "ja": "縦読みの幅 · Ctrl＋ホイール",
+    "es": "Ancho del webtoon · Ctrl + rueda"
+  },
+  "條漫寬度": {
+    "zh-CN": "条漫宽度",
+    "en": "Webtoon width",
+    "ja": "縦読みの幅",
+    "es": "Ancho del webtoon"
+  },
+  "這本看起來是條漫": {
+    "zh-CN": "这本看起来是条漫",
+    "en": "This looks like a webtoon",
+    "ja": "縦読みマンガのようです",
+    "es": "Parece un webtoon"
+  },
+  "切換到條漫": {
+    "zh-CN": "切换到条漫",
+    "en": "Switch to webtoon",
+    "ja": "縦読みに切り替え",
+    "es": "Cambiar a webtoon"
+  },
+  "不用": {
+    "zh-CN": "不用",
+    "en": "No thanks",
+    "ja": "いいえ",
+    "es": "No, gracias"
+  },
+  "Ctrl＋滾輪調整寬度 · V 切換條漫 · ESC 返回": {
+    "zh-CN": "Ctrl＋滚轮调整宽度 · V 切换条漫 · ESC 返回",
+    "en": "Ctrl + wheel width · V webtoon · ESC back",
+    "ja": "Ctrl＋ホイールで幅 · V 縦読み · ESC 戻る",
+    "es": "Ctrl + rueda ancho · V webtoon · ESC volver"
   }
 }

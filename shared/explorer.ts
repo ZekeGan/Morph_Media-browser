@@ -46,6 +46,11 @@ export interface ReadingPrefs {
   spread?: boolean
   rtl?: boolean
   firstSingle?: boolean
+  // R-256: webtoon mode (pages in one continuous column), its width in percent of the window, and whether the
+  // "looks like a webtoon" suggestion was already answered for this book.
+  webtoon?: boolean
+  webtoonWidth?: number
+  webtoonAsked?: boolean
 }
 export interface SubtitlePrefs {
   offset: number

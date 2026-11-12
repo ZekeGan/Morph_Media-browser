@@ -179,6 +179,8 @@ const paths = {
   'page-single': <rect x="6" y="3" width="8" height="14" rx="1" />,
   'page-spread': <path d="M2.5 4.5h7v11h-7ZM10.5 4.5h7v11h-7Z" />,
   'page-cover': <path d="M2 5h5v10H2ZM9.5 5h4v10h-4ZM13.5 5h4.5v10h-4.5Z" />,
+  // Webtoon: pages stacked in one tall column.
+  'page-webtoon': <path d="M6.5 2h7v5h-7ZM6.5 7.5h7v5h-7ZM6.5 13h7v5h-7Z" />,
   // Reading direction: an open book with the way pages turn.
   'read-ltr': (
     <path d="M10 6C8 4.7 5.5 4.5 3 5.2v10c2.5-.7 5-.5 7 .8 2-1.3 4.5-1.5 7-.8v-10C14.5 4.5 12 4.7 10 6v10M12.5 10.5h3m-1.2-1.4 1.4 1.4-1.4 1.4" />

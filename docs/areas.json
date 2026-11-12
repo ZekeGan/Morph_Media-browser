@@ -140,15 +140,18 @@
         "ALBUM_VIEWER_DESIGN.md#圖片閱讀器"
       ],
       "code": ["src/gallery/Gallery*", "shared/gallery*", "shared/images*", "electron/image-url*"],
-      "ui": ["gallery-performance-ui", "media-scope-ui", "reader-ui", "image-nth-ui"],
+      "ui": ["gallery-performance-ui", "media-scope-ui", "reader-ui",
+        "webtoon-ui", "image-nth-ui"],
       "tests": ["gallery.test.ts", "image-url.test.ts"]
     },
     {
       "id": "reader",
       "name": "漫畫閱讀器",
       "docs": ["MANGA_VIEWER_DESIGN.md#漫畫閱讀器"],
-      "code": ["src/reader/Reader*", "shared/reader*"],
-      "ui": ["reader-ui", "reader-next-ui", "media-scope-ui"],
+      "code": ["src/reader/Reader*",
+        "src/reader/Webtoon*", "shared/reader*"],
+      "ui": ["reader-ui",
+        "webtoon-ui", "reader-next-ui", "media-scope-ui"],
       "tests": ["reader.test.ts"]
     },
     {
@@ -168,7 +171,8 @@
       "name": "ZIP／CBZ／PDF",
       "docs": ["DOCUMENT_VIEWER_DESIGN.md#zipcbz", "DOCUMENT_VIEWER_DESIGN.md#pdf"],
       "code": ["src/documents/DocumentViewer*", "electron/archive*"],
-      "ui": ["reader-ui", "decided-ui"],
+      "ui": ["reader-ui",
+        "webtoon-ui", "decided-ui"],
       "tests": ["decided-media.test.ts"]
     },
     {

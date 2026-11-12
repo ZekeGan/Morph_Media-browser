@@ -1,10 +1,28 @@
 import { t as tr, useLocale } from '../i18n'
 import { Icon, type IconName } from '../common/icons'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { createPortal } from 'react-dom'
 import { ActionIcon, Button, FocusTrap, Group, Select, Slider, Tooltip } from '@mantine/core'
 import type { MediaEntry, ReadingPrefs } from '../../shared/explorer'
 import { readingGroups, readerArrowStep, spreadGeometry, type ImageSize } from '../../shared/reader'
+import {
+  Webtoon,
+  WEBTOON_MAX,
+  WEBTOON_MIN,
+  clampWidth,
+  lastWebtoonWidth,
+  looksLikeWebtoon,
+  rememberWebtoonWidth,
+  type WebtoonHandle,
+} from './Webtoon'
 interface Frame {
   key: string
   token: number
@@ -77,6 +95,17 @@ export function Reader({
   const [spread, setSpread] = useState(prefs?.spread ?? false),
     [rtl, setRtl] = useState(prefs?.rtl ?? manga),
     [first, setFirst] = useState(prefs?.firstSingle ?? false)
+  // R-256: webtoon mode and its column width (this book's, else the last one used on this computer).
+  const [webtoon, setWebtoon] = useState(manga && !!prefs?.webtoon),
+    [webtoonWidth, setWidthState] = useState(() => prefs?.webtoonWidth ?? lastWebtoonWidth()),
+    [asked, setAsked] = useState(!!prefs?.webtoonAsked),
+    [suggest, setSuggest] = useState(false)
+  const strip = useRef<WebtoonHandle>(null)
+  const setWebtoonWidth = useCallback((value: number) => {
+    const next = clampWidth(value)
+    setWidthState(next)
+    rememberWebtoonWidth(next)
+  }, [])
   const [toolbar, setToolbar] = useState(true),
     [pageDropdown, setPageDropdown] = useState(false),
     [immersive, setImmersive] = useState(false),
@@ -192,8 +221,8 @@ export function Reader({
     }
   }
   const groups = useMemo(
-    () => readingGroups(images.length, manga && spread, first),
-    [images.length, manga, spread, first]
+    () => readingGroups(images.length, manga && spread && !webtoon, first),
+    [images.length, manga, spread, first, webtoon]
   )
   const groupIndex = Math.max(
       0,
@@ -265,7 +294,8 @@ export function Reader({
     let cancelled = false
     setLoading(true)
     setError('')
-    if (!group.length) {
+    // The webtoon column loads its own pages.
+    if (!group.length || webtoon) {
       setLoading(false)
       return
     }
@@ -294,7 +324,7 @@ export function Reader({
     return () => {
       cancelled = true
     }
-  }, [groupKey, retry])
+  }, [groupKey, retry, webtoon])
   useEffect(() => {
     if (!active) return
     const index = groups.findIndex((group) => group.includes(active.indices[0]))
@@ -324,7 +354,7 @@ export function Reader({
     observer.observe(element)
     measure()
     return () => observer.disconnect()
-  }, [])
+  }, [webtoon])
   useLayoutEffect(() => {
     if (!anchor.current || !viewport.current) return
     const point = anchor.current
@@ -384,7 +414,7 @@ export function Reader({
     }
     element.addEventListener('wheel', wheel, { passive: false })
     return () => element.removeEventListener('wheel', wheel)
-  }, [])
+  }, [webtoon])
   const setFitMode = (value: typeof fit) => {
     anchor.current = undefined
     setFit(value)
@@ -397,6 +427,9 @@ export function Reader({
     spread,
     rtl,
     firstSingle: first,
+    ...(webtoon ? { webtoon: true } : {}),
+    ...(webtoon || prefs?.webtoonWidth ? { webtoonWidth } : {}),
+    ...(asked ? { webtoonAsked: true } : {}),
   })
   // Leaving a manga any other way than exit (closing the viewer, another folder) keeps the reading place, but only
   // when it moved since opening: just looking, or a book still loading that could not resume, writes nothing.
@@ -434,12 +467,21 @@ export function Reader({
         heading.current = forward !== rtl ? 'right' : 'left'
       }
       setPage(target[0])
+      if (webtoon) strip.current?.toPage(target[0])
       setPageDropdown(false)
       focusStage()
     }
   }
+  // Past the last page: the first press says so (and names the next book), the second opens it.
+  const pastEnd = () => {
+    if (ending && nextBook) {
+      setEnding(false)
+      handover.current = immersive
+      nextBook.open(immersive)
+      setTimeout(() => (handover.current = false), 5000)
+    } else setEnding(true)
+  }
   const step = (delta: number) => {
-    // Past the last page: the first press says so (and names the next book), the second opens it.
     if (manga && delta > 0 && groupIndex === groups.length - 1) {
       if (ending && nextBook) {
         setEnding(false)
@@ -483,10 +525,37 @@ export function Reader({
         return
       }
       if (event.ctrlKey || event.altKey || event.metaKey) return
-      const direction = readerArrowStep(event.key, rtl)
+      // Webtoon: arrows, space and Page keys scroll a window height; Home and End go to either end.
+      if (webtoon) {
+        const move = (
+          {
+            ArrowDown: 1,
+            ArrowRight: 1,
+            PageDown: 1,
+            ' ': 1,
+            ArrowUp: -1,
+            ArrowLeft: -1,
+            PageUp: -1,
+          } as Record<string, 1 | -1>
+        )[event.key]
+        if (move || event.key === 'Home' || event.key === 'End') {
+          event.preventDefault()
+          event.stopImmediatePropagation()
+          if (!move) strip.current?.edge(event.key === 'End')
+          else if (strip.current?.screen(move)) setEnding(false)
+          else if (move > 0) pastEnd()
+          return
+        }
+      }
+      const direction = webtoon ? 0 : readerArrowStep(event.key, rtl)
       const actions: Record<string, () => void> = {
         ...(!manga ? { w: () => setFitMode('width'), h: () => setFitMode('height') } : {}),
-        d: () => manga && setSpread((value) => !value),
+        d: () => {
+          if (!manga) return
+          if (webtoon) setWebtoon(false)
+          else setSpread((value) => !value)
+        },
+        v: () => manga && setWebtoon((value) => !value),
         r: () => setFitMode(fit),
         g: () => {
           setToolbar(true)
@@ -501,9 +570,9 @@ export function Reader({
           else if (immersive || ownsFullscreen.current) void leaveImmersive()
           else exit()
         },
-        '+': () => changeZoom(zoom * 1.25),
-        '=': () => changeZoom(zoom * 1.25),
-        '-': () => changeZoom(zoom / 1.25),
+        '+': () => (webtoon ? setWebtoonWidth(webtoonWidth + 5) : changeZoom(zoom * 1.25)),
+        '=': () => (webtoon ? setWebtoonWidth(webtoonWidth + 5) : changeZoom(zoom * 1.25)),
+        '-': () => (webtoon ? setWebtoonWidth(webtoonWidth - 5) : changeZoom(zoom / 1.25)),
       }
       const action = direction
         ? () => step(direction)
@@ -551,8 +620,24 @@ export function Reader({
     if (index >= 0 && !groups[groupIndex]?.includes(index)) setPage(index)
   }, [selectedId])
   useEffect(() => {
-    if (active) onActive?.(images[active.indices[0]].id)
+    if (active && !webtoon) onActive?.(images[active.indices[0]].id)
   }, [activeKey])
+  useEffect(() => {
+    if (webtoon && images[page]) onActive?.(images[page].id)
+  }, [webtoon, page])
+  // R-256: suggest webtoon mode once per book when one of its first pages is much taller than wide.
+  useEffect(() => {
+    if (!manga || webtoon || asked) return
+    let alive = true
+    void Promise.all(images.slice(0, 3).map((entry) => load(entry).catch(() => undefined))).then(
+      (sizes) => {
+        if (alive && looksLikeWebtoon(sizes.filter((size) => !!size))) setSuggest(true)
+      }
+    )
+    return () => {
+      alive = false
+    }
+  }, [])
   const pageLabel = (indices: number[]) => indices.map((index) => index + 1).join('–')
   const icon = (kind: 'prev' | 'next' | 'minus' | 'plus' | 'reset' | 'focus' | 'settings') => (
     <Icon
@@ -605,30 +690,48 @@ export function Reader({
           label: tr('單頁'),
           key: 'D',
           icon: 'page-single',
-          pressed: !spread,
-          action: () => setSpread(false),
+          pressed: !spread && !webtoon,
+          action: () => {
+            setWebtoon(false)
+            setSpread(false)
+          },
         },
         {
           label: tr('雙頁'),
           key: 'D',
           icon: 'page-spread',
-          pressed: spread,
-          action: () => setSpread(true),
+          pressed: spread && !webtoon,
+          action: () => {
+            setWebtoon(false)
+            setSpread(true)
+          },
         },
         {
-          label: tr('首張獨立顯示'),
-          key: '',
-          icon: 'page-cover',
-          pressed: first,
-          disabled: !spread,
-          action: () => setFirst((value) => !value),
+          label: tr('條漫'),
+          key: 'V',
+          icon: 'page-webtoon',
+          pressed: webtoon,
+          action: () => setWebtoon(true),
         },
-        {
-          label: rtl ? tr('由右至左') : tr('由左至右'),
-          key: '',
-          icon: rtl ? 'read-rtl' : 'read-ltr',
-          action: () => setRtl((value) => !value),
-        },
+        // First page alone and reading direction do not apply to one continuous column.
+        ...(webtoon
+          ? []
+          : ([
+              {
+                label: tr('首張獨立顯示'),
+                key: '',
+                icon: 'page-cover',
+                pressed: first,
+                disabled: !spread,
+                action: () => setFirst((value) => !value),
+              },
+              {
+                label: rtl ? tr('由右至左') : tr('由左至右'),
+                key: '',
+                icon: rtl ? 'read-rtl' : 'read-ltr',
+                action: () => setRtl((value) => !value),
+              },
+            ] as ReaderTool[])),
       ]
     : [
         {
@@ -709,19 +812,20 @@ export function Reader({
       <nav className="reader-rail" aria-label={tr('閱讀工具')}>
         {modeTools.map((tool) => toolButton(tool, 'right'))}
         <span className="reader-rail-gap" />
-        {[zoomOut, zoomIn, zoomReset].map((tool) => toolButton(tool, 'right'))}
+        {!webtoon && [zoomOut, zoomIn, zoomReset].map((tool) => toolButton(tool, 'right'))}
         <span className="reader-rail-gap" />
         {toolButton(immersiveTool, 'right')}
       </nav>
       <div className="reader-edge reader-edge-bottom" aria-hidden="true" />
       <div className="reader-progress" role="group" aria-label={tr('閱讀進度')}>
-        {iconTool(
-          rtl ? tr('下一頁') : tr('上一頁'),
-          '←',
-          'prev',
-          () => step(rtl ? 1 : -1),
-          rtl ? !canForward : groupIndex === 0
-        )}
+        {!webtoon &&
+          iconTool(
+            rtl ? tr('下一頁') : tr('上一頁'),
+            '←',
+            'prev',
+            () => step(rtl ? 1 : -1),
+            rtl ? !canForward : groupIndex === 0
+          )}
         <div
           ref={track}
           className="reader-progress-track"
@@ -756,13 +860,14 @@ export function Reader({
             </div>
           )}
         </div>
-        {iconTool(
-          rtl ? tr('上一頁') : tr('下一頁'),
-          '→',
-          'next',
-          () => step(rtl ? -1 : 1),
-          rtl ? groupIndex === 0 : !canForward
-        )}
+        {!webtoon &&
+          iconTool(
+            rtl ? tr('上一頁') : tr('下一頁'),
+            '→',
+            'next',
+            () => step(rtl ? -1 : 1),
+            rtl ? groupIndex === 0 : !canForward
+          )}
         <span className="reader-progress-pages">
           {tr('第 {0} / {1} 頁', pageLabel(groups[scrub ?? groupIndex] ?? []), images.length)}
         </span>
@@ -822,13 +927,14 @@ export function Reader({
         {toolbar && (
           <div className="reader-toolbar">
             <Group className="reader-tool-group" gap={3} wrap="nowrap">
-              {iconTool(
-                rtl ? tr('下一頁') : tr('上一頁'),
-                '←',
-                'prev',
-                () => step(rtl ? 1 : -1),
-                rtl ? !canForward : groupIndex === 0
-              )}
+              {!webtoon &&
+                iconTool(
+                  rtl ? tr('下一頁') : tr('上一頁'),
+                  '←',
+                  'prev',
+                  () => step(rtl ? 1 : -1),
+                  rtl ? !canForward : groupIndex === 0
+                )}
               <Tooltip zIndex={510} label={tr('跳至頁碼 · G')}>
                 <div className="reader-page-select">
                   <Select
@@ -858,166 +964,229 @@ export function Reader({
                 </div>
               </Tooltip>
               <span className="reader-page-total">/ {images.length}</span>
-              {iconTool(
-                rtl ? tr('上一頁') : tr('下一頁'),
-                '→',
-                'next',
-                () => step(rtl ? -1 : 1),
-                rtl ? groupIndex === 0 : !canForward
-              )}
+              {!webtoon &&
+                iconTool(
+                  rtl ? tr('上一頁') : tr('下一頁'),
+                  '→',
+                  'next',
+                  () => step(rtl ? -1 : 1),
+                  rtl ? groupIndex === 0 : !canForward
+                )}
             </Group>
             <Group className="reader-tool-group" gap={3} wrap="nowrap">
               {modeTools.map((tool) => toolButton(tool))}
             </Group>
             <Group className="reader-tool-group reader-zoom-tools" gap={3} wrap="nowrap">
-              {toolButton(zoomOut)}
-              <span
-                className="reader-zoom-value"
-                title={manga ? tr('100%＝貼合可視區高度；可繼續放大查看細節') : undefined}
-              >
-                {Math.round(zoom * 100)}%
-              </span>
-              {toolButton(zoomIn)}
-              {toolButton(zoomReset)}
+              {webtoon ? (
+                // The column width replaces fitting and zoom in webtoon mode (Ctrl + wheel changes it too).
+                <Tooltip zIndex={510} label={tr('條漫寬度 · Ctrl＋滾輪')}>
+                  <div className="reader-webtoon-width">
+                    <Slider
+                      aria-label={tr('條漫寬度')}
+                      min={WEBTOON_MIN}
+                      max={WEBTOON_MAX}
+                      step={5}
+                      label={null}
+                      value={webtoonWidth}
+                      onChange={setWebtoonWidth}
+                    />
+                    <span className="reader-zoom-value">{webtoonWidth}%</span>
+                  </div>
+                </Tooltip>
+              ) : (
+                <>
+                  {toolButton(zoomOut)}
+                  <span
+                    className="reader-zoom-value"
+                    title={manga ? tr('100%＝貼合可視區高度；可繼續放大查看細節') : undefined}
+                  >
+                    {Math.round(zoom * 100)}%
+                  </span>
+                  {toolButton(zoomIn)}
+                  {toolButton(zoomReset)}
+                </>
+              )}
               {toolButton(immersiveTool)}
             </Group>
             {extraTools}
           </div>
         )}
-        <div
-          ref={viewport}
-          className={
-            'reader-viewport reader-stage' +
-            (geometry.width > box.width || geometry.height > box.height ? ' can-pan' : '')
-          }
-          tabIndex={0}
-          onPointerDown={(event) => {
-            if (event.button !== 0) return
-            const element = event.currentTarget,
-              pan = geometry.width > box.width || geometry.height > box.height
-            if (pan) event.preventDefault()
-            drag.current = {
-              x: event.clientX,
-              y: event.clientY,
-              left: element.scrollLeft,
-              top: element.scrollTop,
-              pan,
-              moved: false,
-              time: performance.now(),
+        {webtoon ? (
+          <Webtoon
+            ref={strip}
+            images={images}
+            start={page}
+            width={webtoonWidth}
+            onPage={setPage}
+            onWidth={setWebtoonWidth}
+          />
+        ) : (
+          <div
+            ref={viewport}
+            className={
+              'reader-viewport reader-stage' +
+              (geometry.width > box.width || geometry.height > box.height ? ' can-pan' : '')
             }
-            element.setPointerCapture(event.pointerId)
-          }}
-          onPointerMove={(event) => {
-            const start = drag.current
-            if (!start) return
-            if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 5) start.moved = true
-            if (start.pan && start.moved) {
-              event.currentTarget.scrollLeft = start.left - (event.clientX - start.x)
-              event.currentTarget.scrollTop = start.top - (event.clientY - start.y)
-            }
-          }}
-          onPointerUp={(event) => {
-            const start = drag.current
-            drag.current = undefined
-            // R-264: a sideways drag on a page that fits turns it, like a swipe. Short drags stay clicks, a zoomed
-            // page keeps panning, and drags starting at the left, right or bottom edge belong to the edge panels.
-            if (manga && start && !start.pan && start.moved) {
-              const bounds = event.currentTarget.getBoundingClientRect(),
-                dx = event.clientX - start.x,
-                dy = event.clientY - start.y,
-                fast = Math.abs(dx) > 40 && performance.now() - start.time < 250,
-                edge =
-                  start.x - bounds.left < 24 ||
-                  bounds.right - start.x < 24 ||
-                  bounds.bottom - start.y < 24
-              if (
-                !edge &&
-                Math.abs(dx) > Math.abs(dy) &&
-                (Math.abs(dx) > bounds.width * 0.15 || fast)
-              )
-                step(readerArrowStep(dx < 0 ? 'ArrowRight' : 'ArrowLeft', rtl))
-              return
-            }
-            if (
-              manga &&
-              start &&
-              !start.moved &&
-              Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 5
-            ) {
-              const bounds = event.currentTarget.getBoundingClientRect()
-              step(
-                readerArrowStep(
-                  event.clientX < bounds.left + bounds.width / 2 ? 'ArrowLeft' : 'ArrowRight',
-                  rtl
+            tabIndex={0}
+            onPointerDown={(event) => {
+              if (event.button !== 0) return
+              const element = event.currentTarget,
+                pan = geometry.width > box.width || geometry.height > box.height
+              if (pan) event.preventDefault()
+              drag.current = {
+                x: event.clientX,
+                y: event.clientY,
+                left: element.scrollLeft,
+                top: element.scrollTop,
+                pan,
+                moved: false,
+                time: performance.now(),
+              }
+              element.setPointerCapture(event.pointerId)
+            }}
+            onPointerMove={(event) => {
+              const start = drag.current
+              if (!start) return
+              if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 5)
+                start.moved = true
+              if (start.pan && start.moved) {
+                event.currentTarget.scrollLeft = start.left - (event.clientX - start.x)
+                event.currentTarget.scrollTop = start.top - (event.clientY - start.y)
+              }
+            }}
+            onPointerUp={(event) => {
+              const start = drag.current
+              drag.current = undefined
+              // R-264: a sideways drag on a page that fits turns it, like a swipe. Short drags stay clicks, a zoomed
+              // page keeps panning, and drags starting at the left, right or bottom edge belong to the edge panels.
+              if (manga && start && !start.pan && start.moved) {
+                const bounds = event.currentTarget.getBoundingClientRect(),
+                  dx = event.clientX - start.x,
+                  dy = event.clientY - start.y,
+                  fast = Math.abs(dx) > 40 && performance.now() - start.time < 250,
+                  edge =
+                    start.x - bounds.left < 24 ||
+                    bounds.right - start.x < 24 ||
+                    bounds.bottom - start.y < 24
+                if (
+                  !edge &&
+                  Math.abs(dx) > Math.abs(dy) &&
+                  (Math.abs(dx) > bounds.width * 0.15 || fast)
                 )
-              )
-            }
-          }}
-          onPointerCancel={() => {
-            drag.current = undefined
-          }}
-        >
-          <div className="reader-surface" style={{ width: surface.width, height: surface.height }}>
-            {frames.map((frame) => {
-              const size = spreadGeometry(frame.sizes, fit, box, zoom),
-                isActive = frame.key === activeKey,
-                isPrevious = !!active && frame.token < active.token
-              return (
-                <div
-                  key={frame.key}
-                  className={
-                    'reader-frame-layer ' +
-                    (isActive ? 'is-active' : isPrevious ? 'is-previous' : 'is-pending') +
-                    (isActive && frame.enter ? ' enter-' + frame.enter : '') +
-                    (isPrevious && active?.enter
-                      ? ' leave-' + (active.enter === 'right' ? 'left' : 'right')
-                      : '')
-                  }
-                  aria-hidden={!isActive}
-                  data-pages={pageLabel(frame.indices)}
-                  style={{ zIndex: isActive ? 2 : isPrevious ? 1 : 3 }}
-                >
+                  step(readerArrowStep(dx < 0 ? 'ArrowRight' : 'ArrowLeft', rtl))
+                return
+              }
+              if (
+                manga &&
+                start &&
+                !start.moved &&
+                Math.hypot(event.clientX - start.x, event.clientY - start.y) <= 5
+              ) {
+                const bounds = event.currentTarget.getBoundingClientRect()
+                step(
+                  readerArrowStep(
+                    event.clientX < bounds.left + bounds.width / 2 ? 'ArrowLeft' : 'ArrowRight',
+                    rtl
+                  )
+                )
+              }
+            }}
+            onPointerCancel={() => {
+              drag.current = undefined
+            }}
+          >
+            <div
+              className="reader-surface"
+              style={{ width: surface.width, height: surface.height }}
+            >
+              {frames.map((frame) => {
+                const size = spreadGeometry(frame.sizes, fit, box, zoom),
+                  isActive = frame.key === activeKey,
+                  isPrevious = !!active && frame.token < active.token
+                return (
                   <div
-                    className={'reader-spread' + (rtl ? ' rtl' : '')}
-                    style={{
-                      left: Math.max(0, (surface.width - size.width) / 2),
-                      top: Math.max(0, (surface.height - size.height) / 2),
-                      width: size.width,
-                      height: size.height,
-                    }}
+                    key={frame.key}
+                    className={
+                      'reader-frame-layer ' +
+                      (isActive ? 'is-active' : isPrevious ? 'is-previous' : 'is-pending') +
+                      (isActive && frame.enter ? ' enter-' + frame.enter : '') +
+                      (isPrevious && active?.enter
+                        ? ' leave-' + (active.enter === 'right' ? 'left' : 'right')
+                        : '')
+                    }
+                    aria-hidden={!isActive}
+                    data-pages={pageLabel(frame.indices)}
+                    style={{ zIndex: isActive ? 2 : isPrevious ? 1 : 3 }}
                   >
-                    {frame.indices.map((index, position) => (
-                      <img
-                        key={images[index].id}
-                        ref={(image) => {
-                          if (image?.complete && image.naturalWidth)
-                            void frameReady(image, frame, index)
-                        }}
-                        src={images[index].url}
-                        alt={images[index].name}
-                        draggable={false}
-                        style={{ width: size.widths[position], height: size.height }}
-                        onLoad={(event) => void frameReady(event.currentTarget, frame, index)}
-                        onError={() => {
-                          if (frame.token === sequence.current) {
-                            setLoading(false)
-                            setError(tr('無法載入 ') + images[index].name)
-                          }
-                        }}
-                      />
-                    ))}
+                    <div
+                      className={'reader-spread' + (rtl ? ' rtl' : '')}
+                      style={{
+                        left: Math.max(0, (surface.width - size.width) / 2),
+                        top: Math.max(0, (surface.height - size.height) / 2),
+                        width: size.width,
+                        height: size.height,
+                      }}
+                    >
+                      {frame.indices.map((index, position) => (
+                        <img
+                          key={images[index].id}
+                          ref={(image) => {
+                            if (image?.complete && image.naturalWidth)
+                              void frameReady(image, frame, index)
+                          }}
+                          src={images[index].url}
+                          alt={images[index].name}
+                          draggable={false}
+                          style={{ width: size.widths[position], height: size.height }}
+                          onLoad={(event) => void frameReady(event.currentTarget, frame, index)}
+                          onError={() => {
+                            if (frame.token === sequence.current) {
+                              setLoading(false)
+                              setError(tr('無法載入 ') + images[index].name)
+                            }
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
+                )
+              })}
+              {!frames.length && (
+                <div className="reader-loading">
+                  {images.length ? tr('載入圖片…') : tr('沒有圖片')}
                 </div>
-              )
-            })}
-            {!frames.length && (
-              <div className="reader-loading">
-                {images.length ? tr('載入圖片…') : tr('沒有圖片')}
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
         {edges}
+        {suggest && (
+          <div className="reader-notice" role="status">
+            <span>{tr('這本看起來是條漫')}</span>
+            <Button
+              size="compact-xs"
+              variant="light"
+              onClick={() => {
+                setSuggest(false)
+                setAsked(true)
+                setWebtoon(true)
+              }}
+            >
+              {tr('切換到條漫')}
+            </Button>
+            <Button
+              size="compact-xs"
+              variant="subtle"
+              onClick={() => {
+                setSuggest(false)
+                setAsked(true)
+                focusStage()
+              }}
+            >
+              {tr('不用')}
+            </Button>
+          </div>
+        )}
         {resumed && resumeAt !== undefined && (
           <div className="reader-notice" role="status">
             <span>{tr('從第 {0} 頁繼續', String(resumeAt + 1))}</span>
@@ -1056,7 +1225,11 @@ export function Reader({
         {toolbar && (
           <div className="reader-info" aria-live="polite">
             <strong>
-              {active ? tr('第 {0} / {1} 頁', pageLabel(active.indices), images.length) : ''}
+              {webtoon
+                ? tr('第 {0} / {1} 頁', String(page + 1), images.length)
+                : active
+                  ? tr('第 {0} / {1} 頁', pageLabel(active.indices), images.length)
+                  : ''}
             </strong>
             <span
               className="reader-image-info"
@@ -1073,7 +1246,9 @@ export function Reader({
                 )
                 .join(' ｜ ')}
             >
-              {error ? (
+              {webtoon ? (
+                images[page]?.name
+              ) : error ? (
                 <span role="alert">
                   {error}
                   <Button
@@ -1125,7 +1300,11 @@ export function Reader({
                 </ActionIcon>
               </Tooltip>
             )}
-            <span>{tr('滾輪縮放 · F11 沉浸閱讀 · ESC 返回')}</span>
+            <span>
+              {webtoon
+                ? tr('Ctrl＋滾輪調整寬度 · V 切換條漫 · ESC 返回')
+                : tr('滾輪縮放 · F11 沉浸閱讀 · ESC 返回')}
+            </span>
           </div>
         )}
       </div>
