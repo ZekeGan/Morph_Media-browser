@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-> 最後確認：2026-11-12（R-321、R-334、R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
+> 最後確認：2026-11-13（R-293、R-329、R-321、R-334、R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
 
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
@@ -16,7 +16,7 @@
 - 標籤是 `命名空間:名稱`。除完整的 `TAGS` 外，每個命名空間另成一個標籤欄位（`LANGUAGE`、`PARODY`、`CHARACTER`、`ARTIST`、`GROUP`、`COSPLAYER`、`FEMALE`、`MALE`、`MIXED`、`OTHER`、`RECLASS`），值不含命名空間前綴；沒有該命名空間的標籤就不產生欄位。未知命名空間只留在 `TAGS`。
 - 取得範圍與公開頁面相同（公開 API；未登入、不讀網頁），登入後才看得到的標籤不會取得。
 
-- **只貼網址**：資料夾設定的「資料」分頁上方的「從網站補充資訊」不再先選來源；由網址網域自動辨識（純數字視為 Steam App ID），辨識成功才可按「取得預覽」，未知網址就地顯示錯誤。不依分類限制來源。
+- **只貼網址**：資料夾設定的「資料」分頁上方的「從網站補充資訊」不再先選來源；由網址網域自動辨識（純數字視為 Steam App ID），辨識成功時輸入框右側顯示站名（商店網址顯示「經 VNDB」），才可按「取得預覽」；未知網址就地顯示錯誤。說明提示只有一句與範例，支援的網站依種類列在可展開的「支援的網站」裡（R-329）。不依分類限制來源。
 
 ## Steam
 
@@ -36,7 +36,7 @@
 | --- | --- | --- |
 | 漫畫／動畫 | E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、MangaDex、Kitsu、MangaUpdates | MangaDex 讀 `/manga/<UUID>`，封面另由 `cover_art` 組成 `uploads.mangadex.org` 網址；Kitsu 的 API 只接受 `Accept: application/vnd.api+json`，類型在 `included`；MangaUpdates 網址是 base36，換成數字 ID 查 API。E-H 系列沿用 [gdata](https://ehwiki.org/wiki/API)，封面縮圖在 `ehgt.org`（JPG、PNG 或 WebP）；Hitomi 僅解析公開 galleryinfo JSON，絕不執行遠端 JS；[Bangumi](https://bangumi.github.io/api/)／[AniList](https://docs.anilist.co/guide/auth/) 讀公開作品條目 |
 | 同人／商店 | DLsite、BOOTH | BOOTH 讀商品頁旁的 `<商品>.json`（社團、分類、標籤、價格、成人標記），封面限 `booth.pximg.net`。DLsite：商品頁的作品 ID（RJ 等）。先讀 `/{站}/api/=/product.json?workno=` 取名稱：社團 `MAKER_NAME`、作品類型名稱、系列、ジャンル（`GENRES`）、作者依職位各成一個標籤欄位（`CREATED_BY`、`SCENARIO_BY`、`ILLUST_BY`、`VOICE_BY`、`MUSIC_BY`…，鍵名照來源）；再讀 `product/info/ajax` 補價格、下載數、評分，這個請求失敗不影響匯入。封面限 `img.dlsite.jp` |
-| 遊戲 | Steam、VNDB | Steam 商店公開資料；[VNDB Kana](https://api.vndb.org/kana) 的公開視覺小說條目 |
+| 遊戲 | Steam、VNDB；Getchu、批評空間、Melonbooks、虎之穴、FANZA 的遊戲網址經 VNDB | Steam 商店公開資料；[VNDB Kana](https://api.vndb.org/kana) 的公開視覺小說條目。商店網址（R-293）不讀商店頁：從網址取出作品 ID，以 VNDB 發行版本記錄的外部連結（`release` 的 `extlink` 篩選，例如 `["getchu", 36221]`、`["egs", 3193]`、`["dmm", "dlsoft.dmm.co.jp/detail/…/"]`）找出作品，以 VNDB 資料預覽；不需要年齡確認、金鑰，也不受地區限制。VNDB 沒有該連結時提示改貼 VNDB 或 DLsite 網址。只涵蓋遊戲，同人誌不在 VNDB |
 | 音樂 | MusicBrainz、Apple Music、Deezer | [公開發行版本資料](https://musicbrainz.org/doc/MusicBrainz_API)，不因此加入音樂播放器；Apple Music 用 iTunes Lookup（專輯＋曲目，封面換成 600×600）；Deezer 讀公開專輯 API |
 | 書籍 | Open Library、Google Books、小説家になろう、カクヨム | [公開書目與作者](https://openlibrary.org/developers/api)，作者補讀最多三筆；Google Books 讀 `volumes/<ID>`（不填金鑰時共用匿名額度，常遇到 429，金鑰見 R-285）；なろう用官方小說 API（R18 的 novel18 走 `novel18api`）；カクヨム讀作品頁內嵌的 Next.js 資料，不執行頁面程式 |
 | 網頁 | 其他任何 HTTPS 網址（R-283） | 只讀頁面自己宣告的 JSON-LD、OpenGraph／Twitter、`<title>`：標題、簡介、作者、日期、關鍵字、網站名稱與封面。只接受不含帳號密碼的 HTTPS、不允許本機與內網位址（轉址也逐次檢查，最多三次）、2 MB、15 秒；依標頭或 `<meta charset>` 解碼（含 Shift_JIS、EUC-JP）；以只往前的掃描讀標籤，不執行頁面程式。封面主機無法事先列名單，一律經圖片網址匯入的安全下載（HTTPS、非內網、大小與影像格式檢查）。 |
@@ -55,7 +55,7 @@
 | Bangumi | 個人權杖（選填） | Bearer；沒填時 404 改提示「找不到作品，或是需要權杖的成人作品」並可前往設定 |
 | Danbooru | 帳號＋API Key（選填） | 查詢參數 `login`、`api_key`，提高額度 |
 | Google Books | API Key（選填） | 不填時共用匿名額度，常回 429 |
-| FANZA／DMM | API ID＋Affiliate ID | 網址裡的 `cid`；`dmm.co.jp` 走 FANZA、`dmm.com` 走 DMM.com；預覽標示「Powered by FANZA Webサービス」 |
+| FANZA／DMM | API ID＋Affiliate ID（選填） | 沒填時遊戲網址改經 VNDB 查（R-293）；網址裡的 `cid`；`dmm.co.jp` 走 FANZA、`dmm.com` 走 DMM.com；預覽標示「Powered by FANZA Webサービス」 |
 
 金鑰類來源在使用者填入金鑰前只用固定回應測試（`tests/keys.test.ts`），尚未實站驗證。
 
@@ -103,11 +103,11 @@ Hitomi 的作品資料主機是 `ltn.gold-usergeneratedcontent.net`（2026-11 �
 
 ## 未接入的來源
 
-候選網站與各自需要的資料、特殊處理登記在 [需求清單](WORK_ITEMS.md#已登記未核定) R-283～R-293；接入前再驗證官方能力、條款與限流。以下網站不接入：
+新增網站前先驗證官方能力、條款與限流。需要年齡確認或沒有 API 的商店（Getchu、批評空間、Melonbooks、虎之穴）不解析網頁，遊戲改經 VNDB（R-293）；只在這些商店賣的同人誌不接入。以下網站不接入：
 
 | 網站 | 原因 |
 | --- | --- |
-| IMDb | 沒有公開 API、條款禁止抓取；以 OMDb 的 tt 編號間接對應 |
+| IMDb | 沒有公開 API、條款禁止抓取；改用 TMDB |
 | Twitter／X | API 需付費 |
 | Fanbox、Fantia | 只能用登入 Cookie 取得 |
 | AO3 | 對程式請求一律回 418「暫時拒絕」（2026-11-12 實測），屬擋機器人保護，不繞過 |

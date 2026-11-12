@@ -56,7 +56,8 @@ export const sourceConfig: Record<
     requestHosts: ['api.dmm.com'],
     coverHosts: ['pics.dmm.co.jp', 'pics.dmm.com', 'doujin-assets.dmm.co.jp'],
     keySite: 'fanza',
-    keyNeed: 'required',
+    // R-293: without the key, games are looked up through VNDB instead.
+    keyNeed: 'optional',
   },
   // R-292
   booth: { requestHosts: ['booth.pm'], coverHosts: ['booth.pximg.net'] },

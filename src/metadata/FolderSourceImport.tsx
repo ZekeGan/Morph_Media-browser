@@ -58,7 +58,7 @@ export function FolderSourceImport({
   const { source, setSource, preview, setPreview, keys, setKeys, cover, setCover } = importer
   // The source is recognised from the pasted address alone; the preview button only works for a known site.
   const detected = sourceForUrl(source.trim()),
-    detectedName = metadataSources.find((item) => item.id === detected)?.name
+    [listOpen, setListOpen] = useState(false)
   // R-285: a site that needs the user's own key says so here, with a way to the settings, before anything is asked.
   const keyed = detected ? keySite(detected) : undefined,
     [keyStatus, setKeyStatus] = useState<Record<string, KeyStatus>>()
@@ -73,6 +73,13 @@ export function FolderSourceImport({
       alive = false
     }
   }, [keyed?.id])
+  // R-293: a store address (or FANZA without the key) is looked up through VNDB, and the badge says so.
+  const viaVndb =
+    (detected === 'vndb' && !/^https:\/\/vndb\.org\//.test(source.trim())) ||
+    (detected === 'fanza' && !!keyStatus && !keyStatus.fanza?.set)
+  const detectedName = viaVndb
+    ? tr('經 VNDB')
+    : metadataSources.find((item) => item.id === detected)?.name
   const missingKey =
     !!keyed && keyed.need === 'required' && !!keyStatus && !keyStatus[keyed.id]?.set
   const openKeys = () =>
@@ -113,10 +120,7 @@ export function FolderSourceImport({
             label={
               <HelpLabel
                 label={tr('作品網址或 ID')}
-                help={
-                  tr('直接貼上網址，自動辨識來源。支援：') +
-                  metadataSources.map((item) => item.name).join('、')
-                }
+                help={tr('貼上作品頁的網址，會自動認出是哪個網站，例如 https://vndb.org/v97')}
               />
             }
             placeholder={tr('貼上作品網址（Steam 可直接輸入 App ID）')}
@@ -135,6 +139,38 @@ export function FolderSourceImport({
               setPreview(undefined)
             }}
           />
+          {/* R-329: the supported sites, by kind, only when asked for. */}
+          <div>
+            <Button
+              variant="subtle"
+              size="compact-xs"
+              aria-expanded={listOpen}
+              onClick={() => setListOpen((open) => !open)}
+            >
+              {listOpen ? tr('收合支援的網站') : tr('支援的網站')}
+            </Button>
+            {listOpen && (
+              <dl className="source-site-list">
+                {[...new Set(metadataSources.map((item) => item.group))].map((group) => (
+                  <div key={group}>
+                    <dt>{tr(group)}</dt>
+                    <dd>
+                      {metadataSources
+                        .filter((item) => item.group === group)
+                        .map((item) => item.name)
+                        .join('、')}
+                    </dd>
+                  </div>
+                ))}
+                <div>
+                  <dt>{tr('經 VNDB')}</dt>
+                  <dd>
+                    Getchu、{tr('批評空間')}、Melonbooks、{tr('虎之穴')}、FANZA
+                  </dd>
+                </div>
+              </dl>
+            )}
+          </div>
           <Group justify="flex-end">
             <Button
               disabled={disabled || fieldDirty || !detected || missingKey}

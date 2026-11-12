@@ -342,7 +342,7 @@ test('Locale Emulator launches go through LEProc.exe and direct launches are tim
 test('play time is stored locally per folder and validated (R-308)', async (t) => {
   await fs.mkdir(base, { recursive: true })
   const root = await fs.mkdtemp(path.join(base, 'game-playtime-'))
-  t.after(() => fs.rm(root, { recursive: true, force: true }))
+  t.after(() => fs.rm(root, { recursive: true, force: true, maxRetries: 5 }))
   const store = new WorkspaceStore(root)
   await store.init()
   const id = '12345678-1234-1234-1234-123456789abc'

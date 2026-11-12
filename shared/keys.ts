@@ -81,12 +81,12 @@ export const keySites: KeySite[] = [
   {
     id: 'fanza',
     name: 'FANZA（DMM）',
-    purpose: 'DMM／FANZA 商品',
+    purpose: 'DMM／FANZA 的同人誌與其他商品；沒填時遊戲改經 VNDB 查',
     fields: [
       { id: 'apiId', label: 'API ID' },
       { id: 'affiliateId', label: 'Affiliate ID' },
     ],
-    need: 'required',
+    need: 'optional',
     help: 'fanza',
     steps:
       '在 affiliate.dmm.com 註冊 DMM アフィリエイト，到「Webサービス」取得 API ID 與 Affiliate ID（後綴 -990～-999）。',

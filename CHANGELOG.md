@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Website sources: game pages on Getchu, ErogameScape, Melonbooks, Toranoana and FANZA (without a key) are looked up through VNDB, so no age check, key or region matters; the address field's help is one line, with the supported sites in a list you can open (R-293, R-329).
 - Website keys: only sites without a keyless alternative remain (TMDB, SteamGridDB, FANZA, and the optional Bangumi, Danbooru and Google Books keys); MyAnimeList, OMDb, Trakt, TheTVDB, Last.fm, Discogs, AniDB, IGDB, RAWG, Giant Bomb and Comic Vine are read as ordinary web pages now (R-321).
 - Games: an EXE action can start with any Locale Emulator profile (Simplified Chinese and so on), not just Japanese; Flash games (.swf) start in the Flash player chosen in the app settings (R-319, R-320).
 - Security: web pages and image addresses connect only to the address that passed the local-network check, closing a DNS-rebinding gap (R-334).

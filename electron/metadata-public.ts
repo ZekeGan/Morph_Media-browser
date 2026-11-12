@@ -69,6 +69,9 @@ export async function publicMetadata(
   const keys = config.keySite ? ((await options.keyFor?.(config.keySite)) ?? {}) : {}
   if (config.keySite && config.keyNeed === 'required' && !Object.keys(keys).length)
     throw new Error(KEY_MISSING)
+  // R-293: a DMM/FANZA address without the user's key is looked up through VNDB (games only).
+  if (provider === 'fanza' && !Object.keys(keys).length)
+    return publicMetadata('vndb', source, fetcher, options)
   const request = async (url: string, body?: unknown, extra: RequestExtra = {}) => {
     const target = new URL(url)
     if (

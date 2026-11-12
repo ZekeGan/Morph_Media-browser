@@ -4835,12 +4835,6 @@
     "ja": "このアドレスの取得元を判別できません",
     "es": "No se reconoce el origen de esta dirección"
   },
-  "直接貼上網址，自動辨識來源。支援：": {
-    "zh-CN": "直接粘贴网址，自动识别来源。支持：",
-    "en": "Paste the address and the source is recognised automatically. Supported: ",
-    "ja": "アドレスを貼り付けるだけで取得元を自動判別します。対応: ",
-    "es": "Pega la dirección y el origen se reconoce automáticamente. Compatibles: "
-  },
   "貼上作品網址（Steam 可直接輸入 App ID）": {
     "zh-CN": "粘贴作品网址（Steam 可直接输入 App ID）",
     "en": "Paste the work's address (for Steam, the App ID works too)",
@@ -8705,12 +8699,6 @@
     "ja": "ドラマ",
     "es": "Series"
   },
-  "DMM／FANZA 商品": {
-    "zh-CN": "DMM／FANZA 商品",
-    "en": "DMM / FANZA products",
-    "ja": "DMM／FANZA の商品",
-    "es": "Productos de DMM / FANZA"
-  },
   "在 affiliate.dmm.com 註冊 DMM アフィリエイト，到「Webサービス」取得 API ID 與 Affiliate ID（後綴 -990～-999）。": {
     "zh-CN": "在 affiliate.dmm.com 注册 DMM アフィリエイト，到“Webサービス”获取 API ID 与 Affiliate ID（后缀 -990～-999）。",
     "en": "Join the DMM affiliate program at affiliate.dmm.com and get the API ID and Affiliate ID (ending -990 to -999) under Web Services.",
@@ -11530,5 +11518,53 @@
     "en": "Invalid Flash player path",
     "ja": "Flash プレーヤーのパスが正しくありません",
     "es": "Ruta del reproductor de Flash no válida"
+  },
+  "經 VNDB": {
+    "zh-CN": "经 VNDB",
+    "en": "via VNDB",
+    "ja": "VNDB 経由",
+    "es": "vía VNDB"
+  },
+  "貼上作品頁的網址，會自動認出是哪個網站，例如 https://vndb.org/v97": {
+    "zh-CN": "粘贴作品页的网址，会自动认出是哪个网站，例如 https://vndb.org/v97",
+    "en": "Paste the work page's address and the site is recognised, e.g. https://vndb.org/v97",
+    "ja": "作品ページの URL を貼ると、どのサイトか自動で判別します。例：https://vndb.org/v97",
+    "es": "Pega la dirección de la página de la obra y se reconoce el sitio, p. ej. https://vndb.org/v97"
+  },
+  "收合支援的網站": {
+    "zh-CN": "收起支持的网站",
+    "en": "Hide supported sites",
+    "ja": "対応サイトを閉じる",
+    "es": "Ocultar sitios admitidos"
+  },
+  "支援的網站": {
+    "zh-CN": "支持的网站",
+    "en": "Supported sites",
+    "ja": "対応サイト",
+    "es": "Sitios admitidos"
+  },
+  "批評空間": {
+    "zh-CN": "批评空间",
+    "en": "ErogameScape",
+    "ja": "批評空間",
+    "es": "ErogameScape"
+  },
+  "虎之穴": {
+    "zh-CN": "虎之穴",
+    "en": "Toranoana",
+    "ja": "とらのあな",
+    "es": "Toranoana"
+  },
+  "VNDB 沒有這個商店網址的作品；可以改貼 VNDB 或 DLsite 的作品網址": {
+    "zh-CN": "VNDB 没有这个商店网址的作品；可以改贴 VNDB 或 DLsite 的作品网址",
+    "en": "VNDB has no work with this store address; paste the VNDB or DLsite page instead",
+    "ja": "VNDB にこのストア URL の作品がありません。VNDB か DLsite の作品 URL を貼ってください",
+    "es": "VNDB no tiene ninguna obra con esta dirección de tienda; pega la página de VNDB o DLsite"
+  },
+  "DMM／FANZA 的同人誌與其他商品；沒填時遊戲改經 VNDB 查": {
+    "zh-CN": "DMM／FANZA 的同人志与其他商品；没填时游戏改经 VNDB 查",
+    "en": "DMM / FANZA doujinshi and other items; without it, games are looked up through VNDB",
+    "ja": "DMM／FANZA の同人誌やその他の商品。未入力の場合、ゲームは VNDB 経由で調べます",
+    "es": "Doujinshi y otros artículos de DMM / FANZA; sin ella, los juegos se buscan en VNDB"
   }
 }
