@@ -1,6 +1,6 @@
 # 現況架構與定位
 
-> 最後確認：2026-11-11。模組責任、資料流與安全邊界；改動模組責任或資料流時同批更新本頁的圖。
+> 最後確認：2026-11-12。模組責任、資料流與安全邊界；改動模組責任或資料流時同批更新本頁的圖。
 
 依目前程式整理；版本與依賴查 package.json。此頁只持有模組責任，功能規格由 [任務索引](README.md) 導向。舊 Next.js／View／Cell／DataType／JsonStorage 原型不是目標資料模型。
 
@@ -31,7 +31,7 @@ flowchart LR
 flowchart TB
   R["renderer · src/<br/>App · DesktopShell · BrowseWorkspace<br/>Editor · FolderPanel · Viewers"]
   P["preload<br/>window.media · explorer · desktop"]
-  M["main · electron/<br/>Library · Explorer · game-detection<br/>SearchIndex · WorkspaceStore · metadata"]
+  M["main · electron/<br/>Library · Explorer · game-detection · game-extras<br/>SearchIndex · WorkspaceStore · metadata"]
   subgraph S["Storage and outside"]
     direction LR
     Rec[("Portable records<br/>source of truth")]
@@ -39,6 +39,7 @@ flowchart TB
     SQ[("Search index<br/>rebuildable")]
     Set[("Local settings<br/>%APPDATA%")]
     Net(["External sites"])
+    Games(["Games and Steam<br/>started by the user"])
   end
   R <-->|"requests / results"| P
   P <-->|IPC| M
@@ -47,6 +48,8 @@ flowchart TB
   M --> SQ
   M --> Set
   M --> Net
+  M -->|"launch, Steam URL"| Games
+  Games -.->|"process ends: play time"| Set
   classDef source fill:#FAEEDA,stroke:#854F0B,color:#633806
   class Rec source
 ```
@@ -66,6 +69,7 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | 原子檔案／路徑 | [files](../electron/files.ts)、[hidden](../electron/hidden.ts) | safePath/within、atomicJson、記錄備份／指紋、Windows 隱藏目錄 |
 | 媒體／縮圖／字幕／遊戲動作 | [explorer](../electron/explorer.ts) `Explorer` | attributes、request 分派；其餘函式在同層模組並由 `Explorer` 轉呼叫：[內容列表](../electron/explorer-content.ts)、[串流與縮圖](../electron/explorer-stream.ts)、[外部資料與圖片網址](../electron/explorer-source.ts)、[檔案總覽](../electron/explorer-overview.ts)、[圖片網址](../electron/image-url.ts)、[媒體檔案分類](../electron/media-files.ts)；另有 content/overview/stream/thumbnail、目標綁定與執行、外部資料套用 |
 | 遊戲辨識 | [game-detection](../electron/game-detection.ts) | 有限探測、證據與 ROOT 邊界 |
+| 遊戲附加功能 | [game-extras](../electron/game-extras.ts) | Steam App ID、商店網址、依引擎推算存檔資料夾、附帶程式與說明書建議（R-305～R-310），全部唯讀；由 `Explorer` 的 gameExtras／runExtra 等請求呼叫。直接啟動的 EXE 結束時，main 把遊玩時間寫進 `WorkspaceStore`（本機設定，不進可攜記錄） |
 | 搜尋索引 | [search-index](../electron/search-index.ts) `SearchIndex` | Node SQLite、Unicode 子字串 grams、分頁；可重建，非資料來源 |
 | 本機 UI 設定 | [workspace](../electron/workspace.ts) `WorkspaceStore` | 群組／排序／窗格／偏好，驗證、保存、尺寸正規化；settings-package／settings-file 處理允許清單、移轉預覽與備份復原 |
 | 外部來源 | [metadata](../electron/metadata.ts) | [sources](../shared/sources.ts) 分類註冊、metadata（E-Hentai、Steam）與 metadata-public（共用請求、主機檢查、封面）固定端點；[sources/](../electron/sources/config.ts) 一站一個轉接器加共用來源設定；[metadata-common](../electron/metadata-common.ts) 大小限制與錯誤分類、來源預覽與追溯 |
