@@ -67,6 +67,8 @@ try {
   await page.getByRole('button', { name: 'story.txt', exact: true }).click()
   await reader().waitFor()
   // Chapter 0 is the foreword; the ruby renders as <ruby>.
+  // The book loads after the dialog opens; wait for its chapter label.
+  await page.waitForFunction(() => !!document.querySelector('.novel-info strong')?.textContent)
   assert.match(await info(), /第 1 \/ 4 章/)
   await page.keyboard.press('ArrowRight')
   await page.keyboard.press('ArrowRight')
