@@ -11,14 +11,9 @@
 
 ## 待你決定
 
-- **金鑰（提醒）**：需要你到「應用程式設定 → 網站金鑰」填入自己的金鑰才能實測：TMDB、SteamGridDB、FANZA（必填），Bangumi 權杖、Danbooru、Google Books（選填）。沒填之前只用固定回應測試。其餘金鑰來源已於 2026-11-12 移除（R-321）。
-
 - **R-293 與批評空間（需要你決定）**：探測需要年齡確認的成人網站（Getchu、Melonbooks、虎之穴，以及批評空間）的頁面結構時，我這邊的自動權限檢查擋下了請求，所以沒有實作。要繼續的話，需要你在設定裡允許這類請求，或親自提供這幾站作品頁的 HTML 結構（存成檔案），我再用固定回應寫轉接器與測試。原需求：每站在設定提供「我已成年」勾選，勾選後才帶年齡確認 Cookie。Getchu（EUC-JP 編碼）、Melonbooks、虎之穴（改版較頻繁）。
 
 ## 待查收
-
-- **R-285～R-290** 使用者自備金鑰＋金鑰類來源（TMDB、MyAnimeList、OMDb、Trakt、RAWG、Giant Bomb、Comic Vine、SteamGridDB、Last.fm、Discogs、Bangumi 權杖、Danbooru／Google Books 選填金鑰、IGDB、TheTVDB、FANZA、AniDB） ｜大｜安全邊界｜設定｜領域：metadata、appearance｜依賴：無
-  驗收：「應用程式設定 → 網站金鑰」每站一列；填一組你有的金鑰 →「保存並測試」顯示「可用」；在資料夾貼該站作品網址 → 預覽成功（TMDB／RAWG／FANZA 有出處標示）。沒填金鑰時貼網址 → 就地提示並可「前往設定」。**需要你的金鑰才能實站驗證**，目前只用固定回應測試。
 
 - **R-291** 待查證的金鑰來源 ｜小｜一般｜無｜領域：metadata｜依賴：R-285
   驗收：看規格「查證過、另行登記的金鑰來源」：Spotify 不接入（原因已記），Gelbooru、DeviantArt、MobyGames 另登記為 R-312～R-314。
