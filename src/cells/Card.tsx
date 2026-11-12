@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react'
 import { httpUrl } from '../../shared/fields'
 import { useFolderStats } from '../browse/folderStats'
 import { formatLastPlayed, formatPlayTime, usePlaytime } from '../game/playtime'
+import { latestNovel } from '../../shared/novel'
 import { cellColors } from './cellStyle'
 import './cells.css'
 import { yesNo } from '../editor/fieldTypes'
@@ -150,6 +151,21 @@ function CellValue({ cell, row, open, preview = false, project }: CellProps) {
     (cell.systemInfo === 'playTime' || cell.systemInfo === 'lastPlayed')
   )
     return <PlayInfo cell={cell} row={row} />
+  if (
+    cell.kind === 'system-info' &&
+    (cell.systemInfo === 'readProgress' || cell.systemInfo === 'lastRead')
+  ) {
+    // R-282: the text book in this folder read most recently.
+    const novel = latestNovel(row?.record?.details?.novels)
+    if (!novel) return <span className="muted">{tr('尚未閱讀')}</span>
+    return (
+      <span>
+        {cell.systemInfo === 'readProgress'
+          ? Math.round(novel.percent * 100) + '%'
+          : new Date(novel.updated).toLocaleDateString(currentLocale())}
+      </span>
+    )
+  }
   if (cell.kind === 'system-info') {
     const kinds: Record<string, string> = {
       book: tr('書籍／漫畫'),

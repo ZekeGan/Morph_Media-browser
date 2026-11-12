@@ -551,6 +551,8 @@ export function EditorInspector(props: EditorInspectorProps) {
                           { value: 'size', label: tr('容量') },
                           { value: 'playTime', label: tr('遊玩時間') },
                           { value: 'lastPlayed', label: tr('最後遊玩') },
+                          { value: 'readProgress', label: tr('閱讀進度') },
+                          { value: 'lastRead', label: tr('最後閱讀') },
                         ]}
                         onChange={(value) =>
                           updateCell({ systemInfo: value as Cell['systemInfo'] })

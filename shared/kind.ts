@@ -13,6 +13,8 @@ export interface KindSample {
   images: number
   videos: number
   audio: number
+  // Text books (TXT, EPUB), R-282.
+  texts?: number
   total: number
 }
 export const sampleOf = (entries: { kind: string }[]): KindSample => {
@@ -21,6 +23,7 @@ export const sampleOf = (entries: { kind: string }[]): KindSample => {
     images: files.filter((entry) => entry.kind === 'image').length,
     videos: files.filter((entry) => entry.kind === 'video').length,
     audio: files.filter((entry) => entry.kind === 'audio').length,
+    texts: files.filter((entry) => entry.kind === 'text').length,
     total: files.length,
   }
 }
@@ -41,6 +44,9 @@ export function detectFolderKind(row: FolderRow, sample?: KindSample): DetectedK
     if ((sample.videos + sample.audio) * 2 >= sample.total)
       return { kind: 'media', source: 'content' }
     if (sample.images >= 3 && sample.images * 10 >= sample.total * 7)
+      return { kind: 'book', source: 'content' }
+    // A folder of novels: mostly TXT or EPUB files.
+    if ((sample.texts ?? 0) >= 1 && (sample.texts ?? 0) * 2 >= sample.total)
       return { kind: 'book', source: 'content' }
   }
   return { kind: 'general', source: 'default' }

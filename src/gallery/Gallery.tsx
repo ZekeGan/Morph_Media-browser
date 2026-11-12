@@ -33,6 +33,7 @@ const friendlyType = (entry: MediaEntry) => {
     subtitle: tr('字幕'),
     archive: tr('壓縮檔'),
     pdf: tr('PDF 文件'),
+    text: tr('文字書'),
     folder: tr('資料夾'),
     other: tr('其他'),
   }[entry.kind]

@@ -1,0 +1,202 @@
+/* R-282: novel reader. The frame, toolbar and info bar reuse the image reader's classes; only the reading area has
+   its own paper-like backgrounds, chosen in the reader's settings. */
+.novel-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.novel-heading {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 40%;
+    padding: 0 6px;
+    line-height: 1.25;
+}
+
+.novel-heading strong,
+.novel-heading small {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.novel-heading small {
+    color: var(--muted);
+}
+
+.novel-tool-gap {
+    flex: 1;
+}
+
+.novel-body {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.novel-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 280px;
+    max-width: 45%;
+    padding: 10px;
+    border-right: 1px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+}
+
+.novel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.novel-list button {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+}
+
+.novel-list button:hover,
+.novel-list button[aria-current='true'] {
+    background: var(--hover);
+}
+
+.novel-list button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.novel-list button small {
+    color: var(--muted);
+}
+
+.novel-mark {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.novel-page {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    outline: none;
+}
+
+.novel-page.paged {
+    overflow: hidden;
+}
+
+.novel-page.scrolled.horizontal {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.novel-page.scrolled.vertical {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.novel-page.vertical .novel-content {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.novel-page.scrolled.vertical .novel-content {
+    width: max-content;
+    min-width: 100%;
+}
+
+.novel-content {
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    line-break: strict;
+}
+
+.novel-content p {
+    margin: 0;
+    text-indent: 0;
+}
+
+.novel-content .novel-blank {
+    min-block-size: 1em;
+}
+
+.novel-content .novel-chapter-title,
+.novel-content h1,
+.novel-content h2,
+.novel-content h3 {
+    margin: 0 0 1.2em;
+    font-size: 1.25em;
+    line-height: 1.5;
+}
+
+.novel-content rt {
+    font-size: 0.5em;
+}
+
+.novel-content .novel-tcy {
+    text-combine-upright: all;
+}
+
+.novel-content .novel-image {
+    display: block;
+    max-inline-size: 100%;
+    max-block-size: 90vh;
+    margin: 0.5em auto;
+    break-inside: avoid;
+}
+
+.novel-font-serif {
+    font-family: 'Noto Serif CJK JP', 'Noto Serif CJK TC', 'Yu Mincho', 'MS Mincho', 'PMingLiU', serif;
+}
+
+.novel-font-sans {
+    font-family: 'Noto Sans CJK JP', 'Noto Sans CJK TC', 'Yu Gothic', 'Microsoft JhengHei', sans-serif;
+}
+
+/* Reading backgrounds: independent of the app theme, like a sheet of paper on the desk. */
+.novel-theme-paper {
+    background: #f4ecd8;
+    color: #3b352b;
+}
+
+.novel-theme-light {
+    background: #ffffff;
+    color: #222222;
+}
+
+.novel-theme-dark {
+    background: #1d1f22;
+    color: #d9d4ca;
+}
+
+.novel-message {
+    padding: 24px;
+}
+
+.novel-immersive .novel-page {
+    cursor: default;
+}
+
+::highlight(novel-search) {
+    background-color: #f6c343;
+    color: #222222;
+}

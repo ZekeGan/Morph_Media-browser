@@ -150,6 +150,8 @@ const explorer: Record<ExplorerRequest['action'], Shape> = {
   addSuggestion: { ...revisionRow, name: text },
   chooseLocaleEmulator: { clear: opt(bool) },
   targetLocale: { ...revisionRow, templateId: ref, value: bool },
+  novel: { rowId: ref, fileId: ref },
+  novelProgress: { rowId: ref, fileId: ref, progress: object },
   subtitle: {
     rowId: ref,
     fileId: opt(ref),

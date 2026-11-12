@@ -19,7 +19,7 @@ export const matchesMedia = (entry: MediaEntry, filter: MediaFilter) =>
       ? !['image', 'video', 'audio'].includes(entry.kind)
       : entry.kind === filter))
 export const canPreviewMedia = (entry: MediaEntry) =>
-  ['image', 'video', 'audio', 'pdf', 'archive'].includes(entry.kind)
+  ['image', 'video', 'audio', 'pdf', 'archive', 'text'].includes(entry.kind)
 export const mediaIdentity = (entry: MediaEntry) =>
   'rowId' in entry ? String(entry.rowId) + '/' + entry.id : entry.id
 // Queue identity and order are inherited from the displayed direct-folder results.

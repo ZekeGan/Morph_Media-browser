@@ -22,6 +22,8 @@ export interface ArchiveIndex {
   modified: number
   central: number
   images: ArchiveImage[]
+  // Text entries (EPUB chapters, package and table of contents), only when asked for (R-282).
+  texts?: ArchiveImage[]
 }
 const crcTable = Array.from({ length: 256 }, (_, index) => {
   let value = index
@@ -40,7 +42,10 @@ async function read(handle: fs.FileHandle, length: number, offset: number) {
   return bytes
 }
 // Random access only. Nothing is extracted, executed or written to the media tree.
-export async function archiveIndex(file: string): Promise<ArchiveIndex> {
+export async function archiveIndex(
+  file: string,
+  options: { texts?: RegExp } = {}
+): Promise<ArchiveIndex> {
   const handle = await fs.open(file, 'r')
   try {
     const stat = await handle.stat(),
@@ -74,6 +79,7 @@ export async function archiveIndex(file: string): Promise<ArchiveIndex> {
       throw new Error('壓縮檔目錄超出限制')
     const directory = await read(handle, centralSize, central),
       images: ArchiveImage[] = [],
+      texts: ArchiveImage[] = [],
       names = new Set<string>()
     let cursor = 0,
       total = 0
@@ -115,7 +121,24 @@ export async function archiveIndex(file: string): Promise<ArchiveIndex> {
       if ((unixMode & 0xf000) === 0xa000) throw new Error('壓縮檔包含符號連結')
       if (offset + 30 + packed > central) throw new Error('ZIP 項目超出範圍')
       const mime = imageTypes[path.extname(name).slice(1).toLowerCase()]
-      if (mime && !name.endsWith('/')) {
+      if (!mime && options.texts?.test(name) && !name.endsWith('/')) {
+        if (flags & 0x41 || ![0, 8].includes(method))
+          throw new Error('文字使用加密或不支援的壓縮方式')
+        if (size > 16 * 1024 * 1024 || size > Math.max(packed * 200, 1024 * 1024))
+          throw new Error('壓縮文字大小或壓縮比例超出限制')
+        if ((total += size) > 2 * 1024 * 1024 * 1024) throw new Error('壓縮檔內容超出限制')
+        texts.push({
+          name,
+          rawName: Buffer.from(rawName),
+          offset,
+          packed,
+          size,
+          crc,
+          method,
+          flags,
+          mime: 'text/plain',
+        })
+      } else if (mime && !name.endsWith('/')) {
         if (flags & 0x41 || ![0, 8].includes(method))
           throw new Error('圖片使用加密或不支援的壓縮方式')
         if (
@@ -142,7 +165,13 @@ export async function archiveIndex(file: string): Promise<ArchiveIndex> {
     }
     if (cursor !== directory.length) throw new Error('ZIP 目錄長度不符')
     images.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
-    return { size: stat.size, modified: stat.mtimeMs, central, images }
+    return {
+      size: stat.size,
+      modified: stat.mtimeMs,
+      central,
+      images,
+      ...(options.texts ? { texts } : {}),
+    }
   } finally {
     await handle.close()
   }
@@ -175,7 +204,7 @@ export async function archiveImage(file: string, index: ArchiveIndex, entry: Arc
     if (
       bytes.length !== entry.size ||
       crc32(bytes) !== entry.crc ||
-      identifyImage(bytes)?.mime !== entry.mime
+      (entry.mime.startsWith('image/') && identifyImage(bytes)?.mime !== entry.mime)
     )
       throw new Error('ZIP 圖片內容或校驗不符')
     return bytes

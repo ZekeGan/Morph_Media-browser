@@ -1,19 +1,30 @@
 import { createPortal } from 'react-dom'
 import { useEffect, useState, useRef, lazy, Suspense } from 'react'
 import { Button, FocusTrap, Group } from '@mantine/core'
-import type { MediaEntry } from '../../shared/explorer'
+import type { ExplorerRequest, ExplorerResponse, MediaEntry } from '../../shared/explorer'
+import type { FolderRow } from '../../shared/model'
 import { t as tr, useLocale } from '../i18n'
 const Reader = lazy(() => import('../reader/Reader').then((module) => ({ default: module.Reader })))
+const NovelReader = lazy(() =>
+  import('../novel/NovelReader').then((module) => ({ default: module.NovelReader }))
+)
 export function DocumentViewer({
   rowId,
   file,
   close,
   embedded = false,
+  row,
+  run,
+  next,
 }: {
   rowId: string
   file: MediaEntry
   close: () => void
   embedded?: boolean
+  // Text books (R-282) open in the novel reader, which keeps the place in the folder record.
+  row?: FolderRow
+  run?: (request: ExplorerRequest) => Promise<ExplorerResponse | undefined>
+  next?: { name: string; open: () => void }
 }) {
   useLocale()
   const [images, setImages] = useState<MediaEntry[]>(),
@@ -23,7 +34,7 @@ export function DocumentViewer({
   onClose.current = close
   useEffect(() => () => returnFocus.current?.focus({ preventScroll: true }), [])
   useEffect(() => {
-    if (images) return
+    if (images || file.kind === 'text') return
     const key = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && !event.defaultPrevented) {
         event.preventDefault()
@@ -50,6 +61,19 @@ export function DocumentViewer({
       alive = false
     }
   }, [rowId, file.id, file.kind])
+  if (file.kind === 'text' && row)
+    return (
+      <Suspense fallback={<p>{tr('載入內容…')}</p>}>
+        <NovelReader
+          row={row}
+          file={file}
+          run={run}
+          close={close}
+          next={next}
+          embedded={embedded}
+        />
+      </Suspense>
+    )
   if (images)
     return (
       <Suspense fallback={<p>{tr('載入內容…')}</p>}>

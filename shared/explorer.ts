@@ -52,6 +52,23 @@ export interface ReadingPrefs {
   webtoonWidth?: number
   webtoonAsked?: boolean
 }
+// R-282: the place in a text book (chapter, and the share of that chapter read), the share of the whole book, when
+// it was last read, and the user's bookmarks.
+export interface NovelProgress {
+  chapter: number
+  position: number
+  percent: number
+  updated: string
+  bookmarks?: { chapter: number; position: number; label: string }[]
+}
+// A text book as the novel reader gets it: plain text chapters (TXT) or chapter XHTML with image addresses (EPUB).
+export interface NovelBook {
+  format: 'txt' | 'epub'
+  title: string
+  encoding: string
+  chapters: { title: string; text?: string; html?: string; path?: string }[]
+  images?: Record<string, string>
+}
 export interface SubtitlePrefs {
   offset: number
   size: number
@@ -86,6 +103,8 @@ export interface FolderDetails {
       localeEmulator?: boolean
     }
   >
+  // R-282, provisional: where each text book in the folder was left, by file name.
+  novels?: Record<string, NovelProgress>
   // R-305, provisional: the save folder the user picked when it could not be worked out from the engine.
   saveFolder?: { path: string; relative: boolean }
   subtitles?: { id: string; name: string; relativePath: string }[]
@@ -140,7 +159,7 @@ export const gameActionTemplates = (project: {
 export interface MediaEntry {
   id: string
   name: string
-  kind: 'image' | 'video' | 'audio' | 'subtitle' | 'folder' | 'other' | 'archive' | 'pdf'
+  kind: 'image' | 'video' | 'audio' | 'subtitle' | 'folder' | 'other' | 'archive' | 'pdf' | 'text'
   size: number
   modified: number
   mime: string
@@ -281,6 +300,10 @@ export type ExplorerRequest =
   | { action: 'addSuggestion'; rowId: string; revision: number; name: string }
   | { action: 'chooseLocaleEmulator'; clear?: boolean }
   | { action: 'targetLocale'; rowId: string; revision: number; templateId: string; value: boolean }
+  // R-282: open a text book, and keep where it was left.
+  | { action: 'novel'; rowId: string; fileId: string }
+  // Only this book's place changes, so main writes it against the record's current revision.
+  | { action: 'novelProgress'; rowId: string; fileId: string; progress: NovelProgress }
   | {
       action: 'subtitle'
       rowId: string
@@ -311,6 +334,7 @@ export interface ExplorerResponse {
   subtitle?: { token: string; name: string; text: string; portable: boolean }
   shortcuts?: string[]
   extras?: GameExtras
+  novel?: NovelBook
   localeEmulator?: string
   probe?: { kind: 'zip' | 'rar' | '7z' | 'gzip' | 'html' | 'empty' | 'media' | 'unknown' }
   preview?: MetadataPreview

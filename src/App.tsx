@@ -225,7 +225,9 @@ export function App() {
   const closeDetail = () => setDetailsId(undefined)
   const explore = async (request: ExplorerRequest): Promise<ExplorerResponse | undefined> => {
     // Preserve reader preferences even while another setting is saving.
-    if (busyRef.current && request.action !== 'reading') return
+    // Reading places (manga pages, novel positions) are saved even while something else runs.
+    if (busyRef.current && request.action !== 'reading' && request.action !== 'novelProgress')
+      return
     const ownBusy = !busyRef.current
     if (ownBusy) {
       busyRef.current = true

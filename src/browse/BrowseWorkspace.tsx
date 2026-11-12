@@ -542,6 +542,7 @@ export function BrowseWorkspace({
     busy,
     saveOrder: (columnOrder) => persist({ ...state.current, columnOrder }),
     games: all.some(isGameFolder),
+    books: all.some((row) => !!row.record?.details?.novels),
   })
   const crumbs = folderBreadcrumbs(all, root, currentFolder?.path ?? root)
   const overviewRoot = currentFolder ?? rootRow

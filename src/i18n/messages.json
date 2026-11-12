@@ -8104,5 +8104,287 @@
     "en": "Ctrl + wheel width · V webtoon · ESC back",
     "ja": "Ctrl＋ホイールで幅 · V 縦読み · ESC 戻る",
     "es": "Ctrl + rueda ancho · V webtoon · ESC volver"
+  },
+  "最後閱讀": {
+    "zh-CN": "最后阅读",
+    "en": "Last read",
+    "ja": "最終閲覧",
+    "es": "Última lectura"
+  },
+  "尚未閱讀": {
+    "zh-CN": "尚未阅读",
+    "en": "Not read yet",
+    "ja": "未読",
+    "es": "Sin leer"
+  },
+  "文字書": {
+    "zh-CN": "文字书",
+    "en": "Text book",
+    "ja": "テキスト本",
+    "es": "Libro de texto"
+  },
+  "第 {0} 部分": {
+    "zh-CN": "第 {0} 部分",
+    "en": "Part {0}",
+    "ja": "第 {0} 部",
+    "es": "Parte {0}"
+  },
+  "小說閱讀器": {
+    "zh-CN": "小说阅读器",
+    "en": "Novel reader",
+    "ja": "小説リーダー",
+    "es": "Lector de novelas"
+  },
+  "目錄、書籤與搜尋": {
+    "zh-CN": "目录、书签与搜索",
+    "en": "Contents, bookmarks and search",
+    "ja": "目次・しおり・検索",
+    "es": "Índice, marcadores y búsqueda"
+  },
+  "上一章": {
+    "zh-CN": "上一章",
+    "en": "Previous chapter",
+    "ja": "前の章",
+    "es": "Capítulo anterior"
+  },
+  "下一章": {
+    "zh-CN": "下一章",
+    "en": "Next chapter",
+    "ja": "次の章",
+    "es": "Capítulo siguiente"
+  },
+  "橫排": {
+    "zh-CN": "横排",
+    "en": "Horizontal text",
+    "ja": "横書き",
+    "es": "Texto horizontal"
+  },
+  "直排": {
+    "zh-CN": "竖排",
+    "en": "Vertical text",
+    "ja": "縦書き",
+    "es": "Texto vertical"
+  },
+  "分頁": {
+    "zh-CN": "分页",
+    "en": "Pages",
+    "ja": "ページ送り",
+    "es": "Por páginas"
+  },
+  "捲動": {
+    "zh-CN": "滚动",
+    "en": "Scroll",
+    "ja": "スクロール",
+    "es": "Desplazamiento"
+  },
+  "閱讀設定": {
+    "zh-CN": "阅读设置",
+    "en": "Reading settings",
+    "ja": "読書設定",
+    "es": "Ajustes de lectura"
+  },
+  "字型": {
+    "zh-CN": "字体",
+    "en": "Font",
+    "ja": "フォント",
+    "es": "Fuente"
+  },
+  "明體": {
+    "zh-CN": "宋体",
+    "en": "Serif",
+    "ja": "明朝",
+    "es": "Serif"
+  },
+  "黑體": {
+    "zh-CN": "黑体",
+    "en": "Sans",
+    "ja": "ゴシック",
+    "es": "Sans"
+  },
+  "字級 {0}": {
+    "zh-CN": "字号 {0}",
+    "en": "Text size {0}",
+    "ja": "文字サイズ {0}",
+    "es": "Tamaño {0}"
+  },
+  "行距 {0}": {
+    "zh-CN": "行距 {0}",
+    "en": "Line spacing {0}",
+    "ja": "行間 {0}",
+    "es": "Interlineado {0}"
+  },
+  "邊界 {0}%": {
+    "zh-CN": "边距 {0}%",
+    "en": "Margins {0}%",
+    "ja": "余白 {0}%",
+    "es": "Márgenes {0}%"
+  },
+  "邊界": {
+    "zh-CN": "边距",
+    "en": "Margins",
+    "ja": "余白",
+    "es": "Márgenes"
+  },
+  "每行 {0} 字": {
+    "zh-CN": "每行 {0} 字",
+    "en": "{0} characters per line",
+    "ja": "1 行 {0} 文字",
+    "es": "{0} caracteres por línea"
+  },
+  "每行字數：自動": {
+    "zh-CN": "每行字数：自动",
+    "en": "Characters per line: automatic",
+    "ja": "1 行の文字数：自動",
+    "es": "Caracteres por línea: automático"
+  },
+  "每行字數": {
+    "zh-CN": "每行字数",
+    "en": "Characters per line",
+    "ja": "1 行の文字数",
+    "es": "Caracteres por línea"
+  },
+  "米色": {
+    "zh-CN": "米色",
+    "en": "Sepia",
+    "ja": "セピア",
+    "es": "Sepia"
+  },
+  "白色": {
+    "zh-CN": "白色",
+    "en": "White",
+    "ja": "白",
+    "es": "Blanco"
+  },
+  "深色": {
+    "zh-CN": "深色",
+    "en": "Dark",
+    "ja": "ダーク",
+    "es": "Oscuro"
+  },
+  "加入書籤": {
+    "zh-CN": "加入书签",
+    "en": "Add bookmark",
+    "ja": "しおりを追加",
+    "es": "Añadir marcador"
+  },
+  "目錄": {
+    "zh-CN": "目录",
+    "en": "Contents",
+    "ja": "目次",
+    "es": "Índice"
+  },
+  "書籤": {
+    "zh-CN": "书签",
+    "en": "Bookmarks",
+    "ja": "しおり",
+    "es": "Marcadores"
+  },
+  "搜尋": {
+    "zh-CN": "搜索",
+    "en": "Search",
+    "ja": "検索",
+    "es": "Buscar"
+  },
+  "還沒有書籤": {
+    "zh-CN": "还没有书签",
+    "en": "No bookmarks yet",
+    "ja": "しおりはまだありません",
+    "es": "Aún no hay marcadores"
+  },
+  "刪除書籤 {0}": {
+    "zh-CN": "删除书签 {0}",
+    "en": "Delete bookmark {0}",
+    "ja": "しおり {0} を削除",
+    "es": "Eliminar marcador {0}"
+  },
+  "搜尋全文": {
+    "zh-CN": "搜索全文",
+    "en": "Search the text",
+    "ja": "本文を検索",
+    "es": "Buscar en el texto"
+  },
+  "找到 {0} 處": {
+    "zh-CN": "找到 {0} 处",
+    "en": "{0} found",
+    "ja": "{0} 件",
+    "es": "{0} resultados"
+  },
+  "已讀完": {
+    "zh-CN": "已读完",
+    "en": "Finished",
+    "ja": "読了",
+    "es": "Terminado"
+  },
+  "第 {0} / {1} 章 · {2}%": {
+    "zh-CN": "第 {0} / {1} 章 · {2}%",
+    "en": "Chapter {0} / {1} · {2}%",
+    "ja": "第 {0} / {1} 章 · {2}%",
+    "es": "Capítulo {0} / {1} · {2}%"
+  },
+  "方向鍵／空白鍵翻頁 · F11 沉浸閱讀 · ESC 返回": {
+    "zh-CN": "方向键／空格键翻页 · F11 沉浸阅读 · ESC 返回",
+    "en": "Arrows / Space turn pages · F11 immersive · ESC back",
+    "ja": "矢印キー／スペースでページ送り · F11 没入 · ESC 戻る",
+    "es": "Flechas / espacio pasan página · F11 inmersivo · ESC volver"
+  },
+  "文字使用加密或不支援的壓縮方式": {
+    "zh-CN": "文字使用加密或不支持的压缩方式",
+    "en": "The text is encrypted or uses an unsupported compression",
+    "ja": "テキストが暗号化されているか、未対応の圧縮方式です",
+    "es": "El texto está cifrado o usa una compresión no admitida"
+  },
+  "壓縮文字大小或壓縮比例超出限制": {
+    "zh-CN": "压缩文字大小或压缩比例超出限制",
+    "en": "A text entry is too large or too highly compressed",
+    "ja": "テキストのサイズまたは圧縮率が上限を超えています",
+    "es": "Una entrada de texto es demasiado grande o está demasiado comprimida"
+  },
+  "壓縮檔內容超出限制": {
+    "zh-CN": "压缩包内容超出限制",
+    "en": "The archive content is over the limit",
+    "ja": "アーカイブの内容が上限を超えています",
+    "es": "El contenido del archivo supera el límite"
+  },
+  "不是文字書（TXT／EPUB）": {
+    "zh-CN": "不是文字书（TXT／EPUB）",
+    "en": "Not a text book (TXT / EPUB)",
+    "ja": "テキスト本（TXT／EPUB）ではありません",
+    "es": "No es un libro de texto (TXT / EPUB)"
+  },
+  "EPUB 缺少 container.xml 或套件檔": {
+    "zh-CN": "EPUB 缺少 container.xml 或包文件",
+    "en": "The EPUB has no container.xml or package file",
+    "ja": "EPUB に container.xml またはパッケージ文書がありません",
+    "es": "El EPUB no tiene container.xml ni archivo de paquete"
+  },
+  "EPUB 套件檔無法讀取": {
+    "zh-CN": "EPUB 包文件无法读取",
+    "en": "The EPUB package file can't be read",
+    "ja": "EPUB のパッケージ文書を読み取れません",
+    "es": "No se puede leer el archivo de paquete del EPUB"
+  },
+  "EPUB 內容超出限制": {
+    "zh-CN": "EPUB 内容超出限制",
+    "en": "The EPUB content is over the limit",
+    "ja": "EPUB の内容が上限を超えています",
+    "es": "El contenido del EPUB supera el límite"
+  },
+  "EPUB 沒有可讀的章節": {
+    "zh-CN": "EPUB 没有可读的章节",
+    "en": "The EPUB has no readable chapters",
+    "ja": "EPUB に読める章がありません",
+    "es": "El EPUB no tiene capítulos legibles"
+  },
+  "文字檔超過 32 MB，無法開啟": {
+    "zh-CN": "文字文件超过 32 MB，无法打开",
+    "en": "The text file is over 32 MB and can't be opened",
+    "ja": "テキストファイルが 32 MB を超えているため開けません",
+    "es": "El archivo de texto supera 32 MB y no se puede abrir"
+  },
+  "小說閱讀紀錄不合法": {
+    "zh-CN": "小说阅读记录不合法",
+    "en": "The novel reading record is invalid",
+    "ja": "小説の読書記録が正しくありません",
+    "es": "El registro de lectura de novelas no es válido"
   }
 }

@@ -30,6 +30,7 @@ import * as sourceFns from './explorer-source'
 import * as overviewFns from './explorer-overview'
 import { bundledSuggestions, engineSaveFolder, steamAppId, storeUrl } from './game-extras'
 import { detectGame } from './game-detection'
+import { readNovel } from './novel'
 export { probeFile }
 
 export interface DesktopOperations {
@@ -755,6 +756,50 @@ export class Explorer {
         validateDetails(record.details)
         await saveFolder(row.path, record, req.revision)
         return this.after(await this.library.refreshRecord(req.rowId))
+      }
+      case 'novel': {
+        const file = await this.file(req.rowId, req.fileId)
+        if (!/\.(txt|epub)$/i.test(file.file)) throw new Error('不是文字書（TXT／EPUB）')
+        // EPUB pictures reuse the read-only archive stream, registered like a comic archive.
+        const token = randomUUID()
+        const novel = await readNovel(
+          file.file,
+          (number) => `media://archive/${req.rowId}/${req.fileId}/${token}/${number}`
+        )
+        if (novel.format === 'epub') {
+          while (this.archives.size >= 4) this.archives.delete(this.archives.keys().next().value!)
+          this.archives.set(token, { file: file.file, index: await archiveIndex(file.file) })
+        }
+        return { novel }
+      }
+      case 'novelProgress': {
+        const file = await this.file(req.rowId, req.fileId),
+          row = await this.library.checkedRow(req.rowId, true),
+          current = await readFolder(row.path)
+        return this.after(
+          await this.details(req.rowId, current.revision, (d) => {
+            // Only the known fields are kept; anything else the window sent is dropped.
+            const p = req.progress
+            d.novels = {
+              ...d.novels,
+              [path.basename(file.file)]: {
+                chapter: p.chapter,
+                position: p.position,
+                percent: p.percent,
+                updated: p.updated,
+                ...(Array.isArray(p.bookmarks)
+                  ? {
+                      bookmarks: p.bookmarks.map((b) => ({
+                        chapter: b?.chapter,
+                        position: b?.position,
+                        label: b?.label,
+                      })),
+                    }
+                  : {}),
+              },
+            }
+          })
+        )
       }
       case 'targetLocale':
         return this.after(

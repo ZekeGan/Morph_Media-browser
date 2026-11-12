@@ -17,6 +17,9 @@ export const mediaTypes: Record<string, [MediaEntry['kind'], string]> = {
   '.pdf': ['pdf', 'application/pdf'],
   '.zip': ['archive', 'application/zip'],
   '.cbz': ['archive', 'application/zip'],
+  // R-282: text books for the novel reader.
+  '.txt': ['text', 'text/plain; charset=utf-8'],
+  '.epub': ['text', 'application/epub+zip'],
   '.png': ['image', 'image/png'],
   '.jpg': ['image', 'image/jpeg'],
   '.jpeg': ['image', 'image/jpeg'],

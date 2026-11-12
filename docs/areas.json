@@ -155,6 +155,14 @@
       "tests": ["reader.test.ts"]
     },
     {
+      "id": "novel",
+      "name": "小說閱讀器",
+      "docs": ["NOVEL_READER.md#閱讀", "NOVEL_READER.md#閱讀紀錄"],
+      "code": ["src/novel/*", "electron/novel*", "shared/novel*"],
+      "ui": ["novel-ui"],
+      "tests": ["novel.test.ts"]
+    },
+    {
       "id": "video",
       "name": "影片播放與字幕",
       "docs": [

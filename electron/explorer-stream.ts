@@ -168,7 +168,7 @@ export async function archiveStream(
       cached = ex.archives.get(token),
       index = cached?.index
     if (
-      file.mime !== 'application/zip' ||
+      !['application/zip', 'application/epub+zip'].includes(file.mime) ||
       !index ||
       cached?.file !== file.file ||
       !/^\d{1,5}$/.test(number)

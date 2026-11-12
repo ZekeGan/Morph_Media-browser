@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 import type { FolderRow } from '../../shared/model'
 import type { PlayRecord } from '../../shared/workspace'
 import { currentLocale, t as tr } from '../i18n'
+import { latestNovel } from '../../shared/novel'
 
 // Play time of games started from M:orph (R-308). Main writes it to the local settings when a game process ends;
 // the window reads it at start and again whenever it gets focus back (usually right after the game was closed).
@@ -39,9 +40,16 @@ export function usePlaytimes() {
   return useSyncExternalStore(subscribe, () => records)
 }
 export const PLAY_TIME = '@playTime',
-  LAST_PLAYED = '@lastPlayed'
+  LAST_PLAYED = '@lastPlayed',
+  // R-282: the text book read most recently in the folder.
+  READ_PROGRESS = '@readProgress',
+  LAST_READ = '@lastRead'
 // Values for sorting: seconds played, or the end of the last session as an ISO time (sorts as text).
 export function playValue(row: FolderRow, id: string, all: Record<string, PlayRecord>) {
+  if (id === READ_PROGRESS || id === LAST_READ) {
+    const novel = latestNovel(row.record?.details?.novels)
+    return novel ? (id === READ_PROGRESS ? novel.percent : novel.updated) : undefined
+  }
   const record = row.record ? all[row.record.folderId] : undefined
   if (!record) return undefined
   return id === PLAY_TIME ? record.total : record.last
@@ -56,5 +64,6 @@ export function formatLastPlayed(iso: string) {
 }
 export function formatPlayValue(id: string, value: unknown) {
   if (value === undefined) return ''
+  if (id === READ_PROGRESS) return Math.round(Number(value) * 100) + '%'
   return id === PLAY_TIME ? formatPlayTime(Number(value)) : formatLastPlayed(String(value))
 }

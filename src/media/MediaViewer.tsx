@@ -228,13 +228,23 @@ export function MediaViewer({
                   }
                   first={index > 0 ? () => setSelected(queue[0].id) : undefined}
                 />
-              ) : current && ['pdf', 'archive'].includes(current.kind) ? (
+              ) : current && ['pdf', 'archive', 'text'].includes(current.kind) ? (
                 <DocumentViewer
                   key={current.id}
                   embedded
                   rowId={row.rowId}
                   file={current}
                   close={close}
+                  row={row}
+                  run={run}
+                  next={
+                    index >= 0 && index + 1 < queue.length
+                      ? {
+                          name: queue[index + 1].name,
+                          open: () => setSelected(queue[index + 1].id),
+                        }
+                      : undefined
+                  }
                 />
               ) : (
                 <p>{tr('載入內容…')}</p>

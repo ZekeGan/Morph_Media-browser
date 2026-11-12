@@ -157,6 +157,14 @@ export function FolderContent({
     [, setReader] = useState(false),
     [fileReader, setFileReader] = useState(false),
     [documentFile, setDocumentFile] = useState<ContentResult['entries'][number]>()
+  // R-282: after the last page of a text book, the next text book in this folder.
+  const nextText = (file: ContentResult['entries'][number]) => {
+    const books = (content?.entries ?? []).filter((entry) => entry.kind === 'text'),
+      following = books[books.findIndex((entry) => entry.id === file.id) + 1]
+    return following && following.id !== file.id
+      ? { name: following.name, open: () => setDocumentFile(following) }
+      : undefined
+  }
   useEffect(() => {
     let alive = true
     if (contentRow.current !== row.rowId) {
@@ -283,9 +291,12 @@ export function FolderContent({
             rowId={row.rowId}
             file={documentFile}
             close={() => setDocumentFile(undefined)}
+            row={row}
+            run={run}
+            next={nextText(documentFile)}
           />
         )}
-        {['pdf', 'archive'].includes(selectedFile.kind) && (
+        {['pdf', 'archive', 'text'].includes(selectedFile.kind) && (
           <Button onClick={() => setDocumentFile(selectedFile)}>{tr('開啟檢視器')}</Button>
         )}
         {selectedFile.kind === 'image' ? (
@@ -619,11 +630,14 @@ export function FolderContent({
           rowId={row.rowId}
           file={documentFile}
           close={() => setDocumentFile(undefined)}
+          row={row}
+          run={run}
+          next={nextText(documentFile)}
         />
       )}
       <Group gap="xs">
         {content.entries
-          .filter((entry) => ['archive', 'pdf'].includes(entry.kind))
+          .filter((entry) => ['archive', 'pdf', 'text'].includes(entry.kind))
           .map((entry) => (
             <Button key={entry.id} variant="light" onClick={() => setDocumentFile(entry)}>
               <Icon name="file" />

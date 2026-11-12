@@ -66,7 +66,9 @@ export interface Cell {
   unitPosition?: 'prefix' | 'suffix'
   decimals?: number
   // playTime / lastPlayed: games started from M:orph (R-308), from the local play record.
-  systemInfo?: 'category' | 'files' | 'size' | 'playTime' | 'lastPlayed'
+  // readProgress / lastRead: the text book read most recently in the folder (R-282).
+  systemInfo?:
+    'category' | 'files' | 'size' | 'playTime' | 'lastPlayed' | 'readProgress' | 'lastRead'
   presentation?: 'badge' | 'rating' | 'progress'
   // 'blur': the whole picture, with its own blurred copy filling the leftover space.
   imageFit?: 'contain' | 'cover' | 'blur'
@@ -433,7 +435,9 @@ function validCell(c: unknown): boolean {
     ].includes(c.kind) &&
     (c.text === undefined || text(c.text, 10000)) &&
     (c.systemInfo === undefined ||
-      ['category', 'files', 'size', 'playTime', 'lastPlayed'].includes(c.systemInfo)) &&
+      ['category', 'files', 'size', 'playTime', 'lastPlayed', 'readProgress', 'lastRead'].includes(
+        c.systemInfo
+      )) &&
     (c.presentation === undefined ||
       (c.presentation === 'badge' && ['field-enum', 'field-boolean'].includes(c.kind)) ||
       (['rating', 'progress'].includes(c.presentation) && c.kind === 'field-number')) &&
@@ -561,6 +565,35 @@ function validTargetEntry([k, t]: [string, unknown]): boolean {
   )
 }
 
+// R-282: a text book's place, kept under its file name inside the folder.
+function validNovelEntry(name: string, p: unknown): boolean {
+  const ratio = (value: unknown) => typeof value === 'number' && value >= 0 && value <= 1
+  return (
+    text(name, 255) &&
+    !/[\\/\0]/.test(name) &&
+    obj(p) &&
+    Object.keys(p).every((k) =>
+      ['chapter', 'position', 'percent', 'updated', 'bookmarks'].includes(k)
+    ) &&
+    integer(p.chapter, 0, 100000) &&
+    ratio(p.position) &&
+    ratio(p.percent) &&
+    typeof p.updated === 'string' &&
+    !Number.isNaN(Date.parse(p.updated)) &&
+    (p.bookmarks === undefined ||
+      (Array.isArray(p.bookmarks) &&
+        p.bookmarks.length <= 500 &&
+        p.bookmarks.every(
+          (b: unknown) =>
+            obj(b) &&
+            Object.keys(b).length === 3 &&
+            integer(b.chapter, 0, 100000) &&
+            ratio(b.position) &&
+            text(b.label, 200)
+        )))
+  )
+}
+
 function validSubtitleSettings(s: unknown): boolean {
   return (
     obj(s) &&
@@ -658,6 +691,13 @@ export function validateDetails(v: unknown): asserts v is FolderDetails {
     throw new Error('閱讀設定不合法')
   if (v.targets && (!obj(v.targets) || !Object.entries(v.targets).every(validTargetEntry)))
     throw new Error('任務設定不合法')
+  if (
+    v.novels !== undefined &&
+    (!obj(v.novels) ||
+      Object.keys(v.novels).length > 10000 ||
+      !Object.entries(v.novels).every(([name, p]) => validNovelEntry(name, p)))
+  )
+    throw new Error('小說閱讀紀錄不合法')
   if (
     v.saveFolder !== undefined &&
     (!obj(v.saveFolder) ||
