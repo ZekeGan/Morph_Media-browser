@@ -55,12 +55,6 @@
 
 ## 已登記（未核定）
 
-- **R-312** Gelbooru（選填金鑰） ｜小｜安全邊界｜無｜領域：metadata｜依賴：R-285
-  比照 Danbooru：`/index.php?page=post&s=view&id=` 的貼文 ID，用 `index.php?page=dapi&s=post&q=index&json=1&id=` 查；金鑰（`api_key`＋`user_id`）選填，不帶時有嚴格限流。
-
-- **R-313** DeviantArt（oEmbed） ｜小｜安全邊界｜無｜領域：metadata｜依賴：無
-  以作品網址呼叫免金鑰的 oEmbed 取標題、作者、分級與縮圖；需要更多欄位時再評估 OAuth client credentials。
-
 ## 擱置
 
 - **R-243** 拆分 App／BrowseWorkspace 的狀態 ｜中｜一般｜無｜領域：browse、notices｜依賴：無

@@ -62,9 +62,9 @@
 ### 查證過、另行登記的金鑰來源（R-291）
 
 - **Spotify**：2026-02 起開發模式只允許 5 個指定使用者，延伸額度限有登記的公司與每月 25 萬活躍使用者；個人桌面程式用不了，不接入（音樂已有 MusicBrainz、Apple Music、Deezer、Last.fm、Discogs）。
-- **Gelbooru**：實際需要帳號 ID＋金鑰（不帶時嚴格限流），可比照 Danbooru 做選填金鑰：R-312。
-- **DeviantArt**：公開資料走 OAuth client credentials；另有免金鑰的 oEmbed（以作品網址查標題、作者、縮圖），先用 oEmbed：R-313。
-- **MobyGames**：非營利用途可免費申請金鑰（約每小時 720 次）：R-314。
+- **Gelbooru**：實際需要帳號 ID＋金鑰（不帶時嚴格限流）；用途與免金鑰的 Danbooru 重疊，使用者決定不接入（2026-11-12）。
+- **DeviantArt**：公開資料走 OAuth client credentials；另有免金鑰的 oEmbed，但只拿得到標題、作者、縮圖；使用者決定不接入（2026-11-12）。
+- **MobyGames**：非營利用途可免費申請金鑰（約每小時 720 次）；遊戲已有 Steam、VNDB、DLsite，依 R-321 不接入。
 
 接入規則（[C-134](DECISIONS.md#c-134網站來源改為可用使用者金鑰與有條件解析網頁2026-11-12)）：
 
