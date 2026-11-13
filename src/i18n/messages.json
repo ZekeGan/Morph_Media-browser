@@ -11818,5 +11818,29 @@
     "en": "Go to page {0}",
     "ja": "{0} ページへ移動",
     "es": "Ir a la página {0}"
+  },
+  "評分人數": {
+    "zh-CN": "评分人数",
+    "en": "Number of ratings",
+    "ja": "評価数",
+    "es": "Número de valoraciones"
+  },
+  "製作工具": {
+    "zh-CN": "制作工具",
+    "en": "Made with",
+    "ja": "制作ツール",
+    "es": "Hecho con"
+  },
+  "VNDB 也有這部作品：{0}": {
+    "zh-CN": "VNDB 也有这部作品：{0}",
+    "en": "This work is also on VNDB: {0}",
+    "ja": "VNDB にもこの作品があります：{0}",
+    "es": "Esta obra también está en VNDB: {0}"
+  },
+  "改看 VNDB 的資料": {
+    "zh-CN": "改看 VNDB 的资料",
+    "en": "Use VNDB instead",
+    "ja": "VNDB の情報を見る",
+    "es": "Ver los datos de VNDB"
   }
 }

@@ -59,6 +59,10 @@ export const importedFieldLabels = (): Record<string, string> => ({
   PRICE_JPY: tr('價格（日圓）'),
   DOWNLOAD_COUNT: tr('下載數'),
   RATING: tr('評分'),
+  // R-359: itch.io
+  RATING_COUNT: tr('評分人數'),
+  MADE_WITH: tr('製作工具'),
+  ITCH_ID: 'itch.io ID',
   COVER_STATUS: tr('封面狀態'),
   // R-283, R-284, R-292
   SITE_NAME: tr('網站名稱'),

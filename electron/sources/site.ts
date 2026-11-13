@@ -26,6 +26,7 @@ export interface SiteResult {
   title: string
   canonical: string
   image?: string
+  related?: { provider: 'vndb'; url: string; title: string }
 }
 export type Adapter = (site: Site) => Promise<SiteResult>
 

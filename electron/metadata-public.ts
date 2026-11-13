@@ -13,6 +13,7 @@ import { openlibrary } from './sources/openlibrary'
 import { pixiv } from './sources/pixiv'
 import { vndb } from './sources/vndb'
 import { booth, kakuyomu } from './sources/pages'
+import { itch } from './sources/itch'
 import { fanza, steamgriddb, tmdb } from './sources/keyed'
 import {
   danbooru,
@@ -50,6 +51,7 @@ const adapters: Record<PublicSourceId, Adapter> = {
   googlebooks,
   booth,
   kakuyomu,
+  itch,
   tmdb,
   steamgriddb,
   fanza,
@@ -79,7 +81,10 @@ export async function publicMetadata(
       target.port ||
       target.username ||
       target.password ||
-      !config.requestHosts.includes(target.hostname)
+      !(
+        config.requestHosts.includes(target.hostname) ||
+        config.requestHostPattern?.test(target.hostname)
+      )
     )
       throw new Error('Request host not allowed for this source: ' + target.hostname)
     const raw = typeof extra.raw === 'string',
@@ -139,14 +144,14 @@ export async function publicMetadata(
         values.push({ key, type: 'number', value })
     },
   }
-  const { title, canonical, image } = await adapters[provider](site)
+  const { title, canonical, image, related } = await adapters[provider](site)
   if (!title.trim()) throw new SourceError('format')
   values.unshift(
     { key: 'TITLE', type: 'string', value: title },
     { key: 'SOURCE_URL', type: 'string', value: canonical }
   )
   const result: Result = {
-    preview: { provider, title: title.slice(0, 200), source: canonical, values },
+    preview: { provider, title: title.slice(0, 200), source: canonical, values, related },
   }
   if (typeof image === 'string')
     try {

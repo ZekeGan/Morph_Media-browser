@@ -15,6 +15,8 @@ export const sourceConfig: Record<
   PublicSourceId,
   {
     requestHosts: string[]
+    // R-359: hosts given by a pattern (a site that serves each account on its own subdomain).
+    requestHostPattern?: RegExp
     coverHosts: string[]
     referer?: boolean
     accept?: string
@@ -61,6 +63,12 @@ export const sourceConfig: Record<
   },
   // R-292
   booth: { requestHosts: ['booth.pm'], coverHosts: ['booth.pximg.net'] },
+  itch: {
+    requestHosts: ['api.vndb.org'],
+    requestHostPattern: /^[a-z0-9-]{1,63}\.itch\.io$/,
+    coverHosts: ['img.itch.zone'],
+    accept: 'application/json, text/html;q=0.9',
+  },
   kakuyomu: { requestHosts: ['kakuyomu.jp'], coverHosts: ['cdn-static.kakuyomu.jp'] },
   // R-284
   mangadex: { requestHosts: ['api.mangadex.org'], coverHosts: ['uploads.mangadex.org'] },

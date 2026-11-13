@@ -219,6 +219,8 @@ export interface MetadataPreview {
   source: string
   values: { key: string; type: string; value: unknown }[]
   image?: string
+  // R-359: the same work on another source, offered for a separate preview (never merged into this one).
+  related?: { provider: MetadataSourceId; url: string; title: string }
 }
 export type ExplorerRequest =
   | { action: 'archive'; rowId: string; fileId: string }

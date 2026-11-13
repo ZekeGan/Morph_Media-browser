@@ -86,17 +86,19 @@ export function FolderSourceImport({
     window.dispatchEvent(
       new CustomEvent('morph:open-settings', { detail: { tab: 'keys', site: keyed?.id } })
     )
-  const loadPreview = async () => {
+  // R-359: also called with the related work's address (the same game on VNDB) to preview that source instead.
+  const loadPreview = async (address = source.trim()) => {
     setError('')
     importer.setResult('')
-    if (!detected) {
+    const provider = address === source.trim() ? detected : sourceForUrl(address)
+    if (!provider) {
       setError(tr('無法辨識這個網址的來源'))
       return
     }
     const result = await run({
       action: 'metadataPreview',
-      source: source.trim(),
-      provider: detected,
+      source: address,
+      provider,
     })
     if (result?.preview) {
       importer.setReplace(false)
@@ -224,6 +226,27 @@ export function FolderSourceImport({
               </Text>
             </div>
           </Group>
+          {preview.related && (
+            <Alert color="blue" mt="sm" className="source-related">
+              <Group gap="xs" justify="space-between" wrap="nowrap">
+                <Text size="sm">
+                  {tr('VNDB 也有這部作品：{0}', preview.related.title || preview.related.url)}
+                </Text>
+                <Button
+                  size="compact-xs"
+                  variant="light"
+                  disabled={disabled}
+                  onClick={() => {
+                    const url = preview.related!.url
+                    setSource(url)
+                    void loadPreview(url)
+                  }}
+                >
+                  {tr('改看 VNDB 的資料')}
+                </Button>
+              </Group>
+            </Alert>
+          )}
           <Text size="sm" c="dimmed" my="sm">
             {preview.provider === 'steam'
               ? tr('發售日保留 Steam 商店顯示的日期，不推定為作品首次發行日。')

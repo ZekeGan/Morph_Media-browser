@@ -1,6 +1,6 @@
 # CELL 編輯器
 
-> 最後確認：2026-11-12。積木（卡片版面）編輯器的現行規則。程式：`src/editor/Editor.tsx`、`src/editor/EditorPalette.tsx`、`src/editor/EditorInspector.tsx`、`src/cells/CellStyleEditor.tsx`、`src/editor/FieldManager.tsx`、`src/editor/FieldGroupPalette.tsx`、`src/editor/DisplaySource.tsx`、`src/editor/OptionTagsInput.tsx`、`src/editor/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/date-fields.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/date-field-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
+> 最後確認：2026-11-13。積木（卡片版面）編輯器的現行規則。程式：`src/editor/Editor.tsx`、`src/editor/EditorPalette.tsx`、`src/editor/EditorInspector.tsx`、`src/cells/CellStyleEditor.tsx`、`src/editor/FieldManager.tsx`、`src/editor/FieldGroupPalette.tsx`、`src/editor/DisplaySource.tsx`、`src/editor/OptionTagsInput.tsx`、`src/editor/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/date-fields.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/date-field-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
 
 本頁持有模板編輯與編輯器內的方案管理行為；CELL 種類只列在 [CELL_CATALOG](CELL_CATALOG.md)，瀏覽時的 CARD 工具列與方案切換由 [工作區](WORKSPACE_REVISION.md) 持有。實作入口：[Editor](../src/editor/Editor.tsx)、[Card](../src/cells/Card.tsx)、[shared/layouts](../shared/layouts.ts)。
 

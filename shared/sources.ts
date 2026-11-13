@@ -49,6 +49,14 @@ export const metadataSources = [
     hint: 'https://store.steampowered.com/app/ID/',
   },
   { id: 'vndb', name: 'VNDB', group: '遊戲', categories: ['game'], hint: 'https://vndb.org/vID' },
+  // R-359: itch.io game pages (and the same game on VNDB as an optional second source).
+  {
+    id: 'itch',
+    name: 'itch.io',
+    group: '遊戲',
+    categories: ['game'],
+    hint: 'https://AUTHOR.itch.io/GAME',
+  },
   {
     id: 'musicbrainz',
     name: 'MusicBrainz',
@@ -244,5 +252,7 @@ export function sourceForUrl(source: string): MetadataSourceId | undefined {
   if (url.hostname === 'www.google.com' && url.pathname.startsWith('/books/')) return 'googlebooks'
   // Shop pages on a BOOTH subdomain (<shop>.booth.pm/items/<id>).
   if (/^[a-z0-9-]{1,63}\.booth\.pm$/.test(url.hostname)) return 'booth'
+  // Game pages live on the author's subdomain (<author>.itch.io/<game>).
+  if (/^[a-z0-9-]{1,63}\.itch\.io$/.test(url.hostname)) return 'itch'
   return Object.hasOwn(sources, url.hostname) ? sources[url.hostname] : 'web'
 }

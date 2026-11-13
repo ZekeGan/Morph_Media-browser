@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Websites: itch.io game addresses import the title, cover, authors, tags, price, genre, platforms, status, engine, release date and rating without a key; when VNDB lists the same game, the preview offers its data as a separate choice (R-359).
 - Development: the UI test runner keeps its output short (a line for the build, and for a failure its error, the test line it stopped at and where its screenshots are), `--verbose` shows what the tests print, and `pnpm verify:old` says why the old code failed; `pnpm item` and `pnpm i18n add` handle the routine edits of the work list, spec dates and translations (R-356, R-357, R-358).
 - Novel reader: scroll mode hides its scrollbar, and the mouse wheel and page keys glide instead of jumping (R-354, R-355).
 - Novel reader: in immersive reading the contents panel sits between the toolbar and the progress bar instead of under them (R-353).

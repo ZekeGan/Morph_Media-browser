@@ -1,6 +1,6 @@
 # 外部資料預覽與匯入
 
-> 最後確認：2026-11-13（R-339、R-293、R-329、R-321、R-334、R-297、R-300～R-302、R-296、R-311、R-283～R-292）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
+> 最後確認：2026-11-13（R-359）。從網站補充資料夾資訊的現行規則。程式：`shared/sources.ts`、`electron/metadata.ts`、`electron/metadata-public.ts`、`electron/sources/`、`src/metadata/FolderSourceImport.tsx`、`electron/explorer-source.ts`；測試：`tests/metadata.test.ts`、`tests/date-fields.test.ts`。
 
 已接入的來源以 `shared/sources.ts` 為準（目前：E-Hentai、ExHentai、Hitomi.la、Bangumi、AniList、DLsite、Steam、VNDB、MusicBrainz、Open Library、Pixiv、Wikimedia Commons）。此頁持有來源流程與人工值保護；程式入口：[metadata](../electron/metadata.ts)、[Explorer](../electron/explorer.ts) 的 metadataPreview／applyMetadata。
 
@@ -41,6 +41,14 @@
 | 書籍 | Open Library、Google Books、小説家になろう、カクヨム | [公開書目與作者](https://openlibrary.org/developers/api)，作者補讀最多三筆；Google Books 讀 `volumes/<ID>`（不填金鑰時共用匿名額度，常遇到 429，金鑰見 R-285）；なろう用官方小說 API（R18 的 novel18 走 `novel18api`）；カクヨム讀作品頁內嵌的 Next.js 資料，不執行頁面程式 |
 | 網頁 | 其他任何 HTTPS 網址（R-283） | 只讀頁面自己宣告的 JSON-LD、OpenGraph／Twitter、`<title>`：標題、簡介、作者、日期、關鍵字、網站名稱與封面。只接受不含帳號密碼的 HTTPS、不允許本機與內網位址（轉址也逐次檢查，最多三次）、2 MB、15 秒；依標頭或 `<meta charset>` 解碼（含 Shift_JIS、EUC-JP）；以只往前的掃描讀標籤，不執行頁面程式。封面主機無法事先列名單，一律經圖片網址匯入的安全下載（HTTPS、非內網、大小與影像格式檢查）。 |
 | 圖片／插畫 | Pixiv、Wikimedia Commons、Danbooru | Pixiv 公開作品回應（插畫 `/artworks/<ID>` 與小說 `/novel/show.php?id=`）；Danbooru 讀 `posts/<ID>.json`，標籤依作者／原作／角色／一般分欄，分級存進年齡分級；[Commons API](https://commons.wikimedia.org/wiki/Commons:API/MediaWiki) 保留作者及授權，不推論私人照片身分 |
+
+### itch.io（R-359）
+
+itch.io 的官方 API 只能查自己的作品，改讀每個作品頁旁公開的 `data.json`（標題、封面、作者、標籤、價格、作品 ID），再讀作品頁的「More information」表格補上類型、平台、發售狀態、製作工具、語言，以及「Published」首次發行日（只有「Updated」時不填發行日）；頁面內嵌的 schema.org 資料補簡介與評分。表格讀不到時只用 `data.json`。不需登入或金鑰，成人作品也沒有年齡確認（2026-11-13 抽 7 個作品實測）；robots.txt 不禁止作品頁，條款沒有禁止自動存取。請求只送往貼上網址的 `<作者>.itch.io` 與 `api.vndb.org`，封面只收 `img.itch.zone`；作品搬到別的帳號時以 `data.json` 裡同在 itch.io 的正式網址為來源網址。
+
+同一作品若在 VNDB 有 itch.io 連結（`itch:作者/作品`），預覽上方提示「VNDB 也有這部作品」，按「改看 VNDB 的資料」另開 VNDB 預覽；兩邊各自套用、各存在自己的來源命名空間，不自動合併。VNDB 查不到或失敗時不提示。
+
+限制：來源請求一律不跟隨轉址，作品搬到別的帳號後舊網址讀不到，要貼現在的網址；封面只收 JPG／PNG／WebP，itch.io 常見的 GIF 封面顯示「封面無法取得」。作品頁由任何 itch.io 使用者撰寫，表格與內嵌資料用有上限的方式讀取（最多 60 列、5 段）；正式網址只採用同一作者子網域的連結。
 
 ### 需要使用者金鑰的來源（R-285～R-290、R-321）
 
@@ -113,7 +121,6 @@ Hitomi 的作品資料主機是 `ltn.gold-usergeneratedcontent.net`（2026-11 �
 | Fanbox、Fantia | 只能用登入 Cookie 取得 |
 | AO3 | 對程式請求一律回 418「暫時拒絕」（2026-11-12 實測），屬擋機器人保護，不繞過 |
 | VGMdb | 回 Cloudflare 驗證頁（2026-11-12 實測），不繞過 |
-| itch.io | API 只能查自己的作品 |
 
 沿用精確作品網址 → 預覽 → 確認套用；同人動畫可優先查原販售頁，一般動畫／漫畫搭配作品資料庫。保留來源命名空間，區分原版／漢化版、單行本／單話及本體／DLC；不依同名自動合併、覆寫人工資料或下載作品內容。
 
