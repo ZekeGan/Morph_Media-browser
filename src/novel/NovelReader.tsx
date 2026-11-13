@@ -568,6 +568,22 @@ export function NovelReader({
   }, [panel, settingsOpen])
   useEffect(() => () => clearTimeout(hideBars.current), [])
   const barsShown = immersive && (bars || !!panel || settingsOpen)
+  // R-353: in immersive reading the bars float over the page, so the side panel sits between them.
+  const toolbar = useRef<HTMLDivElement>(null),
+    progress = useRef<HTMLDivElement>(null),
+    [barSpace, setBarSpace] = useState({ top: 0, bottom: 0 })
+  useLayoutEffect(() => {
+    if (!immersive) return
+    const measure = () =>
+      setBarSpace({
+        top: toolbar.current?.offsetHeight ?? 0,
+        bottom: progress.current?.offsetHeight ?? 0,
+      })
+    const observer = new ResizeObserver(measure)
+    for (const bar of [toolbar.current, progress.current]) if (bar) observer.observe(bar)
+    measure()
+    return () => observer.disconnect()
+  }, [immersive])
   const followMouse = (event: React.MouseEvent<HTMLDivElement>) => {
     if (!immersive) return
     const frame = event.currentTarget.getBoundingClientRect(),
@@ -642,7 +658,7 @@ export function NovelReader({
       >
         {/* R-336: title on the left; search, bookmark, the Aa settings, immersive and close on the right. In immersive
             reading the bar hides and comes back when the mouse reaches the top edge. */}
-        <div className="reader-toolbar novel-toolbar">
+        <div className="reader-toolbar novel-toolbar" ref={toolbar}>
           {tool(tr('目錄、書籤與搜尋'), 'list', () => setPanel(panel ? undefined : 'toc'), !!panel)}
           <span className="novel-heading" title={title}>
             <strong>{title}</strong>
@@ -825,6 +841,7 @@ export function NovelReader({
           {panel && (
             <aside
               className={'novel-panel' + (floating ? ' floating' : '')}
+              style={immersive ? barSpace : undefined}
               aria-label={tr('目錄、書籤與搜尋')}
             >
               <SegmentedControl
@@ -1061,7 +1078,7 @@ export function NovelReader({
             </Button>
           </div>
         )}
-        <div className={'novel-progress' + (vertical ? ' rtl' : '')}>
+        <div className={'novel-progress' + (vertical ? ' rtl' : '')} ref={progress}>
           {tool(tr('上一章'), vertical ? 'chevron-right' : 'chevron-left', () =>
             goChapter(chapter - 1)
           )}

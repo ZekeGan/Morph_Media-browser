@@ -272,6 +272,19 @@ try {
   await waitBars('1')
   await reader().getByRole('button', { name: '目錄、書籤與搜尋', exact: true }).click()
   await reader().locator('.novel-panel.floating').waitFor()
+  // R-353: the panel sits between the bars instead of under them.
+  await page.waitForTimeout(250)
+  const between = await page.evaluate(() => {
+    const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect()
+    const panel = box('.novel-panel'),
+      bar = box('.novel-toolbar'),
+      progress = box('.novel-progress')
+    return { top: panel.top - bar.bottom, bottom: progress.top - panel.bottom }
+  })
+  assert.ok(
+    between.top >= -1 && between.bottom >= -1,
+    'panel between the bars ' + JSON.stringify(between)
+  )
   await page.keyboard.press('Escape')
   await reader().locator('.novel-panel').waitFor({ state: 'detached' })
   await waitBars('0')
