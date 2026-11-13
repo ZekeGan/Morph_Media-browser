@@ -11848,5 +11848,101 @@
     "en": "Invalid content template cover setting",
     "ja": "内容テンプレートの表紙設定が正しくありません",
     "es": "Ajuste de portada de la plantilla no válido"
+  },
+  "統一成日期…": {
+    "zh-CN": "统一成日期…",
+    "en": "Make all dates…",
+    "ja": "日付に統一…",
+    "es": "Unificar como fecha…"
+  },
+  "統一成{0}": {
+    "zh-CN": "统一成{0}",
+    "en": "Make all values: {0}",
+    "ja": "{0}に統一",
+    "es": "Unificar como {0}"
+  },
+  "{0} 個資料夾裡的 {1} 個文字值會改存成{2}。": {
+    "zh-CN": "{0} 个文件夹里的 {1} 个文本值会改存成{2}。",
+    "en": "{1} text values in {0} folders will be stored as {2}.",
+    "ja": "{0} 個のフォルダーにある {1} 個のテキスト値を{2}として保存し直します。",
+    "es": "{1} valores de texto en {0} carpetas se guardarán como {2}."
+  },
+  "沒有能讀成日期的文字值。": {
+    "zh-CN": "没有能读成日期的文本值。",
+    "en": "No text value can be read as a date.",
+    "ja": "日付として読めるテキスト値はありません。",
+    "es": "Ningún valor de texto se puede leer como fecha."
+  },
+  "下列 {0} 個值看不懂，保留為文字：": {
+    "zh-CN": "下列 {0} 个值看不懂，保留为文本：",
+    "en": "These {0} values cannot be read and stay text:",
+    "ja": "次の {0} 個の値は読めないため、テキストのまま残します：",
+    "es": "Estos {0} valores no se pueden leer y quedan como texto:"
+  },
+  "改寫前會先備份到 {0}": {
+    "zh-CN": "改写前会先备份到 {0}",
+    "en": "A backup is made first in {0}",
+    "ja": "書き換える前に {0} にバックアップします",
+    "es": "Antes se hace una copia en {0}"
+  },
+  "確認統一": {
+    "zh-CN": "确认统一",
+    "en": "Make them dates",
+    "ja": "統一する",
+    "es": "Unificar"
+  },
+  "專案未連結，請重新載入": {
+    "zh-CN": "项目未连接，请重新加载",
+    "en": "The project is not linked; reload and try again",
+    "ja": "プロジェクトがリンクされていません。再読み込みしてください",
+    "es": "El proyecto no está vinculado; vuelve a cargar"
+  },
+  "專案位於保護邊界內，無法改寫欄位": {
+    "zh-CN": "项目位于保护边界内，无法改写字段",
+    "en": "The project is inside a protected folder; its fields cannot be rewritten",
+    "ja": "プロジェクトが保護されたフォルダー内にあるため、項目を書き換えられません",
+    "es": "El proyecto está dentro de una carpeta protegida; no se pueden reescribir sus campos"
+  },
+  "這個欄位不是文字與日期混用，沒有可統一的值": {
+    "zh-CN": "这个字段不是文本与日期混用，没有可统一的值",
+    "en": "This field does not mix text and dates; there is nothing to unify",
+    "ja": "この項目はテキストと日付が混在していないため、統一する値はありません",
+    "es": "Este campo no mezcla texto y fechas; no hay nada que unificar"
+  },
+  "欄位統一預覽已失效，請重新預覽": {
+    "zh-CN": "字段统一预览已失效，请重新预览",
+    "en": "The preview is out of date; preview again",
+    "ja": "プレビューが古くなりました。もう一度プレビューしてください",
+    "es": "La vista previa está desactualizada; vuelve a generarla"
+  },
+  "沒有可統一的值": {
+    "zh-CN": "没有可统一的值",
+    "en": "There is nothing to unify",
+    "ja": "統一する値はありません",
+    "es": "No hay nada que unificar"
+  },
+  "預覽後資料已變更，未執行統一": {
+    "zh-CN": "预览后数据已变更，未执行统一",
+    "en": "The data changed after the preview; nothing was changed",
+    "ja": "プレビュー後にデータが変わったため、統一しませんでした",
+    "es": "Los datos cambiaron tras la vista previa; no se cambió nada"
+  },
+  "保護邊界已變更，未執行統一": {
+    "zh-CN": "保护边界已变更，未执行统一",
+    "en": "The protected folders changed; nothing was changed",
+    "ja": "保護範囲が変わったため、統一しませんでした",
+    "es": "Las carpetas protegidas cambiaron; no se cambió nada"
+  },
+  "資料正在變更，請稍後再預覽": {
+    "zh-CN": "数据正在变更，请稍后再预览",
+    "en": "The data is changing; preview again in a moment",
+    "ja": "データが変更中です。少し待ってからもう一度プレビューしてください",
+    "es": "Los datos están cambiando; vuelve a generar la vista previa en un momento"
+  },
+  "專案「{0}」把這個欄位當成其他型別使用，不能統一": {
+    "zh-CN": "项目「{0}」把这个字段当成其他类型使用，不能统一",
+    "en": "The project \"{0}\" uses this field as another type, so it cannot be unified",
+    "ja": "プロジェクト「{0}」がこの項目を別の型で使っているため、統一できません",
+    "es": "El proyecto «{0}» usa este campo con otro tipo, así que no se puede unificar"
   }
 }

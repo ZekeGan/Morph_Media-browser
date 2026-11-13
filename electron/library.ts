@@ -42,6 +42,7 @@ import { identifyImage } from '../shared/images'
 import type { FieldDeletionPreview, FullRemovalPreview } from '../shared/model'
 import { managedTree, type Change, type ManagedFile } from './maintenance'
 import * as fieldRemovalFns from './library-field-removal'
+import * as fieldUnifyFns from './library-field-unify'
 import * as removalFns from './library-removal'
 import * as exportFns from './library-export'
 import * as cleanupFns from './library-cleanup'
@@ -82,6 +83,11 @@ export class Library {
       scope: string
       absent: string[]
     }
+  >()
+  // R-364: confirmed previews of unifying a field's text values to dates.
+  unifyPlans = new Map<
+    string,
+    { changes: Change[]; guards: ManagedFile[]; refs: string; scope: string }
   >()
   fullPlans = new Map<
     string,
@@ -315,6 +321,12 @@ export class Library {
   }
   async deleteField(token: string) {
     return fieldRemovalFns.deleteField(this, token)
+  }
+  async previewUnifyField(projectId: string, attributeId: string) {
+    return fieldUnifyFns.previewUnifyField(this, projectId, attributeId)
+  }
+  async unifyField(token: string) {
+    return fieldUnifyFns.unifyField(this, token)
   }
   async previewFullRemoval(projectId: string): Promise<FullRemovalPreview> {
     return removalFns.previewFullRemoval(this, projectId)

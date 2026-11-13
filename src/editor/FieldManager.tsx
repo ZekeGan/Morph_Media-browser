@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   ActionIcon,
+  Alert,
   Button,
   Group,
   Menu,
@@ -14,7 +15,15 @@ import { Icon } from '../common/icons'
 import { OptionTagsInput } from './OptionTagsInput'
 import { HelpTip } from '../common/HelpTip'
 import { t as tr } from '../i18n'
-import type { Attribute, FieldGroup, FolderRow, Project } from '../../shared/model'
+import type {
+  Attribute,
+  FieldGroup,
+  FieldUnifyPreview,
+  FolderRow,
+  Project,
+  Request,
+  Response,
+} from '../../shared/model'
 import type { editorFields } from '../../shared/layouts'
 import { copyableValue, groupValue, isFilled } from '../../shared/cells'
 import { groupOfField } from '../../shared/fieldGroups'
@@ -51,6 +60,87 @@ const tooLong = (options: string[]) => options.some((option) => option.length > 
 
 // One field's details: what it is, its real data, where it is used, and what can be done with it. Keyed by field, so
 // a half-finished purpose change never carries over to another field.
+// R-364: a field kept as text in some folders and as a date in others is settled here: a preview says how many
+// values would become dates and which cannot be read (they stay text); only a confirmed preview writes.
+function UnifyDates({
+  act,
+  projectId,
+  attributeId,
+  busy,
+}: {
+  act: (request: Request) => Promise<Response | undefined>
+  projectId: string
+  attributeId: string
+  busy: boolean
+}) {
+  const [preview, setPreview] = useState<FieldUnifyPreview>(),
+    [working, setWorking] = useState(false)
+  const run = async (request: Request) => {
+    setWorking(true)
+    try {
+      return await act(request)
+    } finally {
+      setWorking(false)
+    }
+  }
+  if (!preview)
+    return (
+      <Button
+        size="xs"
+        variant="light"
+        disabled={busy || working}
+        onClick={async () =>
+          setPreview(
+            (await run({ action: 'unifyFieldPreview', projectId, attributeId }))?.fieldUnifyPreview
+          )
+        }
+      >
+        {tr('統一成日期…')}
+      </Button>
+    )
+  const kind = preview.to === 'datetime' ? tr('日期和時間') : tr('日期')
+  return (
+    <Alert color="blue" className="field-unify" title={tr('統一成{0}', kind)}>
+      <Text size="sm">
+        {preview.values
+          ? tr('{0} 個資料夾裡的 {1} 個文字值會改存成{2}。', preview.folders, preview.values, kind)
+          : tr('沒有能讀成日期的文字值。')}
+      </Text>
+      {preview.unreadable.length > 0 && (
+        <>
+          <Text size="sm" mt="xs">
+            {tr('下列 {0} 個值看不懂，保留為文字：', preview.unreadable.length)}
+          </Text>
+          <ul className="field-unify-list">
+            {preview.unreadable.slice(0, 8).map((item, index) => (
+              <li key={index} title={item.path}>
+                {item.value}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      <Text size="xs" c="dimmed" mt="xs">
+        {tr('改寫前會先備份到 {0}', preview.recoveryPath)}
+      </Text>
+      <Group gap="xs" mt="sm">
+        <Button
+          size="xs"
+          disabled={busy || working || !preview.values}
+          onClick={async () => {
+            if (await run({ action: 'unifyField', token: preview.token })) setPreview(undefined)
+          }}
+        >
+          {tr('確認統一')}
+        </Button>
+        <Button size="xs" variant="subtle" disabled={working} onClick={() => setPreview(undefined)}>
+          {tr('取消')}
+        </Button>
+      </Group>
+    </Alert>
+  )
+}
+
 function FieldDetail({
   binding,
   added,
@@ -64,9 +154,11 @@ function FieldDetail({
   change,
   reference,
   requestDelete,
+  act,
   setRenaming,
   showSource,
 }: {
+  act: (request: Request) => Promise<Response | undefined>
   binding: Binding
   added: boolean
   source?: Source
@@ -417,6 +509,9 @@ function FieldDetail({
               {tr('同一欄位的型別不一致，請先處理資料衝突')}
             </Text>
           )}
+          {source?.conflict && (
+            <UnifyDates act={act} projectId={draft.projectId} attributeId={id} busy={busy} />
+          )}
         </div>
       )}
       {added && binding.type === 'boolean' && (
@@ -660,11 +755,14 @@ export function FieldManager({
   onNewField,
   reference,
   requestDelete,
+  act,
   setRenaming,
   rows,
   bindSource,
   setError,
 }: {
+  // R-364: main-process requests (unifying a field's text values to dates).
+  act: (request: Request) => Promise<Response | undefined>
   // The field (or "group:" and a group ID) to show first, also after creating one from this window.
   focusId?: string
   rows: FolderRow[]
@@ -918,6 +1016,7 @@ export function FieldManager({
                   change={change}
                   reference={reference}
                   requestDelete={requestDelete}
+                  act={act}
                   setRenaming={setRenaming}
                   showSource={(source) => {
                     setSearch(source)

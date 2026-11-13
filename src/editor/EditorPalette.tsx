@@ -825,6 +825,7 @@ export function EditorPalette(props: EditorPaletteProps) {
           onNewField={() => startNewField()}
           reference={reference}
           requestDelete={(binding) => void requestDelete(binding)}
+          act={act}
           setRenaming={setRenaming}
           rows={rows}
           bindSource={bindSource}

@@ -250,6 +250,17 @@ export interface FullRemovalPreview {
   affectedProjects: { projectId: string; name: string; root: string }[]
   recoveryPath: string
 }
+// R-364: what unifying a field's text values to its date type would change.
+export interface FieldUnifyPreview {
+  token: string
+  attributeId: string
+  name: string
+  to: 'date' | 'datetime'
+  folders: number
+  values: number
+  unreadable: { path: string; value: string }[]
+  recoveryPath: string
+}
 export interface FieldDeletionPreview {
   token: string
   attributeId: string
@@ -287,6 +298,8 @@ export type Request =
   | { action: 'fullRemoval'; token: string }
   | { action: 'deleteFieldPreview'; projectId: string; attributeId: string }
   | { action: 'deleteField'; token: string }
+  | { action: 'unifyFieldPreview'; projectId: string; attributeId: string }
+  | { action: 'unifyField'; token: string }
   | { action: 'copyFieldValue'; rowId: string; attributeId: string }
   | { action: 'copyPath'; rowId: string }
   | { action: 'restoreProject'; projectId: string }
@@ -308,6 +321,7 @@ export interface Response {
   removal?: CleanupResult
   fullRemovalPreview?: FullRemovalPreview
   fieldDeletionPreview?: FieldDeletionPreview
+  fieldUnifyPreview?: FieldUnifyPreview
   recoveryPath?: string
   backup?: import('./backup').BackupPreview
   backups?: import('./backup').BackupEntry[]

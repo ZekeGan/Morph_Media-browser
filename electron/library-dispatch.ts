@@ -123,6 +123,15 @@ export function libraryDispatcher({ library, workspace, window, text: nt }: Disp
       case 'deleteField':
         extra.recoveryPath = await library.deleteField(request.token)
         break
+      case 'unifyFieldPreview':
+        extra.fieldUnifyPreview = await library.previewUnifyField(
+          request.projectId,
+          request.attributeId
+        )
+        break
+      case 'unifyField':
+        extra.recoveryPath = await library.unifyField(request.token)
+        break
       case 'saveProject':
         await library.saveProject(request.project)
         break

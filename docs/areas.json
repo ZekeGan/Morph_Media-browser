@@ -379,7 +379,7 @@
       "id": "project",
       "name": "專案設定與移除",
       "docs": ["WORKSPACE_REVISION.md#專案設定與移除", "STORAGE_OPTIONS.md#移除單一專案"],
-      "code": ["src/settings/ProjectSettings*", "electron/library-removal*", "electron/library-field-removal*"],
+      "code": ["src/settings/ProjectSettings*", "electron/library-removal*", "electron/library-field-removal*", "electron/library-field-unify*", "shared/unifyDates*"],
       "ui": ["decided-ui", "problems-ui"],
       "tests": ["maintenance.test.ts", "library.test.ts"]
     },

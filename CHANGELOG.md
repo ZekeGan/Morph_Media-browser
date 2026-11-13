@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Fields: a field kept as text in some folders and as a date in others (such as gallery posting times imported before R-240) can be made dates in one step from Manage fields, after a preview that lists any value that cannot be read; a backup is made first (R-364).
 - Manga right panel: the cover is a component of the layout (folder cover, else the first picture) that can be moved, resized or removed; a layout never edited starts with the cover and the card's fields instead of an empty column, and an older layout gets its cover component the next time it is opened in the editor (R-362).
 - With the project sidebar hidden, only its top-bar button previews it; the window's left edge no longer brings it out, and Esc puts the preview away while the button's tooltip is showing (R-360).
 - Layout editor: removing a component (a divider, for example) no longer leaves its empty rows on the cards; stored positions match what the editor shows (R-361).

@@ -72,6 +72,8 @@ const library: Record<Request['action'], Shape> = {
   fullRemoval: { token: ref },
   deleteFieldPreview: { projectId: ref, attributeId: ref },
   deleteField: { token: ref },
+  unifyFieldPreview: { projectId: ref, attributeId: ref },
+  unifyField: { token: ref },
   copyFieldValue: { rowId: ref, attributeId: ref },
   copyPath: { rowId: ref },
   restoreProject: { projectId: ref },
