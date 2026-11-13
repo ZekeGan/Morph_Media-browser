@@ -91,7 +91,7 @@ M:orph 的資料以**可攜的 JSON 記錄**為準，SQLite 搜尋索引只是�
 | `layoutPresets`、`activeLayoutId`、`folderLayouts` | 多個命名版面、目前使用的版面、各資料夾指定的版面 |
 | `stylePresets`（選用） | 此專案的命名樣式：`{ id, name, style }`，最多 20 個、名稱不分大小寫不可重複；`style` 與組件的 `style` 同規則 |
 | `contentCells` | 依內容類型的右側版面 |
-| `bookPresets`、`bookPresetId`、`folderBookPresets` | R-363（**暫定**）：漫畫模板清單（最多 30 個，名稱不重複）、專案預設模板（`contentCells.book` 同步存它的內容），以及資料夾自選的模板（資料夾 ID → 模板 ID，指向已刪除的模板時改用專案預設） |
+| `bookPresets`、`bookPresetId`、`folderBookPresets` | R-363：漫畫模板清單（最多 30 個，名稱不重複）、專案預設模板（`contentCells.book` 同步存它的內容），以及資料夾自選的模板（資料夾 ID → 模板 ID，指向已刪除的模板時改用專案預設） |
 | `contentCover` | R-362：`true` 表示書籍模板自己含封面組件；沒有時，已編輯過的書籍模板在旁邊另畫封面（舊行為） |
 | `actionTemplates` | 遊戲動作版型 `{ id, label, kind, color }` |
 | `list`、`cardView`、`excludedRelativePaths`、`scanAll`、`traversal` | 列表、顯示範圍、排除與掃描設定；`cardView.works`（R-340）為 `true` 時是「所有作品」，舊版讀到時依 `mode: multi` 顯示全部層 |

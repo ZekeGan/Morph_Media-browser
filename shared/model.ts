@@ -158,7 +158,7 @@ export interface Project {
   // R-362: the book template holds its own cover; without it an older edited template is shown with the
   // cover drawn beside it, as before.
   contentCover?: boolean
-  // R-363 (provisional): several book templates; the project default is bookPresetId (contentCells.book holds its
+  // R-363: several book templates; the project default is bookPresetId (contentCells.book holds its
   // cells too), and a folder may use another one (folderBookPresets, by folder ID).
   bookPresets?: { id: string; name: string; cells: Cell[] }[]
   bookPresetId?: string
