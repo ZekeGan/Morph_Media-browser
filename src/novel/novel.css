@@ -9,6 +9,10 @@
     gap: 4px;
 }
 
+.novel-reader.reader .novel-toolbar {
+    padding-right: 12px;
+}
+
 .novel-heading {
     display: flex;
     flex-direction: column;
@@ -60,7 +64,7 @@
     min-height: 0;
 }
 
-.novel-list button {
+.novel-list button:not(.mantine-ActionIcon-root) {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -76,17 +80,17 @@
     font-size: 13px;
 }
 
-.novel-list button:hover,
-.novel-list button[aria-current='true'] {
+.novel-list button:not(.mantine-ActionIcon-root):hover,
+.novel-list button:not(.mantine-ActionIcon-root)[aria-current='true'] {
     background: var(--hover);
 }
 
-.novel-list button:focus-visible {
+.novel-list button:not(.mantine-ActionIcon-root):focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: -2px;
 }
 
-.novel-list button small {
+.novel-list button:not(.mantine-ActionIcon-root) small {
     color: var(--muted);
 }
 
@@ -94,6 +98,11 @@
     display: flex;
     align-items: center;
     gap: 4px;
+}
+
+.novel-mark > button:first-child {
+    flex: 1;
+    min-width: 0;
 }
 
 .novel-page {
@@ -355,6 +364,30 @@
     width: min(320px, 85%);
     max-width: none;
     box-shadow: 4px 0 16px rgb(0 0 0 / 25%);
+}
+
+.novel-panel.floating {
+    animation: novel-panel-in 0.15s ease;
+}
+
+@keyframes novel-panel-in {
+    from {
+        transform: translateX(-100%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .novel-panel.floating {
+        animation: none;
+    }
+}
+
+/* R-349: in immersive reading the mouse at the left edge brings the contents out. */
+.novel-edge {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 4;
+    width: 12px;
 }
 
 .novel-panel-backdrop {

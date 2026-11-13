@@ -1,6 +1,6 @@
 # ZIP／CBZ 與 PDF 唯讀觀看
 
-> 最後確認：2026-11-12。ZIP／CBZ／PDF 檢視的現行規則；TXT／EPUB 文字書由同一個入口轉給 [小說閱讀器](NOVEL_READER.md)。程式：`src/documents/DocumentViewer.tsx`、`electron/archive.ts`。
+> 最後確認：2026-11-13。ZIP／CBZ／PDF 檢視的現行規則；TXT／EPUB 文字書由同一個入口轉給 [小說閱讀器](NOVEL_READER.md)。程式：`src/documents/DocumentViewer.tsx`、`electron/archive.ts`。
 
 入口為資料夾內容的書架（每本一列，附閱讀進度與「開始閱讀／繼續閱讀」，R-338），或中央「檔案」總覽選取後檔案頁的主要按鈕（R-337）。不修改原始文件、不解壓到媒體目錄、不為壓縮檔內部建立可攜記錄。
 

@@ -220,6 +220,23 @@ try {
   // A bookmark at this place.
   await reader().getByRole('button', { name: '加入書籤', exact: true }).click()
   await reader().locator('.novel-mark').first().waitFor()
+  // R-348: the bookmark's name fills the row; its delete button stays icon sized.
+  const deleteBox = (await reader()
+    .locator('.novel-mark .mantine-ActionIcon-root')
+    .first()
+    .boundingBox())!
+  assert.ok(deleteBox.width < 40, 'delete button width ' + deleteBox.width)
+  // R-347: the toolbar's last button sits at its right end.
+  assert.ok(
+    await page.evaluate(() => {
+      const bar = document.querySelector('.novel-toolbar')!.getBoundingClientRect(),
+        close = document
+          .querySelector('.novel-toolbar [aria-label="退出 · ESC"]')!
+          .getBoundingClientRect()
+      return bar.right - close.right < 24
+    }),
+    'close button at the right end of the toolbar'
+  )
   await reader().getByRole('button', { name: '退出 · ESC', exact: true }).click()
   await reader().waitFor({ state: 'detached' })
   await page.waitForFunction(() =>
@@ -260,6 +277,15 @@ try {
     undefined
   )
   await page.screenshot({ path: path.join(base, 'shot', 'r282-novel-epub.png') })
+  // R-345: the next book opens at its own saved place (story.txt was left in chapter 3).
+  await page.keyboard.press('End')
+  await reader()
+    .getByRole('button', { name: /^(開啟下一本|下一本：story)$/ })
+    .first()
+    .click()
+  await page.waitForFunction(() =>
+    /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
+  )
   await page.keyboard.press('Escape')
   await reader().waitFor({ state: 'detached' })
   // R-337, R-338: one book in the right panel shows its cover, title, author and chapters.

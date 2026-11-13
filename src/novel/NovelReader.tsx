@@ -91,7 +91,10 @@ export function NovelReader({
     [query, setQuery] = useState(''),
     [hits, setHits] =
       useState<{ chapter: number; at: number; before: string; match: string; after: string }[]>(),
-    [immersive, setImmersive] = useState(false),
+    // The next book (R-345) opens in a new reader while the window is still in fullscreen: it stays immersive.
+    [immersive, setImmersive] = useState(() => !!document.fullscreenElement),
+    // R-349: the panel was brought out by the mouse at the left edge in immersive reading and leaves with it.
+    [peek, setPeek] = useState(false),
     [ending, setEnding] = useState(false),
     [box, setBox] = useState({ width: 1, height: 1 })
   const scroller = useRef<HTMLDivElement>(null),
@@ -342,6 +345,7 @@ export function NovelReader({
       } else {
         await document.documentElement.requestFullscreen()
         setImmersive(true)
+        setPanel(undefined)
       }
     } catch (reason) {
       setError(String(reason))
@@ -490,7 +494,12 @@ export function NovelReader({
     }
   }
   // --- Layout ---
+  // R-350: the margin sets the ends of a line (left and right, or top and bottom for vertical text); across the lines
+  // the page keeps a small edge of its own.
   const pad = Math.round(((vertical ? box.height : box.width) * settings.margin) / 100)
+  const edge = Math.round(
+    Math.min(32, Math.max(16, ((vertical ? box.width : box.height) * 3) / 100))
+  )
   const charLimit = settings.chars ? settings.chars * settings.size : 0
   const inlineSpace = (vertical ? box.height : box.width) - 2 * pad
   const inlinePad = charLimit && inlineSpace > charLimit ? pad + (inlineSpace - charLimit) / 2 : pad
@@ -502,7 +511,7 @@ export function NovelReader({
         ? {
             width: box.width,
             height: box.height,
-            padding: `${inlinePad}px ${pad}px`,
+            padding: `${inlinePad}px ${edge}px`,
             columnWidth: box.height - 2 * inlinePad,
             columnGap: 2 * inlinePad,
             columnFill: 'auto',
@@ -510,14 +519,14 @@ export function NovelReader({
         : {
             width: box.width,
             height: box.height,
-            padding: `${pad}px ${inlinePad}px`,
+            padding: `${edge}px ${inlinePad}px`,
             columnWidth: box.width - 2 * inlinePad,
             columnGap: 2 * inlinePad,
             columnFill: 'auto',
           }
       : vertical
-        ? { height: '100%', padding: `${inlinePad}px ${pad}px` }
-        : { padding: `${pad}px ${inlinePad}px` }),
+        ? { height: '100%', padding: `${inlinePad}px ${edge}px` }
+        : { padding: `${edge}px ${inlinePad}px` }),
   }
   const title = book?.title || file.name
   const chapterLabel = (index: number) =>
@@ -537,6 +546,11 @@ export function NovelReader({
   }
   const [dragging, setDragging] = useState<number>()
   const narrow = useMediaQuery('(max-width: 900px)')
+  // The panel floats over the page on a narrow window and in immersive reading (R-335, R-349).
+  const floating = narrow || immersive
+  useEffect(() => {
+    if (!panel) setPeek(false)
+  }, [panel])
   const left = (() => {
     if (!paged || !scroller.current) return undefined
     const { at, max, page } = extent()
@@ -545,8 +559,14 @@ export function NovelReader({
   // The list scrolls to the chapter being read when the contents open.
   const panelList = useRef<HTMLElement>(null)
   useEffect(() => {
-    if (panel === 'toc')
-      panelList.current?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'center' })
+    const list = panelList.current,
+      item = panel === 'toc' ? list?.querySelector('[aria-current="true"]') : undefined
+    // R-346: moving the list itself keeps the tabs above it in place (scrollIntoView also scrolled the panel).
+    if (list && item) {
+      const box = list.getBoundingClientRect(),
+        at = item.getBoundingClientRect()
+      list.scrollTop += at.top - box.top - (list.clientHeight - at.height) / 2
+    }
   }, [panel])
   const addBookmark = () => {
     setBookmarks((list) => [
@@ -760,7 +780,17 @@ export function NovelReader({
           {tool(tr('退出 · ESC'), 'close', exit)}
         </div>
         <div className="novel-body">
-          {panel && narrow && (
+          {immersive && !panel && (
+            <div
+              className="novel-edge"
+              aria-hidden="true"
+              onMouseEnter={() => {
+                setPeek(true)
+                setPanel('toc')
+              }}
+            />
+          )}
+          {panel && floating && !peek && (
             <button
               type="button"
               className="novel-panel-backdrop"
@@ -770,8 +800,9 @@ export function NovelReader({
           )}
           {panel && (
             <aside
-              className={'novel-panel' + (narrow ? ' floating' : '')}
+              className={'novel-panel' + (floating ? ' floating' : '')}
               aria-label={tr('目錄、書籤與搜尋')}
+              onMouseLeave={peek ? () => setPanel(undefined) : undefined}
             >
               <SegmentedControl
                 size="xs"
@@ -793,7 +824,7 @@ export function NovelReader({
                       aria-current={index === chapter ? 'true' : undefined}
                       onClick={() => {
                         goChapter(index)
-                        if (narrow) setPanel(undefined)
+                        if (floating) setPanel(undefined)
                       }}
                     >
                       {chapterLabel(index)}
@@ -932,7 +963,7 @@ export function NovelReader({
                   <div
                     className="novel-end-page"
                     style={{
-                      blockSize: Math.max(1, (vertical ? box.width : box.height) - 2 * pad),
+                      blockSize: Math.max(1, (vertical ? box.width : box.height) - 2 * edge),
                     }}
                   >
                     {chapter < book.chapters.length - 1 ? (

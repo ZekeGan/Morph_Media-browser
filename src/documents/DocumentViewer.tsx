@@ -65,6 +65,8 @@ export function DocumentViewer({
     return (
       <Suspense fallback={<p>{tr('載入內容…')}</p>}>
         <NovelReader
+          // R-345: the next book gets a fresh reader that starts from its own saved place.
+          key={file.id}
           row={row}
           file={file}
           run={run}
