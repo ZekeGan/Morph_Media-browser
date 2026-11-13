@@ -44,7 +44,7 @@
     "prepare": "node scripts/setup-hooks.mjs"
   },
   "dependencies": {
-    "music-metadata": "^12.3.2"
+    "music-metadata": "^12.3.4"
   },
   "devDependencies": {
     "@dagrejs/dagre": "^3.1.3",
