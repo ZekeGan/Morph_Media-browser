@@ -339,7 +339,10 @@ export function FolderContent({
   const cover =
       row.record?.assets.find((a) => a.assetId === row.record?.details?.bannerAssetId) ??
       row.record?.assets[0],
-    first = content.entries.find((e) => e.kind === 'image')
+    first = content.entries.find((e) => e.kind === 'image'),
+    // R-362: only an edited book template from before the cover became a component still has it drawn beside it.
+    legacyCover =
+      kind === 'book' && project.contentCells?.book !== undefined && !project.contentCover
   if (kind === 'game' && isGameFolder(row)) {
     const disabled = busy || !row.record || row.readonly || row.stopped || !!row.error
     const fields = [
@@ -643,7 +646,7 @@ export function FolderContent({
         onChild={onChild}
       />
       <div className="media-info-template">
-        {kind === 'book' && first && (
+        {legacyCover && first && (
           <img
             className="manga-cover"
             src={first.thumb ?? first.url}
@@ -654,8 +657,9 @@ export function FolderContent({
             alt={first.name}
           />
         )}
-        {/* The default template (name and path) repeats the panel header and folder details, so only a user-edited one is shown. */}
-        {project.contentCells?.[kind]?.length ? (
+        {/* The default template (name and path) repeats the panel header and folder details, so only a user-edited one is
+            shown; a book always shows its template, which starts with the cover (R-362). */}
+        {kind === 'book' || project.contentCells?.[kind]?.length ? (
           <Card
             project={{
               ...project,

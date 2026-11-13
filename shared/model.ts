@@ -155,6 +155,9 @@ export interface Project {
   list: { itemsPerRow: number; pageSize: number }
   excludedRelativePaths: string[]
   contentCells?: Record<string, Cell[]>
+  // R-362 (provisional): the book template holds its own cover; without it an older edited template is shown with the
+  // cover drawn beside it, as before.
+  contentCover?: boolean
   actionTemplates?: ActionTemplate[]
   layoutPresets?: { id: string; name: string; cells: Cell[] }[]
   // Styles saved by name in this project: applied to a component they replace its whole style.
@@ -884,6 +887,8 @@ export function validateProject(v: unknown): asserts v is Project {
         contentCells: undefined,
       })
   } else if (v.activeLayoutId !== undefined) throw new Error('方案清單不存在')
+  if (v.contentCover !== undefined && typeof v.contentCover !== 'boolean')
+    throw new Error('內容模板封面設定不合法')
   if (v.contentCells !== undefined) {
     if (!obj(v.contentCells) || !Object.keys(v.contentCells).every((k) => /^[a-z]{2,20}$/.test(k)))
       throw new Error('內容模板不合法')

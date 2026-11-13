@@ -22,7 +22,13 @@ import { RefreshContext } from './browse/refresh'
 import { Toasts } from './notices/Toasts'
 import { saveCardPreset, visibleCells } from '../shared/layouts'
 import { BrowseWorkspace } from './browse/BrowseWorkspace'
-import { contentCells, type ExplorerRequest, type ExplorerResponse } from '../shared/explorer'
+import { settleGrid } from './editor/settleGrid'
+import {
+  contentCells,
+  withBookCover,
+  type ExplorerRequest,
+  type ExplorerResponse,
+} from '../shared/explorer'
 import type { WorkspacePrefs } from '../shared/workspace'
 import { describeError } from './notices/errors'
 import type { Notice } from '../shared/notifications'
@@ -265,6 +271,7 @@ export function App() {
             ...p,
             cells: project!.cells,
             contentCells: { ...project!.contentCells, [templateCategory]: p.cells },
+            ...(templateCategory === 'book' ? { contentCover: true } : {}),
           }
         : p.layoutPresets
           ? syncPresetDraft(p)
@@ -375,7 +382,13 @@ export function App() {
               onDirty={setEditorDirty}
               project={
                 templateCategory
-                  ? { ...project, cells: contentCells(project, templateCategory) }
+                  ? {
+                      ...project,
+                      cells:
+                        templateCategory === 'book' && !project.contentCover
+                          ? settleGrid(withBookCover(contentCells(project, templateCategory)))
+                          : contentCells(project, templateCategory),
+                    }
                   : { ...project, cells: visibleCells(project) }
               }
               rows={(snapshot.structure ?? snapshot.rows).filter(

@@ -1,4 +1,5 @@
-import { visibleCells } from './layouts'
+import { bookCover, visibleCells } from './layouts'
+export { bookCover }
 import type { MetadataSourceId } from './sources'
 import type { StableQuery } from './query'
 import type { Notice } from './notifications'
@@ -420,4 +421,32 @@ export const contentCells = (
   kind: string
 ) =>
   project.contentCells?.[kind] ??
-  visibleCells(project).filter((c) => ['name', 'path'].includes(c.kind))
+  (kind === 'book'
+    ? bookTemplate(project)
+    : visibleCells(project).filter((c) => ['name', 'path'].includes(c.kind)))
+
+// The template a book starts with: the cover on the left and, on the right, the fields the project's cards show.
+export function bookTemplate(project: { cells: Cell[] }): Cell[] {
+  let y = 0
+  const fields: Cell[] = []
+  for (const cell of visibleCells(project).filter((cell) => cell.kind.startsWith('field-'))) {
+    if (y + cell.grid.h > 100 || fields.length >= 49) break
+    fields.push({ ...cell, grid: { x: 4, y, w: 8, h: cell.grid.h } })
+    y += cell.grid.h
+  }
+  return [bookCover({ x: 0, y: 0, w: 4, h: Math.min(8, Math.max(4, y)) }), ...fields]
+}
+// A book template from before R-362 had the cover drawn beside it. Opened in the editor it gets the cover as a
+// component on the left and the rest moves into the remaining two thirds, so it looks as before.
+export function withBookCover(cells: Cell[]): Cell[] {
+  if (cells.some((cell) => cell.kind === 'image') || cells.length >= 50) return cells
+  // Start and end are scaled together, so cells side by side stay apart; very narrow ones that would meet anyway are
+  // pulled apart by the editor's grid, which settles overlaps downwards.
+  const moved = cells.map((cell) => {
+    const x = Math.min(11, 4 + Math.round((cell.grid.x * 8) / 12)),
+      end = 4 + Math.round(((cell.grid.x + cell.grid.w) * 8) / 12)
+    return { ...cell, grid: { ...cell.grid, x, w: Math.max(1, Math.min(12, end) - x) } }
+  })
+  const bottom = Math.max(4, ...cells.map((cell) => cell.grid.y + cell.grid.h))
+  return [bookCover({ x: 0, y: 0, w: 4, h: Math.min(8, bottom) }), ...moved]
+}

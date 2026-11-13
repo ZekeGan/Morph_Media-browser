@@ -1,5 +1,14 @@
 import { fieldValue, type Attribute, type Cell, type FolderRow, type Project } from './model'
 import { effectiveKind } from './kind'
+// R-362: a book's cover is a component of its template (the folder's cover picture, else its first image), so it can
+// be moved, resized or left out like any other.
+export const bookCover = (grid: Cell['grid'] = { x: 0, y: 0, w: 4, h: 4 }): Cell => ({
+  cellId: 'book-cover',
+  kind: 'image',
+  imageIndex: 1,
+  grid,
+  style: { textColor: '#e4e6e8', backgroundColor: 'transparent' },
+})
 export function projectImageCells(project: Project): Cell[] {
   return [
     ...new Map(
@@ -7,6 +16,8 @@ export function projectImageCells(project: Project): Cell[] {
         ...project.cells,
         ...(project.layoutPresets?.flatMap((p) => p.cells) ?? []),
         ...Object.values(project.contentCells ?? {}).flat(),
+        // A book template never saved still shows the default cover, which can be given a picture of its own.
+        ...(project.contentCells?.book === undefined ? [bookCover()] : []),
       ]
         .filter((c) => c.kind === 'image')
         .map((c) => [c.cellId, c])

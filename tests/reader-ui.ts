@@ -105,6 +105,9 @@ try {
   })
   // R-327: a manga folder found by its pictures offers its layout button in the panel header.
   await page.locator('.manga-gallery .media-thumbnail').first().waitFor()
+  // R-362: the book's cover is a component of its template (no picture drawn beside it), showing the first image.
+  assert.equal(await page.locator('.media-info-template .manga-cover').count(), 0)
+  await page.locator('.media-info-template .card-cell img').first().waitFor()
   await page.getByRole('button', { name: '編輯漫畫展示', exact: true }).waitFor()
   await page.locator('.manga-gallery .media-thumbnail').first().click()
   await waitPages('1')

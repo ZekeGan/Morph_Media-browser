@@ -11842,5 +11842,11 @@
     "en": "Use VNDB instead",
     "ja": "VNDB の情報を見る",
     "es": "Ver los datos de VNDB"
+  },
+  "內容模板封面設定不合法": {
+    "zh-CN": "内容模板封面设置不合法",
+    "en": "Invalid content template cover setting",
+    "ja": "内容テンプレートの表紙設定が正しくありません",
+    "es": "Ajuste de portada de la plantilla no válido"
   }
 }
