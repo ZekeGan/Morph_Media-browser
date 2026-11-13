@@ -195,6 +195,44 @@ export function NovelReader({
     else if (vertical) element.scrollLeft = -value
     else element.scrollTop = value
   }
+  // R-355: in scroll mode the wheel and the page keys glide to where they send the reader instead of jumping there.
+  // Positions are along the reading direction (as extent().at); repeated wheel turns add to the target.
+  const glide = useRef<{ target: number; frame: number; last: number } | undefined>(undefined)
+  const stopGlide = () => {
+    if (glide.current) cancelAnimationFrame(glide.current.frame)
+    glide.current = undefined
+  }
+  const glideBy = (delta: number) => {
+    if (!scroller.current) return
+    const { at, max } = extent(),
+      target = Math.min(max, Math.max(0, (glide.current?.target ?? at) + delta))
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      stopGlide()
+      scrollTo(target)
+      return
+    }
+    if (glide.current) {
+      glide.current.target = target
+      return
+    }
+    const step = () => {
+      const state = glide.current
+      if (!state || !scroller.current) return
+      const now = extent().at,
+        gap = state.target - now
+      // Done, or the page would not move any further (an edge, or the text changed under it).
+      if (Math.abs(gap) < 1 || now === state.last) {
+        if (Math.abs(gap) < 1) scrollTo(state.target)
+        glide.current = undefined
+        return
+      }
+      state.last = now
+      scrollTo(Math.round(now + Math.sign(gap) * Math.max(1, Math.abs(gap) * 0.2)))
+      state.frame = requestAnimationFrame(step)
+    }
+    glide.current = { target, frame: requestAnimationFrame(step), last: NaN }
+  }
+  useEffect(() => stopGlide, [])
   // Put the reader back at the saved place (or the start / end of a chapter) once the chapter is laid out.
   useLayoutEffect(() => {
     const element = scroller.current
@@ -204,10 +242,15 @@ export function NovelReader({
     const box = paged ? undefined : sectionBox(chapter)
     if (box) {
       const span = Math.max(0, box.size - viewSize()),
+        crossed = anchor.current !== undefined,
         into = anchor.current ?? (target === 'end' ? span : span * target)
       anchor.current = undefined
+      const before = extent().at
       scrollTo(box.start + into)
+      if (glide.current && crossed) glide.current.target += extent().at - before
+      else stopGlide()
     } else {
+      stopGlide()
       const { max, page } = extent()
       let value = target === 'end' ? max : Math.round(max * target)
       if (paged && page > 0) value = Math.min(max, Math.round(value / page) * page)
@@ -333,7 +376,8 @@ export function NovelReader({
       return
     }
     setEnding(false)
-    scrollTo(Math.min(max, Math.max(0, at + direction * page)))
+    if (!paged) glideBy(direction * page)
+    else scrollTo(Math.min(max, Math.max(0, at + direction * page)))
     track()
   }
   const exit = () => {
@@ -416,9 +460,20 @@ export function NovelReader({
         if (performance.now() - lock < 250 || Math.abs(event.deltaY) < 4) return
         lock = performance.now()
         turn(event.deltaY > 0 ? 1 : -1)
-      } else if (vertical && Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+      } else if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+        // A touchpad sends many small steps that already move smoothly; a mouse wheel's notches glide (R-355).
+        const notch = event.deltaMode !== 0 || Math.abs(event.deltaY) >= 40
+        if (!notch) {
+          if (vertical) {
+            event.preventDefault()
+            stopGlide()
+            element.scrollLeft -= event.deltaY
+          }
+          return
+        }
         event.preventDefault()
-        element.scrollLeft -= event.deltaY
+        const unit = event.deltaMode === 1 ? 40 : event.deltaMode === 2 ? viewSize() : 1
+        glideBy(event.deltaY * unit)
       }
     }
     element.addEventListener('wheel', wheel, { passive: false })

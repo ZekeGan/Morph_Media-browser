@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Novel reader: scroll mode hides its scrollbar, and the mouse wheel and page keys glide instead of jumping (R-354, R-355).
 - Novel reader: in immersive reading the contents panel sits between the toolbar and the progress bar instead of under them (R-353).
 - Novel reader: in a book with many chapters the contents/bookmarks/search tabs keep their height; only the list below them scrolls (R-352).
 - Novel reader: in immersive reading a click in the middle of the page (or the mouse at the top or bottom edge) brings the toolbar and the progress bar back together; the contents open only from the toolbar, and the left-edge strip is gone; entering immersive reading or resizing the window keeps the place in the chapter (R-351).

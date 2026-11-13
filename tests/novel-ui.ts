@@ -158,6 +158,65 @@ try {
   await page.waitForFunction(() =>
     /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
   )
+  // R-354: scroll mode has no scrollbar.
+  assert.deepEqual(
+    await page.evaluate(() => {
+      const element = document.querySelector<HTMLElement>('.novel-page')!
+      return [getComputedStyle(element).scrollbarWidth, element.offsetHeight - element.clientHeight]
+    }),
+    ['none', 0]
+  )
+  // R-355: a page key glides over several frames instead of jumping.
+  await reader().locator('.novel-page').focus()
+  const glideFrom = await page.evaluate(() =>
+    Math.abs(document.querySelector('.novel-page')!.scrollLeft)
+  )
+  await page.keyboard.press('PageDown')
+  const trail = await page.evaluate(
+    () =>
+      new Promise<number[]>((resolve) => {
+        const element = document.querySelector('.novel-page')!,
+          list: number[] = []
+        const frame = () => {
+          list.push(Math.abs(element.scrollLeft))
+          if (list.length < 45) requestAnimationFrame(frame)
+          else resolve(list)
+        }
+        requestAnimationFrame(frame)
+      })
+  )
+  const width = await page.evaluate(() => document.querySelector('.novel-page')!.clientWidth)
+  assert.ok(new Set(trail).size >= 4, 'glides through several positions: ' + trail.join(','))
+  assert.ok(
+    Math.abs(trail[trail.length - 1] - glideFrom - width * 0.9) < 3,
+    'ends one screen on: ' + glideFrom + ' → ' + trail[trail.length - 1]
+  )
+  await page.keyboard.press('PageUp')
+  await page.waitForTimeout(800)
+  // A mouse wheel notch glides too (sideways in vertical text).
+  const wheelBox = (await reader().locator('.novel-page').boundingBox())!
+  await page.mouse.move(wheelBox.x + wheelBox.width / 2, wheelBox.y + wheelBox.height / 2)
+  const wheelFrom = await page.evaluate(() =>
+    Math.abs(document.querySelector('.novel-page')!.scrollLeft)
+  )
+  await page.mouse.wheel(0, 100)
+  const wheelTrail = await page.evaluate(
+    () =>
+      new Promise<number[]>((resolve) => {
+        const element = document.querySelector('.novel-page')!,
+          list: number[] = []
+        const frame = () => {
+          list.push(Math.abs(element.scrollLeft))
+          if (list.length < 45) requestAnimationFrame(frame)
+          else resolve(list)
+        }
+        requestAnimationFrame(frame)
+      })
+  )
+  assert.ok(new Set(wheelTrail).size >= 3, 'the wheel glides: ' + wheelTrail.join(','))
+  assert.ok(Math.abs(wheelTrail[wheelTrail.length - 1] - wheelFrom - 100) < 3, 'one notch is 100px')
+  await page.mouse.wheel(0, -100)
+  await page.waitForTimeout(800)
   // R-336: in scroll mode the next chapter follows the text, with only a line between them.
   const divider = reader().locator('[data-chapter="2"] .novel-chapter-divider')
   await divider.waitFor({ state: 'attached' })

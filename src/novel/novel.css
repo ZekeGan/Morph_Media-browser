@@ -126,6 +126,16 @@
     overflow: hidden;
 }
 
+/* R-354: scroll mode shows no scrollbar (it would only span the chapters laid out around the current one); the
+   progress bar below shows where the reader is in the book. */
+.novel-page.scrolled {
+    scrollbar-width: none;
+}
+
+.novel-page.scrolled::-webkit-scrollbar {
+    display: none;
+}
+
 .novel-page.scrolled.horizontal {
     overflow-y: auto;
     overflow-x: hidden;
