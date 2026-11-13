@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef } from 'react'
 import type { MediaEntry } from '../../shared/explorer'
 import { t as tr } from '../i18n'
+import { useWheel } from '../common/readerInput'
 
 // R-256: webtoon reading. Every page in one column without gaps, as wide as the chosen share of the window; the page
 // number is the page under the middle of the window. Pages load as they come near (the browser's lazy loading) and
@@ -100,17 +101,15 @@ export const Webtoon = forwardRef<
   // Ctrl + wheel changes the column width; the plain wheel scrolls.
   const latestWidth = useRef(width)
   latestWidth.current = width
-  useEffect(() => {
-    const element = scroller.current
-    if (!element) return
-    const wheel = (event: WheelEvent) => {
+  useWheel(
+    scroller,
+    (event) => {
       if (!event.ctrlKey) return
       event.preventDefault()
       onWidth(clampWidth(latestWidth.current + (event.deltaY < 0 ? 5 : -5)))
-    }
-    element.addEventListener('wheel', wheel, { passive: false })
-    return () => element.removeEventListener('wheel', wheel)
-  }, [onWidth])
+    },
+    [onWidth]
+  )
   return (
     <div
       ref={scroller}

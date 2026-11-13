@@ -1,5 +1,6 @@
 import { t as tr, useLocale } from '../i18n'
 import { Icon, type IconName } from '../common/icons'
+import { consume, focusNextFrame, useCapturedKeys, useWheel } from '../common/readerInput'
 import {
   useCallback,
   useEffect,
@@ -193,8 +194,7 @@ export function Reader({
     setToolbar(false)
     focusStage()
   }, [])
-  const focusStage = () =>
-    requestAnimationFrame(() => viewport.current?.focus({ preventScroll: true }))
+  const focusStage = () => focusNextFrame(viewport)
   const leaveImmersive = async () => {
     if (ownsFullscreen.current && document.fullscreenElement) {
       try {
@@ -414,10 +414,9 @@ export function Reader({
     latest.current = { ...state, zoom: next }
     setZoom(next)
   }
-  useEffect(() => {
-    const element = viewport.current
-    if (!element) return
-    const wheel = (event: WheelEvent) => {
+  useWheel(
+    viewport,
+    (event, element) => {
       if (!latest.current.active) return
       event.preventDefault()
       const delta =
@@ -429,10 +428,9 @@ export function Reader({
         event.clientX - bounds.left,
         event.clientY - bounds.top
       )
-    }
-    element.addEventListener('wheel', wheel, { passive: false })
-    return () => element.removeEventListener('wheel', wheel)
-  }, [webtoon])
+    },
+    [webtoon]
+  )
   const setFitMode = (value: typeof fit) => {
     anchor.current = undefined
     setFit(value)
@@ -494,23 +492,15 @@ export function Reader({
   const pastEnd = () => {
     if (ending && nextBook) {
       setEnding(false)
+      // Hand the fullscreen window over to the next book instead of leaving it.
       handover.current = immersive
       nextBook.open(immersive)
+      // If the switch never happens (for example a draft blocks it), leaving later exits fullscreen as usual.
       setTimeout(() => (handover.current = false), 5000)
     } else setEnding(true)
   }
   const step = (delta: number) => {
-    if (manga && delta > 0 && groupIndex === groups.length - 1) {
-      if (ending && nextBook) {
-        setEnding(false)
-        // Hand the fullscreen window over to the next book instead of leaving it.
-        handover.current = immersive
-        nextBook.open(immersive)
-        // If the switch never happens (for example a draft blocks it), leaving later exits fullscreen as usual.
-        setTimeout(() => (handover.current = false), 5000)
-      } else setEnding(true)
-      return
-    }
+    if (manga && delta > 0 && groupIndex === groups.length - 1) return pastEnd()
     setEnding(false)
     goToGroup(groupIndex + delta)
   }
@@ -525,89 +515,81 @@ export function Reader({
     const timer = setTimeout(() => setOfferAt(undefined), 8000)
     return () => clearTimeout(timer)
   }, [offerAt])
-  useEffect(() => {
-    const key = (event: KeyboardEvent) => {
-      if (event.isComposing) return
-      if (event.key === 'F11') {
-        event.preventDefault()
-        event.stopImmediatePropagation()
-        if (!event.repeat) void toggleImmersive()
+  useCapturedKeys((event) => {
+    if (event.isComposing) return
+    if (event.key === 'F11') {
+      consume(event)
+      if (!event.repeat) void toggleImmersive()
+      return
+    }
+    if (
+      (event.target as HTMLElement)?.closest(
+        'input:not([type="checkbox"]):not([type="radio"]),textarea,select,[role="combobox"],[role="listbox"],[contenteditable="true"]'
+      )
+    ) {
+      if (event.key === 'Escape') {
+        consume(event)
+        setPageDropdown(false)
+        focusStage()
+      }
+      return
+    }
+    if (event.ctrlKey || event.altKey || event.metaKey) return
+    // Webtoon: arrows, space and Page keys scroll a window height; Home and End go to either end.
+    if (webtoon) {
+      const move = (
+        {
+          ArrowDown: 1,
+          ArrowRight: 1,
+          PageDown: 1,
+          ' ': 1,
+          ArrowUp: -1,
+          ArrowLeft: -1,
+          PageUp: -1,
+        } as Record<string, 1 | -1>
+      )[event.key]
+      if (move || event.key === 'Home' || event.key === 'End') {
+        consume(event)
+        if (!move) strip.current?.edge(event.key === 'End')
+        else if (strip.current?.screen(move)) setEnding(false)
+        else if (move > 0) pastEnd()
         return
-      }
-      if (
-        (event.target as HTMLElement)?.closest(
-          'input:not([type="checkbox"]):not([type="radio"]),textarea,select,[role="combobox"],[role="listbox"],[contenteditable="true"]'
-        )
-      ) {
-        if (event.key === 'Escape') {
-          event.preventDefault()
-          event.stopImmediatePropagation()
-          setPageDropdown(false)
-          focusStage()
-        }
-        return
-      }
-      if (event.ctrlKey || event.altKey || event.metaKey) return
-      // Webtoon: arrows, space and Page keys scroll a window height; Home and End go to either end.
-      if (webtoon) {
-        const move = (
-          {
-            ArrowDown: 1,
-            ArrowRight: 1,
-            PageDown: 1,
-            ' ': 1,
-            ArrowUp: -1,
-            ArrowLeft: -1,
-            PageUp: -1,
-          } as Record<string, 1 | -1>
-        )[event.key]
-        if (move || event.key === 'Home' || event.key === 'End') {
-          event.preventDefault()
-          event.stopImmediatePropagation()
-          if (!move) strip.current?.edge(event.key === 'End')
-          else if (strip.current?.screen(move)) setEnding(false)
-          else if (move > 0) pastEnd()
-          return
-        }
-      }
-      const direction = webtoon ? 0 : readerArrowStep(event.key, rtl)
-      const actions: Record<string, () => void> = {
-        ...(!manga ? { w: () => setFitMode('width'), h: () => setFitMode('height') } : {}),
-        d: () => {
-          if (!manga) return
-          if (webtoon) setWebtoon(false)
-          else setSpread((value) => !value)
-        },
-        v: () => manga && setWebtoon((value) => !value),
-        r: () => setFitMode(fit),
-        g: () => {
-          setToolbar(true)
-          setPageDropdown(true)
-          setTimeout(() => select.current?.focus(), 0)
-        },
-        t: () => {
-          if (!event.repeat) void toggleImmersive()
-        },
-        Escape: () => {
-          if (ending) setEnding(false)
-          else if (immersive || ownsFullscreen.current) void leaveImmersive()
-          else exit()
-        },
-        '+': () => (webtoon ? setWebtoonWidth(webtoonWidth + 5) : changeZoom(zoom * 1.25)),
-        '=': () => (webtoon ? setWebtoonWidth(webtoonWidth + 5) : changeZoom(zoom * 1.25)),
-        '-': () => (webtoon ? setWebtoonWidth(webtoonWidth - 5) : changeZoom(zoom / 1.25)),
-      }
-      const action = direction
-        ? () => step(direction)
-        : (actions[event.key] ?? actions[event.key.toLowerCase()])
-      if (action) {
-        event.preventDefault()
-        event.stopImmediatePropagation()
-        action()
       }
     }
-    window.addEventListener('keydown', key, true)
-    return () => window.removeEventListener('keydown', key, true)
+    const direction = webtoon ? 0 : readerArrowStep(event.key, rtl)
+    const actions: Record<string, () => void> = {
+      ...(!manga ? { w: () => setFitMode('width'), h: () => setFitMode('height') } : {}),
+      d: () => {
+        if (!manga) return
+        if (webtoon) setWebtoon(false)
+        else setSpread((value) => !value)
+      },
+      v: () => manga && setWebtoon((value) => !value),
+      r: () => setFitMode(fit),
+      g: () => {
+        setToolbar(true)
+        setPageDropdown(true)
+        setTimeout(() => select.current?.focus(), 0)
+      },
+      t: () => {
+        if (!event.repeat) void toggleImmersive()
+      },
+      Escape: () => {
+        if (ending) setEnding(false)
+        else if (immersive || ownsFullscreen.current) void leaveImmersive()
+        else exit()
+      },
+      '+': () => (webtoon ? setWebtoonWidth(webtoonWidth + 5) : changeZoom(zoom * 1.25)),
+      '=': () => (webtoon ? setWebtoonWidth(webtoonWidth + 5) : changeZoom(zoom * 1.25)),
+      '-': () => (webtoon ? setWebtoonWidth(webtoonWidth - 5) : changeZoom(zoom / 1.25)),
+    }
+    const action = direction
+      ? () => step(direction)
+      : (actions[event.key] ?? actions[event.key.toLowerCase()])
+    if (action) {
+      consume(event)
+      action()
+    }
   })
   const frameReady = async (image: HTMLImageElement, frame: Frame, index: number) => {
     if (frame.loaded.has(index) || frame.token !== sequence.current) return

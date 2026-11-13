@@ -26,6 +26,7 @@ import type { FolderRow } from '../../shared/model'
 import { bookPercent } from '../../shared/novel'
 import { t as tr, useLocale } from '../i18n'
 import { Icon, type IconName } from '../common/icons'
+import { consume, focusNextFrame, useCapturedKeys, useWheel } from '../common/readerInput'
 import { describeError } from '../notices/errors'
 import { chapterText, HtmlChapter, TextChapter } from './NovelContent'
 import './novel.css'
@@ -403,86 +404,73 @@ export function NovelReader({
     } catch (reason) {
       setError(String(reason))
     }
-    requestAnimationFrame(() => scroller.current?.focus({ preventScroll: true }))
+    focusNextFrame(scroller)
   }
   useEffect(() => {
     const changed = () => !document.fullscreenElement && setImmersive(false)
     document.addEventListener('fullscreenchange', changed)
     return () => document.removeEventListener('fullscreenchange', changed)
   }, [])
-  useEffect(() => {
-    const key = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f' && !event.altKey) {
-        event.preventDefault()
-        event.stopImmediatePropagation()
-        setPanel('search')
-        return
-      }
-      if (event.isComposing || event.ctrlKey || event.altKey || event.metaKey) return
-      if ((event.target as HTMLElement)?.closest('input,textarea,select,[role="combobox"]')) {
-        if (event.key === 'Escape') {
-          event.preventDefault()
-          // Esc in the settings closes them first, then the side panel.
-          if (settingsOpen) setSettingsOpen(false)
-          else setPanel(undefined)
-          scroller.current?.focus({ preventScroll: true })
-        }
-        return
-      }
-      const forward = ['PageDown', 'ArrowDown', vertical ? 'ArrowLeft' : 'ArrowRight'],
-        back = ['PageUp', 'ArrowUp', vertical ? 'ArrowRight' : 'ArrowLeft']
-      let handled = true
-      if (event.key === ' ') turn(event.shiftKey ? -1 : 1)
-      else if (forward.includes(event.key)) turn(1)
-      else if (back.includes(event.key)) turn(-1)
-      else if (event.key === 'Home') goChapter(0)
-      else if (event.key === 'End') book && goChapter(book.chapters.length - 1, 'end')
-      else if (event.key === 'F11' || event.key.toLowerCase() === 't') void toggleImmersive()
-      else if (event.key === 'Escape') {
-        if (settingsOpen) setSettingsOpen(false)
-        else if (ending) setEnding(false)
-        else if (panel) setPanel(undefined)
-        else if (immersive) void toggleImmersive()
-        else exit()
-      } else handled = false
-      if (handled) {
-        event.preventDefault()
-        event.stopImmediatePropagation()
-      }
+  useCapturedKeys((event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f' && !event.altKey) {
+      consume(event)
+      setPanel('search')
+      return
     }
-    window.addEventListener('keydown', key, true)
-    return () => window.removeEventListener('keydown', key, true)
+    if (event.isComposing || event.ctrlKey || event.altKey || event.metaKey) return
+    if ((event.target as HTMLElement)?.closest('input,textarea,select,[role="combobox"]')) {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        // Esc in the settings closes them first, then the side panel.
+        if (settingsOpen) setSettingsOpen(false)
+        else setPanel(undefined)
+        scroller.current?.focus({ preventScroll: true })
+      }
+      return
+    }
+    const forward = ['PageDown', 'ArrowDown', vertical ? 'ArrowLeft' : 'ArrowRight'],
+      back = ['PageUp', 'ArrowUp', vertical ? 'ArrowRight' : 'ArrowLeft']
+    let handled = true
+    if (event.key === ' ') turn(event.shiftKey ? -1 : 1)
+    else if (forward.includes(event.key)) turn(1)
+    else if (back.includes(event.key)) turn(-1)
+    else if (event.key === 'Home') goChapter(0)
+    else if (event.key === 'End') book && goChapter(book.chapters.length - 1, 'end')
+    else if (event.key === 'F11' || event.key.toLowerCase() === 't') void toggleImmersive()
+    else if (event.key === 'Escape') {
+      if (settingsOpen) setSettingsOpen(false)
+      else if (ending) setEnding(false)
+      else if (panel) setPanel(undefined)
+      else if (immersive) void toggleImmersive()
+      else exit()
+    } else handled = false
+    if (handled) consume(event)
   })
   // In paged mode the wheel turns pages; in scroll mode it scrolls (sideways in vertical text).
-  useEffect(() => {
-    const element = scroller.current
-    if (!element) return
-    let lock = 0
-    const wheel = (event: WheelEvent) => {
-      if (event.ctrlKey) return
-      if (paged) {
-        event.preventDefault()
-        if (performance.now() - lock < 250 || Math.abs(event.deltaY) < 4) return
-        lock = performance.now()
-        turn(event.deltaY > 0 ? 1 : -1)
-      } else if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
-        // A touchpad sends many small steps that already move smoothly; a mouse wheel's notches glide (R-355).
-        const notch = event.deltaMode !== 0 || Math.abs(event.deltaY) >= 40
-        if (!notch) {
-          if (vertical) {
-            event.preventDefault()
-            stopGlide()
-            element.scrollLeft -= event.deltaY
-          }
-          return
+  // The lock lasts as long as this render's listener, as it did before R-371.
+  let lock = 0
+  useWheel(scroller, (event, element) => {
+    if (event.ctrlKey) return
+    if (paged) {
+      event.preventDefault()
+      if (performance.now() - lock < 250 || Math.abs(event.deltaY) < 4) return
+      lock = performance.now()
+      turn(event.deltaY > 0 ? 1 : -1)
+    } else if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+      // A touchpad sends many small steps that already move smoothly; a mouse wheel's notches glide (R-355).
+      const notch = event.deltaMode !== 0 || Math.abs(event.deltaY) >= 40
+      if (!notch) {
+        if (vertical) {
+          event.preventDefault()
+          stopGlide()
+          element.scrollLeft -= event.deltaY
         }
-        event.preventDefault()
-        const unit = event.deltaMode === 1 ? 40 : event.deltaMode === 2 ? viewSize() : 1
-        glideBy(event.deltaY * unit)
+        return
       }
+      event.preventDefault()
+      const unit = event.deltaMode === 1 ? 40 : event.deltaMode === 2 ? viewSize() : 1
+      glideBy(event.deltaY * unit)
     }
-    element.addEventListener('wheel', wheel, { passive: false })
-    return () => element.removeEventListener('wheel', wheel)
   })
   // --- Search: every chapter's text, then the n-th match highlighted after its chapter is shown. ---
   const texts = useMemo(() => book?.chapters.map(chapterText) ?? [], [book])

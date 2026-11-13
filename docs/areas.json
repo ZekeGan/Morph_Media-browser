@@ -150,7 +150,7 @@
       "id": "reader",
       "name": "漫畫閱讀器",
       "docs": ["MANGA_VIEWER_DESIGN.md#漫畫閱讀器"],
-      "code": ["src/reader/Reader*", "src/reader/Webtoon*", "shared/reader*"],
+      "code": ["src/reader/Reader*", "src/reader/Webtoon*", "src/common/readerInput*", "shared/reader*"],
       "ui": ["reader-ui", "webtoon-ui", "reader-next-ui", "media-scope-ui"],
       "tests": ["reader.test.ts"]
     },
@@ -158,7 +158,7 @@
       "id": "novel",
       "name": "小說閱讀器",
       "docs": ["NOVEL_READER.md#閱讀", "NOVEL_READER.md#閱讀紀錄"],
-      "code": ["src/novel/*", "electron/novel*", "shared/novel*"],
+      "code": ["src/novel/*", "src/common/readerInput*", "electron/novel*", "shared/novel*"],
       "ui": ["novel-ui"],
       "tests": ["novel.test.ts"]
     },

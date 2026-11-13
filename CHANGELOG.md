@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Internal: the manga reader, webtoon column and novel reader take keys and the wheel through one small shared module; what each key or wheel turn does is unchanged (R-371).
 - Internal: one shared module now enumerates every layout component list of a project (card, card layouts, content templates, manga templates), so field deletion, field groups, type changes, validation and the search index can no longer miss one; grouping a cell’s fallbacks now also finds cells that live only in a content template (R-368).
 - Internal: the project data model file is split into types, validation and cell helpers, and the stylesheet puts each rule on its own line; nothing changes on screen (R-369, R-370).
 - Manga right panel: a project can keep several manga templates (add, copy, rename and delete them in the editor), and a folder can follow the project, use another template or get one of its own from its Appearance settings (R-363).
