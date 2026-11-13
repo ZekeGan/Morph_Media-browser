@@ -23,6 +23,7 @@ import {
 } from './files'
 import type { FieldDeletionPreview } from '../shared/model'
 import { applyMaintenance, withoutField, type Change, type ManagedFile } from './maintenance'
+import { cellLists } from '../shared/cellLists'
 import type { Library } from './library'
 
 export function fieldScope(ex: Library) {
@@ -175,14 +176,17 @@ export async function previewDeleteField(
       preview.tables += project.fieldBindings.filter(
         (field) => field.attributeId === attributeId
       ).length
-      const layouts = new Map<string, Project['cells']>([
-        [project.activeLayoutId ?? 'default', project.cells],
-        ...(project.layoutPresets?.map((p) => [p.id, p.cells] as const) ?? []),
-        ...Object.entries(project.contentCells ?? {}).map(
-          ([key, cells]) => ['content:' + key, cells] as const
-        ),
-        ...(project.bookPresets?.map((p) => ['book:' + p.id, p.cells] as const) ?? []),
-      ])
+      // The card stands under its layout's id, so the active layout's saved copy replaces it and is counted once.
+      const layouts = new Map<string, Project['cells']>(
+        cellLists(project).map((list) => [
+          list.where === 'card'
+            ? (project.activeLayoutId ?? 'default')
+            : list.where === 'layout'
+              ? list.id!
+              : list.where + ':' + list.id,
+          list.cells,
+        ])
+      )
       preview.layouts += [...layouts.values()]
         .flat()
         .filter(

@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Internal: one shared module now enumerates every layout component list of a project (card, card layouts, content templates, manga templates), so field deletion, field groups, type changes, validation and the search index can no longer miss one; grouping a cell’s fallbacks now also finds cells that live only in a content template (R-368).
 - Manga right panel: a project can keep several manga templates (add, copy, rename and delete them in the editor), and a folder can follow the project, use another template or get one of its own from its Appearance settings (R-363).
 - Removing a field no longer risks undoing a folder or project saved while its preview was being made (R-366).
 - Websites: nhentai gallery addresses import through its own API, with fields named like E-Hentai's; Hitomi.la adds circles, series, characters and the ♀/♂ marks of tags (R-365, R-367).

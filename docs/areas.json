@@ -204,6 +204,7 @@
         "src/editor/OptionTagsInput*",
         "src/editor/ConditionEditor*",
         "shared/fieldGroups*",
+        "shared/cellLists*",
         "src/editor/fieldTypes*",
         "shared/layouts*"
       ],

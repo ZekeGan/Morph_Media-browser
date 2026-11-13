@@ -13,6 +13,7 @@ import {
 import { fingerprint, exists, keyPath, within, safePath, readJson, message } from './files'
 import { isNewerFormat } from '../shared/upgrade'
 import { groupsWithoutField } from '../shared/fieldGroups'
+import { mapCellLists } from '../shared/cellLists'
 
 export interface ManagedFile {
   root: string
@@ -251,19 +252,10 @@ export async function applyMaintenance(
 }
 
 export function withoutField(project: Project, attributeId: string) {
-  const next = structuredClone(groupsWithoutField(project, attributeId)),
-    cells = (items: Project['cells']): Project['cells'] => cellsWithoutField(items, attributeId)
+  const next = mapCellLists(structuredClone(groupsWithoutField(project, attributeId)), (items) =>
+    cellsWithoutField(items, attributeId)
+  )
   next.fieldBindings = next.fieldBindings.filter((field) => field.attributeId !== attributeId)
-  next.cells = cells(next.cells)
-  next.layoutPresets = next.layoutPresets?.map((preset) => ({
-    ...preset,
-    cells: cells(preset.cells),
-  }))
-  next.bookPresets = next.bookPresets?.map((preset) => ({ ...preset, cells: cells(preset.cells) }))
-  if (next.contentCells)
-    next.contentCells = Object.fromEntries(
-      Object.entries(next.contentCells).map(([key, items]) => [key, cells(items)])
-    )
   next.savedSearches = next.savedSearches?.filter(
     (search) => !search.queryAst?.groups.flat().some((term) => term.field === attributeId)
   )

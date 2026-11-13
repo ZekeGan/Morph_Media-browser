@@ -1,3 +1,4 @@
+import { cellLists as allCellLists, mapCellLists } from '../../shared/cellLists'
 import { cellConditions, type Cell, type CellCondition, type Project } from '../../shared/model'
 import { isFilled } from '../../shared/cells'
 import { readDate } from '../../shared/fields'
@@ -53,12 +54,7 @@ export function optionsFromValues(values: unknown[]): string[] | undefined {
 
 // Every list of cells in the draft: the card being edited, the other saved layouts and the content templates.
 function cellLists(project: Project): Cell[][] {
-  return [
-    project.cells,
-    ...(project.layoutPresets ?? []).map((preset) => preset.cells),
-    ...Object.values(project.contentCells ?? {}),
-    ...(project.bookPresets ?? []).map((preset) => preset.cells),
-  ]
+  return allCellLists(project).map((list) => list.cells)
 }
 
 export type FieldUse = {
@@ -99,22 +95,22 @@ function cellUses(
       const found = role(cell)
       return found ? [{ where, name, role: found, cell }] : []
     })
-  return [
-    ...from('current', project.cells),
-    ...(project.layoutPresets ?? [])
-      .filter((preset) => !cardEditor || preset.id !== project.activeLayoutId)
-      .flatMap((preset) => from('preset', preset.cells, preset.name)),
-    ...Object.entries(project.contentCells ?? {}).flatMap(([category, cells]) =>
-      from(
-        'content',
-        cardEditor
-          ? cells
-          : cells.filter((cell) => !project.cells.some((own) => own.cellId === cell.cellId)),
-        category
-      )
-    ),
-    ...(project.bookPresets ?? []).flatMap((preset) => from('content', preset.cells, preset.name)),
-  ]
+  return allCellLists(project).flatMap((list) => {
+    if (list.where === 'card') return from('current', list.cells)
+    // In the card editor the active layout's saved copy is the draft itself, counted as "current" above.
+    if (list.where === 'layout')
+      return cardEditor && list.id === project.activeLayoutId
+        ? []
+        : from('preset', list.cells, list.name)
+    // A content template editor has its own list as the draft, so that list's saved copy is not counted again.
+    return from(
+      'content',
+      cardEditor || list.where === 'book'
+        ? list.cells
+        : list.cells.filter((cell) => !project.cells.some((own) => own.cellId === cell.cellId)),
+      list.name
+    )
+  })
 }
 // Components that show a field itself (alone or as a fallback); group components count for the group, conditions
 // only read the field.
@@ -202,34 +198,10 @@ export function switchDateType(
     })
   return {
     project: {
-      ...project,
+      ...mapCellLists(project, cells),
       fieldBindings: project.fieldBindings.map((field) =>
         field.attributeId === attributeId ? { ...field, type: next } : field
       ),
-      cells: cells(project.cells),
-      ...(project.layoutPresets
-        ? {
-            layoutPresets: project.layoutPresets.map((preset) => ({
-              ...preset,
-              cells: cells(preset.cells),
-            })),
-          }
-        : {}),
-      ...(project.contentCells
-        ? {
-            contentCells: Object.fromEntries(
-              Object.entries(project.contentCells).map(([key, list]) => [key, cells(list)])
-            ),
-          }
-        : {}),
-      ...(project.bookPresets
-        ? {
-            bookPresets: project.bookPresets.map((preset) => ({
-              ...preset,
-              cells: cells(preset.cells),
-            })),
-          }
-        : {}),
     },
   }
 }
@@ -240,34 +212,7 @@ export type SwitchResult =
 
 // Applies one change to every cell list of a project (the card, saved layouts and content templates).
 function mapCells(project: Project, map: (cell: Cell) => Cell): Project {
-  const all = (list: Cell[]) => list.map(map)
-  return {
-    ...project,
-    cells: all(project.cells),
-    ...(project.layoutPresets
-      ? {
-          layoutPresets: project.layoutPresets.map((preset) => ({
-            ...preset,
-            cells: all(preset.cells),
-          })),
-        }
-      : {}),
-    ...(project.contentCells
-      ? {
-          contentCells: Object.fromEntries(
-            Object.entries(project.contentCells).map(([key, list]) => [key, all(list)])
-          ),
-        }
-      : {}),
-    ...(project.bookPresets
-      ? {
-          bookPresets: project.bookPresets.map((preset) => ({
-            ...preset,
-            cells: all(preset.cells),
-          })),
-        }
-      : {}),
-  }
+  return mapCellLists(project, (cells) => cells.map(map))
 }
 // A date field in a group with other fields, or in a fallback chain, cannot change between date and text: the
 // fields shown together must keep matching types.
@@ -300,15 +245,9 @@ const dateComparisons = ['gt', 'lt', 'within', 'older']
 // Comparisons with a date ("after", "before", "within N days") that read this field; they go when it becomes text.
 export function dateConditionCount(project: Project, attributeId: string) {
   // The active layout's saved copy is the card being edited; it is counted once.
-  return [
-    project.cells,
-    ...(project.layoutPresets ?? [])
-      .filter((preset) => preset.id !== project.activeLayoutId)
-      .map((preset) => preset.cells),
-    ...Object.values(project.contentCells ?? {}),
-    ...(project.bookPresets ?? []).map((preset) => preset.cells),
-  ]
-    .flat()
+  return allCellLists(project)
+    .filter((list) => !(list.where === 'layout' && list.id === project.activeLayoutId))
+    .flatMap((list) => list.cells)
     .flatMap(cellConditions)
     .filter((c) => c.attributeId === attributeId && dateComparisons.includes(c.operator)).length
 }
@@ -487,37 +426,10 @@ export function switchTextType(
     })
   return {
     project: {
-      ...project,
+      ...mapCellLists(project, convert),
       fieldBindings: project.fieldBindings.map((field) =>
         field.attributeId === attributeId ? updated : field
       ),
-      cells: convert(project.cells),
-      ...(project.layoutPresets
-        ? {
-            layoutPresets: project.layoutPresets.map((preset) => ({
-              ...preset,
-              cells: convert(preset.cells),
-            })),
-          }
-        : {}),
-      ...(project.contentCells
-        ? {
-            contentCells: Object.fromEntries(
-              Object.entries(project.contentCells).map(([category, list]) => [
-                category,
-                convert(list),
-              ])
-            ),
-          }
-        : {}),
-      ...(project.bookPresets
-        ? {
-            bookPresets: project.bookPresets.map((preset) => ({
-              ...preset,
-              cells: convert(preset.cells),
-            })),
-          }
-        : {}),
     },
   }
 }

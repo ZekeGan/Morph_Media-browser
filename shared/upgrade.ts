@@ -1,4 +1,5 @@
 import { fmt } from './message'
+import { mapRawCellLists } from './cellLists'
 // Every stored format carries its own `schemaVersion`. A newer app reads older data by running the steps below in
 // order (v1 -> v2 -> ...) right after reading; the upgraded value is written back only when that record is saved for
 // another reason. Data written by a newer app is never treated as damaged: it raises NewerFormatError, stays read-only
@@ -163,18 +164,5 @@ export function settleFieldGroups(value: unknown): unknown {
       : { ...item, attributeId: members[0] }
   }
   const cells = (list: unknown) => (Array.isArray(list) ? list.map(cell) : list)
-  next.cells = cells(value.cells)
-  if (Array.isArray(value.layoutPresets))
-    next.layoutPresets = value.layoutPresets.map((preset) =>
-      plain(preset) ? { ...preset, cells: cells(preset.cells) } : preset
-    )
-  if (plain(value.contentCells))
-    next.contentCells = Object.fromEntries(
-      Object.entries(value.contentCells).map(([key, list]) => [key, cells(list)])
-    )
-  if (Array.isArray(value.bookPresets))
-    next.bookPresets = value.bookPresets.map((preset) =>
-      plain(preset) ? { ...preset, cells: cells(preset.cells) } : preset
-    )
-  return next
+  return mapRawCellLists(next, cells)
 }

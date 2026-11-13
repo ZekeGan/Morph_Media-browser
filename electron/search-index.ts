@@ -5,6 +5,7 @@ import path from 'node:path'
 import { createHash } from 'node:crypto'
 import type { Snapshot } from '../shared/model'
 import { fieldValue } from '../shared/model'
+import { cellLists } from '../shared/cellLists'
 import type { SearchResult } from '../shared/explorer'
 import {
   parseQuery,
@@ -185,14 +186,7 @@ export class SearchIndex {
         groupMembers.set(group.groupId, group.memberIds)
       }
     for (const linked of this.snapshot?.projects ?? [])
-      for (const cells of linked.project
-        ? [
-            linked.project.cells,
-            ...(linked.project.layoutPresets?.map((preset) => preset.cells) ?? []),
-            ...Object.values(linked.project.contentCells ?? {}),
-            ...(linked.project.bookPresets?.map((preset) => preset.cells) ?? []),
-          ]
-        : [])
+      for (const { cells } of linked.project ? cellLists(linked.project) : [])
         for (const cell of cells)
           if (cell.attributeId && cell.fallbackIds?.length) {
             const set = chains.get(cell.attributeId) ?? new Set<string>()

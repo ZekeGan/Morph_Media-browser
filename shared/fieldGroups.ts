@@ -1,5 +1,6 @@
 import { compatibleFieldTypes } from './fields'
 import { MAX_GROUP_MEMBERS, type Cell, type FieldGroup, type Project } from './model'
+import { cellLists, mapCellLists } from './cellLists'
 
 // Field groups (R-226): fields holding the same kind of data from different sources, shown as one. Every change
 // here returns a new project; cells, layouts, content templates and per-folder choices follow the group.
@@ -51,35 +52,6 @@ export function freeGroupName(project: Project, base: string) {
   }
 }
 
-function mapCells(project: Project, map: (cells: Cell[]) => Cell[]): Project {
-  return {
-    ...project,
-    cells: map(project.cells),
-    ...(project.layoutPresets
-      ? {
-          layoutPresets: project.layoutPresets.map((preset) => ({
-            ...preset,
-            cells: map(preset.cells),
-          })),
-        }
-      : {}),
-    ...(project.contentCells
-      ? {
-          contentCells: Object.fromEntries(
-            Object.entries(project.contentCells).map(([key, cells]) => [key, map(cells)])
-          ),
-        }
-      : {}),
-    ...(project.bookPresets
-      ? {
-          bookPresets: project.bookPresets.map((preset) => ({
-            ...preset,
-            cells: map(preset.cells),
-          })),
-        }
-      : {}),
-  }
-}
 function withGroups(project: Project, groups: FieldGroup[]): Project {
   const next = { ...project }
   if (groups.length) next.fieldGroups = groups
@@ -99,7 +71,7 @@ function withGroups(project: Project, groups: FieldGroup[]): Project {
 }
 // Cells showing a group stay bound to one of its members; a dissolved group leaves its cells on its first member.
 export function settleCells(project: Project, before: FieldGroup[]): Project {
-  return mapCells(project, (cells) =>
+  return mapCellLists(project, (cells) =>
     cells.map((cell) => {
       if (!cell.groupId) return cell
       const now = project.fieldGroups?.find((g) => g.groupId === cell.groupId)
@@ -241,17 +213,13 @@ export function groupFromFallbacks(
   name: string,
   groupId: string
 ): Project {
-  const cell = [
-    project.cells,
-    ...(project.layoutPresets?.map((p) => p.cells) ?? []),
-    ...(project.bookPresets?.map((p) => p.cells) ?? []),
-  ]
-    .flat()
+  const cell = cellLists(project)
+    .flatMap((list) => list.cells)
     .find((c) => c.cellId === cellId)
   if (!cell?.attributeId || !cell.fallbackIds?.length) return project
   const next = createGroup(project, [cell.attributeId, ...cell.fallbackIds], name, groupId),
     group = next.fieldGroups!.find((g) => g.groupId === groupId)!
-  return mapCells(next, (cells) =>
+  return mapCellLists(next, (cells) =>
     cells.map((c) => (c.cellId === cellId ? bindCellToGroup(c, group) : c))
   )
 }

@@ -4,6 +4,7 @@ import { imageTypes } from './images'
 import { compatibleFieldTypes, httpUrl, validFieldValue } from './fields'
 import { validStableQuery, type StableQuery } from './query'
 import { checkNotNewer, FORMAT_VERSION } from './upgrade'
+import { withOnlyCells } from './cellLists'
 export const DATA_DIR = '.media-viewer'
 export type CellKind =
   | 'name'
@@ -897,16 +898,7 @@ export function validateProject(v: unknown): asserts v is Project {
       throw new Error('版面方案不合法或名稱重複')
     if (!id(v.activeLayoutId) || !v.layoutPresets.some((p) => p.id === v.activeLayoutId))
       throw new Error('作用中方案不存在')
-    for (const preset of v.layoutPresets)
-      validateProject({
-        ...v,
-        cells: preset.cells,
-        layoutPresets: undefined,
-        activeLayoutId: undefined,
-        contentCells: undefined,
-        bookPresets: undefined,
-        bookPresetId: undefined,
-      })
+    for (const preset of v.layoutPresets) validateProject(withOnlyCells(v, preset.cells))
   } else if (v.activeLayoutId !== undefined) throw new Error('方案清單不存在')
   if (v.contentCover !== undefined && typeof v.contentCover !== 'boolean')
     throw new Error('內容模板封面設定不合法')
@@ -924,17 +916,7 @@ export function validateProject(v: unknown): asserts v is Project {
       throw new Error('漫畫模板不合法或名稱重複')
     if (!id(v.bookPresetId) || !v.bookPresets.some((p) => p.id === v.bookPresetId))
       throw new Error('漫畫預設模板不存在')
-    for (const preset of v.bookPresets)
-      validateProject({
-        ...v,
-        cells: preset.cells,
-        layoutPresets: undefined,
-        activeLayoutId: undefined,
-        contentCells: undefined,
-        bookPresets: undefined,
-        bookPresetId: undefined,
-        folderBookPresets: undefined,
-      })
+    for (const preset of v.bookPresets) validateProject(withOnlyCells(v, preset.cells))
   } else if (v.bookPresetId !== undefined) throw new Error('漫畫模板清單不存在')
   if (
     v.folderBookPresets !== undefined &&
@@ -946,14 +928,7 @@ export function validateProject(v: unknown): asserts v is Project {
   if (v.contentCells !== undefined) {
     if (!obj(v.contentCells) || !Object.keys(v.contentCells).every((k) => /^[a-z]{2,20}$/.test(k)))
       throw new Error('內容模板不合法')
-    for (const cells of Object.values(v.contentCells))
-      validateProject({
-        ...v,
-        cells,
-        contentCells: undefined,
-        bookPresets: undefined,
-        bookPresetId: undefined,
-      })
+    for (const cells of Object.values(v.contentCells)) validateProject(withOnlyCells(v, cells))
   }
   if (
     v.traversal !== undefined &&
