@@ -28,6 +28,11 @@ const story =
     .join('')
 const storyBytes = Buffer.from(story, 'utf8')
 await fs.writeFile(path.join(media, 'story.txt'), storyBytes)
+// R-352: a long book whose contents list is taller than the side panel.
+await fs.writeFile(
+  path.join(media, 'zz-long.txt'),
+  Array.from({ length: 80 }, (_, i) => `第${i + 1}章　長${i + 1}\n本文${i + 1}。\n`).join('')
+)
 const xml = (name: string, value: string) => ({ name, bytes: Buffer.from(value) })
 await fs.writeFile(
   path.join(media, 'book.epub'),
@@ -73,7 +78,7 @@ try {
   await page.getByRole('button', { name: '開啟專案 Novel test', exact: true }).first().click()
   // R-338: the folder lists its books with how far each has been read.
   await page.locator('.book-shelf').waitFor()
-  assert.equal(await page.locator('.book-shelf li').count(), 2)
+  assert.equal(await page.locator('.book-shelf li').count(), 3)
   await page.screenshot({ path: path.join(base, 'shot', 'r338-book-shelf.png') })
   await page.getByRole('button', { name: /^(開始|繼續)閱讀 story.txt$/ }).click()
   await reader().waitFor()
@@ -322,6 +327,41 @@ try {
     /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
   )
   await page.keyboard.press('Escape')
+  await reader().waitFor({ state: 'detached' })
+  // R-352: with more chapters than fit, the tabs keep their height and only the list scrolls.
+  await page.getByRole('button', { name: /^(開始|繼續)閱讀 zz-long.txt$/ }).click()
+  await reader().getByRole('button', { name: '目錄、書籤與搜尋', exact: true }).click()
+  const contents = reader().getByRole('navigation', { name: '目錄' })
+  await contents
+    .getByRole('button', { name: '第80章　長80', exact: true }) // ui-names: ignore
+    .waitFor({ state: 'attached' })
+  const panelLayout = await page.evaluate(() => {
+    const panel = document.querySelector('.novel-panel')!.getBoundingClientRect(),
+      tabs = document
+        .querySelector('.novel-panel .mantine-SegmentedControl-root')!
+        .getBoundingClientRect(),
+      list = document.querySelector<HTMLElement>('.novel-panel .novel-list')!
+    return {
+      tabs: tabs.height,
+      listTop: list.getBoundingClientRect().top,
+      tabsBottom: tabs.bottom,
+      listBottom: list.getBoundingClientRect().bottom,
+      panelBottom: panel.bottom,
+      scrolls: list.scrollHeight > list.clientHeight,
+    }
+  })
+  assert.ok(panelLayout.tabs >= 24, 'tabs height ' + panelLayout.tabs)
+  assert.ok(panelLayout.listTop >= panelLayout.tabsBottom - 1, 'the list starts below the tabs')
+  assert.ok(
+    panelLayout.listBottom <= panelLayout.panelBottom + 1,
+    'the list stays inside the panel'
+  )
+  assert.ok(panelLayout.scrolls, 'the list scrolls')
+  await reader().locator('.novel-panel label', { hasText: '書籤' }).click()
+  await reader().getByText('還沒有書籤', { exact: true }).waitFor()
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(200)
+  if (await reader().isVisible()) await page.keyboard.press('Escape')
   await reader().waitFor({ state: 'detached' })
   // R-337, R-338: one book in the right panel shows its cover, title, author and chapters.
   await page.locator('.workspace-toolbar').getByText('檔案', { exact: true }).click()

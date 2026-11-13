@@ -56,6 +56,16 @@
     overflow: hidden;
 }
 
+/* R-352: the tabs and the search box keep their height (the tabs clip their overflow, so the column could squash
+   them to nothing); only the list takes the rest of the panel and scrolls. */
+.novel-panel > * {
+    flex-shrink: 0;
+}
+
+.novel-panel > .novel-list {
+    flex: 1 1 0;
+}
+
 .novel-list {
     display: flex;
     flex-direction: column;
