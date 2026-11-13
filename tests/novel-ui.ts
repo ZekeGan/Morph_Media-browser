@@ -217,6 +217,41 @@ try {
   assert.ok(Math.abs(wheelTrail[wheelTrail.length - 1] - wheelFrom - 100) < 3, 'one notch is 100px')
   await page.mouse.wheel(0, -100)
   await page.waitForTimeout(800)
+  // Spinning on into the next chapter keeps the distance: 40 notches move the text 4000px, no more.
+  await page.evaluate(() => {
+    const element = document.querySelector('.novel-page')!,
+      next = element.querySelector('[data-chapter="3"]')!
+    element.scrollLeft -=
+      element.getBoundingClientRect().right - next.getBoundingClientRect().right - 2000
+  })
+  await page.waitForTimeout(300)
+  const markedAt = await page.evaluate(() => {
+    const element = document.querySelector('.novel-page')!,
+      frame = element.getBoundingClientRect(),
+      node = document.elementFromPoint(frame.left + frame.width / 2, frame.top + frame.height / 2)!
+    node.setAttribute('data-glide-mark', '')
+    return node.getBoundingClientRect().right
+  })
+  for (let notch = 0; notch < 40; notch++) {
+    await page.mouse.wheel(0, 100)
+    await page.waitForTimeout(25)
+  }
+  await page.waitForFunction(() =>
+    /第 4 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
+  )
+  await page.waitForTimeout(1500)
+  const travelled = await page.evaluate(
+    (start) => document.querySelector('[data-glide-mark]')!.getBoundingClientRect().right - start,
+    markedAt
+  )
+  assert.ok(Math.abs(travelled - 4000) < 5, 'crossing a chapter keeps the distance: ' + travelled)
+  await reader()
+    .getByRole('navigation', { name: '目錄' })
+    .getByRole('button', { name: '第2章　章2', exact: true }) // ui-names: ignore
+    .click()
+  await page.waitForFunction(() =>
+    /第 3 \/ 4 章/.test(document.querySelector('.novel-info strong')?.textContent ?? '')
+  )
   // R-336: in scroll mode the next chapter follows the text, with only a line between them.
   const divider = reader().locator('[data-chapter="2"] .novel-chapter-divider')
   await divider.waitFor({ state: 'attached' })

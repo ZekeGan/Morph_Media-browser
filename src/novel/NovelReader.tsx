@@ -101,7 +101,9 @@ export function NovelReader({
     restore = useRef<number | 'end'>(saved?.position ?? 0),
     findAfterRender = useRef<{ text: string; nth: number } | undefined>(undefined),
     // Scroll mode: how far into the newly current chapter the view was when scrolling crossed into it.
-    anchor = useRef<number | undefined>(undefined)
+    anchor = useRef<number | undefined>(undefined),
+    // R-355: how far a glide still had to go when scrolling crossed into the next or previous chapter.
+    glideRest = useRef<number | undefined>(undefined)
   const setSettings = (change: Partial<Settings>) =>
     setSettingsState((previous) => {
       const next = { ...previous, ...change }
@@ -244,10 +246,12 @@ export function NovelReader({
       const span = Math.max(0, box.size - viewSize()),
         crossed = anchor.current !== undefined,
         into = anchor.current ?? (target === 'end' ? span : span * target)
-      anchor.current = undefined
-      const before = extent().at
+      const rest = glideRest.current
+      anchor.current = glideRest.current = undefined
       scrollTo(box.start + into)
-      if (glide.current && crossed) glide.current.target += extent().at - before
+      // A glide that crossed into another chapter goes on for what it had left. The text around it was swapped, and
+      // the browser may already have cut the scroll position to the new length, so the old position is no measure.
+      if (glide.current && crossed && rest !== undefined) glide.current.target = extent().at + rest
       else stopGlide()
     } else {
       stopGlide()
@@ -286,6 +290,7 @@ export function NovelReader({
       })
     if (shown !== undefined) {
       anchor.current = at - sectionBox(shown)!.start
+      glideRest.current = glide.current ? glide.current.target - at : undefined
       setEnding(false)
       setChapter(shown)
       return
