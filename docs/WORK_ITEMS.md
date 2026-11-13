@@ -13,15 +13,6 @@
 
 ## 待查收
 
-- **R-356** UI 測試執行器：安靜的建置、完整的失敗原因 ｜小｜一般｜無｜領域：core｜依賴：無
-  驗收：改任一個 src 檔後跑一個 UI 測試 → 建置只印「Built in Ns」；故意讓測試失敗時看到錯誤訊息、Stopped at 行號與截圖位置；pnpm verify:old 也印出失敗原因。
-
-- **R-357** UI 測試執行器加 `--verbose` ｜小｜一般｜無｜領域：core｜依賴：R-356
-  驗收：node scripts/run-ui-tests.mjs workspace-toolbar --verbose → 多出「--- workspace-toolbar-ui output ---」與測試自己印的 PASS 說明。
-
-- **R-358** 需求清單與語系的例行命令 ｜中｜一般｜無｜領域：core｜依賴：無
-  驗收：pnpm item 不帶參數印出用法；用 pnpm item add 登記一項看編號與格式，再 start、review、accept 走一輪；pnpm i18n add 一個少一種語言的檔案會被拒絕。
-
 ## 進行中
 
 ## 已核定（未做）
