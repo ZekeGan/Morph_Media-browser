@@ -57,6 +57,7 @@ function cellLists(project: Project): Cell[][] {
     project.cells,
     ...(project.layoutPresets ?? []).map((preset) => preset.cells),
     ...Object.values(project.contentCells ?? {}),
+    ...(project.bookPresets ?? []).map((preset) => preset.cells),
   ]
 }
 
@@ -112,6 +113,7 @@ function cellUses(
         category
       )
     ),
+    ...(project.bookPresets ?? []).flatMap((preset) => from('content', preset.cells, preset.name)),
   ]
 }
 // Components that show a field itself (alone or as a fallback); group components count for the group, conditions
@@ -220,6 +222,14 @@ export function switchDateType(
             ),
           }
         : {}),
+      ...(project.bookPresets
+        ? {
+            bookPresets: project.bookPresets.map((preset) => ({
+              ...preset,
+              cells: cells(preset.cells),
+            })),
+          }
+        : {}),
     },
   }
 }
@@ -247,6 +257,14 @@ function mapCells(project: Project, map: (cell: Cell) => Cell): Project {
           contentCells: Object.fromEntries(
             Object.entries(project.contentCells).map(([key, list]) => [key, all(list)])
           ),
+        }
+      : {}),
+    ...(project.bookPresets
+      ? {
+          bookPresets: project.bookPresets.map((preset) => ({
+            ...preset,
+            cells: all(preset.cells),
+          })),
         }
       : {}),
   }
@@ -288,6 +306,7 @@ export function dateConditionCount(project: Project, attributeId: string) {
       .filter((preset) => preset.id !== project.activeLayoutId)
       .map((preset) => preset.cells),
     ...Object.values(project.contentCells ?? {}),
+    ...(project.bookPresets ?? []).map((preset) => preset.cells),
   ]
     .flat()
     .flatMap(cellConditions)
@@ -489,6 +508,14 @@ export function switchTextType(
                 convert(list),
               ])
             ),
+          }
+        : {}),
+      ...(project.bookPresets
+        ? {
+            bookPresets: project.bookPresets.map((preset) => ({
+              ...preset,
+              cells: convert(preset.cells),
+            })),
           }
         : {}),
     },

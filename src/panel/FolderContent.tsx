@@ -19,6 +19,7 @@ import { Fragment, lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { isFilled } from '../../shared/cells'
 import { fieldSourceGroups, rowFieldAttributes } from '../editor/fieldSources'
 import { ActionIcon, Button, Group, Menu, Tooltip } from '@mantine/core'
+import { bookCellsFor } from '../../shared/layouts'
 import { Card } from '../cells/Card'
 import { FolderDetails, FolderHeader } from './FolderParts'
 import { Gallery } from '../gallery/Gallery'
@@ -664,7 +665,10 @@ export function FolderContent({
             project={{
               ...project,
               folderLayouts: undefined,
-              cells: contentCells(project, kind),
+              cells:
+                kind === 'book'
+                  ? bookCellsFor(project, row.record?.folderId, contentCells(project, kind))
+                  : contentCells(project, kind),
             }}
             row={row}
             open={() => {

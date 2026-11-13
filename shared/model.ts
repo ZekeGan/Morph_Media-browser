@@ -158,6 +158,11 @@ export interface Project {
   // R-362: the book template holds its own cover; without it an older edited template is shown with the
   // cover drawn beside it, as before.
   contentCover?: boolean
+  // R-363 (provisional): several book templates; the project default is bookPresetId (contentCells.book holds its
+  // cells too), and a folder may use another one (folderBookPresets, by folder ID).
+  bookPresets?: { id: string; name: string; cells: Cell[] }[]
+  bookPresetId?: string
+  folderBookPresets?: Record<string, string>
   actionTemplates?: ActionTemplate[]
   layoutPresets?: { id: string; name: string; cells: Cell[] }[]
   // Styles saved by name in this project: applied to a component they replace its whole style.
@@ -899,15 +904,56 @@ export function validateProject(v: unknown): asserts v is Project {
         layoutPresets: undefined,
         activeLayoutId: undefined,
         contentCells: undefined,
+        bookPresets: undefined,
+        bookPresetId: undefined,
       })
   } else if (v.activeLayoutId !== undefined) throw new Error('方案清單不存在')
   if (v.contentCover !== undefined && typeof v.contentCover !== 'boolean')
     throw new Error('內容模板封面設定不合法')
+  if (v.bookPresets !== undefined) {
+    if (
+      !Array.isArray(v.bookPresets) ||
+      !v.bookPresets.length ||
+      v.bookPresets.length > 30 ||
+      new Set(v.bookPresets.map((p) => p?.id)).size !== v.bookPresets.length ||
+      new Set(
+        v.bookPresets.map((p) => (typeof p?.name === 'string' ? p.name.toLocaleLowerCase() : p))
+      ).size !== v.bookPresets.length ||
+      !v.bookPresets.every((p) => obj(p) && id(p.id) && text(p.name, 100) && p.name.trim())
+    )
+      throw new Error('漫畫模板不合法或名稱重複')
+    if (!id(v.bookPresetId) || !v.bookPresets.some((p) => p.id === v.bookPresetId))
+      throw new Error('漫畫預設模板不存在')
+    for (const preset of v.bookPresets)
+      validateProject({
+        ...v,
+        cells: preset.cells,
+        layoutPresets: undefined,
+        activeLayoutId: undefined,
+        contentCells: undefined,
+        bookPresets: undefined,
+        bookPresetId: undefined,
+        folderBookPresets: undefined,
+      })
+  } else if (v.bookPresetId !== undefined) throw new Error('漫畫模板清單不存在')
+  if (
+    v.folderBookPresets !== undefined &&
+    (!obj(v.folderBookPresets) ||
+      Object.keys(v.folderBookPresets).length > 50000 ||
+      !Object.entries(v.folderBookPresets).every(([folder, preset]) => id(folder) && id(preset)))
+  )
+    throw new Error('資料夾漫畫模板指定不合法')
   if (v.contentCells !== undefined) {
     if (!obj(v.contentCells) || !Object.keys(v.contentCells).every((k) => /^[a-z]{2,20}$/.test(k)))
       throw new Error('內容模板不合法')
     for (const cells of Object.values(v.contentCells))
-      validateProject({ ...v, cells, contentCells: undefined })
+      validateProject({
+        ...v,
+        cells,
+        contentCells: undefined,
+        bookPresets: undefined,
+        bookPresetId: undefined,
+      })
   }
   if (
     v.traversal !== undefined &&

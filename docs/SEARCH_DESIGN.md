@@ -1,6 +1,6 @@
 # 搜尋規格與工程邊界
 
-> 最後確認：2026-11-12。搜尋畫面、語法與索引的現行規則；程式：`shared/query.ts`、`electron/search-index.ts`、`src/search/SearchDialog.tsx`。
+> 最後確認：2026-11-13（R-363）。搜尋畫面、語法與索引的現行規則；程式：`shared/query.ts`、`electron/search-index.ts`、`src/search/SearchDialog.tsx`。
 
 已選單一搜尋框＋欄位提示＋自由文字（方案 A）。本頁是語法及搜尋語意主文件；外框位置見 [工作區](WORKSPACE_REVISION.md)。程式入口：[query](../shared/query.ts)、[SearchIndex](../electron/search-index.ts)、[SearchDialog](../src/search/SearchDialog.tsx)。
 

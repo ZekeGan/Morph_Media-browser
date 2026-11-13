@@ -33,7 +33,7 @@ type Props = {
   deepest: number
   density: { itemsPerRow: number | string; pageSize: number | string }
   display: ReturnType<typeof cardDisplay>
-  edit: (category?: string) => void
+  edit: (category?: string, preset?: string) => void
   folderMode: boolean
   switchContent: (value: 'folders' | 'files') => void
   hasGames: boolean

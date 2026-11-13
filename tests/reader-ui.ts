@@ -109,6 +109,32 @@ try {
   assert.equal(await page.locator('.media-info-template .manga-cover').count(), 0)
   await page.locator('.media-info-template .card-cell img').first().waitFor()
   await page.getByRole('button', { name: '編輯漫畫展示', exact: true }).waitFor()
+  // R-363: a folder can make its own manga template; the editor opens on it, the folder keeps the choice.
+  await page.evaluate(() => {
+    window.confirm = () => true
+  })
+  await page.getByRole('tab', { name: '設定', exact: true }).click()
+  await page.getByRole('tab', { name: '外觀', exact: true }).click()
+  const bookChoice = page.getByRole('textbox', { name: '此資料夾的漫畫展示', exact: true })
+  assert.match(await bookChoice.inputValue(), /^遵循專案預設/)
+  await bookChoice.click()
+  await page.getByRole('option', { name: '另做一份給這個資料夾…', exact: true }).click()
+  const scheme = page.locator('.scheme-toolbar input').first()
+  await scheme.waitFor()
+  const own = await scheme.inputValue()
+  assert.ok(own && own !== '預設版面', 'the editor opens on the folder template: ' + own)
+  await page.locator('.scheme-toolbar').waitFor()
+  await page
+    .getByRole('button', { name: /^(關閉|放棄變更)$/ })
+    .first()
+    .click()
+  // Back in the panel, the folder settings show the folder's own template.
+  await page.getByRole('tab', { name: '設定', exact: true }).click()
+  await page.getByRole('tab', { name: '外觀', exact: true }).click()
+  for (let i = 0; i < 40 && (await bookChoice.inputValue()) !== own; i++)
+    await page.waitForTimeout(100)
+  assert.equal(await bookChoice.inputValue(), own)
+  await page.getByRole('tab', { name: '內容', exact: true }).click()
   await page.locator('.manga-gallery .media-thumbnail').first().click()
   await waitPages('1')
   await fit()

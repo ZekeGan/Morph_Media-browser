@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Manga right panel: a project can keep several manga templates (add, copy, rename and delete them in the editor), and a folder can follow the project, use another template or get one of its own from its Appearance settings (R-363).
 - Removing a field no longer risks undoing a folder or project saved while its preview was being made (R-366).
 - Websites: nhentai gallery addresses import through its own API, with fields named like E-Hentai's; Hitomi.la adds circles, series, characters and the ♀/♂ marks of tags (R-365, R-367).
 - Fields: a field kept as text in some folders and as a date in others (such as gallery posting times imported before R-240) can be made dates in one step from Manage fields, after a preview that lists any value that cannot be read; a backup is made first; times whose zone gives hours only (`-05`) are read as dates too (R-364).

@@ -75,6 +75,8 @@ export function Editor({
   onDirty,
   targetLabel = tr('卡片'),
   presets = false,
+  presetTools = false,
+  fromSaved,
 }: {
   project: Project
   rows: FolderRow[]
@@ -84,8 +86,14 @@ export function Editor({
   close: () => void
   onDirty: (dirty: boolean) => void
   targetLabel?: string
+  // Card layouts: their presets and the conversions that reach every card layout.
   presets?: boolean
+  // R-363: only the preset tools (choose, add, copy, rename, delete), for templates kept as presets (book templates).
+  presetTools?: boolean
+  // How a project saved elsewhere while editing (a field removal) maps back into what this editor shows.
+  fromSaved?: (saved: Project) => Project
 }) {
+  const presetUi = presets || presetTools
   const labels: Record<CellKind, string> = {
     name: tr('資料夾名稱'),
     path: tr('目前路徑'),
@@ -131,7 +139,7 @@ export function Editor({
   useLocale()
 
   const [initial, setInitial] = useState(() =>
-    presets ? presetDraft(project) : structuredClone(project)
+    presetUi ? presetDraft(project) : structuredClone(project)
   )
   const [draft, setDraft] = useState(() => structuredClone(initial))
   const [past, setPast] = useState<Project[]>([]),
@@ -725,7 +733,7 @@ export function Editor({
           {tr('版面編輯')} · {targetLabel}
           {dirty && <span className="tab-dirty-dot" role="img" aria-label={tr('未保存')} />}
         </strong>
-        {presets && (
+        {presetUi && (
           <Group className="scheme-toolbar" align="end" gap="xs">
             <Select
               title={
@@ -881,7 +889,7 @@ export function Editor({
           <Button
             loading={busy}
             onClick={async () => {
-              if (await save(presets ? syncPresetDraft(draft) : draft)) close()
+              if (await save(presetUi ? syncPresetDraft(draft) : draft)) close()
             }}
           >
             {tr('儲存')}
@@ -957,11 +965,12 @@ export function Editor({
                         (ref) => ref.projectId === project.projectId
                       )?.project
                       if (saved) {
-                        const next = presets
-                          ? presetDraft(saved)
+                        const base = fromSaved ? fromSaved(saved) : saved
+                        const next = presetUi
+                          ? presetDraft(base)
                           : {
-                              ...saved,
-                              cells: saved.cells,
+                              ...base,
+                              cells: base.cells,
                             }
                         setDraft(next)
                         setInitial(structuredClone(next))

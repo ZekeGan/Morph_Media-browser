@@ -26,7 +26,7 @@ type Props = {
   closeConfig: () => void
   config?: FolderRow
   detail?: FolderRow
-  edit: (category?: string) => void
+  edit: (category?: string, preset?: string) => void
   expanded: boolean
   filePreview?: OverviewEntry
   folderMode: boolean

@@ -69,7 +69,7 @@ interface Props {
   act: Act
   run: Run
   onDirty: (v: boolean) => void
-  edit: (category?: string) => void
+  edit: (category?: string, preset?: string) => void
   notify: (message: string) => void
   onOverlay: (v: boolean) => void
 }
@@ -562,6 +562,7 @@ export function BrowseWorkspace({
         run={run}
         onDirty={reportDirty}
         onEditLayout={() => edit()}
+        onEditBookLayout={(preset?: string) => edit('book', preset)}
       />
     </Suspense>
   )

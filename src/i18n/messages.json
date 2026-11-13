@@ -11962,5 +11962,59 @@
     "en": "Favorites",
     "ja": "お気に入り数",
     "es": "Favoritos"
+  },
+  "此資料夾的漫畫展示": {
+    "zh-CN": "此文件夹的漫画展示",
+    "en": "Manga view for this folder",
+    "ja": "このフォルダーの漫画表示",
+    "es": "Vista de manga de esta carpeta"
+  },
+  "右側漫畫資訊用哪個模板；「另做一份給這個資料夾」會複製目前的模板並打開編輯器。": {
+    "zh-CN": "右侧漫画信息用哪个模板；「另做一份给这个文件夹」会复制当前的模板并打开编辑器。",
+    "en": "Which template the manga details on the right use. \"Make one for this folder\" copies the current template and opens the editor.",
+    "ja": "右側の漫画情報に使うテンプレート。「このフォルダー用に作る」は今のテンプレートを複製してエディターを開きます。",
+    "es": "Qué plantilla usan los datos del manga a la derecha. «Crear una para esta carpeta» copia la plantilla actual y abre el editor."
+  },
+  "遵循專案預設（目前：{0}）": {
+    "zh-CN": "遵循项目默认（当前：{0}）",
+    "en": "Follow the project default (now: {0})",
+    "ja": "プロジェクトの既定に従う（現在：{0}）",
+    "es": "Seguir el valor del proyecto (ahora: {0})"
+  },
+  "另做一份給這個資料夾…": {
+    "zh-CN": "另做一份给这个文件夹…",
+    "en": "Make one for this folder…",
+    "ja": "このフォルダー用に作る…",
+    "es": "Crear una para esta carpeta…"
+  },
+  "此資料夾": {
+    "zh-CN": "此文件夹",
+    "en": "This folder",
+    "ja": "このフォルダー",
+    "es": "Esta carpeta"
+  },
+  "漫畫模板不合法或名稱重複": {
+    "zh-CN": "漫画模板不合法或名称重复",
+    "en": "Invalid manga templates or a repeated name",
+    "ja": "漫画テンプレートが正しくないか名前が重複しています",
+    "es": "Plantillas de manga no válidas o con nombre repetido"
+  },
+  "漫畫預設模板不存在": {
+    "zh-CN": "漫画默认模板不存在",
+    "en": "The default manga template does not exist",
+    "ja": "既定の漫画テンプレートがありません",
+    "es": "La plantilla de manga predeterminada no existe"
+  },
+  "漫畫模板清單不存在": {
+    "zh-CN": "漫画模板列表不存在",
+    "en": "There is no list of manga templates",
+    "ja": "漫画テンプレートの一覧がありません",
+    "es": "No hay lista de plantillas de manga"
+  },
+  "資料夾漫畫模板指定不合法": {
+    "zh-CN": "文件夹漫画模板指定不合法",
+    "en": "Invalid manga template choice for a folder",
+    "ja": "フォルダーの漫画テンプレート指定が正しくありません",
+    "es": "Elección de plantilla de manga no válida para una carpeta"
   }
 }

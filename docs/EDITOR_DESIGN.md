@@ -1,6 +1,6 @@
 # CELL 編輯器
 
-> 最後確認：2026-11-13（R-364）。積木（卡片版面）編輯器的現行規則。程式：`src/editor/Editor.tsx`、`src/editor/EditorPalette.tsx`、`src/editor/EditorInspector.tsx`、`src/cells/CellStyleEditor.tsx`、`src/editor/FieldManager.tsx`、`src/editor/FieldGroupPalette.tsx`、`src/editor/DisplaySource.tsx`、`src/editor/OptionTagsInput.tsx`、`src/editor/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/date-fields.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/date-field-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
+> 最後確認：2026-11-13（R-363）。積木（卡片版面）編輯器的現行規則。程式：`src/editor/Editor.tsx`、`src/editor/EditorPalette.tsx`、`src/editor/EditorInspector.tsx`、`src/cells/CellStyleEditor.tsx`、`src/editor/FieldManager.tsx`、`src/editor/FieldGroupPalette.tsx`、`src/editor/DisplaySource.tsx`、`src/editor/OptionTagsInput.tsx`、`src/editor/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/date-fields.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/date-field-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
 
 本頁持有模板編輯與編輯器內的方案管理行為；CELL 種類只列在 [CELL_CATALOG](CELL_CATALOG.md)，瀏覽時的 CARD 工具列與方案切換由 [工作區](WORKSPACE_REVISION.md) 持有。實作入口：[Editor](../src/editor/Editor.tsx)、[Card](../src/cells/Card.tsx)、[shared/layouts](../shared/layouts.ts)。
 
@@ -51,7 +51,7 @@ CARD 專案方案與單一資料夾指定既有方案共用穩定方案身分；
 
 ## 組件與方案管理
 
-方案管理只適用卡片，漫畫資訊模板沿用共用編輯能力；組件與欄位型別契約集中 [CELL 目錄](CELL_CATALOG.md#新增組件與型別)。
+方案管理適用卡片與漫畫資訊模板（R-363：漫畫模板也可新增、複製、改名、刪除；儲存時選中的模板成為專案預設，從資料夾設定「另做一份給這個資料夾」打開時則不改專案預設）；其他內容模板只有一份。組件與欄位型別契約集中 [CELL 目錄](CELL_CATALOG.md#新增組件與型別)。
 
 ### 組件與欄位區
 

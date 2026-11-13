@@ -190,6 +190,7 @@ export class SearchIndex {
             linked.project.cells,
             ...(linked.project.layoutPresets?.map((preset) => preset.cells) ?? []),
             ...Object.values(linked.project.contentCells ?? {}),
+            ...(linked.project.bookPresets?.map((preset) => preset.cells) ?? []),
           ]
         : [])
         for (const cell of cells)

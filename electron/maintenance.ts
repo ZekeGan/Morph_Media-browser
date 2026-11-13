@@ -259,6 +259,7 @@ export function withoutField(project: Project, attributeId: string) {
     ...preset,
     cells: cells(preset.cells),
   }))
+  next.bookPresets = next.bookPresets?.map((preset) => ({ ...preset, cells: cells(preset.cells) }))
   if (next.contentCells)
     next.contentCells = Object.fromEntries(
       Object.entries(next.contentCells).map(([key, items]) => [key, cells(items)])

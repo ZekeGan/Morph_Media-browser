@@ -20,7 +20,7 @@ import { ApplicationSettings } from './settings/ApplicationSettings'
 import { DesktopShell } from './shell/DesktopShell'
 import { RefreshContext } from './browse/refresh'
 import { Toasts } from './notices/Toasts'
-import { saveCardPreset, visibleCells } from '../shared/layouts'
+import { bookEditorProject, fromBookEditor, saveCardPreset, visibleCells } from '../shared/layouts'
 import { BrowseWorkspace } from './browse/BrowseWorkspace'
 import { settleGrid } from './editor/settleGrid'
 import {
@@ -92,6 +92,8 @@ export function App() {
         .catch((e) => notifyError(String(e)))
   }, [createOpen, notifyError])
   const [templateCategory, setTemplateCategory] = useState<string>()
+  // R-363: the book template to open first (one folder's own); saving it then leaves the project default alone.
+  const [templatePreset, setTemplatePreset] = useState<string>()
   const [settings, setSettings] = useState<Project>(),
     [editor, setEditor] = useState(false),
     [detailsId, setDetailsId] = useState<string>(),
@@ -264,23 +266,28 @@ export function App() {
       }
     }
   }
+  // The book template a project starts the editor with: an older edited one gets its cover component (R-362).
+  const bookStart = (p: Project) =>
+    p.contentCover ? contentCells(p, 'book') : settleGrid(withBookCover(contentCells(p, 'book')))
   const saveEdited = async (p: Project, preset?: { name: string; asNew: boolean }) => {
     try {
-      const next = templateCategory
-        ? {
-            ...p,
-            cells: project!.cells,
-            contentCells: { ...project!.contentCells, [templateCategory]: p.cells },
-            ...(templateCategory === 'book' ? { contentCover: true } : {}),
-          }
-        : p.layoutPresets
-          ? syncPresetDraft(p)
-          : saveCardPreset(
-              p,
-              preset ?? { name: tr('預設版面'), asNew: false },
-              () => crypto.randomUUID(),
-              project!
-            )
+      const next =
+        templateCategory === 'book'
+          ? fromBookEditor(project!, p, !!templatePreset)
+          : templateCategory
+            ? {
+                ...p,
+                cells: project!.cells,
+                contentCells: { ...project!.contentCells, [templateCategory]: p.cells },
+              }
+            : p.layoutPresets
+              ? syncPresetDraft(p)
+              : saveCardPreset(
+                  p,
+                  preset ?? { name: tr('預設版面'), asNew: false },
+                  () => crypto.randomUUID(),
+                  project!
+                )
       return !!(await act({ action: 'saveProject', project: next }))
     } catch (e) {
       notifyError(String(e))
@@ -364,6 +371,14 @@ export function App() {
               key={`${project.projectId}:${templateCategory ?? 'card'}`}
               act={act}
               presets={!templateCategory}
+              presetTools={templateCategory === 'book'}
+              fromSaved={
+                templateCategory === 'book'
+                  ? (saved) => bookEditorProject(saved, bookStart(saved), templatePreset)
+                  : templateCategory
+                    ? (saved) => ({ ...saved, cells: contentCells(saved, templateCategory) })
+                    : undefined
+              }
               targetLabel={
                 templateCategory
                   ? tr(
@@ -381,15 +396,11 @@ export function App() {
               }
               onDirty={setEditorDirty}
               project={
-                templateCategory
-                  ? {
-                      ...project,
-                      cells:
-                        templateCategory === 'book' && !project.contentCover
-                          ? settleGrid(withBookCover(contentCells(project, templateCategory)))
-                          : contentCells(project, templateCategory),
-                    }
-                  : { ...project, cells: visibleCells(project) }
+                templateCategory === 'book'
+                  ? bookEditorProject(project, bookStart(project), templatePreset)
+                  : templateCategory
+                    ? { ...project, cells: contentCells(project, templateCategory) }
+                    : { ...project, cells: visibleCells(project) }
               }
               rows={(snapshot.structure ?? snapshot.rows).filter(
                 (r) => r.projectId === selected && !r.readonly
@@ -399,6 +410,7 @@ export function App() {
               close={() => {
                 setEditor(false)
                 setTemplateCategory(undefined)
+                setTemplatePreset(undefined)
               }}
             />
           ) : project && !linked?.error ? (
@@ -421,9 +433,10 @@ export function App() {
               onDirty={setDetailDirty}
               onOverlay={setSettingsOverlay}
               notify={notifyError}
-              edit={(category) => {
+              edit={(category, preset) => {
                 if (!detailDirty || window.confirm(tr('放棄欄位草稿後編輯版面？'))) {
                   setTemplateCategory(category)
+                  setTemplatePreset(preset)
                   setEditor(true)
                 }
               }}

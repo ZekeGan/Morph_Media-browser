@@ -172,5 +172,9 @@ export function settleFieldGroups(value: unknown): unknown {
     next.contentCells = Object.fromEntries(
       Object.entries(value.contentCells).map(([key, list]) => [key, cells(list)])
     )
+  if (Array.isArray(value.bookPresets))
+    next.bookPresets = value.bookPresets.map((preset) =>
+      plain(preset) ? { ...preset, cells: cells(preset.cells) } : preset
+    )
   return next
 }

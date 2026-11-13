@@ -47,6 +47,8 @@ import {
   type ExplorerResponse,
 } from '../../shared/explorer'
 import { fieldValue } from '../../shared/model'
+import { withBookCover } from '../../shared/explorer'
+import { settleGrid } from '../editor/settleGrid'
 import type { Attribute, FolderRow, Project, Request, Response } from '../../shared/model'
 import { groupValue, isFilled } from '../../shared/cells'
 import { groupOfField, setGroupSource } from '../../shared/fieldGroups'
@@ -64,6 +66,7 @@ export function FolderPanel({
   run,
   onDirty,
   onEditLayout,
+  onEditBookLayout,
   initialTab = 'fields',
 }: {
   row: FolderRow
@@ -75,6 +78,8 @@ export function FolderPanel({
   run: Run
   onDirty: (dirty: boolean) => void
   onEditLayout?: () => void
+  // R-363: opens the book template editor at a template (a folder's own).
+  onEditBookLayout?: (preset?: string) => void
   initialTab?: string
 }) {
   useLocale()
@@ -876,6 +881,16 @@ export function FolderPanel({
                 }}
               />
             )}
+            {row.record && detectedKind.kind === 'book' && (
+              <BookLayoutChoice
+                project={project}
+                folderId={row.record.folderId}
+                folderName={row.name}
+                disabled={busy || fieldDirty}
+                act={act}
+                onEdit={onEditBookLayout}
+              />
+            )}
           </Stack>
         </Tabs.Panel>
         <Tabs.Panel value="images" pt="md">
@@ -963,5 +978,93 @@ export function FolderPanel({
         </Stack>
       </Modal>
     </Stack>
+  )
+}
+
+// R-363: which book template this folder shows. "Its own" copies the template it shows now into a new one used by this
+// folder only and opens it in the editor; it is an ordinary template from then on.
+const presetLabel = (preset: { id: string; name: string }) =>
+  preset.id === 'default' && preset.name === '預設版面' ? tr('預設版面') : preset.name
+function BookLayoutChoice({
+  project,
+  folderId,
+  folderName,
+  disabled,
+  act,
+  onEdit,
+}: {
+  project: Project
+  folderId: string
+  folderName: string
+  disabled: boolean
+  act: Act
+  onEdit?: (preset?: string) => void
+}) {
+  // The project's default cells, an older edited template getting its cover component as the editor would (R-362).
+  const defaultCells = project.contentCover
+    ? contentCells(project, 'book')
+    : settleGrid(withBookCover(contentCells(project, 'book')))
+  const presets = project.bookPresets ?? [{ id: 'default', name: '預設版面', cells: defaultCells }]
+  const current = presets.find((preset) => preset.id === (project.bookPresetId ?? presets[0].id))
+  const own = project.folderBookPresets?.[folderId]
+  const choose = async (value: string | null) => {
+    const folders = { ...project.folderBookPresets }
+    if (value === '__own') {
+      const used = new Set(presets.map((preset) => preset.name.toLocaleLowerCase()))
+      const base = folderName.slice(0, 90).trim() || tr('此資料夾')
+      let name = base
+      for (let n = 2; used.has(name.toLocaleLowerCase()); n++) name = base + ' (' + n + ')'
+      const shown =
+        presets.find((preset) => preset.id === own)?.cells ?? current?.cells ?? defaultCells
+      const id = crypto.randomUUID()
+      folders[folderId] = id
+      const saved = await act({
+        action: 'saveProject',
+        project: {
+          ...project,
+          contentCells: { ...project.contentCells, book: current?.cells ?? defaultCells },
+          contentCover: true,
+          bookPresets: [...presets, { id, name, cells: structuredClone(shown) }],
+          bookPresetId: current?.id ?? presets[0].id,
+          folderBookPresets: folders,
+        },
+      })
+      if (saved) onEdit?.(id)
+      return
+    }
+    if (value) folders[folderId] = value
+    else delete folders[folderId]
+    void act({
+      action: 'saveProject',
+      project: {
+        ...project,
+        folderBookPresets: Object.keys(folders).length ? folders : undefined,
+      },
+    })
+  }
+  return (
+    <Select
+      label={
+        <HelpLabel
+          label={tr('此資料夾的漫畫展示')}
+          help={tr(
+            '右側漫畫資訊用哪個模板；「另做一份給這個資料夾」會複製目前的模板並打開編輯器。'
+          )}
+        />
+      }
+      allowDeselect={false}
+      value={own && presets.some((preset) => preset.id === own) ? own : ''}
+      data={[
+        {
+          value: '',
+          label: tr('遵循專案預設（目前：{0}）', current ? presetLabel(current) : tr('預設版面')),
+        },
+        ...presets.map((preset) => ({ value: preset.id, label: presetLabel(preset) })),
+        // Templates are limited to 30, as card layouts are.
+        { value: '__own', label: tr('另做一份給這個資料夾…'), disabled: presets.length >= 30 },
+      ]}
+      disabled={disabled}
+      onChange={(value) => void choose(value)}
+    />
   )
 }

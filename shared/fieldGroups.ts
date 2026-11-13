@@ -70,6 +70,14 @@ function mapCells(project: Project, map: (cells: Cell[]) => Cell[]): Project {
           ),
         }
       : {}),
+    ...(project.bookPresets
+      ? {
+          bookPresets: project.bookPresets.map((preset) => ({
+            ...preset,
+            cells: map(preset.cells),
+          })),
+        }
+      : {}),
   }
 }
 function withGroups(project: Project, groups: FieldGroup[]): Project {
@@ -90,7 +98,7 @@ function withGroups(project: Project, groups: FieldGroup[]): Project {
   return next
 }
 // Cells showing a group stay bound to one of its members; a dissolved group leaves its cells on its first member.
-function settleCells(project: Project, before: FieldGroup[]): Project {
+export function settleCells(project: Project, before: FieldGroup[]): Project {
   return mapCells(project, (cells) =>
     cells.map((cell) => {
       if (!cell.groupId) return cell
@@ -233,7 +241,11 @@ export function groupFromFallbacks(
   name: string,
   groupId: string
 ): Project {
-  const cell = [project.cells, ...(project.layoutPresets?.map((p) => p.cells) ?? [])]
+  const cell = [
+    project.cells,
+    ...(project.layoutPresets?.map((p) => p.cells) ?? []),
+    ...(project.bookPresets?.map((p) => p.cells) ?? []),
+  ]
     .flat()
     .find((c) => c.cellId === cellId)
   if (!cell?.attributeId || !cell.fallbackIds?.length) return project

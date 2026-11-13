@@ -181,6 +181,7 @@ export async function previewDeleteField(
         ...Object.entries(project.contentCells ?? {}).map(
           ([key, cells]) => ['content:' + key, cells] as const
         ),
+        ...(project.bookPresets?.map((p) => ['book:' + p.id, p.cells] as const) ?? []),
       ])
       preview.layouts += [...layouts.values()]
         .flat()

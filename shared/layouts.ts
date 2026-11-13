@@ -1,5 +1,6 @@
 import { fieldValue, type Attribute, type Cell, type FolderRow, type Project } from './model'
 import { effectiveKind } from './kind'
+import { settleCells } from './fieldGroups'
 // R-362: a book's cover is a component of its template (the folder's cover picture, else its first image), so it can
 // be moved, resized or left out like any other.
 export const bookCover = (grid: Cell['grid'] = { x: 0, y: 0, w: 4, h: 4 }): Cell => ({
@@ -16,6 +17,7 @@ export function projectImageCells(project: Project): Cell[] {
         ...project.cells,
         ...(project.layoutPresets?.flatMap((p) => p.cells) ?? []),
         ...Object.values(project.contentCells ?? {}).flat(),
+        ...(project.bookPresets?.flatMap((p) => p.cells) ?? []),
         // A book template never saved still shows the default cover, which can be given a picture of its own.
         ...(project.contentCells?.book === undefined ? [bookCover()] : []),
       ]
@@ -359,4 +361,69 @@ export function samplePreviewRow(
         ]
   })
   return { ...base, record: { ...base.record, attributes, projectOverrides: {} } }
+}
+
+// R-363: book templates are kept as presets like card layouts, so the editor's preset tools serve them too. In the
+// editor they stand where the card presets are; the folder choices stand where folderLayouts are.
+export function bookEditorProject(project: Project, defaultCells: Cell[], start?: string): Project {
+  const presets = project.bookPresets?.length
+      ? project.bookPresets
+      : [{ id: 'default', name: '預設版面', cells: defaultCells }],
+    has = (id?: string) => !!id && presets.some((preset) => preset.id === id),
+    active = has(start) ? start! : has(project.bookPresetId) ? project.bookPresetId! : presets[0].id
+  return {
+    ...project,
+    cells: structuredClone(presets.find((preset) => preset.id === active)!.cells),
+    layoutPresets: structuredClone(presets),
+    activeLayoutId: active,
+    folderLayouts: project.folderBookPresets,
+    kindLayouts: undefined,
+  }
+}
+// Back from the editor: the card layouts stay as they were. The template chosen when saving becomes the project's
+// default, unless the editor was opened for one folder's template (keepDefault), which leaves the default alone.
+export function fromBookEditor(original: Project, edited: Project, keepDefault: boolean): Project {
+  const synced = syncPresetDraft(edited),
+    presets = synced.layoutPresets!,
+    fallback = synced.activeLayoutId!,
+    chosen =
+      keepDefault && presets.some((preset) => preset.id === original.bookPresetId)
+        ? original.bookPresetId!
+        : fallback,
+    // A folder choice whose template was deleted is dropped.
+    kept = Object.entries(synced.folderLayouts ?? {}).filter(([, id]) =>
+      presets.some((preset) => preset.id === id)
+    ),
+    folders = kept.length ? Object.fromEntries(kept) : undefined
+  // Field groups changed in this editor were settled in its draft (book templates and other content templates); the
+  // card layouts restored here are settled against them the same way.
+  return settleCells(
+    {
+      ...synced,
+      cells: original.cells,
+      layoutPresets: original.layoutPresets,
+      activeLayoutId: original.activeLayoutId,
+      folderLayouts: original.folderLayouts,
+      kindLayouts: original.kindLayouts,
+      contentCells: {
+        ...synced.contentCells,
+        book: structuredClone(presets.find((preset) => preset.id === chosen)!.cells),
+      },
+      contentCover: true,
+      bookPresets: presets,
+      bookPresetId: chosen,
+      folderBookPresets: folders,
+    },
+    original.fieldGroups ?? []
+  )
+}
+// The template a book folder shows: its own choice, else the project's.
+export function bookCellsFor(
+  project: Pick<Project, 'bookPresets' | 'bookPresetId' | 'folderBookPresets'>,
+  folderId: string | undefined,
+  projectCells: Cell[]
+): Cell[] {
+  const chosen = folderId ? project.folderBookPresets?.[folderId] : undefined,
+    find = (id?: string) => project.bookPresets?.find((preset) => preset.id === id)?.cells
+  return find(chosen) ?? find(project.bookPresetId) ?? projectCells
 }
