@@ -63,6 +63,10 @@ export const importedFieldLabels = (): Record<string, string> => ({
   RATING_COUNT: tr('評分人數'),
   MADE_WITH: tr('製作工具'),
   ITCH_ID: 'itch.io ID',
+  // R-365, R-367: gallery sites
+  TITLE_PRETTY: tr('簡短標題'),
+  SCANLATOR: tr('翻譯者'),
+  FAVORITE_COUNT: tr('收藏數'),
   COVER_STATUS: tr('封面狀態'),
   // R-283, R-284, R-292
   SITE_NAME: tr('網站名稱'),

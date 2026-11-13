@@ -63,6 +63,8 @@ export const sourceConfig: Record<
   },
   // R-292
   booth: { requestHosts: ['booth.pm'], coverHosts: ['booth.pximg.net'] },
+  // R-367: the API host; covers from the thumbnail host.
+  nhentai: { requestHosts: ['nhentai.net'], coverHosts: ['t1.nhentai.net'] },
   itch: {
     requestHosts: ['api.vndb.org'],
     requestHostPattern: /^[a-z0-9-]{1,63}\.itch\.io$/,

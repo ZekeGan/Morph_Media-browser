@@ -14,6 +14,7 @@ import { pixiv } from './sources/pixiv'
 import { vndb } from './sources/vndb'
 import { booth, kakuyomu } from './sources/pages'
 import { itch } from './sources/itch'
+import { nhentai } from './sources/nhentai'
 import { fanza, steamgriddb, tmdb } from './sources/keyed'
 import {
   danbooru,
@@ -52,6 +53,7 @@ const adapters: Record<PublicSourceId, Adapter> = {
   booth,
   kakuyomu,
   itch,
+  nhentai,
   tmdb,
   steamgriddb,
   fanza,

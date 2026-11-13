@@ -1,6 +1,6 @@
 # CELL 目錄
 
-> 最後確認：2026-11-12。卡片組件與欄位型別的現行契約；共用編輯行為見 [EDITOR_DESIGN](EDITOR_DESIGN.md)。值、版面與受控動作分開；取捨見 [決策索引](DECISIONS.md)。
+> 最後確認：2026-11-13。卡片組件與欄位型別的現行契約；共用編輯行為見 [EDITOR_DESIGN](EDITOR_DESIGN.md)。值、版面與受控動作分開；取捨見 [決策索引](DECISIONS.md)。
 
 ## 現行契約
 

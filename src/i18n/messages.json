@@ -11944,5 +11944,23 @@
     "en": "The project \"{0}\" uses this field as another type, so it cannot be unified",
     "ja": "プロジェクト「{0}」がこの項目を別の型で使っているため、統一できません",
     "es": "El proyecto «{0}» usa este campo con otro tipo, así que no se puede unificar"
+  },
+  "簡短標題": {
+    "zh-CN": "简短标题",
+    "en": "Short title",
+    "ja": "短いタイトル",
+    "es": "Título corto"
+  },
+  "翻譯者": {
+    "zh-CN": "翻译者",
+    "en": "Translator",
+    "ja": "翻訳者",
+    "es": "Traductor"
+  },
+  "收藏數": {
+    "zh-CN": "收藏数",
+    "en": "Favorites",
+    "ja": "お気に入り数",
+    "es": "Favoritos"
   }
 }

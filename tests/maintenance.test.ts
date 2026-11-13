@@ -11,6 +11,7 @@ import {
   readJson,
   exists,
 } from '../electron/files'
+import { stableRead } from '../electron/library-field-removal'
 import { applyMaintenance, managedTree, MaintenanceFailure } from '../electron/maintenance'
 async function fixture(t: { after: (callback: () => Promise<void>) => void }) {
   const base = path.resolve('.test-output')
@@ -393,4 +394,22 @@ test('full metadata inventory handles historical game records and archived defin
   await lib.fullRemoveProject(preview.token)
   assert.equal(await exists(folderFile(historical)), false)
   assert.equal(await fs.readFile(path.join(outside, 'original'), 'utf8'), 'OUTSIDE')
+})
+test('R-366: a file saved while a preview reads it stops the preview instead of pairing old content with the new hash', async (t) => {
+  const { root } = await fixture(t),
+    file = path.join(root, 'record.json')
+  await fs.writeFile(file, '{"a":1}')
+  const { value, hash } = await stableRead(file, async () =>
+    JSON.parse(await fs.readFile(file, 'utf8'))
+  )
+  assert.deepEqual(value, { a: 1 })
+  assert.ok(hash)
+  await assert.rejects(
+    stableRead(file, async () => {
+      const before = JSON.parse(await fs.readFile(file, 'utf8'))
+      await fs.writeFile(file, '{"a":2}')
+      return before
+    }),
+    /正在變更/
+  )
 })

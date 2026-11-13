@@ -18,6 +18,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Removing a field no longer risks undoing a folder or project saved while its preview was being made (R-366).
+- Websites: nhentai gallery addresses import through its own API, with fields named like E-Hentai's; Hitomi.la adds circles, series, characters and the ♀/♂ marks of tags (R-365, R-367).
 - Fields: a field kept as text in some folders and as a date in others (such as gallery posting times imported before R-240) can be made dates in one step from Manage fields, after a preview that lists any value that cannot be read; a backup is made first; times whose zone gives hours only (`-05`) are read as dates too (R-364).
 - Manga right panel: the cover is a component of the layout (folder cover, else the first picture) that can be moved, resized or removed; a layout never edited starts with the cover and the card's fields instead of an empty column, and an older layout gets its cover component the next time it is opened in the editor (R-362).
 - With the project sidebar hidden, only its top-bar button previews it; the window's left edge no longer brings it out, and Esc puts the preview away while the button's tooltip is showing (R-360).

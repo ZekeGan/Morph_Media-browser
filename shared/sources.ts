@@ -20,6 +20,14 @@ export const metadataSources = [
     categories: ['manga', 'album'],
     hint: 'https://hitomi.la/reader/ID.html',
   },
+  // R-367: nhentai galleries through its own API.
+  {
+    id: 'nhentai',
+    name: 'nhentai',
+    group: '漫畫／動畫',
+    categories: ['manga', 'album'],
+    hint: 'https://nhentai.net/g/ID/',
+  },
   {
     id: 'bangumi',
     name: 'Bangumi',
@@ -238,6 +246,7 @@ export function sourceForUrl(source: string): MetadataSourceId | undefined {
     'danbooru.donmai.us': 'danbooru',
     'books.google.com': 'googlebooks',
     'booth.pm': 'booth',
+    'nhentai.net': 'nhentai',
     'kakuyomu.jp': 'kakuyomu',
     'www.themoviedb.org': 'tmdb',
     'themoviedb.org': 'tmdb',

@@ -40,6 +40,18 @@ export function fieldScope(ex: Library) {
   )
 }
 
+// R-366: a file is fingerprinted before it is read and checked again after, so a plan never pairs old content with the
+// hash of a file saved in between (applying it would undo that save).
+export async function stableRead<T>(
+  file: string,
+  read: () => Promise<T>
+): Promise<{ value: T; hash: string }> {
+  const hash = await fingerprint(file),
+    value = await read()
+  if ((await fingerprint(file)) !== hash) throw new Error('資料正在變更，請稍後再預覽')
+  return { value, hash }
+}
+
 export async function previewDeleteField(
   ex: Library,
   projectId: string,
@@ -149,8 +161,8 @@ export async function previewDeleteField(
     }
     const file = projectFile(ref.root, ref.projectId)
     await safePath(ref.root, file)
-    const project = await ex.currentProject(ref),
-      guard = { root: ref.root, path: file, hash: await fingerprint(file) }
+    const { value: project, hash } = await stableRead(file, () => ex.currentProject(ref)),
+      guard = { root: ref.root, path: file, hash }
     guards.push(guard)
     const next = withoutField(resolveSearches(project), attributeId)
     let changed =
@@ -190,11 +202,11 @@ export async function previewDeleteField(
     const backup = file + '.bak'
     if (await exists(backup)) {
       await safePath(ref.root, backup)
-      const old = await readJson(backup)
+      const { value: old, hash: backupHash } = await stableRead(backup, () => readJson(backup))
       validateProject(old)
       if (old.projectId !== project.projectId || old.rootFolderId !== project.rootFolderId)
         throw new Error('專案備份身分不符')
-      const backupGuard = { root: ref.root, path: backup, hash: await fingerprint(backup) }
+      const backupGuard = { root: ref.root, path: backup, hash: backupHash }
       guards.push(backupGuard)
       const stripped = withoutField(resolveSearches(old), attributeId)
       if (
@@ -221,12 +233,10 @@ export async function previewDeleteField(
   ]
   for (const row of rows) {
     await safePath(row.path, folderFile(row.path))
-    const record = await readFolder(row.path),
-      guard = {
-        root: row.path,
-        path: folderFile(row.path),
-        hash: await fingerprint(folderFile(row.path)),
-      }
+    const { value: record, hash } = await stableRead(folderFile(row.path), () =>
+        readFolder(row.path)
+      ),
+      guard = { root: row.path, path: folderFile(row.path), hash }
     guards.push(guard)
     const attributes = [
       ...record.attributes,
@@ -266,10 +276,10 @@ export async function previewDeleteField(
     const backup = folderFile(row.path) + '.bak'
     if (await exists(backup)) {
       await safePath(row.path, backup)
-      const old = await readJson(backup)
+      const { value: old, hash: backupHash } = await stableRead(backup, () => readJson(backup))
       validateFolder(old)
       if (old.folderId !== record.folderId) throw new Error('資料夾備份身分不符')
-      const backupGuard = { root: row.path, path: backup, hash: await fingerprint(backup) }
+      const backupGuard = { root: row.path, path: backup, hash: backupHash }
       guards.push(backupGuard)
       const stripped = strip(old)
       if (JSON.stringify(stripped) !== JSON.stringify(old)) {
