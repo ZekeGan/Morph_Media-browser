@@ -373,6 +373,19 @@ try {
   await page.waitForTimeout(200)
   if (await reader().isVisible()) await page.keyboard.press('Escape')
   await reader().waitFor({ state: 'hidden' })
+  // R-322: a page picked by hand opens there and offers the saved page, without writing anything when left alone.
+  await page.locator('.manga-gallery .media-thumbnail').last().click()
+  const offer = reader().locator('.reader-notice')
+  await offer.waitFor()
+  assert.equal(
+    ((await offer.textContent()) ?? '').match(/^上次讀到第 (\d+) 頁/)?.[1],
+    String(leftAt).split('–')[0]
+  )
+  await offer.getByRole('button', { name: /^跳到第 \d+ 頁$/ }).waitFor()
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(200)
+  if (await reader().isVisible()) await page.keyboard.press('Escape')
+  await reader().waitFor({ state: 'hidden' })
   await page.locator('.manga-gallery .media-thumbnail').first().click()
   // R-253: opening from the first page continues where the reader was left, with a way back to the start.
   const resume = reader().locator('.reader-notice')

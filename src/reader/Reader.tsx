@@ -72,7 +72,8 @@ export function Reader({
   nextBook?: { name: string; open: (keepImmersive: boolean) => void }
   // The window is already in fullscreen from the previous book: start in immersive mode (R-275).
   startImmersive?: boolean
-  // R-322: false when the reader opens at an image the user picked: it stays there and only offers the saved page.
+  // R-322: false when the reader opens at an image the user picked even if it is the first one; it then only offers
+  // the saved page. A reader opened at any later page does the same.
   resume?: boolean
 }) {
   useLocale()
@@ -90,9 +91,11 @@ export function Reader({
       ? prefs.page
       : undefined
   )
-  // R-322: opened at a picked image, the saved page (when the book is not finished) is offered instead of taken.
+  // R-322: opened at a picked page (from the file page, or a thumbnail other than the first), the saved page of an
+  // unfinished book is offered instead of taken.
   const [offerAt, setOfferAt] = useState(() =>
-    !resume &&
+    resumeAt === undefined &&
+    (!resume || start > 0) &&
     manga &&
     prefs?.page &&
     prefs.page > 0 &&
