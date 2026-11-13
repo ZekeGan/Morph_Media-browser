@@ -11806,5 +11806,17 @@
     "en": "Invalid browse setting",
     "ja": "閲覧方法が正しくありません",
     "es": "Ajuste de exploración no válido"
+  },
+  "上次讀到第 {0} 頁": {
+    "zh-CN": "上次读到第 {0} 页",
+    "en": "Last read: page {0}",
+    "ja": "前回は {0} ページまで",
+    "es": "Última lectura: página {0}"
+  },
+  "跳到第 {0} 頁": {
+    "zh-CN": "跳到第 {0} 页",
+    "en": "Go to page {0}",
+    "ja": "{0} ページへ移動",
+    "es": "Ir a la página {0}"
   }
 }

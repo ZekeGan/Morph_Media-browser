@@ -1,6 +1,6 @@
 # 現況架構與定位
 
-> 最後確認：2026-11-12。模組責任、資料流與安全邊界；改動模組責任或資料流時同批更新本頁的圖。
+> 最後確認：2026-11-13。模組責任、資料流與安全邊界；改動模組責任或資料流時同批更新本頁的圖。
 
 依目前程式整理；版本與依賴查 package.json。此頁只持有模組責任，功能規格由 [任務索引](README.md) 導向。舊 Next.js／View／Cell／DataType／JsonStorage 原型不是目標資料模型。
 
@@ -67,7 +67,7 @@ Renderer 負責畫面、草稿與互動；preload 只暴露受控 API；main 驗
 | IPC 請求檢查與 library 分派 | [ipc-requests](../electron/ipc-requests.ts)、[library-dispatch](../electron/library-dispatch.ts) | 每個 IPC 入口先驗證呼叫來源，再檢查請求形狀（動作在允許清單、各欄位型別）；巢狀內容由寫入端驗證。library 請求在 library-dispatch 轉成 Library、備份與原生對話框呼叫，資料夾選擇以短期代號交給 renderer |
 | 專案與可攜記錄 | [library](../electron/library.ts) `Library` | create/link/saveValues、身分、副本與復原；類別只保留協調與狀態，其餘函式在同層模組並由 `Library` 轉呼叫：[掃描與造訪](../electron/library-scan.ts)、[欄位刪除](../electron/library-field-removal.ts)、[專案移除](../electron/library-removal.ts)、[清理與復原](../electron/library-cleanup.ts)、[匯出](../electron/library-export.ts)；移除與欄位刪除共用 [maintenance](../electron/maintenance.ts) 的備份與回滾流程；[backup](../electron/backup.ts) 管理備份資料夾 |
 | 原子檔案／路徑 | [files](../electron/files.ts)、[hidden](../electron/hidden.ts) | safePath/within、atomicJson、記錄備份／指紋、Windows 隱藏目錄 |
-| 媒體／縮圖／字幕／遊戲動作 | [explorer](../electron/explorer.ts) `Explorer` | attributes、request 分派；其餘函式在同層模組並由 `Explorer` 轉呼叫：[內容列表](../electron/explorer-content.ts)、[串流與縮圖](../electron/explorer-stream.ts)、[外部資料與圖片網址](../electron/explorer-source.ts)、[檔案總覽](../electron/explorer-overview.ts)、[圖片網址](../electron/image-url.ts)、[媒體檔案分類](../electron/media-files.ts)；另有 content/overview/stream/thumbnail、目標綁定與執行、外部資料套用 |
+| 媒體／縮圖／字幕／遊戲動作 | [explorer](../electron/explorer.ts) `Explorer` | attributes、request 分派；其餘函式在同層模組並由 `Explorer` 轉呼叫：[內容列表](../electron/explorer-content.ts)、[串流與縮圖](../electron/explorer-stream.ts)、[外部資料與圖片網址](../electron/explorer-source.ts)、[檔案總覽](../electron/explorer-overview.ts)、[圖片網址](../electron/image-url.ts)（對外連線經 [pinned-fetch](../electron/pinned-fetch.ts)：在連線當下查 DNS 並拒絕私有位址，R-334）、[媒體檔案分類](../electron/media-files.ts)；另有 content/overview/stream/thumbnail、目標綁定與執行、外部資料套用 |
 | 遊戲辨識 | [game-detection](../electron/game-detection.ts) | 有限探測、證據與 ROOT 邊界 |
 | 遊戲附加功能 | [game-extras](../electron/game-extras.ts) | Steam App ID、商店網址、依引擎推算存檔資料夾、附帶程式與說明書建議（R-305～R-310），全部唯讀；由 `Explorer` 的 gameExtras／runExtra 等請求呼叫。直接啟動的 EXE 結束時，main 把遊玩時間寫進 `WorkspaceStore`（本機設定，不進可攜記錄） |
 | 搜尋索引 | [search-index](../electron/search-index.ts) `SearchIndex` | Node SQLite、Unicode 子字串 grams、分頁；可重建，非資料來源 |

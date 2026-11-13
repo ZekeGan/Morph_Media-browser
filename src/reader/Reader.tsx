@@ -72,7 +72,7 @@ export function Reader({
   nextBook?: { name: string; open: (keepImmersive: boolean) => void }
   // The window is already in fullscreen from the previous book: start in immersive mode (R-275).
   startImmersive?: boolean
-  // R-322: false when the reader opens at an image the user picked, not at the start of the book.
+  // R-322: false when the reader opens at an image the user picked: it stays there and only offers the saved page.
   resume?: boolean
 }) {
   useLocale()
@@ -86,6 +86,17 @@ export function Reader({
     prefs?.page &&
     prefs.page > 0 &&
     // A book left on its last page counts as finished and opens from the start.
+    prefs.page < images.length - (prefs.spread ? 2 : 1)
+      ? prefs.page
+      : undefined
+  )
+  // R-322: opened at a picked image, the saved page (when the book is not finished) is offered instead of taken.
+  const [offerAt, setOfferAt] = useState(() =>
+    !resume &&
+    manga &&
+    prefs?.page &&
+    prefs.page > 0 &&
+    prefs.page !== start &&
     prefs.page < images.length - (prefs.spread ? 2 : 1)
       ? prefs.page
       : undefined
@@ -506,6 +517,11 @@ export function Reader({
     const timer = setTimeout(() => setResumed(false), 4000)
     return () => clearTimeout(timer)
   }, [resumed])
+  useEffect(() => {
+    if (offerAt === undefined) return
+    const timer = setTimeout(() => setOfferAt(undefined), 8000)
+    return () => clearTimeout(timer)
+  }, [offerAt])
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (event.isComposing) return
@@ -1189,6 +1205,23 @@ export function Reader({
               }}
             >
               {tr('不用')}
+            </Button>
+          </div>
+        )}
+        {offerAt !== undefined && (
+          <div className="reader-notice" role="status">
+            <span>{tr('上次讀到第 {0} 頁', String(offerAt + 1))}</span>
+            <Button
+              size="compact-xs"
+              variant="light"
+              onClick={() => {
+                setOfferAt(undefined)
+                const index = groups.findIndex((group) => group.includes(offerAt))
+                goToGroup(index >= 0 ? index : 0)
+                focusStage()
+              }}
+            >
+              {tr('跳到第 {0} 頁', String(offerAt + 1))}
             </Button>
           </div>
         )}

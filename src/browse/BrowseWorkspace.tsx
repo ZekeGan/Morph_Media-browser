@@ -885,10 +885,8 @@ export function BrowseWorkspace({
               highlight={highlight}
               marked={marked}
               gestures={gestures}
-              panelOpen={panelOpen}
               showPanelFor={showPanelFor}
               act={act}
-              configure={openConfig}
             />
           )}
           {!current.length && browse.mode !== 'TREE' && (

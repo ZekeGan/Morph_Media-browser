@@ -55,18 +55,21 @@ export function KindIcon({ row, size = 16 }: { row: FolderRow; size?: number }) 
   )
 }
 
-// The badge on a card: the kind's icon; its tooltip says whether it was detected or set by hand, and a click opens
-// the folder settings where the kind is chosen. Plain folders have no badge.
-export function KindBadge({ row, configure }: { row: FolderRow; configure?: () => void }) {
+// The badge on a card (R-344): the kind's icon, a plain folder for general folders or when kind badges are turned
+// off. Its tooltip says the kind and whether it was detected or set by hand; a click shows the folder contents.
+export function KindBadge({ row, show }: { row: FolderRow; show: () => void }) {
   useLocale()
   const { look, manual, candidate } = useKindLook(row)
   const visible = useKindBadgeVisible()
-  if (!visible || (look === 'general' && !candidate)) return null
-  const shown = look === 'general' ? 'game' : look,
-    unconfirmed = candidate && look !== 'game',
-    label = unconfirmed
-      ? tr('疑似遊戲 · 尚未確認')
-      : tr(looks[shown].label) + ' · ' + (manual ? tr('你指定的') : tr('自動判斷'))
+  const typed = visible && (look !== 'general' || candidate)
+  const shown: KindLook = !typed ? 'general' : look === 'general' ? 'game' : look,
+    unconfirmed = typed && candidate && look !== 'game',
+    kind = !visible
+      ? ''
+      : unconfirmed
+        ? tr('疑似遊戲 · 尚未確認')
+        : tr(looks[shown].label) + ' · ' + (manual ? tr('你指定的') : tr('自動判斷')),
+    label = kind ? kind + ' — ' + tr('顯示資料夾內容') : tr('顯示資料夾內容')
   return (
     <Tooltip label={label} withArrow>
       <button
@@ -75,7 +78,7 @@ export function KindBadge({ row, configure }: { row: FolderRow; configure?: () =
         aria-label={label}
         onClick={(event) => {
           event.stopPropagation()
-          configure?.()
+          show()
         }}
       >
         <Icon name={looks[shown].icon} size={14} />
@@ -84,7 +87,7 @@ export function KindBadge({ row, configure }: { row: FolderRow; configure?: () =
   )
 }
 
-// Showing the card badges is this computer's choice (on unless turned off).
+// Showing the kind on card badges is this computer's choice (on unless turned off).
 const badgeKey = 'morph.kindBadge'
 const badgeListeners = new Set<() => void>()
 const readBadge = () => {

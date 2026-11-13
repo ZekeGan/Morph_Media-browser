@@ -1,6 +1,6 @@
 # 遊戲引擎辨識
 
-> 本頁只寫現行的辨識規則與邊界策略，不承擔畫面或工作進度。導覽能否進入依 [現行工作區](WORKSPACE_REVISION.md)，內容／動作見 [遊戲](GAME_VIEWER_DESIGN.md)；取捨與歷次診斷見 [DECISIONS](DECISIONS.md)（C-80 起）。程式：`electron/game-detection.ts`；測試：`tests/game-detection.test.ts`；唯讀試跑：`pnpm detect <資料夾> [--children]`。最後確認：2026-11-12。
+> 本頁只寫現行的辨識規則與邊界策略，不承擔畫面或工作進度。導覽能否進入依 [現行工作區](WORKSPACE_REVISION.md)，內容／動作見 [遊戲](GAME_VIEWER_DESIGN.md)；取捨與歷次診斷見 [DECISIONS](DECISIONS.md)（C-80 起）。程式：`electron/game-detection.ts`；測試：`tests/game-detection.test.ts`；唯讀試跑：`pnpm detect <資料夾> [--children]`。最後確認：2026-11-13。
 
 ## 目的與原則
 
