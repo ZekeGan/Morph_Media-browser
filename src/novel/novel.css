@@ -324,13 +324,15 @@
     white-space: nowrap;
 }
 
-/* Immersive reading: the bars leave the page and come back while the mouse is at the top or bottom edge. */
+/* Immersive reading (R-351): the bars leave the page and come back together, at the top or bottom edge or after a
+   click in the middle of the page. Hidden bars take no clicks. */
 .novel-immersive .novel-toolbar,
 .novel-immersive .novel-progress {
     position: absolute;
     left: 0;
     right: 0;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.15s ease;
 }
 
@@ -342,11 +344,12 @@
     bottom: 0;
 }
 
-.novel-immersive .novel-toolbar:hover,
-.novel-immersive .novel-toolbar:focus-within,
-.novel-immersive .novel-progress:hover,
-.novel-immersive .novel-progress:focus-within {
+.novel-immersive.bars-shown .novel-toolbar,
+.novel-immersive.bars-shown .novel-progress,
+.novel-immersive .novel-toolbar:has(:focus-visible),
+.novel-immersive .novel-progress:has(:focus-visible) {
     opacity: 1;
+    pointer-events: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -380,14 +383,6 @@
     .novel-panel.floating {
         animation: none;
     }
-}
-
-/* R-349: in immersive reading the mouse at the left edge brings the contents out. */
-.novel-edge {
-    position: absolute;
-    inset: 0 auto 0 0;
-    z-index: 4;
-    width: 12px;
 }
 
 .novel-panel-backdrop {

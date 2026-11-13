@@ -237,6 +237,41 @@ try {
     }),
     'close button at the right end of the toolbar'
   )
+  // R-351: in immersive reading the toolbar and the progress bar come and go together with a click in the middle.
+  const barsVisible = () =>
+    page.evaluate(() =>
+      ['.novel-toolbar', '.novel-progress'].map(
+        (selector) => getComputedStyle(document.querySelector(selector)!).opacity
+      )
+    )
+  const waitBars = async (opacity: string) => {
+    for (let i = 0; i < 30 && (await barsVisible()).some((value) => value !== opacity); i++)
+      await page.waitForTimeout(50)
+    assert.deepEqual(await barsVisible(), [opacity, opacity])
+  }
+  const middle = async () => {
+    const box = (await reader().locator('.novel-page').boundingBox())!
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+  }
+  await reader().locator('.novel-page').focus()
+  await page.keyboard.press('t')
+  await page.locator('.novel-reader.novel-immersive').waitFor()
+  await waitBars('0')
+  assert.equal(await reader().locator('.novel-edge').count(), 0, 'no left-edge strip')
+  await middle()
+  await waitBars('1')
+  await middle()
+  await waitBars('0')
+  // The contents open from the toolbar, float over the page, and the bars leave with them.
+  await middle()
+  await waitBars('1')
+  await reader().getByRole('button', { name: '目錄、書籤與搜尋', exact: true }).click()
+  await reader().locator('.novel-panel.floating').waitFor()
+  await page.keyboard.press('Escape')
+  await reader().locator('.novel-panel').waitFor({ state: 'detached' })
+  await waitBars('0')
+  await page.keyboard.press('t')
+  await page.locator('.novel-reader.novel-immersive').waitFor({ state: 'detached' })
   await reader().getByRole('button', { name: '退出 · ESC', exact: true }).click()
   await reader().waitFor({ state: 'detached' })
   await page.waitForFunction(() =>

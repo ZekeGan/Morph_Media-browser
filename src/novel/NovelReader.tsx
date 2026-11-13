@@ -93,8 +93,8 @@ export function NovelReader({
       useState<{ chapter: number; at: number; before: string; match: string; after: string }[]>(),
     // The next book (R-345) opens in a new reader while the window is still in fullscreen: it stays immersive.
     [immersive, setImmersive] = useState(() => !!document.fullscreenElement),
-    // R-349: the panel was brought out by the mouse at the left edge in immersive reading and leaves with it.
-    [peek, setPeek] = useState(false),
+    // R-351: in immersive reading the toolbar and the progress bar come and go together.
+    [bars, setBars] = useState(false),
     [ending, setEnding] = useState(false),
     [box, setBox] = useState({ width: 1, height: 1 })
   const scroller = useRef<HTMLDivElement>(null),
@@ -134,12 +134,16 @@ export function NovelReader({
   useLayoutEffect(() => {
     const element = scroller.current
     if (!element) return
-    const measure = () =>
-      setBox((previous) =>
-        previous.width === element.clientWidth && previous.height === element.clientHeight
-          ? previous
-          : { width: element.clientWidth, height: element.clientHeight }
-      )
+    const measure = () => {
+      const width = element.clientWidth,
+        height = element.clientHeight
+      setBox((previous) => {
+        if (previous.width === width && previous.height === height) return previous
+        // R-351: a new size (fullscreen for immersive reading, a resized window) keeps the place in the chapter.
+        if (restore.current === 0) restore.current = latest.current.position
+        return { width, height }
+      })
+    }
     const observer = new ResizeObserver(measure)
     observer.observe(element)
     measure()
@@ -546,11 +550,39 @@ export function NovelReader({
   }
   const [dragging, setDragging] = useState<number>()
   const narrow = useMediaQuery('(max-width: 900px)')
-  // The panel floats over the page on a narrow window and in immersive reading (R-335, R-349).
+  // The panel floats over the page on a narrow window and in immersive reading (R-335, R-351).
   const floating = narrow || immersive
+  // R-351: the bars show while the mouse is at the top or bottom edge or over them, or after a click in the middle of
+  // the page; they leave about 2 seconds after the mouse moves away, on a second click, or when the panel closes.
+  const hideBars = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const showBars = (value: boolean) => {
+    clearTimeout(hideBars.current)
+    hideBars.current = undefined
+    setBars(value)
+  }
   useEffect(() => {
-    if (!panel) setPeek(false)
-  }, [panel])
+    if (panel || settingsOpen) return
+    showBars(false)
+    // Focus goes back to the page, so a toolbar button that opened the panel does not keep the bars out.
+    if (immersive) scroller.current?.focus({ preventScroll: true })
+  }, [panel, settingsOpen])
+  useEffect(() => () => clearTimeout(hideBars.current), [])
+  const barsShown = immersive && (bars || !!panel || settingsOpen)
+  const followMouse = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!immersive) return
+    const frame = event.currentTarget.getBoundingClientRect(),
+      edge = 56,
+      atEdge =
+        event.clientY < frame.top + edge ||
+        event.clientY > frame.bottom - edge ||
+        !!(event.target as HTMLElement).closest('.novel-toolbar,.novel-progress')
+    if (atEdge) showBars(true)
+    else if (bars && hideBars.current === undefined)
+      hideBars.current = setTimeout(() => {
+        hideBars.current = undefined
+        setBars(false)
+      }, 2000)
+  }
   const left = (() => {
     if (!paged || !scroller.current) return undefined
     const { at, max, page } = extent()
@@ -600,8 +632,10 @@ export function NovelReader({
         className={
           'novel-reader reader' +
           (embedded ? ' reader-embedded' : ' overlay-frame') +
-          (immersive ? ' novel-immersive' : '')
+          (immersive ? ' novel-immersive' : '') +
+          (barsShown ? ' bars-shown' : '')
         }
+        onMouseMove={followMouse}
         role="dialog"
         aria-modal="true"
         aria-label={tr('小說閱讀器')}
@@ -780,17 +814,7 @@ export function NovelReader({
           {tool(tr('退出 · ESC'), 'close', exit)}
         </div>
         <div className="novel-body">
-          {immersive && !panel && (
-            <div
-              className="novel-edge"
-              aria-hidden="true"
-              onMouseEnter={() => {
-                setPeek(true)
-                setPanel('toc')
-              }}
-            />
-          )}
-          {panel && floating && !peek && (
+          {panel && floating && (
             <button
               type="button"
               className="novel-panel-backdrop"
@@ -802,7 +826,6 @@ export function NovelReader({
             <aside
               className={'novel-panel' + (floating ? ' floating' : '')}
               aria-label={tr('目錄、書籤與搜尋')}
-              onMouseLeave={peek ? () => setPanel(undefined) : undefined}
             >
               <SegmentedControl
                 size="xs"
@@ -909,9 +932,19 @@ export function NovelReader({
             }
             onScroll={track}
             onClick={(event) => {
-              if (!paged || (event.target as HTMLElement).closest('a,button')) return
+              if ((event.target as HTMLElement).closest('a,button')) return
               const bounds = event.currentTarget.getBoundingClientRect(),
-                left = event.clientX < bounds.left + bounds.width / 2
+                middle =
+                  event.clientX > bounds.left + bounds.width / 3 &&
+                  event.clientX < bounds.right - bounds.width / 3
+              // R-351: in immersive reading a click in the middle third (anywhere in scroll mode, but not the end of a
+              // text selection) shows or hides the bars.
+              if (immersive && (middle || !paged)) {
+                if (!getSelection()?.toString()) showBars(!bars)
+                return
+              }
+              if (!paged) return
+              const left = event.clientX < bounds.left + bounds.width / 2
               // Vertical text reads right to left: the left half is the next page.
               turn(left === vertical ? 1 : -1)
             }}
