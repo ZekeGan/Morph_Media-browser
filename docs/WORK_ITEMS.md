@@ -13,20 +13,20 @@
 
 ## 待查收
 
+- **R-356** UI 測試執行器：安靜的建置、完整的失敗原因 ｜小｜一般｜無｜領域：core｜依賴：無
+  驗收：改任一個 src 檔後跑一個 UI 測試 → 建置只印「Built in Ns」；故意讓測試失敗時看到錯誤訊息、Stopped at 行號與截圖位置；pnpm verify:old 也印出失敗原因。
+
+- **R-357** UI 測試執行器加 `--verbose` ｜小｜一般｜無｜領域：core｜依賴：R-356
+  驗收：node scripts/run-ui-tests.mjs workspace-toolbar --verbose → 多出「--- workspace-toolbar-ui output ---」與測試自己印的 PASS 說明。
+
+- **R-358** 需求清單與語系的例行命令 ｜中｜一般｜無｜領域：core｜依賴：無
+  驗收：pnpm item 不帶參數印出用法；用 pnpm item add 登記一項看編號與格式，再 start、review、accept 走一輪；pnpm i18n add 一個少一種語言的檔案會被拒絕。
+
 ## 進行中
 
 ## 已核定（未做）
 
 ## 已登記（未核定）
-
-- **R-356** UI 測試執行器：安靜的建置、完整的失敗原因 ｜小｜一般｜無｜領域：core｜依賴：無
-  `run-ui-tests.mjs` 自動建置時只在出錯才印建置訊息；測試失敗時一定印出斷言訊息與測試檔行號（不只最後 12 行）；`pnpm verify:old` 也印出舊程式失敗在哪一行，確認新測試抓到的是要防的問題。目的：每次跑測試少讀幾十行雜訊，失敗時不必再重跑找原因。
-
-- **R-357** UI 測試執行器加 `--verbose` ｜小｜一般｜無｜領域：core｜依賴：R-356
-  加上 `--verbose` 時把測試自己的 console 輸出直接顯示（平常仍安靜），除錯時不必改成寫檔再讀。
-
-- **R-358** 需求清單與語系的例行命令 ｜中｜一般｜無｜領域：core｜依賴：無
-  把每批反覆手寫的修改做成專案命令：`pnpm item add`（登記）、`pnpm item start`（核定後移到進行中）、`pnpm item review R-xxx "驗收步驟"`（移到待查收）、`pnpm item accept R-xxx …`（刪除已驗收）、`pnpm i18n add <檔案>`（加五語系翻譯）、規格卡「最後確認」日期更新。格式沿用 WORK_ITEMS 現行寫法，做完同步 CLAUDE.md 的流程說明。目的：每批收尾少十幾次工具呼叫，也避免臨時腳本的跳脫字元錯誤。
 
 ## 擱置
 

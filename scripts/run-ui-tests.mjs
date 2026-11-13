@@ -6,10 +6,14 @@
 //   node scripts/run-ui-tests.mjs game --repeat 8 run each chosen test 8 times (no retry) to measure flakiness;
 //                                                 always use this instead of looping `tsx tests/x-ui.ts` by hand,
 //                                                 so every run keeps the timeout and the stray-Electron cleanup
+//   node scripts/run-ui-tests.mjs novel --verbose also show everything the tests print (console.log while debugging)
+// The output stays short: the build says only that it ran (its full output only when it fails), and a failed test
+// shows its error, the line of the test it stopped at and where its screenshots are, not the whole log.
 import { existsSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { areasOf, isSource, smoke, uiTestsOf } from './areas.mjs'
+import { failureSummary, plain } from './test-report.mjs'
 
 // Leftovers older than a day (failure artifacts, old screenshots) are pruned on every start.
 spawnSync(process.execPath, ['scripts/clean-test-output.mjs', '--older-than', '24'], {
@@ -64,14 +68,24 @@ if (!builtAt || buildInputs.some((path) => newestMtime(path) > builtAt)) {
   console.log(
     `Build is ${builtAt ? 'older than the sources' : 'missing'}; running pnpm build first.`
   )
-  if (spawnSync('pnpm', ['build'], { stdio: 'inherit', shell: true }).status !== 0) {
+  const started = Date.now(),
+    build = spawnSync('pnpm', ['build'], { encoding: 'utf8', shell: true })
+  if (build.status !== 0) {
+    console.log(
+      plain((build.stdout ?? '') + (build.stderr ?? ''))
+        .split('\n')
+        .slice(-60)
+        .join('\n')
+    )
     console.log('pnpm build failed; UI tests not run.')
     process.exit(1)
   }
+  console.log(`Built in ${Math.round((Date.now() - started) / 1000)}s.`)
 }
 console.log('Build time:', new Date(newestMtime('out')).toLocaleString())
 
 const args = process.argv.slice(2)
+const verbose = args.includes('--verbose')
 const repeatAt = args.indexOf('--repeat'),
   repeat = repeatAt >= 0 ? Math.max(1, Math.min(50, Number(args[repeatAt + 1]) || 1)) : 1
 const words = args.filter(
@@ -122,7 +136,10 @@ const execute = (name) => {
   const timedOut = run.error?.code === 'ETIMEDOUT'
   // Killing the shell leaves its Electron behind, which would stall the next test.
   if (timedOut) stopStrayElectron()
-  return { ...run, stdout: run.stdout ?? '', stderr: run.stderr ?? '', timedOut }
+  const output = { ...run, stdout: run.stdout ?? '', stderr: run.stderr ?? '', timedOut }
+  if (verbose)
+    console.log(`--- ${name} output ---\n` + plain(output.stdout + output.stderr).trimEnd())
+  return output
 }
 // Repeat mode: every run counts, nothing is retried, so the pass count shows how flaky a test really is.
 for (const name of repeat > 1 ? files : []) {
@@ -134,7 +151,7 @@ for (const name of repeat > 1 ? files : []) {
     const verdict = run.status === 0 ? 'PASS' : run.timedOut ? 'TIMEOUT' : 'FAIL'
     console.log(`  ${name} run ${round}/${repeat}: ${verdict}`)
     if (run.status === 0) passed++
-    else firstFailure ??= (run.stdout + run.stderr).split('\n').slice(-12).join('\n')
+    else firstFailure ??= failureSummary(run.stdout + run.stderr, name)
   }
   const seconds = Math.round((Date.now() - started) / 1000)
   results.push({ name, ok: passed === repeat, seconds, flaky: false })
@@ -152,16 +169,20 @@ for (const name of repeat > 1 ? [] : files) {
     run = execute(name)
     if (run.status === 0) {
       flaky = true
-      console.log(
-        'First run failed:\n' + (first.stdout + first.stderr).split('\n').slice(-12).join('\n')
-      )
+      console.log('First run failed:\n' + failureSummary(first.stdout + first.stderr, name))
     }
   }
   const seconds = Math.round((Date.now() - started) / 1000)
   results.push({ name, ok: run.status === 0, seconds, flaky })
   const verdict = run.status === 0 ? (flaky ? 'FLAKY' : 'PASS') : run.timedOut ? 'TIMEOUT' : 'FAIL'
   console.log(`${verdict} ${name} (${seconds}s)`)
-  if (run.status !== 0) console.log((run.stdout + run.stderr).split('\n').slice(-12).join('\n'))
+  if (run.status !== 0)
+    console.log(
+      run.timedOut
+        ? `Stopped after ${limit / 1000}s (waiting on a prompt?). ` +
+            failureSummary(run.stdout + run.stderr, name)
+        : failureSummary(run.stdout + run.stderr, name)
+    )
 }
 const failed = results.filter((r) => !r.ok)
 if (results.some((r) => r.flaky))

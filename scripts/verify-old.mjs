@@ -50,6 +50,15 @@ try {
     force: true,
     filter: (source) => !source.endsWith('.test.ts'),
   })
+  // Today's runner as well, so the old run reports the same way (which line failed, and why).
+  for (const file of [
+    'scripts/run-ui-tests.mjs',
+    'scripts/test-report.mjs',
+    'scripts/areas.mjs',
+    'scripts/clean-test-output.mjs',
+    'docs/areas.json',
+  ])
+    fs.cpSync(path.join(root, file), path.join(dir, file), { force: true })
   console.log(`Building ${ref} in ${path.relative(root, dir)} …`)
   const build = run('pnpm', ['build'], { cwd: dir, timeout: 5 * 60 * 1000 })
   if (build.status !== 0)
@@ -62,10 +71,11 @@ try {
     env: { ...process.env, UI_TEST_TIMEOUT: '180' },
   })
   const output = (test.stdout ?? '') + (test.stderr ?? '')
+  // The runner's own lines, without its build and clean-up notes: verdicts and, for a failure, what failed and where.
   console.log(
     output
       .split('\n')
-      .filter((line) => /PASS|FAIL|TIMEOUT|FLAKY|passed/.test(line))
+      .filter((line) => line.trim() && !/^(Built in|Build time|Removed|Build is)/.test(line))
       .join('\n')
   )
   console.log(

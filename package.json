@@ -28,6 +28,8 @@
     "detect": "tsx tests/support/detect.ts",
     "status": "node scripts/status.mjs",
     "stale": "node scripts/stale.mjs",
+    "item": "node scripts/item.mjs",
+    "i18n": "node scripts/i18n.mjs",
     "verify:old": "node scripts/verify-old.mjs",
     "clean:test": "node scripts/clean-test-output.mjs",
     "postinstall": "install-electron",
