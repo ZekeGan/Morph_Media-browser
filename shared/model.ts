@@ -155,7 +155,7 @@ export interface Project {
   list: { itemsPerRow: number; pageSize: number }
   excludedRelativePaths: string[]
   contentCells?: Record<string, Cell[]>
-  // R-362 (provisional): the book template holds its own cover; without it an older edited template is shown with the
+  // R-362: the book template holds its own cover; without it an older edited template is shown with the
   // cover drawn beside it, as before.
   contentCover?: boolean
   actionTemplates?: ActionTemplate[]
