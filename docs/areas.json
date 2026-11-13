@@ -193,6 +193,7 @@
       "code": [
         "src/editor/Editor*",
         "src/editor/editorDrag*",
+        "src/editor/settleGrid*",
         "src/editor/editorKinds*",
         "src/editor/commonFields*",
         "src/editor/importedFieldLabels*",

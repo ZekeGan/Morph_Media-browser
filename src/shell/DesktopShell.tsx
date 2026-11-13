@@ -152,20 +152,21 @@ export function DesktopShell(props: Props) {
     }
   }, [])
   const prefs = workspace.prefs
-  // While the sidebar is hidden, resting the pointer on the left edge (or on its button) lays it over the page
-  // without moving anything; it goes away again when the pointer leaves or a project is picked.
+  // While the sidebar is hidden, resting the pointer on its button in the top bar lays it over the page without moving
+  // anything; it goes away again when the pointer leaves or a project is picked. The window's left edge does not open
+  // it (R-360): the pointer passes there too often by accident.
   const [peek, setPeek] = useState(false),
     peekTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const peeking = peek && !!prefs.sidebarHidden
-  // Closing on purpose (Esc, picking a project) while the pointer rests on the edge must not reopen it: the browser
-  // sends a mouse move after the layout change, which the edge would take as a fresh hover.
-  // So it stays closed until the pointer has moved away from the left edge once.
+  // Closing on purpose (Esc, picking a project) while the pointer rests on the button must not reopen it: the browser
+  // sends a mouse move after the layout change, which the button would take as a fresh hover.
+  // So it stays closed until the pointer has left the button once.
   const peekBlocked = useRef(false)
   const closePeekNow = () => {
     setPeek(false)
     peekBlocked.current = true
     const away = (event: MouseEvent) => {
-      if (event.clientX < 48) return
+      if (sidebarToggle.current?.contains(event.target as Node)) return
       peekBlocked.current = false
       window.removeEventListener('mousemove', away)
     }
@@ -199,8 +200,9 @@ export function DesktopShell(props: Props) {
       )
         closePeekNow()
     }
-    window.addEventListener('keydown', key)
-    return () => window.removeEventListener('keydown', key)
+    // Captured first: the button's tooltip takes Esc for itself on the document and stops it there (R-360).
+    window.addEventListener('keydown', key, true)
+    return () => window.removeEventListener('keydown', key, true)
   }, [peeking])
   useEffect(() => () => clearTimeout(peekTimer.current), [])
   const selectFromSidebar = (id: string) => {
@@ -647,9 +649,6 @@ export function DesktopShell(props: Props) {
         </div>
       </header>
       <div className="desktop-body">
-        {!!prefs.sidebarHidden && (
-          <div className="sidebar-edge" aria-hidden="true" onMouseEnter={openPeek} />
-        )}
         <div
           ref={sidebarSlot}
           className="sidebar-slot"

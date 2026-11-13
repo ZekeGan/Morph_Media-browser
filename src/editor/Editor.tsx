@@ -51,6 +51,7 @@ import { fieldSource, rowFieldAttributes } from './fieldSources'
 import { importedFieldLabels } from './importedFieldLabels'
 import { bindCellToGroup, freeGroupName, groupFromFallbacks } from '../../shared/fieldGroups'
 import { refusalText } from './FieldGroupPalette'
+import { settleGrid } from './settleGrid'
 
 const withoutGroup = (cell: Cell): Cell => {
   const { groupId: _drop, ...plain } = cell
@@ -409,7 +410,9 @@ export function Editor({
   const availableFields = sources.filter(
     (a) => !draft.fieldBindings.some((f) => f.attributeId === a.attributeId)
   )
-  const change = (next: Project) => {
+  const change = (proposed: Project) => {
+    // R-361: stored positions follow the grid's own settling, so removing a component leaves no empty rows on cards.
+    const next = { ...proposed, cells: settleGrid(proposed.cells) }
     if (JSON.stringify(next) === JSON.stringify(draft)) return
     setPast([...past.slice(-49), structuredClone(draft)])
     setFuture([])

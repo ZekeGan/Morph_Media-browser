@@ -306,7 +306,6 @@ pre, .file-list { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30
 .pick-path { flex:1; min-width:0; display:flex; align-items:center; padding:0 12px; min-height:36px; border:1px solid var(--line); border-radius:8px; background:var(--soft); color:var(--text); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .pick-path[data-empty="true"] { color:var(--muted); }
 .desktop-body { position: relative; }
-.sidebar-edge { position: absolute; left: 0; top: 0; bottom: 0; width: 8px; z-index: 29; }
 /* The slot keeps its zero-width place in the layout while peeking; only the sidebar inside floats over the page, so
    showing and hiding it never moves (or animates the width of) what lies beneath. */
 .sidebar-slot[data-open='false'][data-peek='true'] { position: relative; z-index: 30; overflow: visible; }

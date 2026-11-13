@@ -1,6 +1,6 @@
 # CELL 編輯器
 
-> 最後確認：2026-11-13。積木（卡片版面）編輯器的現行規則。程式：`src/editor/Editor.tsx`、`src/editor/EditorPalette.tsx`、`src/editor/EditorInspector.tsx`、`src/cells/CellStyleEditor.tsx`、`src/editor/FieldManager.tsx`、`src/editor/FieldGroupPalette.tsx`、`src/editor/DisplaySource.tsx`、`src/editor/OptionTagsInput.tsx`、`src/editor/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/date-fields.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/date-field-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
+> 最後確認：2026-11-13（R-361）。積木（卡片版面）編輯器的現行規則。程式：`src/editor/Editor.tsx`、`src/editor/EditorPalette.tsx`、`src/editor/EditorInspector.tsx`、`src/cells/CellStyleEditor.tsx`、`src/editor/FieldManager.tsx`、`src/editor/FieldGroupPalette.tsx`、`src/editor/DisplaySource.tsx`、`src/editor/OptionTagsInput.tsx`、`src/editor/fieldTypes.ts`、`shared/fieldGroups.ts`、`shared/layouts.ts`；測試：`tests/field-types.test.ts`、`tests/date-fields.test.ts`、`tests/field-groups.test.ts`、`tests/cell-editor-ui.ts`、`tests/field-edit-ui.ts`、`tests/date-field-ui.ts`、`tests/editor-fields-ui.ts`、`tests/cell-style-ui.ts`、`tests/decided-ui.ts`。
 
 本頁持有模板編輯與編輯器內的方案管理行為；CELL 種類只列在 [CELL_CATALOG](CELL_CATALOG.md)，瀏覽時的 CARD 工具列與方案切換由 [工作區](WORKSPACE_REVISION.md) 持有。實作入口：[Editor](../src/editor/Editor.tsx)、[Card](../src/cells/Card.tsx)、[shared/layouts](../shared/layouts.ts)。
 
@@ -38,6 +38,7 @@ CARD 專案方案與單一資料夾指定既有方案共用穩定方案身分；
 
 - 保留 react-grid-layout 作格線拖放／調整尺寸引擎。固定邏輯格線，窄視窗減少每列筆數或換行；不能裁掉內容。
 - 預設碰撞推開；沒有合法空間就拒絕並提示，不越界。不預設允許重疊／圖層，任意 CSS／腳本未納入。
+- 畫布會把組件往上補到空出來的列；存下來的位置與畫布看到的一致（R-361：移除組件後，卡片不留空列）。要刻意留空時用「空白間距」，它固定不動。
 - 新增分隔線組件；選取組件時畫布上浮出複製／移除小工具列（在組件右上角上方，沒有空間時在角內）。Delete 移除、Ctrl+D 複製目前選取的組件，Esc 或點畫布空白處取消選取；輸入框／選單輸入與中文組字不攔截，支援復原／重做。
 - 右側設定分「內容／樣式」兩分頁，記住上次的分頁（本機設定）；沒有內容設定的組件（名稱、路徑、空白間距、分隔線、開啟資料夾）不顯示分頁列，直接是樣式。位置與大小的數值輸入在樣式底部的「進階：位置與大小」。
 - 內容分頁（R-232）：欄位或群組名稱＋［更換］→「顯示方式」切換鈕（文字與多個值：文字／標籤，標籤時另有標籤顏色與分類前綴（只在這個欄位的資料有「分類:標籤」格式、或已設定過時出現，R-238）；單選與是／否：文字／徽章；數字：數字／星等／進度條，星等與進度條另有滿分）→ 組件專屬設定 →「沒有值時隱藏」（沒有值的欄位組件在卡片與預覽一律顯示淡色的「沒有值」，勾選則留白，R-237；等於條件「這個組件的欄位有值」；群組或備用來源組件看實際顯示的值）→ 收合的「其他選項」：顯示複製按鈕（只限文字、網址、多個值）與「只在…時顯示」的完整條件（最多 5 個，兩個以上時可選全部符合／任一符合；日期欄位另有距今 N 天內／超過 N 天，R-239）；版面文字另有「依條件顯示文字」規則清單，下方的文字框變成「其他情況顯示的文字」；已有其他條件或已開複製按鈕時自動展開，換組件時收回。單選的選項只在管理欄位編輯（右側是［編輯選項］）；顯示方式為徽章時才有選項顏色，並註明所有組件共用。沒選組件時顯示「整張卡片」：組件數、被截掉的組件清單（點選即選取）與操作提示。

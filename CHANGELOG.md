@@ -18,6 +18,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- With the project sidebar hidden, only its top-bar button previews it; the window's left edge no longer brings it out, and Esc puts the preview away while the button's tooltip is showing (R-360).
+- Layout editor: removing a component (a divider, for example) no longer leaves its empty rows on the cards; stored positions match what the editor shows (R-361).
 - Websites: itch.io game addresses import the title, cover, authors, tags, price, genre, platforms, status, engine, release date and rating without a key; when VNDB lists the same game, the preview offers its data as a separate choice (R-359).
 - Development: the UI test runner keeps its output short (a line for the build, and for a failure its error, the test line it stopped at and where its screenshots are), `--verbose` shows what the tests print, and `pnpm verify:old` says why the old code failed; `pnpm item` and `pnpm i18n add` handle the routine edits of the work list, spec dates and translations (R-356, R-357, R-358).
 - Novel reader: scroll mode hides its scrollbar, and the mouse wheel and page keys glide instead of jumping (R-354, R-355).
