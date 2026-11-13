@@ -23,6 +23,10 @@ test('dates written as text are read when they name a full day, and nothing else
   assert.equal(day('2020/1/2'), '2020-01-02')
   assert.equal(day('2020年1月2日'), '2020-01-02')
   assert.deepEqual(parseDate('2020-11-12 10:30'), { type: 'datetime', value: '2020-11-12T10:30' })
+  // A zone written with hours only is the same time as with minutes.
+  assert.deepEqual(parseDate('2026-04-13 20:55:00-05'), parseDate('2026-04-13T20:55:00-05:00'))
+  assert.equal(parseDate('2026-04-13 20:55:00-05')?.type, 'datetime')
+  assert.equal(parseDate('2026-04-13 20:55:00-5'), undefined)
   for (const text of [
     '1999',
     '2020-11',

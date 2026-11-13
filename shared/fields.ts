@@ -70,7 +70,8 @@ export function parseDate(text: unknown): { type: 'date' | 'datetime'; value: st
   if (typeof text !== 'string' || text.length > 100) return undefined
   const s = text.trim()
   let m =
-    /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(Z|[+-]\d{2}:?\d{2})?$/i.exec(
+    // A zone may be written with hours only ("-05", as PostgreSQL and some sites do).
+    /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(Z|[+-]\d{2}(?::?\d{2})?)?$/i.exec(
       s
     )
   if (m) {
@@ -81,7 +82,8 @@ export function parseDate(text: unknown): { type: 'date' | 'datetime'; value: st
         type: 'datetime',
         value: `${date}T${m[4]}:${m[5]}${m[6] && m[6] !== '00' ? ':' + m[6] : ''}`,
       }
-    const at = new Date(s.replace(' ', 'T'))
+    // The browser's parser needs the zone's minutes.
+    const at = new Date(s.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'))
     if (Number.isNaN(at.getTime())) return undefined
     const local = `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())}T${pad(at.getHours())}:${pad(at.getMinutes())}`
     return { type: 'datetime', value: local + (at.getSeconds() ? ':' + pad(at.getSeconds()) : '') }
