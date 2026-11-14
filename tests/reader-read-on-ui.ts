@@ -122,6 +122,27 @@ try {
   await waitPages('4')
   await page.keyboard.press('ArrowUp')
   await waitPages('3')
+  // R-376: in immersive reading Tab on the page does not walk into the hidden tool rail.
+  await page.keyboard.press('t')
+  await page.waitForFunction(() => !!document.fullscreenElement)
+  await page.waitForFunction(() => document.activeElement?.matches('.reader-stage'))
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Shift+Tab')
+  await page.waitForTimeout(150)
+  assert.ok(
+    await page.evaluate(() => document.activeElement?.matches('.reader-stage')),
+    'Tab leaves the focus on the page'
+  )
+  assert.equal(await page.locator('.reader-rail:has(:focus-visible)').count(), 0)
+  await page.keyboard.press('t')
+  await page.waitForFunction(() => !document.fullscreenElement)
+  // Outside immersive reading Tab moves through the toolbar as before.
+  await page.waitForFunction(() => document.activeElement?.matches('.reader-stage'))
+  await page.keyboard.press('Tab')
+  assert.ok(
+    await page.evaluate(() => !document.activeElement?.matches('.reader-stage')),
+    'Tab leaves the page when the toolbar is shown'
+  )
   assert.deepEqual(errors, [])
   passed = true
   console.log('PASS wheel turns and zooms, keys read on, wide pages stand alone. ' + root)

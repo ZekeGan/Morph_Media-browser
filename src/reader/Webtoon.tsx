@@ -4,8 +4,9 @@ import { t as tr } from '../i18n'
 import { useWheel } from '../common/readerInput'
 
 // R-256: webtoon reading. Every page in one column without gaps, as wide as the chosen share of the window; the page
-// number is the page under the middle of the window. Pages load as they come near (the browser's lazy loading) and
-// keep their place while pages above them load (scroll anchoring).
+// number is the page under the middle of the window. Pages around the current one load ahead of the reader (R-375),
+// the rest as they come near (the browser's lazy loading); pages keep their place while pages above them load
+// (scroll anchoring).
 export interface WebtoonHandle {
   // Scroll so this page starts at the top of the window.
   toPage(index: number): void
@@ -128,8 +129,10 @@ export const Webtoon = forwardRef<
             className="reader-webtoon-page pending"
             src={image.url}
             alt={image.name}
-            loading="lazy"
-            decoding="async"
+            // R-375: the pages just ahead (and the two behind) load before they are scrolled to and are drawn
+            // decoded, so reading down does not pass through empty pages that fill in late; the rest wait.
+            loading={index >= start - 2 && index <= start + 6 ? 'eager' : 'lazy'}
+            decoding={index >= start - 2 && index <= start + 6 ? 'sync' : 'async'}
             draggable={false}
             data-page={index + 1}
             onLoad={(event) => event.currentTarget.classList.remove('pending')}

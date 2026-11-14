@@ -18,6 +18,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Webtoon mode: the pages just ahead load before they are scrolled to, so reading down no longer passes through blank pages that fill in late (R-375).
+- Immersive reading: Tab on the page no longer moves the focus into the hidden tool rail, which used to bring the rail out and keep it there (R-376).
 - Manga reader and image viewer: the wheel now moves a page larger than the window and turns the page at its end, and Ctrl + wheel zooms (the wheel used to zoom); Space, Page Down/Up and the up and down arrows read the rest of the page before turning it (R-372, R-373).
 - Manga two-page mode: a page wider than tall (a spread saved as one picture) is shown by itself, and the pages after it pair up again from there (R-374).
 - Internal: the manga reader, webtoon column and novel reader take keys and the wheel through one small shared module; what each key or wheel turn does is unchanged (R-371).

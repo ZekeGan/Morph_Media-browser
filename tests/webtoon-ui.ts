@@ -58,6 +58,15 @@ try {
     await reader().getByRole('button', { name: '條漫', exact: true }).getAttribute('aria-pressed'),
     'true'
   )
+  // R-375: the pages ahead load before they are scrolled to (each page here is several windows tall, so the
+  // browser's own lazy loading would wait).
+  await page.waitForFunction(
+    () =>
+      [...document.querySelectorAll<HTMLImageElement>('.reader-webtoon-page')]
+        .slice(0, 7)
+        .every((image) => image.complete && image.naturalWidth > 0) &&
+      document.querySelector('.reader-webtoon')!.scrollTop === 0
+  )
   // Pages touch: no gap between one page and the next.
   await page.waitForFunction(
     () => document.querySelectorAll('.reader-webtoon-page:not(.pending)').length >= 2

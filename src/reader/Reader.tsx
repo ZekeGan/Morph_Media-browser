@@ -583,6 +583,16 @@ export function Reader({
       }
       return
     }
+    // R-376: in immersive reading Tab on the page stays there. The tool rail shows for as long as one of its buttons
+    // has keyboard focus, so a stray Tab used to bring it out and keep it out.
+    if (
+      event.key === 'Tab' &&
+      immersive &&
+      (event.target === document.body || (event.target as HTMLElement)?.matches('.reader-stage'))
+    ) {
+      consume(event)
+      return
+    }
     if (event.ctrlKey || event.altKey || event.metaKey) return
     // Webtoon: arrows, space and Page keys scroll a window height; Home and End go to either end.
     if (webtoon) {
