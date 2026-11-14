@@ -18,6 +18,9 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Manga reader: a toolbar switch (A) turns the page-turn slide off so the new page just appears; the choice is kept for this computer and every book (R-378).
+- Novel reader: in immersive reading Tab on the text no longer brings the bars out and keeps them there (R-377).
+- Changing project no longer slides the right panel shut and open again when it was open (R-379).
 - Webtoon mode: the pages just ahead load before they are scrolled to, so reading down no longer passes through blank pages that fill in late (R-375).
 - Immersive reading: Tab on the page no longer moves the focus into the hidden tool rail, which used to bring the rail out and keep it there (R-376).
 - Manga reader and image viewer: the wheel now moves a page larger than the window and turns the page at its end, and Ctrl + wheel zooms (the wheel used to zoom); Space, Page Down/Up and the up and down arrows read the rest of the page before turning it (R-372, R-373).

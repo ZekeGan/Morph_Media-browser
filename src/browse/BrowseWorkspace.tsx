@@ -589,6 +589,17 @@ export function BrowseWorkspace({
     if (!panelOpen && slot.contains(document.activeElement)) panelToggle.current?.focus()
     slot.inert = !panelOpen
   }, [panelOpen])
+  // R-379: the panel a project opens with is simply there. The workspace is built anew for each project and its
+  // saved folder arrives a moment later, so the panel used to slide shut and open again on every project change.
+  // Only opening or closing it afterwards slides.
+  useLayoutEffect(() => {
+    if (panelSlot.current) panelSlot.current.dataset.instant = 'true'
+  }, [])
+  useEffect(() => {
+    if (!ready) return
+    const timer = setTimeout(() => delete panelSlot.current?.dataset.instant, 600)
+    return () => clearTimeout(timer)
+  }, [ready])
   const moveWidth = (e: React.PointerEvent) => {
     if (!resize.current) return
     const r = resize.current

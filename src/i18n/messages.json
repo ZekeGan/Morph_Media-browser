@@ -12016,5 +12016,11 @@
     "en": "Wheel to turn pages · Ctrl + wheel to zoom · F11 immersive · ESC back",
     "ja": "ホイールでページ送り · Ctrl＋ホイールで拡大縮小 · F11 没入表示 · ESC 戻る",
     "es": "Rueda para pasar página · Ctrl + rueda para zoom · F11 inmersivo · ESC volver"
+  },
+  "翻頁過渡": {
+    "zh-CN": "翻页过渡",
+    "en": "Page-turn transition",
+    "ja": "ページ送りのアニメーション",
+    "es": "Transición al pasar página"
   }
 }

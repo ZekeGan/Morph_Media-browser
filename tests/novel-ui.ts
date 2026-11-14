@@ -372,6 +372,13 @@ try {
   await page.locator('.novel-reader.novel-immersive').waitFor()
   await waitBars('0')
   assert.equal(await reader().locator('.novel-edge').count(), 0, 'no left-edge strip')
+  // R-377: Tab on the text does not walk into the hidden bars.
+  await page.keyboard.press('Tab')
+  await page.waitForTimeout(150)
+  assert.ok(
+    await page.evaluate(() => document.activeElement?.matches('.novel-page')),
+    'Tab leaves the focus on the text'
+  )
   await middle()
   await waitBars('1')
   await middle()

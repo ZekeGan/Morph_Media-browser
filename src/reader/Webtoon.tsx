@@ -129,13 +129,17 @@ export const Webtoon = forwardRef<
             className="reader-webtoon-page pending"
             src={image.url}
             alt={image.name}
-            // R-375: the pages just ahead (and the two behind) load before they are scrolled to and are drawn
-            // decoded, so reading down does not pass through empty pages that fill in late; the rest wait.
+            // R-375: the pages just ahead (and the two behind) load before they are scrolled to and are decoded
+            // as soon as they arrive, so reading down does not pass through empty pages that fill in late; the
+            // rest wait. Decoding stays off the scrolling itself, which stuttered when drawing waited for it.
             loading={index >= start - 2 && index <= start + 6 ? 'eager' : 'lazy'}
-            decoding={index >= start - 2 && index <= start + 6 ? 'sync' : 'async'}
+            decoding="async"
             draggable={false}
             data-page={index + 1}
-            onLoad={(event) => event.currentTarget.classList.remove('pending')}
+            onLoad={(event) => {
+              event.currentTarget.classList.remove('pending')
+              void event.currentTarget.decode().catch(() => {})
+            }}
           />
         ))}
       </div>

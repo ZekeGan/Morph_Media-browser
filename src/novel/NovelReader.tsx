@@ -417,6 +417,16 @@ export function NovelReader({
       setPanel('search')
       return
     }
+    // R-377: in immersive reading Tab on the text stays there. The bars show for as long as one of their buttons has
+    // keyboard focus, so a stray Tab used to bring them out and keep them out. Inside an open panel Tab works as usual.
+    if (
+      event.key === 'Tab' &&
+      immersive &&
+      (event.target === document.body || event.target === scroller.current)
+    ) {
+      consume(event)
+      return
+    }
     if (event.isComposing || event.ctrlKey || event.altKey || event.metaKey) return
     if ((event.target as HTMLElement)?.closest('input,textarea,select,[role="combobox"]')) {
       if (event.key === 'Escape') {

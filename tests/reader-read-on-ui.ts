@@ -122,6 +122,24 @@ try {
   await waitPages('4')
   await page.keyboard.press('ArrowUp')
   await waitPages('3')
+  // R-378: with the page-turn transition off (A, or its toolbar button) the new page just appears.
+  const transition = reader().getByRole('button', { name: '翻頁過渡', exact: true })
+  assert.equal(await transition.getAttribute('aria-pressed'), 'true')
+  const entering = () =>
+    page.evaluate(() =>
+      /enter-/.test(document.querySelector('.reader-frame-layer.is-active')?.className ?? '')
+    )
+  await page.keyboard.press('a')
+  assert.equal(await transition.getAttribute('aria-pressed'), 'false')
+  await page.keyboard.press(' ')
+  await waitPages('4')
+  assert.equal(await entering(), false, 'no slide with the transition off')
+  await transition.click()
+  assert.equal(await transition.getAttribute('aria-pressed'), 'true')
+  await reader().locator('.reader-stage').focus()
+  await page.keyboard.press('PageUp')
+  await waitPages('3')
+  assert.equal(await entering(), true, 'the slide is back')
   // R-376: in immersive reading Tab on the page does not walk into the hidden tool rail.
   await page.keyboard.press('t')
   await page.waitForFunction(() => !!document.fullscreenElement)

@@ -40,6 +40,21 @@ interface Frame {
   // R-270: the side a page turn slides this frame in from; none for loads, mode changes and jumps from the queue.
   enter?: 'left' | 'right'
 }
+// R-378: whether a page turn slides or the new page just appears. A reading habit, so it is kept for this computer
+// and every book rather than in each book's record.
+const turnMotionKey = 'morph.readerTurnMotion'
+function lastTurnMotion() {
+  try {
+    return localStorage.getItem(turnMotionKey) !== 'off'
+  } catch {
+    return true
+  }
+}
+function rememberTurnMotion(value: boolean) {
+  try {
+    localStorage.setItem(turnMotionKey, value ? 'on' : 'off')
+  } catch {}
+}
 interface CachedImage {
   image: HTMLImageElement
   promise: Promise<ImageSize>
@@ -126,6 +141,11 @@ export function Reader({
     [asked, setAsked] = useState(!!prefs?.webtoonAsked),
     [suggest, setSuggest] = useState(false)
   const strip = useRef<WebtoonHandle>(null)
+  const [turnMotion, setTurnMotionState] = useState(lastTurnMotion)
+  const toggleTurnMotion = () => {
+    rememberTurnMotion(!turnMotion)
+    setTurnMotionState(!turnMotion)
+  }
   const setWebtoonWidth = useCallback((value: number) => {
     const next = clampWidth(value)
     setWidthState(next)
@@ -478,7 +498,7 @@ export function Reader({
     const target = groups[index]
     if (target) {
       setEnding(false)
-      if (index !== groupIndex) {
+      if (index !== groupIndex && turnMotion) {
         const forward = index > groupIndex
         heading.current = forward !== rtl ? 'right' : 'left'
       }
@@ -640,6 +660,7 @@ export function Reader({
         else setSpread((value) => !value)
       },
       v: () => manga && setWebtoon((value) => !value),
+      a: () => manga && !webtoon && toggleTurnMotion(),
       r: () => setFitMode(fit),
       g: () => {
         setToolbar(true)
@@ -811,6 +832,13 @@ export function Reader({
                 key: '',
                 icon: rtl ? 'read-rtl' : 'read-ltr',
                 action: () => setRtl((value) => !value),
+              },
+              {
+                label: tr('翻頁過渡'),
+                key: 'A',
+                icon: 'page-slide',
+                pressed: turnMotion,
+                action: toggleTurnMotion,
               },
             ] as ReaderTool[])),
       ]

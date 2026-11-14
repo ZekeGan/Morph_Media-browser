@@ -351,6 +351,26 @@ try {
     BrowserWindow.getAllWindows()[0].webContents.setZoomFactor(1)
   )
   await button('開啟專案 Multi navigation').first().click()
+  // R-379: the right panel of the project just opened is there at once; it does not slide open again.
+  const panelWidths = await page.evaluate(
+    () =>
+      new Promise<number[]>((resolve) => {
+        const seen: number[] = [],
+          start = performance.now()
+        const tick = () => {
+          const slot = document.querySelector('.content-panel-slot')
+          if (slot) seen.push(Math.round(slot.getBoundingClientRect().width))
+          if (performance.now() - start < 700) requestAnimationFrame(tick)
+          else resolve(seen)
+        }
+        tick()
+      })
+  )
+  const panelOpenWidth = Math.max(...panelWidths)
+  assert.ok(
+    panelOpenWidth > 0 && panelWidths.every((width) => width === 0 || width === panelOpenWidth),
+    'the panel does not slide open after a project change: ' + [...new Set(panelWidths)].join(',')
+  )
   await page.locator('.media-subfolders, .content-subfolders').waitFor()
   await current('Multi')
   await buttons(false, false)
