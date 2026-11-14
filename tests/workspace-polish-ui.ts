@@ -177,13 +177,15 @@ try {
         await button('重設縮放').click()
         await fit(axis)
       }
-      // Batched wheel events cross the old scrollbar threshold without changing the fit base.
+      // Batched wheel events cross the old scrollbar threshold without changing the fit base (R-373: Ctrl + wheel
+      // zooms).
       await page.locator('.reader-stage').evaluate((element) => {
         const box = element.getBoundingClientRect()
         for (let i = 0; i < 12; i++)
           element.dispatchEvent(
             new WheelEvent('wheel', {
               deltaY: -60,
+              ctrlKey: true,
               clientX: box.left + box.width / 2,
               clientY: box.top + box.height / 2,
               bubbles: true,
