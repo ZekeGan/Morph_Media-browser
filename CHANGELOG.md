@@ -18,6 +18,8 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Manga reader and image viewer: the wheel now moves a page larger than the window and turns the page at its end, and Ctrl + wheel zooms (the wheel used to zoom); Space, Page Down/Up and the up and down arrows read the rest of the page before turning it (R-372, R-373).
+- Manga two-page mode: a page wider than tall (a spread saved as one picture) is shown by itself, and the pages after it pair up again from there (R-374).
 - Internal: the manga reader, webtoon column and novel reader take keys and the wheel through one small shared module; what each key or wheel turn does is unchanged (R-371).
 - Internal: one shared module now enumerates every layout component list of a project (card, card layouts, content templates, manga templates), so field deletion, field groups, type changes, validation and the search index can no longer miss one; grouping a cell’s fallbacks now also finds cells that live only in a content template (R-368).
 - Internal: the project data model file is split into types, validation and cell helpers, and the stylesheet puts each rule on its own line; nothing changes on screen (R-369, R-370).

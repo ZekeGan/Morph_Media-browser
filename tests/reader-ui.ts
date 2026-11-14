@@ -246,9 +246,12 @@ try {
   await clickStage(true)
   await waitPages('11–12')
   await reader().locator('.reader-stage').hover()
+  // R-373: Ctrl + wheel zooms (the plain wheel turns the page).
+  await page.keyboard.down('Control')
   await page.mouse.wheel(0, 400)
   await fit()
   await page.mouse.wheel(0, -400)
+  await page.keyboard.up('Control')
   await page.waitForFunction(
     () =>
       document.querySelector('.is-active .reader-spread')!.getBoundingClientRect().height >

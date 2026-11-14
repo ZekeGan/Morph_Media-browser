@@ -8,6 +8,11 @@ test('reader groups preserve first-page and odd-page rules; RTL reverses only ar
   assert.deepEqual(readingGroups(5, true, true), [[0], [1, 2], [3, 4]])
   assert.deepEqual(readingGroups(2, false, true), [[0], [1]])
   assert.deepEqual(readingGroups(0, true, false), [])
+  // R-374: a wide page stands alone, and so does the page left without a partner before it.
+  const wide = (index: number) => index === 3
+  assert.deepEqual(readingGroups(8, true, false, wide), [[0, 1], [2], [3], [4, 5], [6, 7]])
+  assert.deepEqual(readingGroups(6, true, true, wide), [[0], [1, 2], [3], [4, 5]])
+  assert.deepEqual(readingGroups(5, false, false, wide), [[0], [1], [2], [3], [4]])
   assert.equal(readerArrowStep('ArrowLeft', false), -1)
   assert.equal(readerArrowStep('ArrowRight', false), 1)
   assert.equal(readerArrowStep('ArrowLeft', true), 1)

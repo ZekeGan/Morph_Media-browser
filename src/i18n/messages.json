@@ -2189,12 +2189,6 @@
     "en": "…",
     "es": "…"
   },
-  "滾輪縮放 · F11 沉浸閱讀 · ESC 返回": {
-    "ja": "ホイールで拡大縮小 · F11 没入表示 · ESC 戻る",
-    "zh-CN": "滚轮缩放 · F11 沉浸阅读 · ESC 返回",
-    "en": "Wheel to zoom · F11 immersive · ESC back",
-    "es": "Rueda para zoom · F11 inmersivo · ESC volver"
-  },
   "資料夾名稱、路徑或欄位值": {
     "ja": "フォルダー名、パス、項目の値",
     "zh-CN": "文件夹名称、路径或栏位值",
@@ -12016,5 +12010,11 @@
     "en": "Invalid manga template choice for a folder",
     "ja": "フォルダーの漫画テンプレート指定が正しくありません",
     "es": "Elección de plantilla de manga no válida para una carpeta"
+  },
+  "滾輪翻頁 · Ctrl＋滾輪縮放 · F11 沉浸閱讀 · ESC 返回": {
+    "zh-CN": "滚轮翻页 · Ctrl＋滚轮缩放 · F11 沉浸阅读 · ESC 返回",
+    "en": "Wheel to turn pages · Ctrl + wheel to zoom · F11 immersive · ESC back",
+    "ja": "ホイールでページ送り · Ctrl＋ホイールで拡大縮小 · F11 没入表示 · ESC 戻る",
+    "es": "Rueda para pasar página · Ctrl + rueda para zoom · F11 inmersivo · ESC volver"
   }
 }

@@ -151,7 +151,7 @@
       "name": "漫畫閱讀器",
       "docs": ["MANGA_VIEWER_DESIGN.md#漫畫閱讀器"],
       "code": ["src/reader/Reader*", "src/reader/Webtoon*", "src/common/readerInput*", "shared/reader*"],
-      "ui": ["reader-ui", "webtoon-ui", "reader-next-ui", "media-scope-ui"],
+      "ui": ["reader-ui", "reader-read-on-ui", "webtoon-ui", "reader-next-ui", "media-scope-ui"],
       "tests": ["reader.test.ts"]
     },
     {

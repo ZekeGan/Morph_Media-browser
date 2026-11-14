@@ -13,7 +13,13 @@ import {
 import { createPortal } from 'react-dom'
 import { ActionIcon, Button, FocusTrap, Group, Select, Slider, Tooltip } from '@mantine/core'
 import type { MediaEntry, ReadingPrefs } from '../../shared/explorer'
-import { readingGroups, readerArrowStep, spreadGeometry, type ImageSize } from '../../shared/reader'
+import {
+  isWidePage,
+  readingGroups,
+  readerArrowStep,
+  spreadGeometry,
+  type ImageSize,
+} from '../../shared/reader'
 import {
   Webtoon,
   WEBTOON_MAX,
@@ -238,9 +244,14 @@ export function Reader({
       }
     }
   }
+  // R-374: pages found to be wider than tall as they load (by url); in two-page mode each gets the screen to itself.
+  const [wide, setWide] = useState<ReadonlySet<string>>(() => new Set())
   const groups = useMemo(
-    () => readingGroups(images.length, manga && spread && !webtoon, first),
-    [images.length, manga, spread, first, webtoon]
+    () =>
+      readingGroups(images.length, manga && spread && !webtoon, first, (index) =>
+        wide.has(images[index].url)
+      ),
+    [images, manga, spread, first, webtoon, wide]
   )
   const groupIndex = Math.max(
       0,
@@ -299,6 +310,12 @@ export function Reader({
       }
       image.onerror = () => reject(new Error(tr('無法載入 ') + entry.name))
     })
+    void promise
+      .then((size) => {
+        if (mounted.current && isWidePage(size))
+          setWide((known) => (known.has(entry.url) ? known : new Set(known).add(entry.url)))
+      })
+      .catch(() => {})
     cache.current.set(entry.url, { image, promise, animated: entry.mime === 'image/gif' })
     image.src = entry.url
     trim()
@@ -414,23 +431,6 @@ export function Reader({
     latest.current = { ...state, zoom: next }
     setZoom(next)
   }
-  useWheel(
-    viewport,
-    (event, element) => {
-      if (!latest.current.active) return
-      event.preventDefault()
-      const delta =
-          event.deltaY *
-          (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? element.clientHeight : 1),
-        bounds = element.getBoundingClientRect()
-      changeZoom(
-        latest.current.zoom * Math.exp(-delta * 0.0015),
-        event.clientX - bounds.left,
-        event.clientY - bounds.top
-      )
-    },
-    [webtoon]
-  )
   const setFitMode = (value: typeof fit) => {
     anchor.current = undefined
     setFit(value)
@@ -505,6 +505,55 @@ export function Reader({
     goToGroup(groupIndex + delta)
   }
   const canForward = manga || groupIndex < groups.length - 1
+  // R-372: Space, the Page keys and the up and down arrows read on: the rest of a page taller than the window first
+  // (about nine tenths of a window at a time), then the next page.
+  const readOn = (direction: 1 | -1) => {
+    const element = viewport.current
+    if (element) {
+      const max = element.scrollHeight - element.clientHeight,
+        at = element.scrollTop
+      if (direction > 0 ? at < max - 1 : at > 1) {
+        element.scrollTop = at + direction * element.clientHeight * 0.9
+        return
+      }
+    }
+    step(direction)
+  }
+  // R-373: the wheel moves a page larger than the window and turns the page once it has no further to go; with Ctrl
+  // it zooms around the pointer. A turn waits a quarter second after the last turn or movement, so a spin that
+  // reaches the edge does not run on through the book, and the wheel never opens the next book by itself.
+  const wheeled = useRef({ turned: 0, moved: 0 })
+  useWheel(viewport, (event, element) => {
+    if (!latest.current.active) return
+    event.preventDefault()
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? element.clientHeight : 1,
+      dx = event.deltaX * unit,
+      dy = event.deltaY * unit
+    if (event.ctrlKey) {
+      const bounds = element.getBoundingClientRect()
+      changeZoom(
+        latest.current.zoom * Math.exp(-dy * 0.0015),
+        event.clientX - bounds.left,
+        event.clientY - bounds.top
+      )
+      return
+    }
+    const left = element.scrollLeft,
+      top = element.scrollTop,
+      now = performance.now(),
+      state = wheeled.current
+    element.scrollLeft = left + dx
+    element.scrollTop = top + dy
+    if (element.scrollLeft !== left || element.scrollTop !== top) {
+      state.moved = now
+      return
+    }
+    if (Math.abs(dy) < 4 || Math.abs(dy) <= Math.abs(dx)) return
+    if (now - state.turned < 250 || now - state.moved < 250) return
+    state.turned = now
+    if (manga && dy > 0 && groupIndex === groups.length - 1) setEnding(true)
+    else step(dy > 0 ? 1 : -1)
+  })
   useEffect(() => {
     if (!resumed) return
     const timer = setTimeout(() => setResumed(false), 4000)
@@ -555,6 +604,22 @@ export function Reader({
         else if (move > 0) pastEnd()
         return
       }
+    }
+    const onward = webtoon
+      ? undefined
+      : (
+          {
+            ' ': event.shiftKey ? -1 : 1,
+            PageDown: 1,
+            ArrowDown: 1,
+            PageUp: -1,
+            ArrowUp: -1,
+          } as Record<string, 1 | -1>
+        )[event.key]
+    if (onward) {
+      consume(event)
+      readOn(onward)
+      return
     }
     const direction = webtoon ? 0 : readerArrowStep(event.key, rtl)
     const actions: Record<string, () => void> = {
@@ -1326,7 +1391,7 @@ export function Reader({
             <span>
               {webtoon
                 ? tr('Ctrl＋滾輪調整寬度 · V 切換條漫 · ESC 返回')
-                : tr('滾輪縮放 · F11 沉浸閱讀 · ESC 返回')}
+                : tr('滾輪翻頁 · Ctrl＋滾輪縮放 · F11 沉浸閱讀 · ESC 返回')}
             </span>
           </div>
         )}

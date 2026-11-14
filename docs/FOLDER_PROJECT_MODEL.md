@@ -1,6 +1,6 @@
 # 資料夾與專案語意
 
-> 最後確認：2026-11-13。資料夾身分、共用值與專案私有覆寫的模型；型別在 `shared/model.ts`。
+> 最後確認：2026-11-14。資料夾身分、共用值與專案私有覆寫的模型；型別在 `shared/model.ts`。
 
 本頁持有身分、值與跨專案語意；實體欄位／驗證以 [shared/model.ts](../shared/model.ts) 為準，位置見 [架構](ARCHITECTURE.md)，寫入安全見 [儲存規則](STORAGE_OPTIONS.md)。不要再維護一份平行 schema。
 

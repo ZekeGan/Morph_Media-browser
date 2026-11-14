@@ -284,6 +284,21 @@ try {
   assert.ok(Math.abs(after - placed) <= 3, `the text does not jump: ${placed} → ${after}`)
   await page.screenshot({ path: path.join(base, 'shot', 'r336-novel-continuous.png') })
   await choose('分頁')
+  // Two wheel notches within a quarter second turn one page, not two.
+  await page.locator('.novel-page').focus()
+  await page.keyboard.press('Home')
+  await page.waitForTimeout(300)
+  const pagedBox = (await reader().locator('.novel-page').boundingBox())!
+  await page.mouse.move(pagedBox.x + pagedBox.width / 2, pagedBox.y + pagedBox.height / 2)
+  // The first chapter is one page long, so a turn shows as the next chapter.
+  const chapterNow = () =>
+    page.evaluate(() => document.querySelector('.novel-info strong')?.textContent ?? '')
+  assert.match(await chapterNow(), /第 1 \/ 4 章/)
+  await page.mouse.wheel(0, 100)
+  await page.waitForTimeout(150)
+  await page.mouse.wheel(0, 100)
+  await page.waitForTimeout(400)
+  assert.match(await chapterNow(), /第 2 \/ 4 章/, 'two quick wheel notches turn one page')
   // R-342: in paged mode the last page of a chapter is its end page; at the end of the book it says so.
   await page.locator('.novel-page').focus()
   await page.keyboard.press('End')
