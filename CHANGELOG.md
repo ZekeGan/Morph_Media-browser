@@ -18,6 +18,7 @@ The application version is independent of portable record `schemaVersion`.
 
 ## Unreleased
 
+- Folder type: choosing "Game" now also marks the folder as a game main folder, so the game page appears at once instead of after a second step under Advanced (R-380).
 - Manga reader: a toolbar switch (A) turns the page-turn slide off so the new page just appears; the choice is kept for this computer and every book (R-378).
 - Novel reader: in immersive reading Tab on the text no longer brings the bars out and keeps them there (R-377).
 - Changing project no longer slides the right panel shut and open again when it was open (R-379).

@@ -6,6 +6,7 @@ import { Library } from '../electron/library'
 import { Explorer, type DesktopOperations } from '../electron/explorer'
 import { detectFolderKind, sampleOf } from '../shared/kind'
 import { readFolder } from '../electron/files'
+import { isGameFolder } from '../shared/media'
 import type { FolderRow } from '../shared/model'
 
 const row = (details?: object, boundary?: object) =>
@@ -101,6 +102,51 @@ test('the folderKind request stores or clears the manual kind and rejects unknow
     kind: null,
   })
   assert.equal((await readFolder(rowA().path)).details?.kind, undefined)
+  assert.equal((await readFolder(rowA().path)).details?.boundary, undefined, 'a book is no game')
+  // R-380: choosing "game" also marks the folder as a game main folder, so the game page shows in one step.
+  assert.equal(isGameFolder(rowA()), false)
+  const made = await explorer.request({
+    action: 'folderKind',
+    rowId: rowA().rowId,
+    revision: rowA().record!.revision,
+    kind: 'game',
+  })
+  // The answer comes from a new scan, so the row already carries the boundary the panel and lists read.
+  assert.equal(
+    made.snapshot!.rows.find((r) => r.name === 'A')!.boundary?.state,
+    'root',
+    'the returned row is the rescanned one'
+  )
+  assert.deepEqual((await readFolder(rowA().path)).details?.boundary, {
+    state: 'root',
+    engines: [],
+    evidence: ['使用者指定'],
+  })
+  assert.equal(isGameFolder(rowA()), true)
+  assert.deepEqual(detectFolderKind(rowA()), { kind: 'game', source: 'manual' })
+  // A folder the user had said is not a game becomes one when they choose the game type after all.
+  await explorer.request({
+    action: 'boundary',
+    rowId: rowA().rowId,
+    revision: rowA().record!.revision,
+    state: 'not-game',
+  })
+  assert.equal(isGameFolder(rowA()), false)
+  await explorer.request({
+    action: 'folderKind',
+    rowId: rowA().rowId,
+    revision: rowA().record!.revision,
+    kind: 'game',
+  })
+  assert.equal((await readFolder(rowA().path)).details?.boundary?.state, 'root')
+  // Another type afterwards leaves the mark: "this is not a game folder" is what removes it.
+  await explorer.request({
+    action: 'folderKind',
+    rowId: rowA().rowId,
+    revision: rowA().record!.revision,
+    kind: 'media',
+  })
+  assert.equal((await readFolder(rowA().path)).details?.boundary?.state, 'root')
 })
 
 test('folderKinds sets the kind of several folders and reports the ones that fail', async (t) => {
@@ -162,4 +208,13 @@ test('folderKinds sets the kind of several folders and reports the ones that fai
     kind: null,
   })
   assert.equal((await readFolder(rowOf('A').path)).details?.kind, undefined)
+  // R-380: the batch only sets the type. It does not make main folders, whose insides are protected, of a selection.
+  await explorer.request({
+    action: 'folderKinds',
+    rows: [{ rowId: a.rowId, revision: rowOf('A').record!.revision }],
+    kind: 'game',
+  })
+  const batched = (await readFolder(rowOf('A').path)).details
+  assert.equal(batched?.kind, 'game')
+  assert.equal(batched?.boundary, undefined)
 })

@@ -464,12 +464,28 @@ export class Explorer {
         )
       case 'folderKind': {
         if (req.kind !== null && !isFolderKind(req.kind)) throw new Error('資料夾類型不合法')
+        // R-380: a folder made a game by hand is a game main folder too, so this one choice brings up the game page
+        // (it shows only for a main folder). It writes what "mark as game main folder" writes and keeps what
+        // detection found. Another type afterwards leaves the mark: "this is not a game folder" removes it. The
+        // batch request below only sets the type, so a wide selection cannot turn a whole shelf into main folders.
+        const detected =
+          req.kind === 'game' ? (await this.library.checkedRow(req.rowId)).boundary : undefined
+        let marked = false
         const snapshot = await this.details(req.rowId, req.revision, (d) => {
           if (req.kind === null) delete d.kind
           else d.kind = req.kind
+          if (req.kind === 'game' && d.boundary?.state !== 'root') {
+            d.boundary = {
+              state: 'root',
+              engines: d.boundary?.engines ?? detected?.engines ?? [],
+              evidence: d.boundary?.evidence ?? detected?.evidence ?? ['使用者指定'],
+            }
+            marked = true
+          }
         })
         return {
-          ...this.after(snapshot),
+          // A new main folder changes what the scan shows of it and inside it, as after the boundary request.
+          ...this.after(marked ? await this.library.scan() : snapshot),
           notice: { level: 'success' as const, message: '已更新資料夾類型' },
         }
       }

@@ -1,6 +1,6 @@
 # 遊戲引擎辨識
 
-> 本頁只寫現行的辨識規則與邊界策略，不承擔畫面或工作進度。導覽能否進入依 [現行工作區](WORKSPACE_REVISION.md)，內容／動作見 [遊戲](GAME_VIEWER_DESIGN.md)；取捨與歷次診斷見 [DECISIONS](DECISIONS.md)（C-80 起）。程式：`electron/game-detection.ts`；測試：`tests/game-detection.test.ts`；唯讀試跑：`pnpm detect <資料夾> [--children]`。最後確認：2026-11-13。
+> 本頁只寫現行的辨識規則與邊界策略，不承擔畫面或工作進度。導覽能否進入依 [現行工作區](WORKSPACE_REVISION.md)，內容／動作見 [遊戲](GAME_VIEWER_DESIGN.md)；取捨與歷次診斷見 [DECISIONS](DECISIONS.md)（C-80 起）。程式：`electron/game-detection.ts`；測試：`tests/game-detection.test.ts`；唯讀試跑：`pnpm detect <資料夾> [--children]`。最後確認：2026-11-14（R-380）。
 
 ## 目的與原則
 
@@ -10,7 +10,7 @@
 - 自動結果一律是**候選**，不自動宣告 ROOT；使用者的「確認 ROOT」或「這不是遊戲」優先，新規則不得靜默覆蓋。
 - 候選在建立子層記錄前就處理；未解決的候選保持暫停，例外、權限錯誤或取消都不能變成「無遊戲、可繼續寫入」。
 - 單一線索（`.exe`、`Data`、`.pak`、`package.json`、單一 DLL、EXE 版本資訊、圖示、存檔名）都不足以判定遊戲；規則必須是同一款遊戲內的檔案組合。
-- 找不到引擎仍可手動設為 ROOT；未知或自製引擎不阻擋遊戲檢視與使用者指定的 EXE。
+- 找不到引擎仍可手動設為 ROOT；在資料夾設定把類型選成「遊戲」就同時設為 ROOT（R-380），不必再到進階按「標記為遊戲主資料夾」，之後改成別的類型不會取消 ROOT，要取消用「這不是遊戲目錄」；批次指定類型只改類型、不設 ROOT，避免一次選取把整批資料夾的內部都變成受保護；未知或自製引擎不阻擋遊戲檢視與使用者指定的 EXE。
 
 ## 探測範圍
 
